@@ -1454,7 +1454,6 @@ This is the same as using \\[set-mark-command] with the prefix argument."
    (if (region-active-p)
        (cons (region-beginning) (region-end))
      (cons (line-beginning-position) (line-end-position)))))
-     (cons (line-beginning-position) (line-end-position)))))
 
 (advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
 
