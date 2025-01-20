@@ -1,6 +1,6 @@
 { inputs, outputs, lib, config, pkgs, ... }:
-{
 
+{
   imports = [
     ./sh.nix
     ./services.nix
@@ -20,6 +20,7 @@
       allowUnfree = true;
     };
   };
+  
   home.username = "kam";
   home.homeDirectory = "/home/kam";
 
@@ -85,8 +86,6 @@
     userName = "Kamron";
     userEmail = "kamrosmith@gmail.com";
   };
-
-  systemd.user.startServices = "sd-switch";
 
   programs.emacs = {
     package = pkgs.emacs30;
