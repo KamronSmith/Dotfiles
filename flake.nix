@@ -34,9 +34,9 @@
       nixosConfigurations = {
         nixos = nixpkgs.lib.nixosSystem {
           specialArgs = {inherit inputs outputs; };
-	  modules = [ ./nixos/configuration.nix ];
-	};
-
+	        modules = [ ./nixos/configuration.nix ];
+	      };
+        
         overlays = import ./overlays {inherit inputs;};
 
         nixosModules = import ./modules/nixos;
