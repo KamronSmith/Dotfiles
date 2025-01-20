@@ -467,7 +467,7 @@ Occur is a command that shows all lines in a buffer that match a user given rege
   ("C-M-v" . mark-sexp)
   ("C-M-y" . #'kam-duplicate-line-or-region)
   ("C-M-DEL" . backward-kill-sexp)
-  ("C-c f c" . (lambda () (interactive) (find-file "/home/kam/.dotfiles/user/kam-emacs.org")))
+  ("C-c f c" . (lambda () (interactive) (find-file "/home/kam/.dotfiles/home-manager/kam-emacs.org")))
   ([remap list-buffers] . ibuffer)
   ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
   :config
