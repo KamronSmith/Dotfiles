@@ -119,6 +119,7 @@
      _1password-gui
      _1password-cli
      terraform
+     (import ./scripts.nix { inherit pkgs; })
   #  wget
   ];
 
