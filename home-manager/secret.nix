@@ -33,7 +33,7 @@
     enable = true;
     credentials = {
       "default" = {
-        "credential_process" = "";
+        "credential_process" = "${pkgs.aws-op-cred-helper}/bin/aws-op-cred-helper";
       };
     };
   };
