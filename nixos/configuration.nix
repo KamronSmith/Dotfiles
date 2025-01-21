@@ -109,12 +109,12 @@
   };
   
   # Enable automatic login for the user.
-   services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "kam";
    services.displayManager.autoLogin.enable = true;
    services.displayManager.autoLogin.user = "kam";
 
    security.polkit.enable = true;
+   programs._1password.enable = true;
+   
   # Install firefox.
   programs.firefox.enable = true;
 
