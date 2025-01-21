@@ -9,6 +9,7 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
       ./secret.nix
+      ./virtualization.nix
       inputs.home-manager.nixosModules.home-manager
     ];
 
@@ -25,9 +26,6 @@
 
   # Enable networking
   networking.networkmanager.enable = true;
-  programs.virt-manager.enable = true;
-  virtualisation.libvirtd.enable = true;
-  virtualisation.spiceUSBRedirection.enable = true;
 
   # Enable network manager applet
   programs.nm-applet.enable = true;
