@@ -114,6 +114,7 @@
    services.displayManager.autoLogin.enable = true;
    services.displayManager.autoLogin.user = "kam";
 
+   security.polkit.enable = true;
   # Install firefox.
   programs.firefox.enable = true;
 
