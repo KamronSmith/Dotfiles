@@ -25,7 +25,6 @@
        '';
         environmentVariables = {
           EDITOR = "emacsclient -c -a \"\"";
-          AWS_CONFIG_FILE = "${config.home.homeDirectory}/.config/aws/config";
           NIXOS_OZONE_WL = 1;
           NIXPKGS_ALLOW_UNFREE = 1;
           XDG_CURRENT_DESKTOP = "Hyprland";
