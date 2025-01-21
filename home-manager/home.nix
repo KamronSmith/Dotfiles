@@ -48,6 +48,7 @@
     bluez
     bluez-tools
     ripgrep
+    hyprpolkitagent
     fd
     neofetch
     zip
