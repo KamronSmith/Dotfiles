@@ -1,4 +1,5 @@
 { config, lib, pkgs, ... }:
+
 {
   programs.ssh = {
     enable = true;
@@ -32,7 +33,7 @@
     enable = true;
     credentials = {
       "default" = {
-        "credential_process" = "${pkgs._1password}/bin/op";
+        "credential_process" = "";
       };
     };
   };
