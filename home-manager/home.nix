@@ -3,6 +3,7 @@
 {
   imports = [
     ./sh.nix
+    ./default-apps.nix
     ./secret.nix
     ./services.nix
     ./wm.nix
