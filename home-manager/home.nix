@@ -7,6 +7,7 @@
     ./services.nix
     ./wm.nix
     ./waybar.nix
+    ./rofi.nix
     ./firefox.nix
   ];
 
