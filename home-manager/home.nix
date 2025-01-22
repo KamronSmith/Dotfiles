@@ -10,6 +10,7 @@
     ./waybar.nix
     ./rofi.nix
     ./firefox.nix
+    ./term.nix
   ];
 
   nixpkgs = {
