@@ -40,6 +40,7 @@
   services.xserver.enable = true;
   xdg.portal = {
     enable = true;
+    xdgOpenUsePortal = true;
   };
 
   # Enable the LXQT Desktop Environment.
