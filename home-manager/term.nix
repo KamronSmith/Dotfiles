@@ -8,7 +8,7 @@
       size = 14;
     };
     extraConfig = ''
-    window_padding_width 3
+    window_padding_width 5
     '';
   };
 }
