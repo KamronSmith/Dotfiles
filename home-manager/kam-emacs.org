@@ -528,6 +528,23 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         (reb-quit)
         (query-replace-regexp re replacement delimited beg end)))))
 #+end_src
+** The =init.el= section for =Tramp=
+#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(use-package tramp
+  :ensure nil
+  :config
+  (setq tramp-encoding-shell (executable-find "sh")
+        sh-shell-file (executable-find "bash")
+        shell-file-name (executable-find "bash"))
+  
+  (add-to-list 'tramp-connection-properties
+               (list (regexp-quote "/sudo::")
+                     "login-program" (executable-find "env")))
+  
+  (add-to-list 'tramp-connection-properties
+               (list (regexp-quote "/sudo::")
+                     "remote-shell" (executable-find "env"))))
+#+end_src
 ** The =init.el= section for =find-file=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (defun kam-auto-create-missing-dirs ()
