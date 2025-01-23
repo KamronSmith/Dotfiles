@@ -53,7 +53,7 @@
     variant = "";
   };
 
-  # Enable CUPS to print documents.
+  # Enable cups to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
@@ -119,7 +119,7 @@
      _1password-gui
      _1password-cli
      terraform
-  #  wget
+     #  wget
   ];
 
   programs.nix-ld.enable = true;
