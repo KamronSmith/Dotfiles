@@ -69,18 +69,31 @@
     sysstat
     pciutils # lspci
     usbutils # lsusb
-    emacs
-    ripgrep-all
-    findutils
-    calibre
+    # coding
+    git
+    docker
+    gcc
+    direnv
     cmake # for Emacs + Vterm
     libtool
     awscli2
     gh
+    # user apps
+    kitty
+    waybar
+    rofi-wayland
+    swww
+    neofetch
+    vlc
+    mpv
+    emacs
+    calibre
     remmina
+    anki
   ];
-
+  
   home.file = {
+    
   };
 
   # xdg.configFile = {
