@@ -11,6 +11,7 @@
     ./rofi.nix
     ./firefox.nix
     ./term.nix
+    ./themes.nix
   ];
 
   nixpkgs = {
