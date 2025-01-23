@@ -99,6 +99,7 @@
     userName = "Kamron";
     userEmail = "kamrosmith@gmail.com";
   };
+  
 
   programs.emacs = {
     package = pkgs.emacs30;
