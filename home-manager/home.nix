@@ -41,20 +41,14 @@
   };
   
   home.packages = with pkgs; [
-    git
-    docker
-    gcc
-    kitty
-    waybar
-    direnv
-    rofi-wayland
-    swww
+    # system utilities
+    pavucontrol
     bluez
     bluez-tools
     ripgrep
-    hyprpolkitagent
     fd
-    neofetch
+    ripgrep-all
+    findutils
     zip
     unzip
     dnsutils
