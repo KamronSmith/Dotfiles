@@ -5,12 +5,12 @@
  xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "image/svg+xml" = [ "feh" ];
-      "image/png" = [ "feh" ];
-      "image/jpeg" = [ "feh" ];
-      "image/gif" = [ "feh" ];
-      "image/avif" = [ "feh" ];
-      "image/webp" = [ "feh" ];
+      "image/svg+xml" = [ "emacsclient.desktop" ];
+      "image/png" = [ "emacsclient.desktop" ];
+      "image/jpeg" = [ "emacsclient.desktop" ];
+      "image/gif" = [ "emacsclient.desktop" ];
+      "image/avif" = [ "emacsclient.desktop" ];
+      "image/webp" = [ "emacsclient.desktop" ];
       "video/mpeg" = [ "mpv.desktop" ];
       "video/vnd.rn-realvideo" = [ "mpv.desktop" ];
       "video/3gpp2" = [ "mpv.desktop" ];
@@ -72,13 +72,13 @@
       "text/x-tex" = [ "emacsclient.desktop" ];
       "text/x-c++hdr" = [ "emacsclient.desktop" ];
       "text/x-csrc" = [ "emacsclient.desktop" ];
-      "text/x-makefile" = [ "emacsclient.desktop" ];
-      "text/x-c++scr" = [ "emacsclient.desktop" ];
+      "text/x-makefile" = [ "emacsclient.text" ];
+      "desktop/x-c++scr" = [ "emacsclient.desktop" ];
       "text/plain" = [ "emacsclient.desktop" ];
       "text/tcl" = [ "emacsclient.desktop" ];
       "text/x-java" = [ "emacsclient.desktop" ];
       "application/pdf" = [ "emacsclient.desktop" ];
-      "application/epub+zip" [ "emacsclient.desktop" ];
+      "application/epub+zip" = [ "emacsclient.desktop" ];
     };
   };
 }
