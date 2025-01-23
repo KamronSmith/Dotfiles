@@ -1721,7 +1721,7 @@ This module contains all the settings and configuration related to =Org= and all
         org-use-speed-commands t
         org-hide-macro-markers t
         org-blank-before-new-entry '((heading . nil)
-                                    (plain-list-item . auto))
+                                     (plain-list-item . auto))
         org-ellipsis " ⌄"
         org-hide-emphasis-markers t
         org-fold-catch-invisible-edits 'show
@@ -1889,8 +1889,8 @@ This stops the mismatch parenthesis bug in Org source blocks."
         ("C-<return>" . kam-insert-new-line-below)
         ("C-<tab>" . #'kam-org-fold-nearest-heading)
         ("C-<f2>" . org-insert-subheading)
-         ("M-j" . point-to-register)
-         ("C-j" . consult-register-load)
+        ("M-j" . point-to-register)
+        ("C-j" . consult-register-load)
         ("M-<f2>" . #'kam-org-insert-super-heading)
         ("C-'" . org-edit-src-code)
         ("M-'" . org-edit-src-exit)
@@ -1937,7 +1937,7 @@ This stops the mismatch parenthesis bug in Org source blocks."
          (org-mode . visual-line-mode))
   :config
   (setq org-pretty-entities t))
-  
+
 #+end_src
 *** The =Org= section that configures =Pomodoros=
 :PROPERTIES:
@@ -2055,7 +2055,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
     (down-list arg)))
 
 (defun kam-org-fold-nearest-heading (&optional arg)
-    "Fold the nearest heading at point."
+  "Fold the nearest heading at point."
   (interactive)
   (kam-org-up-heading)
   (org-cycle))
@@ -2219,7 +2219,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 ;;               (persp-ibuffer-set-filter-groups)
 ;;               (unless (eq ibuffer-sorting-mode 'alphabetic)
 ;;                 (ibuffer-do-sort-by-alphabetic))))
-  
+
 ;;   (persp-mode))
 #+end_src
 *** The call to provide =Project=
