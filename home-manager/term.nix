@@ -5,7 +5,7 @@
     enable = true;
     font = {
       name = "Iosevka Comfy Duo";
-      size = 24;
+      size = 14;
     };
     extraConfig = ''
     window_padding_width 3
