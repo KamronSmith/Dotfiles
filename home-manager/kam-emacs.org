@@ -1101,6 +1101,16 @@ Numerical argument ARG determines the command being selected from to choose argu
   :bind
   ("C-c d" . dired-jump))
 #+end_src
+*** The =Dired= section for opening files externally
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-dired.el")
+(use-package dired
+  :ensure nil
+  :config
+  (setq dired-guess-shell-alist-user
+        '(("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
+          ("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
+          (".*" "xdg-open"))))
+#+end_src
 *** The =Dired= section that loads =dired-x= and =dired-aux=
 :PROPERTIES:
 :CUSTOM_ID: h:A410CEC2-D906-483B-8BF0-CAC5BEA723AA
