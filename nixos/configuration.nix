@@ -11,7 +11,6 @@
       ./secret.nix
       ./virtualization.nix
       ./networking.nix
-      ./scripts.nix
       inputs.home-manager.nixosModules.home-manager
     ];
 
