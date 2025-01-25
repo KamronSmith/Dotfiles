@@ -30,6 +30,7 @@
                allow_tearing = false
                layout = master
            }
+
            decoration {
                rounding = 10
                active_opacity = 1.0
@@ -40,6 +41,7 @@
                       render_power = 3
                       color = rgba(1a1a1aee)
                }
+
                blur {
                     enabled = true
                     size = 6
@@ -48,6 +50,7 @@
                     vibrancy = 0.1696
                }
            }
+
            animations {
                       enabled = true
                       bezier = easeOutQuint,0.23,1,0.32,1
@@ -74,6 +77,7 @@
            }
            master {
                   new_status = master
+                  mfact = 0.50
            }
            misc {
                 force_default_wallpaper = 0
@@ -88,9 +92,10 @@
                  follow_mouse = 1
                  sensitivity = 0
                  touchpad {
-                 natural_scroll = false
+                          natural_scroll = false
                  }
            }
+
 $mainMod = ALT
 
 bind = $mainMod, F, exec, $terminal

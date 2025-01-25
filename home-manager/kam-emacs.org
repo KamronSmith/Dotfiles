@@ -1099,7 +1099,9 @@ Numerical argument ARG determines the command being selected from to choose argu
 (use-package dired
   :ensure nil
   :bind
-  ("C-c d" . dired-jump))
+  ("C-c d" . dired-jump)
+  (:map dired-mode-map
+        ("o" . dired-open-xdg)))
 #+end_src
 *** The =Dired= section for opening files externally
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-dired.el")
@@ -1202,6 +1204,15 @@ Numerical argument ARG determines the command being selected from to choose argu
 :PROPERTIES:
 :CUSTOM_ID: h:8AF8A2E1-12BD-4F53-805D-6D3A22CD81ED
 :END:
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-dired.el")
+(defun kam-dired-shell-command-on-file-at-point ()
+  "Runs a shell command on the file at point."
+  (interactive)
+  (concat
+   (read-shell-command "Shell command: ")
+   " "
+   (dired-file-name-at-point)))
+#+end_src
 *** The call to provide =Dired=
 :PROPERTIES:
 :CUSTOM_ID: h:7861C98E-7CC7-4D49-ADDC-687175A2D64F
@@ -1324,6 +1335,13 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
   (setq show-paren-context-when-offscreen 'child-frame
         show-paren-delay .75))
 #+end_src
+*** The =Naved= section about =visible-mark-mode=
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
+(use-package visible-mark
+  :ensure t
+  :config
+  (global-visible-mark-mode))
+#+end_src
 *** The =Naved= section about =subword-mode=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
 (global-subword-mode)
@@ -1415,7 +1433,28 @@ As god intended.
 :PROPERTIES:
 :CUSTOM_ID: h:F53E6ABC-575D-4B03-85C6-AE54C84FA3F5
 :END:
+**** The =Naved= section that defines the mark commands
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
+(defun kam--mark (bounds)
+  "Mark between BOUNDS as a cons cell of beginning and end positions."
+  (push-mark (car bounds))
+  (goto-char (cdr bounds))
+  (activate-mark))
+
+(defun kam-mark-sexp ()
+  "Mark symbolic expression at or near point.
+Repeat to extend the region forward to the next symbolic expression."
+  (interactive)
+  (if (and (region-active-p)
+           (eq last-command this-command))
+      (ignore-errors (forward-sexp 1))
+    (when-let* ((thing (cond
+                        ((thing-at-point 'url) 'url)
+                        ((thing-at-point 'sexp) 'sexp)
+                        ((thing-at-point 'string) 'string)
+                        ((thing-at-point 'word) 'word))))
+      (kam--mark (bounds-of-thing-at-point thing)))))
+
 (defun kam-push-mark-no-activate ()
   "Pushes the `point' to the `mark-ring' and does not activate the region.
 Equivalent to \\[set-mark-command] when \\[transient-mark-mode] is disabled."
@@ -1447,21 +1486,29 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 (defun kam-mark-line-with-newline ()
   "Selects the whole line with the newline."
   (interactive)
-  (let (p1)
-      (setq p1 (line-beginning-position))
-      (push-mark p1 nil)
-      (goto-char (progn
-                   (forward-line)
-                   (line-beginning-position)))))
+  (let (p1 p2)
+    (setq p1 (save-excursion
+               (previous-line)
+               (line-end-position)))
+    (setq p2 (line-end-position))
+    (push-mark p1 nil t)
+    (goto-char p2)))
 
+(define-advice pop-global-mark (:around (pgm) use-display-buffer)
+  "Make `pop-to-buffer' jump buffers via `display-buffer'."
+  (cl-letf (((symbol-function 'switch-to-buffer)
+             #'pop-to-buffer))
+    (funcall pgm)))
+#+end_src
+**** The =Naved= section that defines the editing commands
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
 (defun kam-cut-dwim ()
   "If the region is active, kill the region. If the region is inactive, kill the whole line. If the point is on an Org heading, kill the subtree."
   (interactive)
   (cond ((region-active-p)
-           (kill-region nil nil t))
-          ((org-at-heading-p)
-           (org-cut-subtree))
-          (t (kam-kill-whole-line 1))))
+         (kill-region nil nil t))
+        ((org-at-heading-p)
+        (t (kam-kill-whole-line 1))))
 
 (defun kam-kill-ring-save-dwim ()
   "If the region is active, copy the region. If the region is inactive, copy the line."
@@ -1483,12 +1530,6 @@ This is the same as using \\[set-mark-command] with the prefix argument."
      (cons (line-beginning-position) (line-end-position)))))
 
 (advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
-
-(define-advice pop-global-mark (:around (pgm) use-display-buffer)
-  "Make `pop-to-buffer' jump buffers via `display-buffer'."
-  (cl-letf (((symbol-function 'switch-to-buffer)
-             #'pop-to-buffer))
-    (funcall pgm)))
 
 (defun kam-insert-new-line-below (n)
   "Create N empty lines below the current one.
@@ -1536,9 +1577,44 @@ When the region is active, comment its lines instead."
   (if (use-region-p)
       (comment-or-uncomment-region
        (region-beginning) (region-end))
-    (comment-or-uncomment-region
-     (line-beginning-position) (line-end-position))))
+    (comment-line n)))
 
+(defun kam-transpose-char (&optional arg)
+  "Interchange the characters behind the point."
+  (interactive "p")
+  (transpose-chars -1)
+  (forward-char))
+
+(defun kam-kill-sexp (&optional arg interactive)
+  "Kill the sexp following point.
+With ARG, do it that many times."
+  (interactive "p\nd")
+  (if interactive
+      (condition-case _
+          (kam-kill-sexp arg nil)
+        (scan-error (user-error (if (> arg 0)
+                                    "No next sexp"
+                                  "No previous sexp"))))
+    (let ((old-point (point)))
+      (kam-forward-sexp (or arg 1))
+      (kill-region old-point (point)))))
+
+(defun kam-kill-sexp (&optional arg interactive)
+  "Kill the sexp following point.
+With ARG, do it that many times."
+  (interactive "p\nd")
+  (if interactive
+      (condition-case _
+          (kam-kill-sexp arg nil)
+        (scan-error (user-error (if (> arg 0)
+                                    "No next sexp"
+                                  "No previous sexp"))))
+    (let ((old-point (point)))
+      (kam-forward-sexp (or arg 1))
+      (kill-region old-point (point)))))
+#+end_src
+**** The =Naved= section that defines the navigation commands
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
 (defun kam-end-of-string ()
   (interactive)
   (while (in-string-p)
@@ -1562,11 +1638,11 @@ This command assumes a string or a comment is a sexp."
         (scan-error (user-error (if (> arg 0)
                                     "No next sexp"
                                   "No previous sexp"))))
-  (if (in-string-p)
-      (progn
-        (kam-end-of-string)
-        (forward-char -1))
-    (forward-sexp arg))))
+    (if (in-string-p)
+        (progn
+          (kam-end-of-string)
+          (forward-char -1))
+      (forward-sexp arg))))
 
 (defun kam-backward-sexp (&optional arg interactive)
   "Move backwards across a sexp.
@@ -1581,26 +1657,6 @@ Uses `kam-forward-sexp' to do the work."
         (forward-char 1))
     (kam-forward-sexp (- arg) interactive)))
 
-(defun kam-transpose-char (&optional arg)
-  "Interchange the characters behind the point."
-  (interactive "p")
-  (transpose-chars -1)
-  (forward-char))
-
-(defun kam-kill-sexp (&optional arg interactive)
-  "Kill the sexp following point.
-With ARG, do it that many times."
-  (interactive "p\nd")
-  (if interactive
-      (condition-case _
-          (kam-kill-sexp arg nil)
-        (scan-error (user-error (if (> arg 0)
-                                    "No next sexp"
-                                  "No previous sexp"))))
-  (let ((old-point (point)))
-    (kam-forward-sexp (or arg 1))
-    (kill-region old-point (point)))))
-
 (defun kam-narrow-or-widen-dwim (p)
   "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
 Intelligently means: region, subtree, or defun, whichever applies first."
@@ -1614,6 +1670,15 @@ Intelligently means: region, subtree, or defun, whichever applies first."
 
 (defun kam-current-sexp ()
   "Returns the current expression based on the position of the point within or on the edges of an s-expression."
+  ;; doesnt work good right now
+ (cond
+  ((thing-at-point 'url) 'url)
+  ((thing-at-point 'word) 'word)
+  ((thing-at-point 'string) 'string)
+  ((thing-at-point 'sexp) 'sexp)))
+
+(defun kam-current-elisp-sexp ()
+  "Returns the current Elisp expression based on the position of the point within or on the edges of an s-expression."
   (cond
    ((looking-at "(") (sexp-at-point))
    ((looking-back ")" 1) (elisp--preceding-sexp))
@@ -1625,7 +1690,7 @@ Intelligently means: region, subtree, or defun, whichever applies first."
   "Evaluates the current sexp at point.
 Unlike `eval-last-sexp', the point doesn't need to be at the end of the expression, but can be at the beginning (on the parenthesis) or somewhere inside."
   (interactive)
-  (eval-expression (kam-current-sexp)))
+  (eval-expression (kam-current-elisp-sexp)))
 
 (defun kam-isearch-symbol-at-point ()
   (interactive)
@@ -1641,6 +1706,33 @@ Unlike `eval-last-sexp', the point doesn't need to be at the end of the expressi
   (interactive)
   (backward-up-list)
   (kam-kill-sexp))
+
+(cl-defmethod register-val-jump-to ((val vector) delete)
+  "Handle how to jump to a location register.
+This is like the default, but does not ask to visit a file, but does it outright."
+  (cond
+   ((eq (aref val 0) 'file-with-point)
+    (find-file (aref val 1))
+    (goto-char (aref val 2)))
+   (t (cl-call-next-method val delete))))
+#+end_src
+**** The =Naved= section that defines the scrolling commands
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
+(defun kam-multi-line-below ()
+  "Move a half screen below."
+  (interactive)
+  (forward-line (floor (window-height) 2))
+  (setq this-command 'scroll-down-command))
+
+(defun kam-multi-line-above ()
+  "Move a half screen above."
+  (interactive)
+  (forward-line (- (floor (window-height) 2)))
+  (setq this-command 'scroll-down-command))
+#+end_src
+**** The =Naved= section that defines commenting commands
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-naved.el")
+()
 #+end_src
 *** The call to provide =Naved=
 :PROPERTIES:
@@ -2237,16 +2329,16 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   "The default directory where project folders are stored.")
 
 (defvar kam-task-task-file "~/Documents/Inbox/tasks.org"
-    "The default file where all of my tasks and projects are stored.")
+  "The default file where all of my tasks and projects are stored.")
 
 (defvar kam-task-inbox-file "~/Documents/Inbox/inbox.org"
-    "The default file where all of my projects and todos are stored before they are sorted.")
+  "The default file where all of my projects and todos are stored before they are sorted.")
 
 (defun kam-task-create-project ()
   "Create a project in the `kam-task-projects-directory'."
   (interactive)
   (let* ((default-directory kam-task-projects-directory)
-        (new-project (read-directory-name "Project: ")))
+         (new-project (read-directory-name "Project: ")))
     (make-directory (concat kam-task-projects-directory (s-replace " " "_" new-project)))
     (write-region (concat "* " new-project) nil kam-task-inbox-file 'append)))
 
@@ -2269,7 +2361,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
                                                    (org-agenda-skip-function '(kam-org-agenda-skip-entry-if-property "STYLE" "test"))))))
                                      
                                      ("i" "Inbox" todo "TODO" ((org-agenda-files `(,kam-task-inbox-file))
-                                                             (org-agenda-overriding-header "Unprocessed Inbox Items")))
+                                                               (org-agenda-overriding-header "Unprocessed Inbox Items")))
                                      
                                      ("d" "Daily Agenda"
                                       ((agenda "" ((org-agenda-span 'day)
@@ -2328,11 +2420,11 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 *** The =Shell= section for keybindings
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-shell.el")
 ;; (use-package emacs
-  ;; :ensure nil
-  ;; :bind
-  ;; (:map shell-mode-map
-        ;; ("C-c C-d" . #'kam-shell-cd)
-        ;; ("C-c C-j" . #'kam-comint-input-from-history)))
+;; :ensure nil
+;; :bind
+;; (:map shell-mode-map
+;; ("C-c C-d" . #'kam-shell-cd)
+;; ("C-c C-j" . #'kam-comint-input-from-history)))
 #+end_src
 *** The =Shell= section that sets the shell settings
 :PROPERTIES:
@@ -2344,11 +2436,11 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   ;; :hook (shell-mode-hook . #'kam-shell-mode-setup)
   ;; :bind
   ;; (:map shell-mode-map
-        ;; ("SPC" . 'comint-magic-space))
+  ;; ("SPC" . 'comint-magic-space))
   :config
   (setq shell-command-prompt-show-cwd t
         explicit-zsh-args '("--login" "--interactive")
-        explicit-shell-file-name "/bin/zsh"
+        explicit-shell-file-name (executable-find "bash")
         ansi-color-for-comint-mode t
         shell-kill-buffer-on-exit t
         comint-prompt-read-only t
@@ -2455,7 +2547,7 @@ The shell is renamed to match that directory to make multiple shell windows easi
 (use-package eshell
   :ensure nil
   ;; :hook ((eshell-mode . #'kam-eshell--set-env)
-         ;; (eshell-mode . completion-preview-mode))
+  ;; (eshell-mode . completion-preview-mode))
   :bind
   (("C-c e" . eshell)
    :map eshell-mode-map
@@ -2734,11 +2826,11 @@ The shell is renamed to match that directory to make multiple shell windows easi
 ;;      `(org-drawer ((,c :inherit variable-pitch :height 1.0 :foreground ,fg-dim)))
 ;;      `(org-property-value ((,c :inherit variable-pitch :height 1.0 :foreground ,fg-dim)))
 ;;      `(org-verbatim ((,c :foreground ,magenta-cooler))))))
-     
-     ;; This is the part of the function that turns the light theme into looking like word
-  ;; (if (string= (standard-themes--current-theme) "standard-light")
-      ;; (set-face-attribute 'olivetti-fringe nil :background "#ececec")
-    ;; (set-face-attribute 'olivetti-fringe nil :background (standard-themes-get-color-value 'bg-main)))
+
+;; This is the part of the function that turns the light theme into looking like word
+;; (if (string= (standard-themes--current-theme) "standard-light")
+;; (set-face-attribute 'olivetti-fringe nil :background "#ececec")
+;; (set-face-attribute 'olivetti-fringe nil :background (standard-themes-get-color-value 'bg-main)))
 
 ;; (add-hook 'standard-themes-post-load-hook #'kam-standard-themes-custom-faces)
 #+end_src
@@ -2851,7 +2943,7 @@ For use with Avy.
   (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-down)
   (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-up)
   (add-to-list 'pulsar-pulse-functions 'ace-window))
-  
+
 #+end_src 
 *** The =Themes= section that sets up icons
 :PROPERTIES:
@@ -2879,7 +2971,7 @@ For use with Avy.
 
 (use-package all-the-icons-completion 
   :ensure t
-  :after marginalia
+  :after (marginalia)
   :config
   (all-the-icons-completion-mode)
   (add-hook 'marginalia-mode-hook #'nerd-icons-completion-marginalia-setup))
@@ -3085,37 +3177,46 @@ For use with Avy.
 #+end_src
 *** The =Window= section for Beframed
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-window.el")
-;; (use-package beframe
-;;   :ensure t
-;;   :config
-;;   (setq beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*")
-;;         beframe-functions-in-frames '())
-;;   (beframe-mode)
+(use-package beframe
+  :ensure t
+  :config
+  (setq beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*")
+        beframe-functions-in-frames '())
+  (beframe-mode)
 
-;;   (defvar consult-buffer-sources)
-;;   (declare-function consult--buffer-state "consult")
+  (defvar consult-buffer-sources)
+  (declare-function consult--buffer-state "consult")
 
-;;   (with-eval-after-load 'consult
-;;     (defface beframe-buffer
-;;       '((t :inherit font-lock-string-face))
-;;       "Face for `consult' framed buffers.")
+  (with-eval-after-load 'consult
+    (defface beframe-buffer
+      '((t :inherit font-lock-string-face))
+      "Face for `consult' framed buffers.")
 
-;;     (defun kam-beframe-buffer-names-sorted (&optional frame)
-;;       "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-;; With optional argument FRAME, return the list of buffers of FRAME."
-;;       (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
+    (defun kam-beframe-buffer-names-sorted (&optional frame)
+      "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
+With optional argument FRAME, return the list of buffers of FRAME."
+      (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
 
-;;     (defvar beframe-consult-source
-;;       `( :name "Frame-specific buffers (current frame)"
-;;           :narrow ?F
-;;           :category buffer
-;;           :face beframe-buffer
-;;           :history beframe-history
-;;           :items ,#'kam-beframe-buffer-names-sorted
-;;           :action ,#'switch-to-buffer
-;;           :state ,#'consult--buffer-state))
+    (defvar beframe-consult-source
+      `( :name "Buffers"
+          :narrow ?F
+          :category buffer
+          ; :face beframe-buffer
+          :history beframe-history
+          :items ,#'kam-beframe-buffer-names-sorted
+          :action ,#'switch-to-buffer
+          :state ,#'consult--buffer-state))
 
-;;     (add-to-list 'consult-buffer-sources 'beframe-consult-source)))
+    (add-to-list 'consult-buffer-sources 'beframe-consult-source)
+
+    (defvar consult-initial-narrow-config
+      '((consult-buffer . ?F)))
+
+    (defun kam-consult-initial-narrow ()
+      (when-let (key (alist-get this-command consult-initial-narrow-config))
+        (setq unread-command-events (append unread-command-events (list key 32)))))
+
+    (add-hook 'minibuffer-setup-hook #'kam-consult-initial-narrow)))
 #+end_src
 *** The =Window= section for custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-window.el")
@@ -3398,10 +3499,10 @@ The purpose of the essentials module is to transform Emacs UI from ancient and o
 :CUSTOM_ID: h:D3D58FF4-7BE7-41EF-ACB2-6F63FF339CB2
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "modules/kam-essentials.el")
-(use-package marginalia
-   :ensure t
-   :config
-   (marginalia-mode))
+ (use-package marginalia
+    :ensure t
+    :config
+    (marginalia-mode))
 #+end_src
 *** The =Essentials= section that sets up =Orderless=
 :PROPERTIES:
@@ -3456,8 +3557,8 @@ The purpose of the essentials module is to transform Emacs UI from ancient and o
   :bind
   (:map vertico-map
         ("<escape>" . #'kam-keyboard-quit-dwim)
-        ("<next>" . vertico-scroll-up)
-        ("<prior>" . vertico-scroll-down)
+        ("C-," . vertico-scroll-up)
+        ("M-," . vertico-scroll-down)
         ("<up>" . nil)
         ("<down>" . nil)
         ("C-<return>" . #'minibuffer-force-complete-and-exit)
@@ -3504,6 +3605,7 @@ The purpose of the essentials module is to transform Emacs UI from ancient and o
         ("<down>" . nil)
         ("C-<return>" . #'minibuffer-force-complete-and-exit)
         ("<f6>" . vertico-quick-exit)
+        ("C-<f6>" . vertico-quick-insert)
         ("RET" . vertico-directory-enter)
         ("<backspace>" . vertico-directory-delete-char)
         ("C-<backspace>" . vertico-directory-delete-word)
@@ -3977,7 +4079,6 @@ This module is designed to make a nice terminal emulator experience within Emacs
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "kam-common.el") :mkdirp yes
 ;;; -*- lexical-binding: t -*-
-
 (eval-when-compile
   (require 'subr-x)
   (require 'cl-lib))
@@ -4055,6 +4156,15 @@ Where kam-test is an alist of choices mapped to values."
                      ((assoc-list-p collection) (alist-get choice collection def nil 'equal))
                      (t choice))))
       (if (listp results) (first results) results))))
+
+(defun kam-common-rename-file-and-buffer (name)
+  "Apply NAME to current file and rename its buffer."
+  (interactive
+   (list (read-string "Rename current file: " (buffer-file-name))))
+  (let ((file (buffer-file-name)))
+    (if (vc-registered file)
+        (vc-rename-file file name))
+    (set-visited-file-name name t t)))
 
 (provide 'kam-common)
 #+end_src

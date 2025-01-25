@@ -2,14 +2,14 @@
 
 {
   imports = [
-    ./sh.nix
+    ./shells.nix
     ./default-apps.nix
-    ./secret.nix
+    ./secrets.nix
     ./services.nix
     ./wm.nix
-    ./waybar.nix
-    ./rofi.nix
-    ./firefox.nix
+    ./programs/waybar.nix
+    ./programs/rofi.nix
+    ./programs/browsers.nix
     ./term.nix
     ./themes.nix
   ];
@@ -112,5 +112,5 @@
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
- home.stateVersion = "24.11";
+  home.stateVersion = "24.11";
 }
