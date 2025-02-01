@@ -80,10 +80,14 @@
     neofetch
     vlc
     mpv
-    emacs
+    emacs30
     calibre
     remmina
     anki
+    pamixer
+    playerctl
+    waybar-mpris
+    wayshot
   ];
   
   home.file = {
