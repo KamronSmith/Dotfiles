@@ -96,65 +96,67 @@
                  }
            }
 
-$mainMod = ALT
+           $mainMod = ALT
 
-bind = $mainMod, F, exec, $terminal
-bind = $mainMod, C, killactive,
-bind = $mainMod, E, exec, $fileManager
-bind = $mainMod, V, togglefloating,
-bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
-bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
-bind = $mainMod, Tab, exec, rofi -show window
+           bind = $mainMod, F, exec, $terminal
+           bind = $mainMod, C, killactive,
+           bind = $mainMod, E, exec, $fileManager
+           bind = $mainMod, V, togglefloating,
+           bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
+           bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
+           bind = $mainMod, Tab, exec, rofi -show window
 
-bind = $mainMod, e, layoutmsg, cycleprev
-bind = $mainMod, n, layoutmsg, cyclenext
-bind = $mainMod, i, layoutmsg, swapwithmaster master
-bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
+           bind = $mainMod, e, layoutmsg, cycleprev
+           bind = $mainMod, n, layoutmsg, cyclenext
+           bind = $mainMod, i, layoutmsg, swapwithmaster master
+           bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
-bind = $mainMod, d, workspace, name:main
-bind = $mainMod, r, workspace, name:side
-# bind = $mainMod, t, workspace, 3
-# bind = $mainMod, s, workspace, 4
-# bind = $mainMod, 5, workspace, 5
-# bind = $mainMod, 6, workspace, 6
-# bind = $mainMod, 7, workspace, 7
+           bind = $mainMod, d, workspace, name:main
+           bind = $mainMod, r, workspace, name:side
+           # bind = $mainMod, t, workspace, 3
+           # bind = $mainMod, s, workspace, 4
+           # bind = $mainMod, 5, workspace, 5
+           # bind = $mainMod, 6, workspace, 6
+           # bind = $mainMod, 7, workspace, 7
 
-bind = $mainMod SHIFT, d, movetoworkspace, name:main
-bind = $mainMod SHIFT, r, movetoworkspace, name:side
-bind = $mainMod SHIFT, t, movetoworkspace, 3
-bind = $mainMod SHIFT, s, movetoworkspace, 4
-bind = $mainMod SHIFT, 5, movetoworkspace, 5
-bind = $mainMod SHIFT, 6, movetoworkspace, 6
-bind = $mainMod SHIFT, 7, movetoworkspace, 7
-bind = $mainMod SHIFT, 8, movetoworkspace, 8
-bind = $mainMod SHIFT, 9, movetoworkspace, 9
-bind = $mainMod SHIFT, 0, movetoworkspace, 10
+           bind = $mainMod SHIFT, d, movetoworkspace, name:main
+           bind = $mainMod SHIFT, r, movetoworkspace, name:side
+           bind = $mainMod SHIFT, t, movetoworkspace, 3
+           bind = $mainMod SHIFT, s, movetoworkspace, 4
+           bind = $mainMod SHIFT, 5, movetoworkspace, 5
+           bind = $mainMod SHIFT, 6, movetoworkspace, 6
+           bind = $mainMod SHIFT, 7, movetoworkspace, 7
+           bind = $mainMod SHIFT, 8, movetoworkspace, 8
+           bind = $mainMod SHIFT, 9, movetoworkspace, 9
+           bind = $mainMod SHIFT, 0, movetoworkspace, 10
 
-bind = $mainMod, mouse_down, workspace, e+1
-bind = $mainMod, mouse_up, workspace, e-1
+           bind = $mainMod, mouse_down, workspace, e+1
+           bind = $mainMod, mouse_up, workspace, e-1
 
-bindm = $mainMod, mouse:272, movewindow
-bindm = $mainMod, mouse:273, resizewindow
+           bindm = $mainMod, mouse:272, movewindow
+           bindm = $mainMod, mouse:273, resizewindow
 
-bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
-bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
-bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
-bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
-bindel = ,XF86MonBrightnessUp, exec, brightnessctl s 10%+
-bindel = ,XF86MonBrightnessDown, exec, brightnessctl s 10%-
+           bindel = ,XF86AudioRaiseVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+
+           bindel = ,XF86AudioLowerVolume, exec, wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
+           bindel = ,XF86AudioMute, exec, wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+           bindel = ,XF86AudioMicMute, exec, wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle
+           bindel = ,XF86MonBrightnessUp, exec, brightnessctl s 10%+
+           bindel = ,XF86MonBrightnessDown, exec, brightnessctl s 10%-
 
-bindl = , XF86AudioNext, exec, playerctl next
-bindl = , XF86AudioPause, exec, playerctl play-pause
-bindl = , XF86AudioPlay, exec, playerctl play-pause
-bindl = , XF86AudioPrev, exec, playerctl previous
+           bindl = , XF86AudioNext, exec, playerctl next
+           bindl = , XF86AudioPause, exec, playerctl play-pause
+           bindl = , XF86AudioPlay, exec, playerctl play-pause
+           bindl = , XF86AudioPrev, exec, playerctl previous
 
-windowrulev2 = suppressevent maximize, class:.*
-windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
-windowrule = workspace:side, ^(firefox)$
-windowrulev2 = opacity 0.80 0.80, class:^(Emacs)$
-windowrulev2 = opacity 0.80 0.80, class:^(kitty)$
-workspace = name:main, monitor:HDMI-A-4
-workspace = name:side, monitor:DVI-D-1
-                  '';
+           windowrulev2 = suppressevent maximize, class:.*
+           windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
+           windowrule = workspace:side, ^(firefox)$
+           windowrulev2 = opacity 0.80 0.80, class:^(Emacs)$
+           windowrulev2 = opacity 0.80 0.80, class:^(kitty)$
+           workspace = name:main, monitor:HDMI-A-4
+           workspace = name:side, monitor:DVI-D-1
+           layerrule = blur, waybar
+         '';
+    
   };
 }
