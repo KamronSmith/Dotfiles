@@ -80,6 +80,7 @@
            misc {
                 force_default_wallpaper = 0
                 disable_hyprland_logo = true
+                vrr = on
            }
            input {
                  kb_layout = us
@@ -97,9 +98,10 @@
            $mainMod = ALT
 
            bind = $mainMod, F, exec, $terminal
-           bind = $mainMod, C, killactive,
+           bind = $mainMod, C, killactive
            bind = $mainMod, E, exec, $fileManager
-           bind = $mainMod, V, togglefloating,
+           bind = $mainMod, V, togglefloating
+           bind = $mainMod, M, exit
            bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
            bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
            bind = $mainMod, Tab, exec, rofi -show window
