@@ -159,6 +159,9 @@
            layerrule = blur, waybar
            windowrule = workspace kitty, ^(Kitty)$
            windowrule = workspace Chat, ^(Discord)$
+           windowrule = workspace Main, ^(Emacs)$
+           windowrule = workspace Main, ^(Firefox)$
+
            workspace = name:Main, monitor=HDMI-A-4, default:true, persistent:true
            workspace = special:kitty
            workspace = special:Chat, persistent:true
