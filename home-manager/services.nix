@@ -35,6 +35,7 @@
     defaultEditor = true;
     socketActivation.enable = true;
     startWithUserSession = true;
+    client.enable = true; 
   };
 
   services.lorri.enable = true;
