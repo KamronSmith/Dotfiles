@@ -10,8 +10,7 @@
     ./programs/waybar.nix
     ./programs/rofi.nix
     ./programs/browsers.nix
-    ./term.nix
-    ./themes.nix
+    ./programs/term.nix
   ];
 
   nixpkgs = {
