@@ -73,15 +73,18 @@
                       animation = workspacesIn, 1, 1.21, almostLinear, fade
                       animation = workspacesOut, 1, 1.94, almostLinear, fade
            }
+
            master {
                   new_status = master
                   mfact = 0.50
            }
+
            misc {
                 force_default_wallpaper = 0
                 disable_hyprland_logo = true
                 vrr = on
            }
+
            input {
                  kb_layout = us
                  kb_variant =
@@ -94,6 +97,14 @@
                           natural_scroll = false
                  }
            }
+
+           ## smart gaps
+           workspace = w[tv1], gapsout:0, gapsin:0
+           workspace = f[1], gapsout:0, gapsin:0
+           windowrulev2 = bordersize 0, floating:0, onworkspace:w[tv1]
+           windowrulev2 = rounding 0, floating:0, onworkspace:w[tv1]
+           windowrulev2 = bordersize 0, floating:0, onworkspace:f[1]
+           windowrulev2 = rounding 0, floating:0, onworkspace:f[1]
 
            $mainMod = ALT
 
