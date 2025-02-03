@@ -34,7 +34,15 @@
       nixosConfigurations = {
         nixos = nixpkgs.lib.nixosSystem {
           specialArgs = {inherit inputs outputs; };
-	        modules = [ ./nixos/configuration.nix ];
+	        modules = [
+            ./nixos/configuration.nix
+            home-manager.nixosModules.home-manager {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.kam = import ./home-manager/home.nix;
+              home-manager.extraSpecialArgs = { inherit inputs; };
+            }
+          ];
 	      };
         
         overlays = import ./overlays {inherit inputs;};
