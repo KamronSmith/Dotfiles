@@ -4156,13 +4156,35 @@ Return the exit code and output in a list."
     (list (apply 'call-process command nil (current-buffer) nil args)
           (buffer-string))))
 
-
 ;;;###autoload
 (defun kam-common-sudo-shell-command (command &rest args)
   "Runs COMMAND with ARGS as root."
   (async-shell-command (concat "echo " (read-passwd "Password: ") " | sudo -S " command)))
 
 (advice-add 'kam-common-sudo-shell-command :after 'kam-common-clear-echo-area)
+
+;;;###autoload
+(defun kam-common-completion-category ()
+  "Return completion category."
+  (when-let* ((window (active-minibuffer-window)))
+    (with-current-buffer (window-buffer window)
+      (completion-metadata-get
+       (completion-metadata (buffer-substring-no-properties
+                             (minibuffer-prompt-end)
+                             (max (minibuffer-prompt-end) (point)))
+                            minibuffer-completion-table
+                            minibuffer-completion-predicate)
+       'category))))
+
+;;;###autoload
+(defun kam-common-completion-table (category candidates)
+  "Pass appropriate metadata CATEGORY to completion CANDIDATES.
+
+This is intended for bespoke functions that can then be parsed by other tools."
+  (lambda (string pred action)
+    (if (eq action 'metadata)
+        `(metadata (category . ,category))
+      (complete-with-action action candidates string pred))))
 
 ;;;###autoload
 (defun kam--duplicate-buffer-substring (boundaries)
