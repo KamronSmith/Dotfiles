@@ -21,6 +21,12 @@
         };
       };
 
+      extensions = with inputs.firefox-addons.packages."x86_64-linux"; [
+        vimium
+        ublock-origin
+        ## have to figure out 1password
+      ];
+      
       bookmarks = {};
       settings = {
         "browser.startup.homepage" = "about.home";
