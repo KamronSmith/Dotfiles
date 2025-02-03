@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./themes.nix
     ./shells.nix
     ./default-apps.nix
     ./secrets.nix
