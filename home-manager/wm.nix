@@ -105,6 +105,7 @@
            bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
            bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
            bind = $mainMod, Tab, exec, rofi -show window
+           bind = $mainMod, X, togglespecialworkspace, kitty
 
            bind = $mainMod, e, layoutmsg, cycleprev
            bind = $mainMod, n, layoutmsg, cyclenext
@@ -156,6 +157,7 @@
            workspace = name:main, monitor:HDMI-A-4
            workspace = name:side, monitor:DVI-D-1
            layerrule = blur, waybar
+           windowrule = workspace kitty, ^(Kitty)$
            workspace = name:Main, monitor=HDMI-A-4, default:true, persistent:true
            workspace = special:kitty
            workspace = special:Chat, persistent:true
