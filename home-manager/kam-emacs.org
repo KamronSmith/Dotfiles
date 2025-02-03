@@ -4259,6 +4259,7 @@ Check if the `window-width' or the `window-height' is less than `split-width-thr
       (and (numberp split-height-threshold)
            (> (window-total-height) split-height-threshold))))
 
+;;;###autoload
 (defun kam-common-crm-exclude-selected-p (input)
   "Filter out INPUT from `completing-read-multiple'.
 Hide non-destructively the selected entries from completion table, avoiding the risk of entering the same match twice.
