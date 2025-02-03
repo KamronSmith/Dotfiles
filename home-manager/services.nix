@@ -4,6 +4,11 @@
   systemd.user = {
     enable = true;
     startServices = "sd-switch";
+    sessionVariables = {
+      QT_QPA_PLATFORM_THEME = "gtk3";
+      TERM = "xterm-kitty";
+    };
+    
     services = {
       wallpaper = {
         Unit = {
