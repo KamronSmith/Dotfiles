@@ -12,9 +12,7 @@
     extraConfig = ''
            exec-once = dbus-update-activation-environment --systemd --all
 
-           monitor=HDMI-A-4, 1920x1080@60,1920x0, 1
-           monitor=DVI-D-1, 1920x1080@60, 0x0, 1
-
+           monitor=HDMI-A-4,2560x1440@144,0x0,1
            $terminal = kitty
            $fileManager = emacsclient -c -a 
            $menu = rofi -show drun
