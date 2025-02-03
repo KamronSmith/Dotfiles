@@ -29,7 +29,7 @@
       
       bookmarks = {};
       settings = {
-        "browser.startup.homepage" = "about.home";
+        "browser.startup.homepage" = "about:home";
       };
     };
   };
