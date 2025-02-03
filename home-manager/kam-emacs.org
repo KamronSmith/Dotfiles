@@ -90,8 +90,8 @@ This causes problems, so its better to disable it
 * The =init.el= file
 :PROPERTIES:
 :CUSTOM_ID: h:6CA91EE7-5F41-4CA1-B9F2-4BD11386BFE7
-:END:
-** The =init.el= section for loading all of the =modules=
+:End:
+** Putting all of the modules on the =load-path=
 :PROPERTIES:
 :CUSTOM_ID: h:EDED952C-4E83-4DD0-BF63-391F46DBE64E
 :END:
@@ -178,7 +178,7 @@ This causes problems, so its better to disable it
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (setq max-lisp-eval-depth 3200)
 #+end_src
-** The =init.el= section for setting the =backup configurations=
+** Setting the =backup configurations=
 :PROPERTIES:
 :CUSTOM_ID: h:2A2501AB-D674-4B03-A259-7D62D815E6B8
 :END:
@@ -192,7 +192,7 @@ This causes problems, so its better to disable it
 
 (setq kill-buffer-delete-auto-save-files t)
 #+end_src
-** The =init.el= section for disabling annoying confirmation messages
+** Disabling annoying confirmation messages
 :PROPERTIES:
 :CUSTOM_ID: h:E8861DAD-4CA5-459F-8E4D-22CB4645568C
 :END:
@@ -206,7 +206,7 @@ This causes problems, so its better to disable it
             kill-buffer-query-functions))
 (setq initial-scratch-message "")
 #+end_src
-** The =init.el= section for using the system trash
+** Using the system trash
 :PROPERTIES:
 :CUSTOM_ID: h:48570B02-C51A-46B2-B070-5F24F61B9E21
 :END:
@@ -230,7 +230,7 @@ I disable the custom file by making it disposable.
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (setq initial-major-mode 'emacs-lisp-mode)
 #+end_src
-** The =init.el= section for =default settings=
+** =Default settings=
 :PROPERTIES:
 :CUSTOM_ID: h:A667A06D-EDCE-41AF-A7FE-94775942BB26
 :END:
@@ -246,7 +246,7 @@ I disable the custom file by making it disposable.
               ;; scroll-margin 99999
               cursor-in-non-selected-windows nil)
 #+end_src
-** The =init.el= section for Mac specific settings
+** Mac specific settings
 :PROPERTIES:
 :CUSTOM_ID: h:67DE7323-31FA-459F-82E3-7FEC46D6D498
 :END:
@@ -261,7 +261,7 @@ I disable the custom file by making it disposable.
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 #+end_src
-** The =init.el= section for Linux specific settings
+** Linux specific settings
 :PROPERTIES:
 :CUSTOM_ID: h:057410F5-6704-4B86-86F3-3F800DF327EB
 :END:
@@ -270,7 +270,7 @@ I disable the custom file by making it disposable.
    (setq x-super-keysym 'meta
          x-meta-keysym 'alt))
 #+end_src
-** The =init.el= section for =completions=
+** =Completions=
 :PROPERTIES:
 :CUSTOM_ID: h:3A79B6A1-2534-4FF6-94BE-D8B00BBD835F
 :END:
@@ -288,7 +288,7 @@ I disable the custom file by making it disposable.
       completion-ignore-case t
       read-file-name-completion-ignore-case t)
 #+end_src
-** The =init.el= section for =imenu=
+** =Imenu=
 :PROPERTIES:
 :CUSTOM_ID: h:0360CC8E-0EA6-40C0-B88C-FC0C38B3986D
 :END:
@@ -300,11 +300,11 @@ I disable the custom file by making it disposable.
   :config
   (setq org-imenu-depth 4))
 #+end_src
-** The =init.el= section for =help-mode=
+**  =help-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:D661E16E-B075-468A-AEEE-A68D3F817881
 :END:
-** The =init.el= section for =occur=
+**  =occur=
 :PROPERTIES:
 :CUSTOM_ID: h:82B82CF0-FEF5-4431-93A3-C08576891A90
 :END:
@@ -330,7 +330,7 @@ Occur is a command that shows all lines in a buffer that match a user given rege
    (kam-get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
 #+end_src
-** The =init.el= section for the minibuffer
+** Minibuffer
 :PROPERTIES:
 :CUSTOM_ID: h:93BE1CDF-9EC8-4408-85AE-1C4CB8BE79C1
 :END:
@@ -528,7 +528,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         (reb-quit)
         (query-replace-regexp re replacement delimited beg end)))))
 #+end_src
-** The =init.el= section for =Tramp=
+** =Tramp=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (use-package tramp
   :ensure nil
@@ -545,7 +545,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
                (list (regexp-quote "/sudo::")
                      "remote-shell" (executable-find "env"))))
 #+end_src
-** The =init.el= section for =find-file=
+** =find-file=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (defun kam-auto-create-missing-dirs ()
   (let ((target-dir (file-name-directory buffer-file-name)))
@@ -554,7 +554,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
 (add-to-list 'find-file-not-found-functions #'kam-auto-create-missing-dirs)
 #+end_src
-** The =init.el= section for =recentf-mode=
+** =recentf-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:C206B5BA-3AC7-4346-A380-2C0A0D832D0C
 :END:
@@ -596,7 +596,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (ultra-scroll-mode 1))
 #+end_src
-** The =init.el= section for =repeat-mode=
+** =repeat-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:1DADCF8B-7411-4908-8EB9-ED2CD0D4DA34
 :END:
@@ -621,7 +621,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
        (put cmd 'repeat-map keymap)))
    (symbol-value keymap)))
 #+end_src
-** The =init.el= section for =keyfreq=
+** =keyfreq=
 :PROPERTIES:
 :CUSTOM_ID: h:9F15EF8E-6BAA-4E63-85AA-E35EC09ECFD8
 :END:
@@ -631,7 +631,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 :config
 (keyfreq-mode))
 #+end_src
-** The =init.el= section for =bookmarks=
+** =bookmarks=
 :PROPERTIES:
 :CUSTOM_ID: h:25E3DCCC-A2B4-4C3D-8DB6-CD2D26BE360D
 :END:
@@ -648,7 +648,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         bookmark-fringe-mark nil
         bookmark-save-flag 1))
 #+end_src
-** The =init.el= section for =registers=
+** =registers=
 :PROPERTIES:
 :CUSTOM_ID: h:72DA1A59-8097-461A-A9FA-78C315121F25
 :END:
@@ -666,7 +666,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'register-alist)))
 #+end_src
-** The =init.el= section for =abbrev-mode=
+** =abbrev-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:5DAC9775-CDE6-4199-A338-AAA2E952DA94
 :END:
@@ -676,7 +676,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
   :config
   (setq-default abbrev-mode t))
 #+end_src
-** The =init.el= section for =keyboard macros=
+** =keyboard macros=
 :PROPERTIES:
 :CUSTOM_ID: h:5F327C1F-2868-4C45-9533-8B95E54AA4FC
 :END:
@@ -689,7 +689,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
   :config
   (defalias 'kmacro-insert-macro 'insert-keyboard-macro))
 #+end_src
-** The =init.el= section for =auto-revert-mode=
+** =auto-revert-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:2054818A-2C0D-45A9-A01D-B9F261921286
 :END:
@@ -701,7 +701,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
   (setq auto-revert-verbose nil
         global-auto-revert-non-file-buffers t))
 #+end_src
-** The =init.el= section for =delete-section-mode=
+** =delete-section-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:E6B53794-EFA4-4E55-9BD7-0E75B8DC956D
 :END:
@@ -710,7 +710,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
   :ensure nil
   :hook (after-init . delete-selection-mode))
 #+end_src
-** The =init.el= section for =savehist-mode=
+** =savehist-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:31033B87-D998-4952-A1E9-3F12073CBB44
 :END:
@@ -719,7 +719,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
 
 (setq history-length 50)
 #+end_src
-** The =init.el= section for =tooltips=
+** =tooltips=
 :PROPERTIES:
 :CUSTOM_ID: h:C01A39EB-7EA5-4FF0-9B13-AAE577F85F79
 :END:
@@ -729,7 +729,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
       tooltip-reuse-hidden-frame t
       tooltip-use-echo-area t)
 #+end_src
-** The =init.el= section for =manpages=
+** =manpages=
 :PROPERTIES:
 :CUSTOM_ID: h:42C5BC72-EF43-4A8C-98A5-D68E3B7D7CAA
 :END:
@@ -740,7 +740,7 @@ Additional code is added to save the contents of registers after Emacs closes, s
   :config
   (setq Man-notify-method 'pushy))
 #+end_src
-** The =init.el= section for =proced=
+** =proced=
 :PROPERTIES:
 :CUSTOM_ID: h:1CF5B0BC-B163-4BC8-B8B9-221C79C09475
 :END:
@@ -782,14 +782,14 @@ Additional code is added to save the contents of registers after Emacs closes, s
       mouse-drag-and-drop-region-cross-program t
       mouse-drag-and-drop-region-scroll-margin t)
 #+end_src
-** The =init.el= section =global-so-long-mode=
+** =global-so-long-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:1AD00154-0759-44D0-ADCB-0110D88C685B
 :END:
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (global-so-long-mode 1)
 #+end_src
-** The =init.el= section for clipboards
+** Clipboards
 :PROPERTIES:
 :CUSTOM_ID: h:A21013CB-A2DA-4C20-990A-EF0E9B96DB74
 :END:
