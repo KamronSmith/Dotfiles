@@ -357,7 +357,7 @@ Occur is a command that shows all lines in a buffer that match a user given rege
   (setq resize-mini-windows 'grow-only
         resize-mini-frames 'grow-only))
 #+end_src
-** The =init.el= section for =undo=
+** =undo=
 :PROPERTIES:
 :CUSTOM_ID: h:FC224E32-F90A-4CDA-859B-967AA06176C5
 :END:
