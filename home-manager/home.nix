@@ -90,7 +90,6 @@
     playerctl
     waybar-mpris
     wayshot
-    (import ../bin/aws-op-cred-helper.nix { inherit pkgs; })
   ];
   
   home.file = {

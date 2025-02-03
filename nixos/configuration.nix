@@ -53,6 +53,9 @@
     variant = "";
   };
 
+  services.devmon.enable = true;
+  services.udisks2.enable = true;
+  
   # Enable cups to print documents.
   services.printing.enable = true;
 
@@ -103,7 +106,9 @@
    programs._1password.enable = true;
    
   # Install firefox.
-  programs.firefox.enable = true;
+   programs.firefox.enable = true;
+
+   programs.steam.enable = true;
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -119,6 +124,8 @@
      _1password-gui
      _1password-cli
      terraform
+     duplicati
+     (import ../bin/aws-op-credential-helper.nix { inherit pkgs; })
      #  wget
   ];
 
@@ -128,6 +135,7 @@
     iosevka-comfy.comfy
     iosevka-comfy.comfy-duo
     nerdfonts
+    libre-caslon
   ];
 
  fonts.fontconfig = {
@@ -146,17 +154,17 @@
   #   enableSSHSupport = true;
   # };
 
-  # hardware.nvidia = {
-  #   package = config.boot.kernelPackages.nvidiaPackages.stable;
-  #   modesetting.enable = false;
-  #   powerManagement.enable = false;
-  #   powerManagement.finegrained = false;
-  #   open = true;
-  #   nvidiaSettings = true;
-  # };
+hardware.nvidia = {
+  package = config.boot.kernelPackages.nvidiaPackages.stable;
+  modesetting.enable = true;
+  powerManagement.enable = false;
+  powerManagement.finegrained = false;
+  open = false;
+  nvidiaSettings = true;
+};
   
   hardware.graphics.enable = true;
-  # services.xserver.videoDrivers = [ "nvidia" ];
+  services.xserver.videoDrivers = [ "nvidia" ];
 
   hardware.bluetooth = {
     enable = true;
@@ -185,12 +193,14 @@
   system.stateVersion = "24.11"; # Did you read the comment?
 
   home-manager = {
-    extraSpecialArgs = {inherit inputs outputs; };
+    extraSpecialArgs = { inherit inputs outputs; };
     users = {
       "kam" = import ../home-manager/home.nix;
     };
   };
 
+  services.duplicati.enable = true;
+  
   system.autoUpgrade = {
     enable = true;
     flake = inputs.self.outPath;
