@@ -158,6 +158,7 @@
            workspace = name:side, monitor:DVI-D-1
            layerrule = blur, waybar
            windowrule = workspace kitty, ^(Kitty)$
+           windowrule = workspace Chat, ^(Discord)$
            workspace = name:Main, monitor=HDMI-A-4, default:true, persistent:true
            workspace = special:kitty
            workspace = special:Chat, persistent:true
