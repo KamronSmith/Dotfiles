@@ -111,16 +111,16 @@
            bind = $mainMod, i, layoutmsg, swapwithmaster master
            bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
-           bind = $mainMod, d, workspace, name:main
-           bind = $mainMod, r, workspace, name:side
+           bind = $mainMod, d, workspace, name:Main
+           bind = $mainMod, r, workspace, name:Side
            # bind = $mainMod, t, workspace, 3
            # bind = $mainMod, s, workspace, 4
            # bind = $mainMod, 5, workspace, 5
            # bind = $mainMod, 6, workspace, 6
            # bind = $mainMod, 7, workspace, 7
 
-           bind = $mainMod SHIFT, d, movetoworkspace, name:main
-           bind = $mainMod SHIFT, r, movetoworkspace, name:side
+           bind = $mainMod SHIFT, d, movetoworkspace, name:Main
+           bind = $mainMod SHIFT, r, movetoworkspace, name:Side
            bind = $mainMod SHIFT, t, movetoworkspace, 3
            bind = $mainMod SHIFT, s, movetoworkspace, 4
            bind = $mainMod SHIFT, 5, movetoworkspace, 5
@@ -156,6 +156,9 @@
            workspace = name:main, monitor:HDMI-A-4
            workspace = name:side, monitor:DVI-D-1
            layerrule = blur, waybar
+           workspace = name:Main, monitor=HDMI-A-4, default:true, persistent:true
+           workspace = special:kitty
+           workspace = special:Chat, persistent:true
          '';
     
   };
