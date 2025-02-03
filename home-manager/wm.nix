@@ -151,16 +151,13 @@
 
            windowrulev2 = suppressevent maximize, class:.*
            windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
-           windowrule = workspace:side, ^(firefox)$
-           windowrulev2 = opacity 0.80 0.80, class:^(Emacs)$
-           windowrulev2 = opacity 0.80 0.80, class:^(kitty)$
-           workspace = name:main, monitor:HDMI-A-4
-           workspace = name:side, monitor:DVI-D-1
-           layerrule = blur, waybar
            windowrule = workspace kitty, ^(Kitty)$
            windowrule = workspace Chat, ^(Discord)$
            windowrule = workspace Main, ^(Emacs)$
            windowrule = workspace Main, ^(Firefox)$
+
+           windowrulev2 = opacity 0.80 0.80, class:^(Emacs)$
+           windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
 
            workspace = name:Main, monitor=HDMI-A-4, default:true, persistent:true
            workspace = special:kitty
