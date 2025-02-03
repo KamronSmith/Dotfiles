@@ -43,6 +43,7 @@
   home.packages = with pkgs; [
     # system utilities
     pavucontrol
+    dunst
     bluez
     bluez-tools
     ripgrep
@@ -63,6 +64,7 @@
     sysstat
     pciutils # lspci
     usbutils # lsusb
+    gdb
     # coding
     git
     docker
