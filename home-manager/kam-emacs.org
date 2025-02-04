@@ -4954,10 +4954,3 @@ The string is truncated if the width of the window is smaller than `split-width-
 
 (provide 'kam-modeline)
 #+end_src
-** Logging
-*** Buffers
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-logging.el") :mkdirp yes
-(defun kam-logging-create-buffer ()
-  "Create a log buffer."
-  (get-b))
-#+end_src
