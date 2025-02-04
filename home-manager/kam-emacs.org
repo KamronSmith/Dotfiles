@@ -1401,117 +1401,117 @@ This is the same as using \\[set-mark-command] with the prefix argument."
 #+end_src
 **** The =Naved= section that defines the editing commands
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
-(defun kam-cut-dwim ()
-  "If the region is active, kill the region. If the region is inactive, kill the whole line. If the point is on an Org heading, kill the subtree."
-  (interactive)
-  (cond ((region-active-p)
-         (kill-region nil nil t))
-        ((org-at-heading-p)
-         (org-cut-subtree))
-        (t (kam-kill-whole-line 1))))
+  (defun kam-cut-dwim ()
+    "If the region is active, kill the region. If the region is inactive, kill the whole line. If the point is on an Org heading, kill the subtree."
+    (interactive)
+    (cond ((region-active-p)
+           (kill-region nil nil t))
+          ((org-at-heading-p)
+           (org-cut-subtree))
+          (t (kam-kill-whole-line 1))))
 
-(defun kam-kill-ring-save-dwim ()
-  "If the region is active, copy the region. If the region is inactive, copy the line."
-  (interactive)
-  (if (region-active-p)
-      (copy-region-as-kill nil nil t)
-    (progn
+  (defun kam-kill-ring-save-dwim ()
+    "If the region is active, copy the region. If the region is inactive, copy the line."
+    (interactive)
+    (if (region-active-p)
+        (copy-region-as-kill nil nil t)
+      (progn
+        (kam-mark-line-with-newline)
+        (kill-ring-save nil nil t))))
+
+  (defun kam-duplicate-line-or-region ()
+    "Duplicate the current line or active region."
+    (interactive)
+    (unless mark-ring
+      (push-mark (point) t nil))
+    (kam--duplicate-buffer-substring
+     (if (region-active-p)
+         (cons (region-beginning) (region-end))
+       (cons (line-beginning-position) (line-end-position)))))
+
+  (advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
+
+  (defun kam-insert-new-line-below (n)
+    "Create N empty lines below the current one.
+    When called interactively without a prefix numeric argument, N is 1."
+    (interactive "p")
+    (goto-char (line-end-position))
+    (dotimes (_ n) (newline-and-indent)))
+
+  (defun kam-insert-new-line-above (n)
+    "Create N empty lines above the current one.
+    When called interactively without a prefix numeric argument, N is 1."
+    (interactive "p")
+    (let ((point-min (point-min)))
+      (if (or (bobp)
+              (eq (point) point-min)
+              (eq (line-number-at-pos point-min) 1))
+          (progn
+            (goto-char (line-beginning-position))
+            (forward-line (- n))
+            (dotimes (_ n) (kam-insert-new-line-below n)))
+        (forward-line (- n))
+        (kam-insert-new-line-below n))))
+
+  (defun kam-yank-replace-line-or-region ()
+    "Replace line or region with the latest kill.
+    This command can be followed by the standard `yank-pop' (default is bound to \\[yank-pop])."
+    (interactive)
+    (if (use-region-p)
+        (delete-region (region-beginning) (region-end))
+      (delete-region (line-beginning-position) (line-end-position)))
+    (yank))
+
+  (defun kam-kill-whole-line (n)
+    "Kills the whole line, regardless of the cursor position within the line.
+    If called interactively without a prefix numeric argument, N is 1."
+    (interactive "p")
+    (dotimes (_ n)
       (kam-mark-line-with-newline)
-      (kill-ring-save nil nil t))))
+      (kill-region (region-beginning) (region-end))))
 
-(defun kam-duplicate-line-or-region ()
-  "Duplicate the current line or active region."
-  (interactive)
-  (unless mark-ring
-    (push-mark (point) t nil))
-  (kam--duplicate-buffer-substring
-   (if (region-active-p)
-       (cons (region-beginning) (region-end))
-     (cons (line-beginning-position) (line-end-position)))))
+  (defun kam-comment-dwim (n)
+    "Comment N lines, defaulting to the current line.
+    When the region is active, comment its lines instead."
+    (interactive "p")
+    (if (use-region-p)
+        (comment-or-uncomment-region
+         (region-beginning) (region-end))
+      (comment-line n)))
 
-(advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
+  (defun kam-transpose-char (&optional arg)
+    "Interchange the characters behind the point."
+    (interactive "p")
+    (transpose-chars -1)
+    (forward-char))
 
-(defun kam-insert-new-line-below (n)
-  "Create N empty lines below the current one.
-  When called interactively without a prefix numeric argument, N is 1."
-  (interactive "p")
-  (goto-char (line-end-position))
-  (dotimes (_ n) (newline-and-indent)))
+  (defun kam-kill-sexp (&optional arg interactive)
+    "Kill the sexp following point.
+    With ARG, do it that many times."
+    (interactive "p\nd")
+    (if interactive
+        (condition-case _
+            (kam-kill-sexp arg nil)
+          (scan-error (user-error (if (> arg 0)
+                                      "No next sexp"
+                                    "No previous sexp"))))
+      (let ((old-point (point)))
+        (kam-forward-sexp (or arg 1))
+        (kill-region old-point (point)))))
 
-(defun kam-insert-new-line-above (n)
-  "Create N empty lines above the current one.
-  When called interactively without a prefix numeric argument, N is 1."
-  (interactive "p")
-  (let ((point-min (point-min)))
-    (if (or (bobp)
-            (eq (point) point-min)
-            (eq (line-number-at-pos point-min) 1))
-        (progn
-          (goto-char (line-beginning-position))
-          (forward-line (- n))
-          (dotimes (_ n) (kam-insert-new-line-below n)))
-      (forward-line (- n))
-      (kam-insert-new-line-below n))))
-
-(defun kam-yank-replace-line-or-region ()
-  "Replace line or region with the latest kill.
-  This command can be followed by the standard `yank-pop' (default is bound to \\[yank-pop])."
-  (interactive)
-  (if (use-region-p)
-      (delete-region (region-beginning) (region-end))
-    (delete-region (line-beginning-position) (line-end-position)))
-  (yank))
-
-(defun kam-kill-whole-line (n)
-  "Kills the whole line, regardless of the cursor position within the line.
-  If called interactively without a prefix numeric argument, N is 1."
-  (interactive "p")
-  (dotimes (_ n)
-    (kam-mark-line-with-newline)
-    (kill-region (region-beginning) (region-end))))
-
-(defun kam-comment-dwim (n)
-  "Comment N lines, defaulting to the current line.
-  When the region is active, comment its lines instead."
-  (interactive "p")
-  (if (use-region-p)
-      (comment-or-uncomment-region
-       (region-beginning) (region-end))
-    (comment-line n)))
-
-(defun kam-transpose-char (&optional arg)
-  "Interchange the characters behind the point."
-  (interactive "p")
-  (transpose-chars -1)
-  (forward-char))
-
-(defun kam-kill-sexp (&optional arg interactive)
-  "Kill the sexp following point.
-  With ARG, do it that many times."
-  (interactive "p\nd")
-  (if interactive
-      (condition-case _
-          (kam-kill-sexp arg nil)
-        (scan-error (user-error (if (> arg 0)
-                                    "No next sexp"
-                                  "No previous sexp"))))
-    (let ((old-point (point)))
-      (kam-forward-sexp (or arg 1))
-      (kill-region old-point (point)))))
-
-(defun kam-kill-sexp (&optional arg interactive)
-  "Kill the sexp following point.
-  With ARG, do it that many times."
-  (interactive "p\nd")
-  (if interactive
-      (condition-case _
-          (kam-kill-sexp arg nil)
-        (scan-error (user-error (if (> arg 0)
-                                    "No next sexp"
-                                  "No previous sexp"))))
-    (let ((old-point (point)))
-      (kam-forward-sexp (or arg 1))
-      (kill-region old-point (point)))))
+  (defun kam-kill-sexp (&optional arg interactive)
+    "Kill the sexp following point.
+    With ARG, do it that many times."
+    (interactive "p\nd")
+    (if interactive
+        (condition-case _
+            (kam-kill-sexp arg nil)
+          (scan-error (user-error (if (> arg 0)
+                                      "No next sexp"
+                                    "No previous sexp"))))
+      (let ((old-point (point)))
+        (kam-forward-sexp (or arg 1))
+        (kill-region old-point (point)))))
 #+end_src
 **** The =Naved= section that defines the navigation commands
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
