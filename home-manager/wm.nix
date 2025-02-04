@@ -76,7 +76,8 @@
 
            master {
                   new_status = master
-                  mfact = 0.50
+                  mfact = 0.70
+                  orientation = center
            }
 
            misc {
