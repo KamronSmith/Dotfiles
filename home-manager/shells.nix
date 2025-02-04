@@ -59,6 +59,7 @@
           SDL_VIDEO_DRIVER = "wayland";
           XCURSOR_SIZE = 24;
           MOZ_ENABLE_WAYLAND = 1;
+          SSH_AUTH_SOCK= "~/.1password/agent.sock";
         };
     };
 
