@@ -9,3 +9,12 @@ This is the dotfiles and configuration repository for my NixOS system
 ** Pkgs
 ** Modules
 ** Overlays
+* Install / Reproduce the system
+1. Run this command to make sure Git is installed
+#+begin_src sh
+nix-shell -p git vim
+#+end_src
+2. Clone this repo and enter it
+#+begin_src sh
+git clone 
+#+end_src
