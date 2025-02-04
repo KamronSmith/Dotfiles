@@ -21,31 +21,25 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
-    let
-      inherit (self) outputs;
-
-      systems = [
-        "x86_64-linux"
-        "x86_64-darwin"
-      ];
-
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-
-    in {
-
-      # packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-      
-      nixosConfigurations = {
-        nixos = nixpkgs.lib.nixosSystem {
-          specialArgs = {inherit inputs outputs; };
+  outputs = {
+    self,
+    nixpkgs,
+    home-manager,
+    hyprland,
+    firefox-addons,
+      ... }@inputs: {
+    
+                nixosConfigurations = {
+                  nixos = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = { inherit inputs outputs; };
 	        modules = [
             ./nixos/configuration.nix
             home-manager.nixosModules.home-manager {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
               home-manager.users.kam = import ./home-manager/home.nix;
-              home-manager.extraSpecialArgs = { inherit inputs; };
+              # home-manager.extraSpecialArgs = { inherit inputs; };
             }
           ];
 	      };
