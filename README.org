@@ -10,11 +10,21 @@ This is the dotfiles and configuration repository for my NixOS system
 ** Modules
 ** Overlays
 * Install / Reproduce the system
-1. Run this command to make sure Git is installed
+** Run this command to make sure Git is installed
 #+begin_src sh
 nix-shell -p git vim
 #+end_src
-2. Clone this repo and enter it
+** Clone this repo and enter it
 #+begin_src sh
-git clone 
+git clone https://github.com/KamronSmith/Dotfiles ~/.dotfiles
+cd .dotfiles
+#+end_src
+**  Generate the hardware config
+#+begin_src sh
+nixos-generate-config --show-hardware-config nixos/hardware-configuration.nix
+#+end_src
+** Enable flakes and install the flake
+#+begin_src sh
+NIX_CONFIG="experimental-features = nix-command flakes"
+sudo nixos-rebuild switch --flake .#nixos
 #+end_src
