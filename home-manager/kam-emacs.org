@@ -674,6 +674,19 @@ Additional code is added to save the contents of registers after Emacs closes, s
 (setq x-select-enable-clipboard t
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 #+end_src
+** Daemon
+#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+              (lambda (frame)
+                (with-selected-frame frame
+                  (kam-set-font-faces)
+                  (kam-set-custom-faces)
+                  (load-theme 'modus-vivendi :no-confirm))))
+  (load-theme 'modus-vivendi :no-confirm)
+  (add-hook 'after-init-hook #'kam-set-custom-faces)
+  (add-hook 'after-init-hook #'kam-set-font-faces))
+#+end_src
 ** The call to load all of the modules
 :PROPERTIES:
 :CUSTOM_ID: h:FB459034-485D-4BB9-8CF1-030E0C45EA0A
@@ -2198,16 +2211,7 @@ For use with Avy.
 #+RESULTS:
 *** The =Themes= section that sets up the Emacs Daemon Make Frame
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(if (daemonp)
-    (add-hook 'after-make-frame-functions
-              (lambda (frame)
-                (with-selected-frame frame
-                  (kam-set-font-faces)
-                  (kam-set-custom-faces)
-                  (load-theme 'modus-vivendi :no-confirm))))
-  (load-theme 'modus-vivendi :no-confirm)
-  (add-hook 'after-init-hook #'kam-set-custom-faces)
-  (add-hook 'after-init-hook #'kam-set-font-faces))
+
 #+end_src
 *** The call to provide =Themes=
 :PROPERTIES:
