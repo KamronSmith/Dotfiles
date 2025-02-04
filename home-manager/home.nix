@@ -42,6 +42,7 @@
   
   home.packages = with pkgs; [
     # system utilities
+    hyprpolkitagent
     pavucontrol
     dunst
     bluez
