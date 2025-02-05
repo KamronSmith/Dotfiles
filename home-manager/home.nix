@@ -8,10 +8,12 @@
     ./secrets.nix
     ./services.nix
     ./wm.nix
+    ./programs/emacs.nix
     ./programs/waybar.nix
     ./programs/rofi.nix
     ./programs/browsers.nix
     ./programs/term.nix
+    ./programs/direnv.nix
   ];
 
   nixpkgs = {
@@ -25,17 +27,6 @@
   
   home.username = "kam";
   home.homeDirectory = "/home/kam";
-
-  programs = {
-    direnv = {
-      enable = true;
-      enableNushellIntegration = true;
-      config = {
-        hideEnvDiff = true;
-        strictEnv = true;
-      };
-    };
-  };
   
   home.packages = with pkgs; [
     # system utilities
@@ -107,10 +98,6 @@
     };
   };
   
-
-  programs.emacs = {
-    package = pkgs.emacs30;
-  };
   
   home.sessionVariables = {
     # Doesnt work with nushell

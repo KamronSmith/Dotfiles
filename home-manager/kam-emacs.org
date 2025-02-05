@@ -681,10 +681,10 @@ Additional code is added to save the contents of registers after Emacs closes, s
               (lambda (frame)
                 (with-selected-frame frame
                   (kam-set-font-faces)
-                  (kam-set-custom-faces)
+                  ;; (kam-set-custom-faces)
                   (load-theme 'modus-vivendi :no-confirm))))
   (load-theme 'modus-vivendi :no-confirm)
-  (add-hook 'after-init-hook #'kam-set-custom-faces)
+  ;; (add-hook 'after-init-hook #'kam-set-custom-faces)
   (add-hook 'after-init-hook #'kam-set-font-faces))
 #+end_src
 ** The call to load all of the modules
@@ -718,7 +718,7 @@ The purpose of the essentials module is to transform Emacs UI from ancient and o
 :PROPERTIES:
 :CUSTOM_ID: h:D3D58FF4-7BE7-41EF-ACB2-6F63FF339CB2
 :END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el") :mkdirp yes
 (use-package marginalia
     :ensure t
     :config
@@ -2108,7 +2108,7 @@ The header line in my Emacs is driven primarily by [[id:d015e408-3572-462e-861a-
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package cursory
   :ensure
-  (:host "github" :repo "protesilaos/cursory"))
+  (:host "gitlab" :repo "protesilaos/cursory"))
 #+end_src
 *** The =Themes= section for =Pulsar=
 For use with Avy.
