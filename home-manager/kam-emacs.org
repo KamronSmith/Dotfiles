@@ -694,10 +694,10 @@ Additional code is added to save the contents of registers after Emacs closes, s
               (lambda (frame)
                 (with-selected-frame frame
                   (kam-set-font-faces)
-                  ;; (kam-set-custom-faces)
+                  (kam-set-custom-faces)
                   (load-theme 'modus-vivendi :no-confirm))))
   (load-theme 'modus-vivendi :no-confirm)
-  ;; (add-hook 'after-init-hook #'kam-set-custom-faces)
+  (add-hook 'after-init-hook #'kam-set-custom-faces)
   (add-hook 'after-init-hook #'kam-set-font-faces))
 #+end_src
 ** The call to load all of the modules
