@@ -99,8 +99,6 @@
   };
   
   # Enable automatic login for the user.
-   services.displayManager.autoLogin.enable = true;
-   services.displayManager.autoLogin.user = "kam";
 
    security.polkit.enable = true;
    programs._1password.enable = true;
