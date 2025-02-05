@@ -84,8 +84,8 @@ This configuration is split into a few parts:
 :END:
 This causes problems, so its better to disable it
 #+begin_src emacs-lisp :tangle (format early-init-file "%s")
-(setq package-enable-at-startup nil
-      use-package-enable-imenu-support t)
+;; (setq package-enable-at-startup nil
+;;       use-package-enable-imenu-support t)
 #+end_src
 * The =init.el= file
 :PROPERTIES:
@@ -106,52 +106,65 @@ This causes problems, so its better to disable it
 :CUSTOM_ID: h:73796FB2-63C2-44E4-B008-8EDC6E7AB645
 :END:
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
-  (defvar elpaca-installer-version 0.9)
-  (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-  (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-  (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-  (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-                                :ref nil
-                                :files (:defaults (:exclude "extensions"))
-                                :build (:not elpaca--activate-package)))
-  (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-         (build (expand-file-name "elpaca/" elpaca-builds-directory))
-         (order (cdr elpaca-order))
-         (default-directory repo))
-    (add-to-list 'load-path (if (file-exists-p build) build repo))
-    (unless (file-exists-p repo)
-      (make-directory repo t)
-      (when (< emacs-major-version 28) (require 'subr-x))
-      (condition-case-unless-debug err
-          (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-                   ((zerop (call-process "git" nil buffer t "clone"
-                                         (plist-get order :repo) repo)))
-                   ((zerop (call-process "git" nil buffer t "checkout"
-                                         (or (plist-get order :ref) "--"))))
-                   (emacs (concat invocation-directory invocation-name))
-                   ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-                                         "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-                   ((require 'elpaca))
-                   ((elpaca-generate-autoloads "elpaca" repo)))
-              (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-            (error "%s" (with-current-buffer buffer (buffer-string))))
-        ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-    (unless (require 'elpaca-autoloads nil t)
-      (require 'elpaca)
-      (elpaca-generate-autoloads "elpaca" repo)
-      (load "./elpaca-autoloads")))
-  (add-hook 'after-init-hook #'elpaca-process-queues)
-  (elpaca `(,@elpaca-order))
-  ;;; (elpaca-wait)
+  ;; (defvar elpaca-installer-version 0.9)
+  ;; (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
+  ;; (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
+  ;; (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
+  ;; (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
+  ;;                               :ref nil
+  ;;                               :files (:defaults (:exclude "extensions"))
+  ;;                               :build (:not elpaca--activate-package)))
+  ;; (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
+  ;;        (build (expand-file-name "elpaca/" elpaca-builds-directory))
+  ;;        (order (cdr elpaca-order))
+  ;;        (default-directory repo))
+  ;;   (add-to-list 'load-path (if (file-exists-p build) build repo))
+  ;;   (unless (file-exists-p repo)
+  ;;     (make-directory repo t)
+  ;;     (when (< emacs-major-version 28) (require 'subr-x))
+  ;;     (condition-case-unless-debug err
+  ;;         (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
+  ;;                  ((zerop (call-process "git" nil buffer t "clone"
+  ;;                                        (plist-get order :repo) repo)))
+  ;;                  ((zerop (call-process "git" nil buffer t "checkout"
+  ;;                                        (or (plist-get order :ref) "--"))))
+  ;;                  (emacs (concat invocation-directory invocation-name))
+  ;;                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
+  ;;                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
+  ;;                  ((require 'elpaca))
+  ;;                  ((elpaca-generate-autoloads "elpaca" repo)))
+  ;;             (progn (message "%s" (buffer-string)) (kill-buffer buffer))
+  ;;           (error "%s" (with-current-buffer buffer (buffer-string))))
+  ;;       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
+  ;;   (unless (require 'elpaca-autoloads nil t)
+  ;;     (require 'elpaca)
+  ;;     (elpaca-generate-autoloads "elpaca" repo)
+  ;;     (load "./elpaca-autoloads")))
+  ;; (add-hook 'after-init-hook #'elpaca-process-queues)
+  ;; (elpaca `(,@elpaca-order))
+  ;; ;;; (elpaca-wait)
 
   (setq use-package-always-ensure t)
 
-  (elpaca elpaca-use-package
-    (elpaca-use-package-mode))
+(setq package-archives
+      '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
+        ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
+        ("melpa" . "https://melpa.org/packages/")))
+
+(setq package-archive-priorities
+      '(("gnu-elpa" . 3)
+        ("melpa" . 2)
+        ("nongnu" . 1)))
+
+(setq package-vc-register-as-project nil)
+
+  ;; (elpaca elpaca-use-package
+    ;; (elpaca-use-package-mode))
   
   (setq font-log nil
         package-install-upgrade-built-in t
-        package-selected-packages '(jsonrpc consult org-roam))
+        package-selected-packages '(jsonrpc transient consult org-roam))
 #+end_src
 ** Adjusting native compilation
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
@@ -2011,8 +2024,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package spacious-padding
-  :ensure
-  (:host "github" :repo "protesilaos/spacious-padding")
+  :ensure t
   :config
   (setq spacious-padding-subtle-mode-line
         `( :mode-line-active "#fec43f"
@@ -2090,16 +2102,14 @@ The header line in my Emacs is driven primarily by [[id:d015e408-3572-462e-861a-
 *** The =Themes= section for =Fontaine=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package fontaine
-  :ensure
-  (:host "github" :repo "protesilaos/fontaine")
+  :ensure t
   :config
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld")))
 #+end_src
 *** The =Themes= section for =Lin=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package lin
-  :ensure
-  (:host "github" :repo "protesilaos/lin")
+  :ensure t
   :config
   (setq lin-face 'lin-yellow)
   (lin-global-mode 1))
@@ -2107,8 +2117,7 @@ The header line in my Emacs is driven primarily by [[id:d015e408-3572-462e-861a-
 *** The =Themes= section for =Cursory=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package cursory
-  :ensure
-  (:host "gitlab" :repo "protesilaos/cursory"))
+  :ensure t)
 #+end_src
 *** The =Themes= section for =Pulsar=
 For use with Avy.
