@@ -313,11 +313,11 @@ I disable the custom file by making it disposable.
   :config
   (setq org-imenu-depth 4))
 #+end_src
-**  =help-mode=
+** =Help-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:D661E16E-B075-468A-AEEE-A68D3F817881
 :END:
-**  =occur=
+** =Occur=
 :PROPERTIES:
 :CUSTOM_ID: h:82B82CF0-FEF5-4431-93A3-C08576891A90
 :END:
@@ -370,7 +370,7 @@ Occur is a command that shows all lines in a buffer that match a user given rege
   (setq resize-mini-windows 'grow-only
         resize-mini-frames 'grow-only))
 #+end_src
-** =undo=
+** =Undo=
 :PROPERTIES:
 :CUSTOM_ID: h:FC224E32-F90A-4CDA-859B-967AA06176C5
 :END:
@@ -383,7 +383,7 @@ Occur is a command that shows all lines in a buffer that match a user given rege
 (dolist (cmd '(undo))
   (put cmd 'repeat-map 'undo-repeat-map))
 #+end_src
-** =re-builder=
+** =Re-Builder=
 :PROPERTIES:
 :CUSTOM_ID: h:11D0AF31-C303-4331-807A-CE55374A6836
 :END:
@@ -454,7 +454,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
                (list (regexp-quote "/sudo::")
                      "remote-shell" (executable-find "env"))))
 #+end_src
-** =find-file=
+** =Find-file=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (defun kam-auto-create-missing-dirs ()
   (let ((target-dir (file-name-directory buffer-file-name)))
@@ -463,7 +463,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
 (add-to-list 'find-file-not-found-functions #'kam-auto-create-missing-dirs)
 #+end_src
-** =recentf-mode=
+** =Recentf-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:C206B5BA-3AC7-4346-A380-2C0A0D832D0C
 :END:
@@ -474,21 +474,22 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (setq recentf-max-saved-items 50))
 #+end_src
-** =completion-preview-mode=
+** =Completion-preview-mode=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (global-completion-preview-mode 1)
 #+end_src
-** =scrolling= settings
+** =Scrolling= settings
 :PROPERTIES:
 :CUSTOM_ID: h:2D6B25C1-7F83-4AF9-B9D0-8B6382EE8ADD
 :END:
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(pixel-scroll-precision-mode nil)
+(pixel-scroll-precision-mode t)
 (setq pixel-scroll-precision-interpolate-mice nil)
 ;; (setq scroll-conservatively 10
 ;;       maximum-scroll-margin 0.5
 ;;       scroll-preserve-screen-position t)
 
+<<<<<<< HEAD
 (package-vc-install '(ultrascroll :vc-backend Git :url "https://github.com/jdtsmith/ultra-scroll"))
 
 (use-package ultra-scroll
@@ -500,8 +501,20 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         scroll-margin 0)
   :config
   (ultra-scroll-mode 1))
+=======
+;; (use-package ultra-scroll
+;;   :ensure t
+;;   :bind
+;;   (("<wheel-up>" . ultra-scroll-up)
+;;    ("<wheel-down>" . ultra-scroll-down))
+;;   :init
+;;   (setq-default scroll-conservatively 101
+;;         scroll-margin 0)
+;;   :config
+;;   (ultra-scroll-mode 1))
+>>>>>>> cccfabd1f11888f25d494ab34ed34eb6b9d83b69
 #+end_src
-** =repeat-mode=
+** =Repeat-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:1DADCF8B-7411-4908-8EB9-ED2CD0D4DA34
 :END:
@@ -2001,8 +2014,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
 *** The =Themes= section that sets up =EF Themes=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package ef-themes
-  :ensure
-  (:host github :repo "protesilaos/ef-themes"))
+  :ensure t)
 #+end_src
 *** The =Themes= section that sets up =Olivetti=
 :PROPERTIES:
@@ -2091,8 +2103,7 @@ The header line in my Emacs is driven primarily by [[id:d015e408-3572-462e-861a-
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package logos
-  :ensure
-  (:host "github" :repo "protesilaos/logos")
+  :ensure t
   :config
   (setq-default logos-hide-mode-line t
                 logos-hide-header-line t
@@ -2124,8 +2135,7 @@ The header line in my Emacs is driven primarily by [[id:d015e408-3572-462e-861a-
 For use with Avy.
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package pulsar
-  :ensure
-  (:host "github" :repo "protesilaos/pulsar")
+  :ensure t
   :hook ((next-error . pulsar-pulse-line)
          (minibuffer-setup . pulsar-pulse-line)
          (consult-after-jump . pulsar-recenter-top)
@@ -2399,8 +2409,7 @@ For use with Avy.
 *** The =Window= section for Beframed
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-window.el")
 (use-package beframe
-  :ensure
-  (:host "github" :repo "protesilaos/beframe")
+  :ensure t
   :config
   (setq beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*")
         beframe-functions-in-frames '())
