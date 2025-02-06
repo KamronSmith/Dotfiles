@@ -489,8 +489,9 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 ;;       maximum-scroll-margin 0.5
 ;;       scroll-preserve-screen-position t)
 
+(package-vc-install '(ultrascroll :vc-backend Git :url "https://github.com/jdtsmith/ultra-scroll"))
+
 (use-package ultra-scroll
-  :ensure (ultra-scroll :host github :repo "jdtsmith/ultra-scroll")
   :bind
   (("<wheel-up>" . ultra-scroll-up)
    ("<wheel-down>" . ultra-scroll-down))
