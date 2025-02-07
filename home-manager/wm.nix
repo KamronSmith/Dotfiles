@@ -24,7 +24,7 @@
                gaps_in = 3
                gaps_out = 8
                border_size = 2
-               col.active_border = rgba(33CCFF44)
+               col.active_border = rgba(33CCFFFF)
                col.inactive_border = rgba(00000000)
                resize_on_border = false
                allow_tearing = false
