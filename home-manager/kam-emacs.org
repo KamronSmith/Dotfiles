@@ -144,7 +144,7 @@ This causes problems, so its better to disable it
   ;; (elpaca `(,@elpaca-order))
   ;; ;;; (elpaca-wait)
 
-  (setq use-package-always-ensure t)
+(setq use-package-always-ensure t)
 
 (setq package-archives
       '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
@@ -162,9 +162,9 @@ This causes problems, so its better to disable it
   ;; (elpaca elpaca-use-package
     ;; (elpaca-use-package-mode))
   
-  (setq font-log nil
-        package-install-upgrade-built-in t
-        package-selected-packages '(jsonrpc transient consult org-roam))
+(setq font-log nil
+      package-install-upgrade-built-in t
+      package-selected-packages '(jsonrpc transient consult org-roam))
 #+end_src
 ** Adjusting native compilation
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
