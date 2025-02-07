@@ -78,7 +78,7 @@
 
            master {
                   new_status = master
-                  mfact = 0.70
+                  mfact = 0.55
                   orientation = center
            }
 
