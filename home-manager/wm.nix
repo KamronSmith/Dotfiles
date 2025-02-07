@@ -11,6 +11,8 @@
     
     extraConfig = ''
            exec-once = dbus-update-activation-environment --systemd --all
+           env = LIBVA_DRIVER_NAME,nvidia
+           env = __GLX_VENDOR_LIBRARY_NAME,nvidia
 
            monitor=HDMI-A-4,2560x1440@144,0x0,1
            $terminal = kitty
