@@ -117,6 +117,7 @@
            bind = $mainMod, V, togglefloating
            bind = $mainMod, M, exit
            bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
+           bind = Control_L&Super_L&Shift_L&Alt_L, D, exec, playerctl play-pause
            bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
            bind = $mainMod, Tab, exec, rofi -show window
            bind = $mainMod, X, togglespecialworkspace, kitty
