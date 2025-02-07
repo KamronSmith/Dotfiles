@@ -17,6 +17,17 @@
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.initrd.kernelModules = [
+    "nvidia"
+    "nvidia-modeset"
+    "nvidia-drm"
+    "nvidia-uvm"
+  ];
+
+  boot.extraModprobeConfig = ''
+  options nvidia-drm fbdev=1
+  options nvidia-drm modeset=1
+  '';
 
   # Set your time zone.
   time.timeZone = "America/Los_Angeles";
