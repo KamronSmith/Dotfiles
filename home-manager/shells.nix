@@ -60,6 +60,8 @@
           XCURSOR_SIZE = 24;
           MOZ_ENABLE_WAYLAND = 1;
           SSH_AUTH_SOCK= "~/.1password/agent.sock";
+          WAYLAND_DISPLAY = ":0";
+          DISPLAY = ":0";
         };
     };
 
