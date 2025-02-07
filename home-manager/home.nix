@@ -80,6 +80,7 @@
     playerctl
     waybar-mpris
     wayshot
+    prismlauncher
   ];
   
   home.file = {
