@@ -35,6 +35,7 @@
     dunst
     bluez
     bluez-tools
+    blueman
     ripgrep
     fd
     ripgrep-all
