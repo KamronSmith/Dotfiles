@@ -2,7 +2,7 @@
 
 {
   xdg.mime.enable = true;
- xdg.mimeApps = {
+  xdg.mimeApps = {
     enable = true;
     defaultApplications = {
       "image/svg+xml" = [ "emacsclient.desktop" ];
@@ -82,3 +82,4 @@
     };
   };
 }
+

@@ -1,34 +1,38 @@
-{config, pkgs, ... }:
+{config, pkgs, inputs, ... }:
 
 {
   wayland.windowManager.hyprland = {
     enable = true;
     xwayland.enable = true;
-    systemd = {
-      enable = true;
-      variables = [ "--all" ];
-    };
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    # systemd = {
+      # enable = true;
+    # };
     
     extraConfig = ''
            exec-once = dbus-update-activation-environment --systemd --all
-           env = LIBVA_DRIVER_NAME,nvidia
-           env = __GLX_VENDOR_LIBRARY_NAME,nvidia
+           exec-once = hyprctl dispatch workspace name:Main
 
-           monitor=HDMI-A-4,2560x1440@144,0x0,1
+           monitor= HDMI-A-1,2560x1440@144,0x0,1
            $terminal = kitty
            $fileManager = emacsclient -c -a 
            $menu = rofi -show drun
            $editor = emacsclient -c -a ""
 
            general {
-               gaps_in = 3
+               gaps_in = 2
                gaps_out = 8
-               border_size = 2
+               border_size = 3
                col.active_border = rgba(33CCFFFF)
                col.inactive_border = rgba(00000000)
+               no_border_on_floating = true
                resize_on_border = false
                allow_tearing = false
                layout = master
+           }
+
+           debug {
+               disable_logs = true
            }
 
            decoration {
@@ -36,10 +40,11 @@
                active_opacity = 1.0
                inactive_opacity = 1.0
                shadow {
-                      enabled = true
+                      enabled = false
                       range = 4
                       render_power = 3
                       color = rgba(1a1a1aee)
+                      color_inactive = rgba(00000000)
                }
 
                blur {
@@ -48,6 +53,7 @@
                     passes = 3
                     new_optimizations = on
                     vibrancy = 0.1696
+                    xray = true
                }
            }
 
@@ -78,7 +84,7 @@
 
            master {
                   new_status = master
-                  mfact = 0.55
+                  mfact = 0.50
                   orientation = center
            }
 
@@ -101,18 +107,10 @@
                  }
            }
 
-           ## smart gaps
-           workspace = w[tv1], gapsout:0, gapsin:0
-           workspace = f[1], gapsout:0, gapsin:0
-           windowrulev2 = bordersize 0, floating:0, onworkspace:w[tv1]
-           windowrulev2 = rounding 0, floating:0, onworkspace:w[tv1]
-           windowrulev2 = bordersize 0, floating:0, onworkspace:f[1]
-           windowrulev2 = rounding 0, floating:0, onworkspace:f[1]
-
            $mainMod = ALT
 
-           bind = $mainMod, F, exec, $terminal
-           bind = $mainMod, C, killactive
+           bind = $mainMod, C, fullscreen, 0
+           bind = $mainMod, Q, killactive
            bind = $mainMod, E, exec, $fileManager
            bind = $mainMod, V, togglefloating
            bind = $mainMod, M, exit
@@ -122,23 +120,25 @@
            bind = $mainMod, Tab, exec, rofi -show window
            bind = $mainMod, X, togglespecialworkspace, kitty
 
-           bind = $mainMod, e, layoutmsg, cycleprev
-           bind = $mainMod, n, layoutmsg, cyclenext
-           bind = $mainMod, i, layoutmsg, swapwithmaster master
+           bind = $mainMod, b, movefocus, l
+           bind = $mainMod, n, movefocus, d
+           bind = $mainMod, p, movefocus, u
+           bind = $mainMod, f, movefocus, r
+           bind = $mainMod, i, layoutmsg, swapwithmaster
            bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
            bind = $mainMod, d, workspace, name:Main
            bind = $mainMod, r, workspace, name:Side
-           # bind = $mainMod, t, workspace, 3
+           bind = $mainMod, t, workspace, name:Gaming
            # bind = $mainMod, s, workspace, 4
            # bind = $mainMod, 5, workspace, 5
            # bind = $mainMod, 6, workspace, 6
            # bind = $mainMod, 7, workspace, 7
 
-           bind = $mainMod SHIFT, d, movetoworkspace, name:Main
-           bind = $mainMod SHIFT, r, movetoworkspace, name:Side
-           bind = $mainMod SHIFT, t, movetoworkspace, 3
-           bind = $mainMod SHIFT, s, movetoworkspace, 4
+           bind = $mainMod SHIFT, d, movetoworkspacesilent, name:Main
+           bind = $mainMod SHIFT, r, movetoworkspacesilent, name:Side
+           bind = $mainMod SHIFT, t, movetoworkspacesilent, name:Gaming
+           bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
            bind = $mainMod SHIFT, 5, movetoworkspace, 5
            bind = $mainMod SHIFT, 6, movetoworkspace, 6
            bind = $mainMod SHIFT, 7, movetoworkspace, 7
@@ -166,18 +166,65 @@
 
            windowrulev2 = suppressevent maximize, class:.*
            windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
-           windowrule = workspace kitty, ^(Kitty)$
-           windowrule = workspace Chat, ^(Discord)$
-           windowrule = workspace Main, ^(Emacs)$
-           windowrule = workspace Main, ^(Firefox)$
+           windowrulev2 = workspace name:Side,class:^(kitty)$,title:^(kitty)$
+           windowrulev2 = workspace name:Main,class:^(Emacs)$
+           windowrulev2 = workspace name:Main,class:^(firefox)$
+
+           ## smart gaps
+           # workspace = w[tv1], gapsout:0, gapsin:0
+           # workspace = f[1], gapsout:0, gapsin:0
+           # windowrulev2 = bordersize 0, floating:0, onworkspace:w[tv1]
+           # windowrulev2 = rounding 0, floating:0, onworkspace:w[tv1]
+           # windowrulev2 = bordersize 0, floating:0, onworkspace:f[1]
+           # windowrulev2 = rounding 0, floating:0, onworkspace:f[1]
 
            windowrulev2 = opacity 0.80 0.80, class:^(Emacs)$
            windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
 
-           workspace = name:Main, monitor=HDMI-A-4, default:true, persistent:true
+           workspace = name:Main,default:true,monitor:HDMI-A-1,id:1
+           workspace = name:Side,monitor:HDMI-A-1,id:2
+           workspace = name:Gaming,monitor:HDMI-A-1,id:3
            workspace = special:kitty
-           workspace = special:Chat, persistent:true
-         '';
-    
+
+           layerrule = blur,waybar
+
+           # gaming
+           windowrulev2 = float,class:^(steam)$
+           windowrulev2 = workspace name:Gaming,class:^(steam)$,title:^(Steam)$
+           windowrulev2 = fullscreen,class:^steam_app\d+$
+           windowrulev2 = workspace name:Gaming,class:^steam_app_\d+$
+           windowrulev2 = workspace name:Gaming,class:^Minecraft\*
+           workspace = Gaming, border:false, rounding:false
+
+           # dialogs
+           windowrulev2 = center,title:^(Open File)(.*)$
+           windowrulev2 = center,title:^(Select a File)(.*)$
+           windowrulev2 = center,title:^(Choose wallpaper)(.*)$
+           windowrulev2 = center,title:^(Open Folder)(.*)$
+           windowrulev2 = center,title:^(Save As)(.*)$
+           windowrulev2 = center,title:^(Library)(.*)$
+           windowrulev2 = center,title:^(File Upload)(.*)$
+
+           windowrulev2 = float,title:^(Open File)(.*)$
+           windowrulev2 = float,title:^(Select a File)(.*)$
+           windowrulev2 = float,title:^(Choose wallpaper)(.*)$
+           windowrulev2 = float,title:^(Open Folder)(.*)$
+           windowrulev2 = float,title:^(Save As)(.*)$
+           windowrulev2 = float,title:^(Library)(.*)$
+           windowrulev2 = float,title:^(File Upload)(.*)$
+
+           # Picture-in-Picture
+           windowrulev2 = keepaspectratio,title:^(Picture(-| )in(-| )[Pp]icture)$
+           windowrulev2 = move 73% 72%,title:^(Picture(-| )in(-| )[Pp]icture)$ 
+           windowrulev2 = size 25%,title:^(Picture(-| )in(-| )[Pp]icture)$
+           windowrulev2 = float,title:^(Picture(-| )in(-| )[Pp]icture)$
+           windowrulev2 = pin,title:^(Picture(-| )in(-| )[Pp]icture)$
+
+           # floats
+           windowrulev2 = float,title:^(Volume Control)$
+           windowrulev2 = float,title:^(Bluetooth Devices)$
+           windowrulev2 = float,class:^(1Password)$
+           
+         '';    
   };
 }
