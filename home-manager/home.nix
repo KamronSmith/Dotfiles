@@ -7,7 +7,7 @@
     ./default-apps.nix
     ./secrets.nix
     ./services.nix
-    ./wm.nix
+    ./hypr.nix
     ./programs/emacs.nix
     ./programs/waybar.nix
     ./programs/rofi.nix
