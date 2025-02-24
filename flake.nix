@@ -7,12 +7,15 @@
 
     home-manager = {
       url = "github:nix-community/home-manager/release-24.11";
-      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     hyprland = {
       url = "github:hyprwm/Hyprland";
-      inputs.nixpkgs.follows = "nixpkgs";
+      # inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprland-qtutils = {
+      url = "github:hyprwm/hyprland-qtutils";
     };
 
     firefox-addons = {
@@ -21,34 +24,29 @@
     };
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    hyprland,
-    firefox-addons,
-      ... }@inputs: {
-    
-                nixosConfigurations = {
-                  nixos = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = { inherit inputs; };
-	        modules = [
-            ./nixos/configuration.nix
-            home-manager.nixosModules.home-manager {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.kam = import ./home-manager/home.nix;
-              home-manager.extraSpecialArgs = { inherit inputs; };
-            }
-          ];
-	      };
+  outputs = { self, nixpkgs, home-manager, hyprland, firefox-addons, hyprland-qtutils, ... }@inputs: {
         
-        overlays = import ./overlays {inherit inputs;};
+        nixosConfigurations = {
+          nixos = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = { inherit inputs; };
+	          modules = [
+              ./nixos/configuration.nix
+              home-manager.nixosModules.home-manager {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.users.kam = import ./home-manager/home.nix;
+                home-manager.extraSpecialArgs = { inherit inputs; };
+                nixpkgs.config.allowUnfree = true;
+              }
+            ];
+	        };
+          
+          overlays = import ./overlays { inherit inputs; };
 
-        nixosModules = import ./modules/nixos;
+          nixosModules = import ./modules/nixos;
 
-        homeManagerModules = import ./modules/home-manager;
+          homeManagerModules = import ./modules/home-manager;
+        };
       };
-    };
 }
