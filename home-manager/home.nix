@@ -4,26 +4,18 @@
   imports = [
     ./themes.nix
     ./shells.nix
-    ./default-apps.nix
+    ./xdg.nix
     ./secrets.nix
     ./services.nix
     ./hypr.nix
     ./programs/emacs.nix
+    ./programs/git.nix
     ./programs/waybar.nix
     ./programs/rofi.nix
     ./programs/browsers.nix
     ./programs/term.nix
     ./programs/direnv.nix
   ];
-
-  nixpkgs = {
-    config.allowUnfree = true;
-    # overlays = [
-    #   outputs.overlays.additions
-    #   outputs.overlays.modifications
-    #   outputs.overlays.unstable-packages
-    # ];
-  };
   
   home.username = "kam";
   home.homeDirectory = "/home/kam";
