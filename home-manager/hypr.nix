@@ -12,6 +12,8 @@
     extraConfig = ''
            exec-once = dbus-update-activation-environment --systemd --all
            exec-once = hyprctl dispatch workspace name:Main
+           exec-once = wl-paste --type text --watch cliphist store
+           exec-once = wl-paste --type image --watch cliphist store
 
            monitor= HDMI-A-1,2560x1440@144,0x0,1
            $terminal = kitty
@@ -114,6 +116,7 @@
            bind = $mainMod, E, exec, $fileManager
            bind = $mainMod, V, togglefloating
            bind = $mainMod, M, exit
+           # bind = $mainMod, F, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
            bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
            bind = Control_L&Super_L&Shift_L&Alt_L, D, exec, playerctl play-pause
            bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor

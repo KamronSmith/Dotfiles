@@ -50,6 +50,8 @@
     btop
     strace
     ltrace
+    wl-clipboard
+    cliphist
     lsof # list open files
     sysstat
     pciutils # lspci
