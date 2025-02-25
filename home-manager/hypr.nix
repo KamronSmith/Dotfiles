@@ -134,21 +134,11 @@
            bind = $mainMod, d, workspace, name:Main
            bind = $mainMod, r, workspace, name:Side
            bind = $mainMod, t, workspace, name:Gaming
-           # bind = $mainMod, s, workspace, 4
-           # bind = $mainMod, 5, workspace, 5
-           # bind = $mainMod, 6, workspace, 6
-           # bind = $mainMod, 7, workspace, 7
 
            bind = $mainMod SHIFT, d, movetoworkspacesilent, name:Main
            bind = $mainMod SHIFT, r, movetoworkspacesilent, name:Side
            bind = $mainMod SHIFT, t, movetoworkspacesilent, name:Gaming
            bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
-           bind = $mainMod SHIFT, 5, movetoworkspace, 5
-           bind = $mainMod SHIFT, 6, movetoworkspace, 6
-           bind = $mainMod SHIFT, 7, movetoworkspace, 7
-           bind = $mainMod SHIFT, 8, movetoworkspace, 8
-           bind = $mainMod SHIFT, 9, movetoworkspace, 9
-           bind = $mainMod SHIFT, 0, movetoworkspace, 10
 
            bind = $mainMod, mouse_down, workspace, e+1
            bind = $mainMod, mouse_up, workspace, e-1
