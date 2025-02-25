@@ -6,21 +6,20 @@
     settings = {
       mainBar = {
         layer = "top";
+        output = "HDMI-A-1";
         position = "top";
         height = 30;
-        output = [
-          "HDMI-A-4"
-        ];
         
         modules-left = [
           "cpu"
           "memory"
           "network"
+          "hyprland/workspaces"
         ];
         
         modules-center = [
           "clock"
-          "hyprland/workspaces"
+          "hyprland/window"
         ];
         
         modules-right = [
@@ -28,12 +27,25 @@
           "pulseaudio"
           "tray"
           "custom/power"
+          "clock"
         ];
         
         "hyprland/workspaces" = {
-          active-only = true;
-          format = "{name}";
+          format = "{icon}";
+          format-icons = {
+            Main = "";
+            Side = "";
+            Gaming = "󰊴";
+          };
           on-click = "activate";
+          persistent-workspaces = {
+            "*" = [ "Main" "Side" "Gaming" ];
+          };
+          sort-by = "id";
+        };
+
+        "hyprland/window" = {
+          max-length = 70;
         };
 
         "cpu" = {
@@ -56,7 +68,7 @@
         };
 
         "clock" = {
-          format = "{:%H:%M %b %d %Y}";
+          format = "<b>{:%H:%M %b %d %Y}</b>";
           format-alt = "{:%b %d %Y}";
           tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
         };
@@ -80,7 +92,7 @@
         };
 
         "mpris" = {
-          format = "{player_icon) {title}";
+          format = "{player_icon} {title}";
           format-paused = " {status_icon} <i>{title}</i>";
           max-length = 80;
           player-icons = {
@@ -107,8 +119,7 @@
           /* 26 27 38 0.5 */
           background-color: #000000; 
           color: #ffffff;
-          transition-property: background-color;
-          transition-duration: 0.5s
+          opacity: 0.8;
         }
 
         /* General styling for the individual modules */
@@ -116,6 +127,8 @@
         #cpu,
         #memory,
         #mpris,
+        #workspaces,
+        #window,
         #tray {
           background-color: #222034;
           font-size: 14px;
@@ -123,6 +136,11 @@
           padding: 3px 8px;
           border-radius: 8px;
           margin: 8px 2px;
+          opacity: 1.0;
+        }
+
+        #workspaces button.active {
+          color: #bbbbbb;
         }
 
         #network,
@@ -138,6 +156,8 @@
 
         #network.ethernet { color: #50C878; }
         #network.disconnected { color: #90EE90; }
+
+        
       '';
   };
 }
