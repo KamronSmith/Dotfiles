@@ -221,6 +221,8 @@
            windowrulev2 = float,title:^(Bluetooth Devices)$
            windowrulev2 = float,class:^(1Password)$
            
+           windowrulev2 = float,class:^(anki)$,title:^(Add)$
+           windowrulev2 = float,class:^(anki)$,title:^(Browse)           
          '';    
   };
 }
