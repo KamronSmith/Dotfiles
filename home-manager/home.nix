@@ -88,17 +88,6 @@
   # xdg.configFile = {
   #   "hypr/hyprland.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/user/hyprland.conf";
   # };
-
-  programs.git = {
-    enable = true;
-    userName = "Kamron";
-    userEmail = "kamrosmith@gmail.com";
-    extraConfig = {
-      gpg."ssh".program = "${pkgs._1password-gui}/bin/op-ssh-sign";
-      pull.rebase = false;
-    };
-  };
-  
   
   home.sessionVariables = {
     # Doesnt work with nushell
