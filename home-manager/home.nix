@@ -23,6 +23,7 @@
   home.packages = with pkgs; [
     # system utilities
     hyprpolkitagent
+    inputs.hyprland-qtutils.packages."${pkgs.system}".default
     pavucontrol
     dunst
     bluez
@@ -63,6 +64,8 @@
     waybar
     rofi-wayland
     swww
+    mpvpaper
+    ffmpeg
     neofetch
     vlc
     mpv
@@ -70,6 +73,7 @@
     calibre
     remmina
     anki
+    anki-sync-server
     pamixer
     playerctl
     waybar-mpris
