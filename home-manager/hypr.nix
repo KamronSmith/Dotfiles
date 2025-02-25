@@ -185,7 +185,7 @@
            # layerrule = order 1, address:0x254e4ae0
 
            # gaming
-           windowrulev2 = float,class:^(steam)$
+           #### windowrulev2 = float,class:^(steam)$
            windowrulev2 = workspace name:Gaming,class:^(steam)$,title:^(Steam)$
            windowrulev2 = fullscreen,class:^steam_app\d+$
            windowrulev2 = workspace name:Gaming,class:^steam_app_\d+$
