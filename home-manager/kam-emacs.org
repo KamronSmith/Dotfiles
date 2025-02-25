@@ -1,4 +1,4 @@
-#+title: Kam's Emacs Configuration
+#+TITLE: Kam's Emacs Configuration
 #+author: Kamron Smith
 #+language: en
 #+options: ':t toc:nil author:t email:t num:t
@@ -3115,7 +3115,7 @@ If there is more than one, let the user choose."
   :init
   (setq magit-define-global-key-bindings nil)
   :bind
-  ("C-c g" . magit-status)
+  ("C-x g" . magit-status)
   (:map magit-section-mode-map
         ("C-<tab>" . kam-magit-toggle-parent-section))
   :config
