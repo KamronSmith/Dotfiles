@@ -180,7 +180,9 @@
            workspace = name:Gaming,monitor:HDMI-A-1,id:3
            workspace = special:kitty
 
-           layerrule = blur,waybar
+           # layerrule = blur, waybar
+           layerrule = blur, rofi
+           # layerrule = order 1, address:0x254e4ae0
 
            # gaming
            windowrulev2 = float,class:^(steam)$
