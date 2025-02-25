@@ -54,7 +54,6 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  
   xdg.icons.enable = true;  
   xdg.portal = {
     enable = true;
