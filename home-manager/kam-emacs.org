@@ -1702,6 +1702,7 @@ Used for hooking into Embark."
   :ensure nil
   :bind
   ("<f3>" . #'kam-window-switch-to-alternate-buffer)
+  ("<f4>" . #'compile)
   ("<escape>" . #'kam-keyboard-quit-dwim)
   ("<home>" . nil)
   ("<end>" . nil)
