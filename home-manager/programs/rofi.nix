@@ -6,7 +6,7 @@
     package = pkgs.rofi-wayland;
     location = "center";
     theme = "/dev/null";
-    font = "Libre Caslon Regular";
+    font = "Iosevka Comfy";
     extraConfig = {
       display-drun = "Applications";
       display-window = "Windows";
