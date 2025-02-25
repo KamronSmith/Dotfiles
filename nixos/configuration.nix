@@ -11,11 +11,16 @@
       ./secret.nix
       ./virtualization.nix
       ./networking.nix
+      ./services.nix
       inputs.home-manager.nixosModules.home-manager
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
+  boot.loader.systemd-boot = {
+    enable = true;
+    configurationLimit = 10;
+  };
+  
   boot.loader.efi.canTouchEfiVariables = true;
   boot.initrd.kernelModules = [
     "nvidia"
@@ -49,15 +54,41 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
+  
+  xdg.icons.enable = true;  
   xdg.portal = {
     enable = true;
-    xdgOpenUsePortal = true;
+    xdgOpenUsePortal = false;
+    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
   # Enable the LXQT Desktop Environment.
-  services.xserver.displayManager.lightdm.enable = true;
-  services.xserver.desktopManager.lxqt.enable = true;
+  services.displayManager = {
+    enable = true;
+    defaultSession = "hyprland-uwsm";
+    # autoLogin = {
+    #   enable = true;
+    #   user = "kam";
+    # };
+  };
 
+  services.xserver.displayManager.gdm = {
+    enable = true;
+  };
+  
+  services.xserver.desktopManager.plasma5 = {
+    enable = true;
+  };
+
+  
+  programs.hyprland = {
+    enable = true;
+    xwayland.enable = true;
+    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
+    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
+    withUWSM = true;
+  };
+  
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
@@ -66,6 +97,7 @@
 
   services.devmon.enable = true;
   services.udisks2.enable = true;
+  services.gvfs.enable = true;
   
   # Enable cups to print documents.
   services.printing.enable = true;
@@ -95,7 +127,7 @@
     shell = pkgs.nushell;
     useDefaultShell = true;
     description = "Kamron Smith";
-    extraGroups = [ "docker" "libvirtd" "networkmanager" "wheel" ];
+    extraGroups = [ "docker" "libvirtd" "networkmanager" "wheel" "storage" ];
     packages = with pkgs; [
     #  thunderbird
     ];
@@ -103,13 +135,6 @@
 
   users.defaultUserShell = pkgs.nushell;
 
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.xdg-desktop-portal-hyprland;
-    xwayland.enable = true;
-  };
-  
   # Enable automatic login for the user.
 
    security.polkit.enable = true;
@@ -118,7 +143,11 @@
   # Install firefox.
    programs.firefox.enable = true;
 
-   programs.steam.enable = true;
+   programs.steam = {
+     enable = true;
+   };
+
+   programs.gamemode.enable = true;
 
   # Allow unfree packages
    nixpkgs.config = {
@@ -129,17 +158,24 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-     neovim
-     nushell
-     discord
-     git
-     google-chrome
-     _1password-gui
-     _1password-cli
-     terraform
-     duplicati
-     (import ../bin/aws-op-credential-helper.nix { inherit pkgs; })
-     #  wget
+    neovim
+    zsh
+    nushell
+    discord
+    git
+    google-chrome
+    _1password-gui
+    _1password-cli
+    terraform
+    man-pages
+    duplicati
+    seatd
+    (import ../bin/aws-op-credential-helper.nix { inherit pkgs; })
+    #  wget
+  ];
+
+  environment.pathsToLink = [
+    "/share/zsh"
   ];
 
   programs.nix-ld.enable = true;
@@ -149,6 +185,8 @@
     iosevka-comfy.comfy-duo
     nerdfonts
     libre-caslon
+    garamond-libre
+    noto-fonts-cjk-sans ## japanese fonts
   ];
 
  fonts.fontconfig = {
@@ -168,11 +206,11 @@
   # };
 
 hardware.nvidia = {
-  package = config.boot.kernelPackages.nvidiaPackages.stable;
+  package = config.boot.kernelPackages.nvidiaPackages.latest;
   modesetting.enable = true;
   powerManagement.enable = false;
   powerManagement.finegrained = false;
-  open = false;
+  open = true;
   nvidiaSettings = true;
 };
   
@@ -228,8 +266,8 @@ hardware.nvidia = {
 
   nix.settings = {
     experimental-features = [ "nix-command flakes" ];
-    substituters = ["https://hyprland.cachix.org"]; #hyprland caching
-    trusted-public-keys = ["hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc="]; # hyprland caching
+    substituters = [ "https://hyprland.cachix.org" ]; # hyprland caching
+    trusted-public-keys = [ "hyprland.cachix.org-1:a7pgxzMz7+chwVL3/pzj6jIBMioiJM7ypFP8PwtkuGc=" ]; # hyprland caching
   };
 
   nix.gc = {
