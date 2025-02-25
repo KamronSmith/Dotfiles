@@ -1886,8 +1886,9 @@ Used for hooking into Embark."
   :name "Search"
   :prefix 'kam-prefix-search
   "e" #'consult-compiler-error
+  "C-a" #'harpoon-go-to-3
   "C-c" #'goto-char
-  "C-e" #'consult-isearch-history
+  "C-e" #'harpoon-go-to-2
   "C-f" #'consult-fd
   "C-g" #'goto-line
   "g" #'kam-consult-ripgrep-symbol-at-point
@@ -1896,7 +1897,8 @@ Used for hooking into Embark."
   "C-k" #'consult-global-mark
   "C-l" #'consult-line
   "H-m" #'consult-mark
-  "C-o" #'consult-outline
+  "C-n" #'harpoon-go-to-1
+  "C-o" #'kam-menu
   "C-p" #'kam-consult-line-symbol-at-point
   "C-r" #'consult-ripgrep
   "C-s" #'isearch-forward)
@@ -2000,18 +2002,12 @@ The =Naved= /"Navigation & Editing"/ module is concerned with the navigation and
 :END:
 Harpoon is intended to be used alongside the =Project= module, where =Project= will manage the projects and associated buffers, and =Harpoon= will allow me to quickly navigate between files.
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
-;; (use-package harpoon
-;;   :ensure t
-;;   :bind
-;;    (("M-1" . harpoon-toggle-quick-menu)
-;;    ("M-2" . harpoon-go-to-1)
-;;    ("M-3" . harpoon-go-to-2)
-;;    ("M-4" . harpoon-go-to-3)
-;;    ("M-5" . harpoon-go-to-4)
-;;    ("M-0" . harpoon-add-file)
-;;    ("<f11>" . harpoon-add-file))
-;;   :config
-;;   (setq harpoon-project-package 'projectile))
+(use-package harpoon
+   :ensure t
+   :bind
+   ("<f11>" . harpoon-add-file)
+   :config
+   (setq harpoon-project-package 'project))
 #+end_src
 *** Smartparens
 :PROPERTIES:
