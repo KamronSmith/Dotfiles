@@ -3,19 +3,33 @@
 {
   gtk = {
     enable = true;
-    theme = {
-      name = "Arc-dark";
-      package = pkgs.arc-theme;
+    iconTheme = {
+      name = "Dark";
+      package = pkgs.tokyonight-gtk-theme;
     };
-    gtk3 = {
-      extraConfig.gtk-application-prefer-dark-theme = true;
+    
+    theme = {
+      name = "adw-gtk3";
+      package = pkgs.adw-gtk3;
+    };
+
+    cursorTheme = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 24;
     };
   };
-
+  
     qt = {
       enable = true;
-      platformTheme.name = "gtk3";
-      style.name = "adwaita-dark";
+      platformTheme.name = "gtk";
+      style.name = "adwaita-dark"; ## to test
       style.package = pkgs.adwaita-qt;
+    };
+
+    home.pointerCursor = {
+      name = "Bibata-Modern-Ice";
+      package = pkgs.bibata-cursors;
+      size = 30;
     };
 }
