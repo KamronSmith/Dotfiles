@@ -27,8 +27,9 @@
                border_size = 3
                col.active_border = rgba(33CCFFFF)
                col.inactive_border = rgba(00000000)
-               no_border_on_floating = true
-               resize_on_border = false
+               no_border_on_floating = false
+               resize_on_border = true
+               resize_corner = 4
                allow_tearing = false
                layout = master
            }
