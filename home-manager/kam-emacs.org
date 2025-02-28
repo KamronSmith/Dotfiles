@@ -358,18 +358,6 @@ I disable the custom file by making it disposable.
 (use-package dired-rainbow
   :ensure t)
 #+end_src
-*** The =Dired= section for keybindings
-:PROPERTIES:
-:CUSTOM_ID: h:42474C8C-AAFC-4357-85BA-51D21EF7D04F
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(use-package dired
-  :ensure nil
-  :bind
-  ("C-c d" . dired-jump)
-  (:map dired-mode-map
-        ("o" . dired-open-xdg)))
-#+end_src
 *** The =Dired= section for opening files externally
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (use-package dired
@@ -433,20 +421,20 @@ If there is more than one, let the user choose."
 #+end_src
 *** The =Dired= section for =dired-subtree=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(use-package dired-subtree
-  :ensure t
-  :after (dired)
-  :bind
-  (:map dired-mode-map
-        ("<tab>" . dired-subtree-toggle)
-        ("TAB" . dired-subtree-toggle)
-        ("C-<tab>" . kam-dired-subtree-up-toggle))
-  :config
-  (defun kam-dired-subtree-up-toggle ()
-    "Goes to the parent subtree and toggles the visiblity of it."
-    (interactive)
-    (dired-subtree-up)
-    (dired-subtree-toggle)))
+;; (use-package dired-subtree
+;;   :ensure t
+;;   :after (dired)
+;;   :bind
+;;   (:map dired-mode-map
+;;         ("<tab>" . dired-subtree-toggle)
+;;         ("TAB" . dired-subtree-toggle)
+;;         ("C-<tab>" . kam-dired-subtree-up-toggle))
+;;   :config
+;;   (defun kam-dired-subtree-up-toggle ()
+;;     "Goes to the parent subtree and toggles the visiblity of it."
+;;     (interactive)
+;;     (dired-subtree-up)
+;;     (dired-subtree-toggle)))
 #+end_src
 *** The =Dired= section for =dired-preview=
 #+begin_src emacs-lisp (format user-init-file "%s")
@@ -2120,7 +2108,7 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
   :ensure t
   :config
   (set-face-attribute 'visible-mark-active nil :background "yellow" :underline t)
-  (setq visible-mark-faces '((:background "gray")))
+  (setq visible-mark-faces '((:background "#989898" :foreground "#000000")))
   (global-visible-mark-mode))
 #+end_src
 *** Display line numbers mode
@@ -3194,6 +3182,7 @@ The majority of the functions are written in the [[id:90ecc2e2-ec44-444f-a373-6a
 
 (setq-default mode-line-format
               '("%e"
+                kam-modeline-nix
                 kam-modeline-kbd-macro
                 kam-modeline-narrow
                 kam-modeline-buffer-modified
@@ -3288,7 +3277,7 @@ For use with Avy.
 
 (use-package all-the-icons-ibuffer
   :ensure t
-  :hook (ibuffer-mode . all-the-icons-ibuffer-mode))
+  :hook (ibuffer-mode . #'all-the-icons-ibuffer-mode))
 
 (use-package all-the-icons-dired
   :ensure t
@@ -3299,9 +3288,9 @@ For use with Avy.
 (use-package all-the-icons-completion 
   :ensure t
   :after (marginalia)
-  :hook (marginalia-mode . nerd-icons-completion-marginalia-setup)
+  :hook (marginalia-mode . #'nerd-icons-completion-marginalia-setup)
   :config
-  (all-the-icons-completion-mode))
+  (all-the-icons-completion-mode 1))
 
 (use-package nerd-icons
   :config
@@ -3454,7 +3443,7 @@ For use with Avy.
         ("C-c C-l" . #'kam-consult-comint-history)
         ("C-." . #'kam-comint-insert-arguments-from-command)))
 #+end_src
-*** The =Comint= section for =shell-mode=
+*** =Shell-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:8082CEBF-DCD1-43A4-A246-920408F81492
 :END:
@@ -3464,9 +3453,11 @@ For use with Avy.
   :ensure nil
   :bind
   (:map shell-mode-map
-        ("SPC" . 'comint-magic-space)
-        ("M-<up>" . 'kam-shell-up-directory)
+        ("SPC" . #'comint-magic-space)
+        ("M-<up>" . #'kam-shell-up-directory)
         ("C-c C-d" . #'kam-shell-cd)
+        ("C-c C-k" . #'comint-clear-buffer)
+        ("C-c C-w" . #'comint-write-buffer)
         ("C-c C-j" . #'kam-comint-input-from-history)))
 #+end_src
 **** The =Shell= section that sets the shell settings
@@ -3476,23 +3467,29 @@ For use with Avy.
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
 (use-package shell
   :ensure nil
-  :hook (shell-mode-hook . #'kam-shell-mode-setup)
   :config
   (setq shell-command-prompt-show-cwd t
-        explicit-zsh-args '("--login" "--interactive")
         explicit-shell-file-name (executable-find "bash")
+        tramp-default-remote-shell "/bin/bash"
         ansi-color-for-comint-mode t
+        shell-command-prompt-show-cwd t
+        shell-input-autoexpand 'input
+        shell-highlight-undef-enable t
+        shell-get-old-input-include-continuation-lines t
         shell-kill-buffer-on-exit t
+        comint-completion-auto-list t
         comint-prompt-read-only t
         comint-buffer-maximum-size 9999
-        comint-input-ignoredups t))
+        comint-input-ignoredups t)
 
-;; (add-hook 'shell-mode-hook #'kam-shell-mode-setup)
+  (setq shell-font-lock-keywords
+        '(("[ \t]\\([+-][^ \t\n]+\\)" 1 font-lock-builtin-face)
+          ("^[^ \t\n]+:.*" . font-lock-string-face)
+          ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face))))
 
 (defun kam-shell-mode-setup ()
   (setq-local comint-process-echoes t
-              outline-regexp comint-prompt-regexp)
-  (add-hook 'comint-output-filter-functions #'kam-shell--track-cd))
+              outline-regexp comint-prompt-regexp))
 #+end_src
 **** The =Shell= section for custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
@@ -3751,22 +3748,44 @@ Numerical argument ARG determines the command being selected from to choose argu
     (setq flycheck-help-echo-function nil))
 
   :hook
-  ((flycheck-mode . flycheck-prefer-eldoc))
+  ;; (flycheck-mode . flycheck-prefer-eldoc)
+  (flycheck-mode . kam-flycheck-set-margins)
   :config
+  (defun kam-flycheck-set-margins ()
+    "Adjust margin and fringe widths in Flycheck-enabled buffers."
+    (setq left-fringe-width 8
+          right-fringe-width 8
+          left-margin-with 1
+          right-margin-width 0))
   (global-flycheck-mode 1))
 #+end_src
-*** The =Programming= section that integrates =Eglot= and =Eldoc=
+*** =Flymake=
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el") :mkdirp yes
+(use-package flymake
+  :ensure nil
+  :config
+  (setq flymake-fringe-indicator-position 'left-fringe
+        flymake-suppress-zero-counters t
+        flymake-no-changes-timeout nil
+        flymake-start-on-flymake-mode t
+        flymake-start-on-save-buffer t
+        flymake-wrap-around nil
+        flymake-show-diagnostics-at-end-of-line nil))
+#+end_src
+*** =Eglot=
 :PROPERTIES:
 :CUSTOM_ID: h:AF0DCA87-D5FB-4F14-B446-E4698E1799A1
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(defun eglot-eldoc ()
-  (setq eldoc-documentation-strategy
-        'eldoc-documentation-compose-eagerly))
-
-(add-hook 'eglot-managed-mode-hook 'eglot-eldoc)
+(use-package eglot
+  :ensure nil
+  :preface
+  (defun kam-eglot-eldoc ()
+      (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
+  :hook ((eglot-managed-mode . kam-eglot-eldoc)
+         (c-ts-mode . eglot-ensure)))
 #+end_src
-*** The =Programming= section that configures =tree-sitter=
+*** =Tree-sitter=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (use-package treesit-auto
   :ensure t
@@ -3824,45 +3843,6 @@ Numerical argument ARG determines the command being selected from to choose argu
 (provide 'kam-programming)
 #+end_src
 ** The =Project= module
-:PROPERTIES:
-:CUSTOM_ID: h:EB91BC1F-508B-4811-9713-F14780B27EA9
-:END:
-*** The =Project= module that sets up =Perspective=
-:PROPERTIES:
-:CUSTOM_ID: h:3ACA3715-B24A-4537-8BEC-D9A637E2FA01
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-project.el")
-;; (use-package perspective
-;;   :ensure t
-;;   :hook ((kill-emacs . persp-state-save)
-;;          (emacs-startup . (lambda () (persp-state-load persp-state-default-file))))
-;;   :custom
-;;   (persp-mode-prefix-key (kbd "C-c x"))
-;;   :bind
-;;   ("C-x C-b" . persp-ibuffer)
-;;   ("C-x k" . persp-kill-buffer*)
-;;   ("C-c s" . persp-switch)
-;;   :config
-;;   (setq persp-state-default-file (concat user-emacs-directory "persp-state-save")
-;;         persp-sort 'access
-;;         persp-modestring-short t)
-;;   (add-to-list 'consult-buffer-sources persp-consult-source)
-;;   (add-hook 'ibuffer-hook
-;;             (lambda ()
-;;               (persp-ibuffer-set-filter-groups)
-;;               (unless (eq ibuffer-sorting-mode 'alphabetic)
-;;                 (ibuffer-do-sort-by-alphabetic))))
-
-;;   (persp-mode))
-#+end_src
-*** The call to provide =Project=
-:PROPERTIES:
-:CUSTOM_ID: h:0A33B244-86E9-42F0-8E3A-CFC1BA61416D
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-project.el")
-(provide 'kam-project)
-#+end_src
-** The =Task= module
 *** Use Case
 *** Custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el") :mkdirp yes
@@ -3875,13 +3855,31 @@ Numerical argument ARG determines the command being selected from to choose argu
 (defvar kam-task-inbox-file "~/Documents/Inbox/inbox.org"
   "The default file where all of my projects and todos are stored before they are sorted.")
 
-(defun kam-task-create-project ()
+(defun kam-task-update-projects-list ()
+  "Updates the project listing with all of the projects in the `kam-task-projects-directory'."
+  (add-to-list 'project--list
+               (directory-files kam-task-projects-directory))
+  (seq-uniq project--list))
+
+(defun kam-task-new-project ()
   "Create a project in the `kam-task-projects-directory'."
   (interactive)
   (let* ((default-directory kam-task-projects-directory)
-         (new-project (read-directory-name "Project: ")))
-    (make-directory (concat kam-task-projects-directory (s-replace " " "_" new-project)))
-    (write-region (concat "* " new-project) nil kam-task-inbox-file 'append)))
+         (project-name (read-directory-name "Project: "))
+         (new-project
+          (concat kam-task-projects-directory
+                  (s-replace " " "_" project-name))))
+    (make-directory new-project)
+    (async-shell-command (concat "git init " new-project))
+    (project--remember-dir new-project)
+    (write-region (concat "* " project-name) nil kam-task-inbox-file 'append)))
+
+(defun kam-task-delete-project ()
+  "Delete a project."
+  (interactive)
+  (let ((default-directory kam-task-projects-directory)
+        (project (read-directory-name "Project to delete: ")))
+    (delete-directory (concat kam-task-projectsa))))
 
 (defun kam-task-get-projects-list ()
   "Returns all of the names of the projects in `kam-task-projects-directory' as a list."
@@ -3896,8 +3894,8 @@ Numerical argument ARG determines the command being selected from to choose argu
   (setq org-agenda-files (list kam-task-task-file)
         org-agenda-custom-commands '(("z" "Things to write about"
                                       ((todo "" ((org-agenda-files `(,kam-ite-inbox-note))
-                                                   (org-agenda-overriding-header "Things to write about")
-                                                   ))))
+                                                 (org-agenda-overriding-header "Things to write about")
+                                                 ))))
                                      
                                      ("i" "Inbox" todo "TODO" ((org-agenda-files `(,kam-task-inbox-file))
                                                                (org-agenda-overriding-header "Unprocessed Inbox Items")))
@@ -4297,6 +4295,12 @@ The eshell is renamed to match that directory in order to make multiple eshell w
   (interactive)
   (org-roam-node-find nil nil
                       (kam-org-roam-filter-by-tag "Baby")))
+
+(defun kam-ite-new-reference-note ()
+  "Makes a new reference note."
+  (interactive)
+  (let ((default-directory kam-ite-reference-note-directory))
+    (find-file (read-file-name "Find file: "))))
 #+end_src
 *** The call to provide =ITE=
 :PROPERTIES:
@@ -4624,7 +4628,7 @@ This library is dedicated to creating custom commands and behaviors for the =Con
   (interactive)
   (save-excursion
     (kam-consult-org-heading--action (org-store-link nil t)))
-  (kam-org-insert-last-stored-link-with-prompt))
+  (kam-insert-last-stored-link-with-prompt))
 
 (defvar kam-consult--previous-point nil
   "Location of point before entering minibuffer.
@@ -4731,11 +4735,15 @@ When the number of characters in a buffer exceeds this threshold,
 (defun kam-menu ()
   "If the current buffer's major mode is Org mode, opens `consult-org-heading'. Otherwise opens `consult-imenu'."
   (interactive)
-  (if (derived-mode-p 'org-mode)
+  (cond
+   ((derived-mode-p 'org-mode)
       (progn
         (consult-org-heading)
-        (setq this-command 'consult-org-heading))
-    (consult-imenu)))
+        (setq this-command 'consult-org-heading)))
+   ((derived-mode-p 'prog-mode)
+    (progn
+      (consult-imenu)
+      (setq this-command 'consult-imenu)))))
 
 (defvar kam-org-refile-region-format "\n\n%s")
 
@@ -5051,6 +5059,12 @@ Also see `kam-modeline-string-abbreviate-but-last'."
 #+end_src
 *** Defining the modeline variables
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-modeline.el") :mkdirp yes :lexical t
+(defvar-local kam-modeline-nix
+    '(:eval
+      (propertize "  " 'face
+                  'shadow))
+  "Mode line construct to display the NixOS logo.")
+
 (defvar-local kam-modeline-kbd-macro
     '(:eval
       (when (and (mode-line-window-selected-p) defining-kbd-macro)
@@ -5135,7 +5149,7 @@ See `kam-modeline-string-cut-middle'."
 
 (defun kam-modeline-major-mode-name ()
   "Return capitalized `major-mode' without the -mode suffix."
-  (capitalize (string-replace "-mode" "" (symbol-name major-mode))))
+  (concat (nerd-icons-icon-for-mode major-mode) " " (capitalize (string-replace "-mode" "" (symbol-name major-mode)))))
 
 (defun kam-modeline-major-mode-help-echo ()
   "Return `help-echo' value for `kam-modeline-major-mode'."
@@ -5148,7 +5162,7 @@ See `kam-modeline-string-cut-middle'."
      '(:eval
        (concat
         (kam-modeline-major-mode-indicator)
-        " "
+        "  "
         (propertize
          (kam-modeline-string-abbreviate-but-last
           (kam-modeline-major-mode-name)
@@ -5255,6 +5269,9 @@ The string is truncated if the width of the window is smaller than `split-width-
                   (face (kam-modeline--vc-face file backend)))
         (kam-modeline--vc-details file branch face)))
   "Mode line construct to return propertized VC branch.")
+
+(defun kam-modeline--lines-and-columns ()
+  "Return the point's position in terms of lines and columns in the current buffer.")
 
 (dolist (construct '(kam-modeline-kbd-macro
                      kam-modeline-narrow
