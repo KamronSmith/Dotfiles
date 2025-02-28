@@ -23,7 +23,7 @@ Additionally, I use this configuration to remind myself of useful Emacs features
 This configuration is split into a few parts:
 - =early-init.el= :: Optimizes the Emacs startup and introduces some basic settings.
 - =init.el= :: Contains basic settings, settings about native Emacs packages, and loads the later modules.
-- =kam-emacs-modules= directory :: Includes all of the modules of the configuration, where one module is aimed around a specific piece of functionality.
+- =lisp= directory :: Includes all of the custom code created by the configuration.
 * The =early-init= file
 :PROPERTIES:
 :CUSTOM_ID: h:A364AC94-F527-4F61-8BD8-74E52286AE46
@@ -268,6 +268,7 @@ I disable the custom file by making it disposable.
   (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
   (defun kam-minibuffer-setup-hook ()
+    "Function for settings as the minibuffer starts."
     (setq gc-cons-threshold most-positive-fixnum
           truncate-lines nil)
     (setq-local fill-column 200))
@@ -2162,21 +2163,21 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
   (defalias 'kmacro-insert-macro 'insert-keyboard-macro))
 #+end_src
 
-*** The =Naved= section about \\[next-line] inserting newlines
+*** Next-line inserting newlines
 :PROPERTIES:
 :CUSTOM_ID: h:E1531A98-B669-47AA-BF55-3FB711898721
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (setq next-line-add-newlines t)
 #+end_src
-*** The =Naved= section for moving lines visually
+*** Moving lines visually
 :PROPERTIES:
 :CUSTOM_ID: h:351C9E33-AC55-47EA-9464-A30C5AD41565
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (setq line-move-visual t)
 #+end_src
-*** The =Naved= section about how many spaces should end a sentence
+*** How many spaces should end a sentence
 :PROPERTIES:
 :CUSTOM_ID: h:F02C470B-A85C-47EC-82F9-0DD343D38E12
 :END:
@@ -2184,14 +2185,14 @@ As god intended.
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (setq sentence-end-double-space nil)
 #+end_src
-*** The =Naved= section about killing not saving duplicates
+*** Killing not saving duplicates
 :PROPERTIES:
 :CUSTOM_ID: h:2F3308B3-AB74-4561-A73C-F9AF284162D7
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (setq kill-do-not-save-duplicates t)
 #+end_src
-*** The =Naved= section that contains custom lisp
+*** Custom lisp
 :PROPERTIES:
 :CUSTOM_ID: h:F53E6ABC-575D-4B03-85C6-AE54C84FA3F5
 :END:
@@ -2590,7 +2591,7 @@ This module contains all the settings and configuration related to =Org= and all
 - Maintain an agenda. See [[#h:EDEF7F9E-0EA7-4CEA-8F54-E54FCF880B6E][The =Org= section that enables =Org Agenda.=]]
 - Clock in and out of tasks, enabling you to keep track of your time.
 - Links to files regardless of file type. See [[#h:268257D7-80D5-4588-9BAF-8D5C6A8F0CB0][The =Org= section for =Org= link settings]] 
-*** The =Org= section for basic settings
+*** Basic settings
 :PROPERTIES:
 :CUSTOM_ID: h:31F7379A-6E8A-4BC7-A1D6-FF3604904994
 :END:
@@ -2619,7 +2620,7 @@ This module contains all the settings and configuration related to =Org= and all
         org-fold-catch-invisible-edits 'show
         org-fontify-todo-headline t))
 #+end_src
-*** The =Org= section that configures =Org Capture=
+*** =Org Capture=
 :PROPERTIES:
 :CUSTOM_ID: h:3AECA5FA-E8C8-42BB-8673-D37771491AF4
 :END:
@@ -2639,7 +2640,7 @@ This module contains all the settings and configuration related to =Org= and all
 
 (add-hook 'olivetti-mode 'org-capture)
 #+end_src
-*** The =Org= section that configures =Org Refile=
+*** =Org Refile=
 :PROPERTIES:
 :CUSTOM_ID: h:2B79A9C5-4C82-438A-BFA2-79BAEC7DADCC
 :STYLE:    test
@@ -2654,7 +2655,7 @@ This module contains all the settings and configuration related to =Org= and all
   (let ((org-refile-targets '((nil . (:maxlevel . 10)))))
     (org-refile)))
 #+end_src
-*** The =Org= section that configures =Org Links=
+*** =Org Links=
 :PROPERTIES:
 :CUSTOM_ID: h:268257D7-80D5-4588-9BAF-8D5C6A8F0CB0
 :END:
@@ -2683,7 +2684,7 @@ This module contains all the settings and configuration related to =Org= and all
         (org-insert-link nil (car l) (read-from-minibuffer "Link Text: "))))))
 #+end_src
 
-*** The =Org= section that configures =Org Babel=
+*** =Org Babel=
 :PROPERTIES:
 :CUSTOM_ID: h:468149A3-9868-47AD-83FE-C0A67D664B20
 :END:
@@ -2724,23 +2725,23 @@ This module contains all the settings and configuration related to =Org= and all
 
 #+RESULTS:
 : t
-*** The =Org= section that configures =Org Export=
+*** =Org Export=
 :PROPERTIES:
 :CUSTOM_ID: h:272DB923-1673-4B0C-AFEC-73EA28D00467
 :END:
-*** The =Org= section that configures =Org Attach= 
+*** =Org Attach= 
 :PROPERTIES:
 :CUSTOM_ID: h:C083C5B7-0EB9-4696-BEB0-4173040C1E8D
 :END:
-*** The =Org= section that configures =Org Protocol= 
+*** =Org Protocol= 
 :PROPERTIES:
 :CUSTOM_ID: h:84FBE031-EE1F-4843-B3B4-27C7EDA2AAD2
 :END:
-*** The =Org= section that configures =Org Time Logging=
+*** =Org Time Logging=
 :PROPERTIES:
 :CUSTOM_ID: h:1F227018-1391-4386-842A-2E9C9AAD2D7C
 :END:
-*** The =Org= section that configures =Org= extensions
+*** =Org= extensions
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 (use-package org-download
   :ensure t
@@ -2750,7 +2751,7 @@ This module contains all the settings and configuration related to =Org= and all
   :ensure t
   :after org)
 #+end_src
-*** The =Org= section for modifying the syntax table
+*** Org modifying the syntax table
 :PROPERTIES:
 :CUSTOM_ID: h:9FBB7D12-610C-4449-B147-61B66B970ACC
 :END:
@@ -2764,7 +2765,7 @@ This stops the mismatch parenthesis bug in Org source blocks."
 
 (add-hook 'org-mode-hook #'kam-org-syntax-table-modify)
 #+end_src
-*** The =Org= section that prettifies Org
+*** Prettifies Org
 :PROPERTIES:
 :CUSTOM_ID: h:C0BADBF4-F85F-41B4-B375-31D7248ADAC4
 :END:
@@ -2785,7 +2786,7 @@ This stops the mismatch parenthesis bug in Org source blocks."
   (setq org-pretty-entities t))
 
 #+end_src
-*** The =Org= section that configures =Pomodoros=
+*** =Pomodoros=
 :PROPERTIES:
 :CUSTOM_ID: h:E527460D-12BC-444E-A111-D64A5B958AEF
 :END:
@@ -2793,7 +2794,7 @@ This stops the mismatch parenthesis bug in Org source blocks."
 ; (use-package tmr
  ; :ensure t)
 #+end_src
-*** The =Org= section that sets up =toc-org=
+*** =Toc-org=
 :PROPERTIES:
 :CUSTOM_ID: h:BADF4859-DC2A-44D0-A8BE-C374BD29E494
 :END:
@@ -2802,12 +2803,12 @@ This stops the mismatch parenthesis bug in Org source blocks."
   :commands toc-org-enable
   :init (add-hook 'org-mode-hook 'toc-org-enable))
 #+end_src
-*** The =Org= section that installs =Org-plus-contrib=
+*** =Org-plus-contrib=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 ;; (use-package org-plus-contrib
 ;;   :ensure t)
 #+end_src
-*** The =Org= section that contains custom lisp
+*** Custom lisp
 :PROPERTIES:
 :CUSTOM_ID: h:15B7C4B7-8411-405D-BAD1-4B56C20A4CB0
 :END:
@@ -3029,7 +3030,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
 :PROPERTIES:
 :CUSTOM_ID: h:739A9D33-046A-4176-883E-11BA86F77F43
 :END:
-*** The =Themes= section that sets up =Modus Themes=
+*** =Modus Themes=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package modus-themes
   :ensure t
@@ -3114,12 +3115,12 @@ The OS module is designed to integrate Emacs with the operating system, specific
   (add-hook 'modus-themes-post-load-hook #'kam-set-custom-faces)
   (add-hook 'modus-themes-post-load-hook #'kam-modus-themes-org-block-faces))
   #+end_src
-*** The =Themes= section that sets up =EF Themes=
+*** =EF Themes=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package ef-themes
   :ensure t)
 #+end_src
-*** The =Themes= section that sets up =Olivetti=
+*** =Olivetti=
 :PROPERTIES:
 :CUSTOM_ID: h:216AA5B4-C126-4271-9F4F-B34DE364E881
 :END:
@@ -3134,7 +3135,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
          olivetti-recall-visual-line-mode-entry-state t))
 
 #+end_src
-*** The =Themes= section that sets up =Spacious Padding=
+*** =Spacious Padding=
 :PROPERTIES:
 :CUSTOM_ID: h:DA5B3A2F-EF18-45BF-84C0-31FED395BD50
 :END:
@@ -3158,7 +3159,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
            :fringe-width 4))
   (spacious-padding-mode))
 #+end_src
-*** The =Themes= section that sets up my =modeline=
+*** =Modeline=
 :PROPERTIES:
 :ID:       81aad2f2-a0f6-4b9a-a657-23451985e93d
 :END:
@@ -3194,7 +3195,7 @@ The majority of the functions are written in the [[id:90ecc2e2-ec44-444f-a373-6a
   (kam-modeline--spacious-indicators)
   (add-hook 'spacious-padding-mode-hook #'kam-modeline--spacious-indicators))
 #+end_src
-*** The =Themes= section that sets up =Logos=
+*** =Logos=
 :PROPERTIES:
 :CUSTOM_ID: h:6D85E383-3981-4C92-A294-D36FA6DC09FC
 :END:
@@ -3208,27 +3209,22 @@ The majority of the functions are written in the [[id:90ecc2e2-ec44-444f-a373-6a
                 logos-hide-fringe nil
                 logos-olivetti t))
 #+end_src
-*** The =Themes= section for =Fontaine=
+*** =Fontaine=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package fontaine
   :ensure t
   :config
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld")))
 #+end_src
-*** The =Themes= section for =Lin=
+*** =Lin=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package lin
   :ensure t
+  :hook (after-init . lin-global-mode)
   :config
-  (setq lin-face 'lin-yellow)
-  (lin-global-mode 1))
+  (setq lin-face 'lin-yellow))
 #+end_src
-*** The =Themes= section for =Cursory=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package cursory
-  :ensure t)
-#+end_src
-*** The =Themes= section for =Pulsar=
+*** =Pulsar=
 For use with Avy.
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 (use-package pulsar
@@ -3254,7 +3250,7 @@ For use with Avy.
   (advice-add 'avy-goto-char-timer :after 'pulsar-recenter-center))
 
 #+end_src 
-*** The =Themes= section that sets up icons
+*** Sets up icons
 :PROPERTIES:
 :CUSTOM_ID: h:1187DBE8-7AC4-4A4C-8FF7-40067F0818D6
 :END:
@@ -3295,7 +3291,7 @@ For use with Avy.
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 #+end_src
-*** The =Themes= sets that sets up fonts
+*** Sets up fonts
 :PROPERTIES:
 :CUSTOM_ID: h:96ADA93B-F10F-49F4-BEC6-76E082CF28B7
 :END:
@@ -3334,7 +3330,7 @@ For use with Avy.
 #+end_src
 
 #+RESULTS:
-*** The =Themes= section that sets up the Emacs Daemon Make Frame
+*** Sets up the Emacs Daemon Make Frame
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
 
 #+end_src
@@ -3349,7 +3345,7 @@ For use with Avy.
 :PROPERTIES:
 :CUSTOM_ID: h:5FB4541E-F907-4424-AF92-79D13478F664
 :END:
-*** The =Books= section that sets up =Calibredb=
+*** =Calibredb=
 :PROPERTIES:
 :CUSTOM_ID: h:4975553E-EE29-4152-A762-CCC9CA107ABA
 :END:
@@ -3363,7 +3359,7 @@ For use with Avy.
         calibredb-library-alist '(("~/Documents/Resources/Books"))
         calibredb-sort-by 'title))
 #+end_src
-*** The =Books= section that sets up =Pdf-tools=
+*** =PDF-tools=
 :PROPERTIES:
 :CUSTOM_ID: h:C2F2FA7D-E90D-455A-ADD1-FB0A77EDAD92
 :END:
@@ -3373,7 +3369,7 @@ For use with Avy.
   :config
   (pdf-tools-install))
 #+end_src
-*** The =Books= section that sets up =Nov= 
+*** =Nov= 
 :PROPERTIES:
 :CUSTOM_ID: h:05D4480D-A8F4-4745-981A-207E421CBE30
 :END:
@@ -3383,7 +3379,7 @@ For use with Avy.
   (setq nov-text-width 80))
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 #+end_src
-*** The =Books= section that sets up =Nov-Xwidget=
+*** =Nov-Xwidget=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-books.el")
  ;; (use-package nov-xwidget
  ;;   :ensure t
@@ -3392,7 +3388,7 @@ For use with Avy.
  ;;   :bind (:map nov-mode-map
  ;;               ("o" . 'nov-xwidget-view)))
 #+end_src
-*** The =Books= section that makes text files readable
+*** Making text files readable
 :PROPERTIES:
 :CUSTOM_ID: h:37992BE2-5D75-4483-AF6A-2218B57FB171
 :END:
@@ -3401,7 +3397,7 @@ For use with Avy.
   :ensure nil
   :hook (text-mode . variable-pitch-mode))
 #+end_src
-*** The =Books= section that contains custom lisp
+*** Custom lisp
 :PROPERTIES:
 :CUSTOM_ID: h:02D98B2D-FF0E-4EBD-8B13-C7382A38B551
 :END:
@@ -3548,7 +3544,7 @@ The shell is renamed to match that directory to make multiple shell windows easi
   (interactive)
   (kam-comint--insert-and-send "cd .."))
 #+end_src
-*** The =Comint= section with custom lisp
+*** Custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
 (defun kam-comint--beginning-of-prompt-p ()
   "Return non-nil if the point is at the beginning of a shell prormpt."
@@ -3652,7 +3648,7 @@ Numerical argument ARG determines the command being selected from to choose argu
 :PROPERTIES:
 :CUSTOM_ID: h:6B6AB7D5-0FEF-4A89-8A23-9A803B1DCD21
 :END:
-*** Integrating =Calendar= with =Org Mode=
+*** =Org Mode=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-calendar.el") :mkdirp yes
 (use-package calendar
   :ensure nil
@@ -3699,7 +3695,7 @@ Numerical argument ARG determines the command being selected from to choose argu
 :PROPERTIES:
 :CUSTOM_ID: h:60A610DE-CB69-4EDD-9371-057095DA9EC7
 :END:
-*** The =Programming= section that configures =Flycheck=
+*** =Flycheck=
 :PROPERTIES:
 :CUSTOM_ID: h:ADF0F138-BB8C-4F12-8497-F3DC450D2540
 :END:
@@ -3758,7 +3754,7 @@ Numerical argument ARG determines the command being selected from to choose argu
   (treesit-auto-add-to-auto-mode-alist 'all)
   (global-treesit-auto-mode))
 #+end_src
-*** The =Programming= section that sets up =emacs-direnv=
+*** =Emacs-direnv=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (use-package direnv
   :ensure t
@@ -3766,12 +3762,12 @@ Numerical argument ARG determines the command being selected from to choose argu
   (setq direnv-always-show-summary nil)
   (direnv-mode))
 #+end_src
-*** The =Programming= section that sets up =envrc=
+*** =Envrc=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (use-package envrc
   :hook (after-init . envrc-global-mode))
 #+end_src
-*** The =Programming= section that adjusts =compilation-mode=
+*** =Compilation-mode=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (use-package compile
   :ensure nil
@@ -3787,12 +3783,12 @@ Numerical argument ARG determines the command being selected from to choose argu
    "Advises `compile' so it sets the argument COMINT to t."
    (ad-set-arg 1 t))
 #+end_src
-*** The =Programming= section that installs =terraform-mode=
+*** =Terraform-mode=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (use-package terraform-mode
   :ensure t)
 #+end_src
-*** The =Programming= section that configures =ediff=
+*** =Ediff=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (setq ediff-keep-variants nil
       ediff-make-buffers-readonly-at-startup nil
@@ -3846,7 +3842,7 @@ Numerical argument ARG determines the command being selected from to choose argu
 #+end_src
 ** The =Task= module
 *** Use Case
-*** The =Task= module that creates custom lisp
+*** Custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el") :mkdirp yes
 (defvar kam-task-projects-directory "~/Documents/Projects/"
   "The default directory where project folders are stored.")
@@ -4055,7 +4051,7 @@ Used for setting Eshell's `outline-regexp'.")
   :ensure t
   :after eshell-mode)
 #+end_src
-*** The =Eshell= section for custom lisp
+*** Custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-eshell.el")
 (defun kam-eshell--history-to-list ()
   "Returns the current Eshell buffer's history as a list of strings."
@@ -4135,7 +4131,7 @@ The eshell is renamed to match that directory in order to make multiple eshell w
 :PROPERTIES:
 :CUSTOM_ID: h:537F628C-3766-4A29-B210-77603F2E687B
 :END:
-*** The =ITE= section about setting up =Org-roam=
+*** =Org-roam=
 :PROPERTIES:
 :CUSTOM_ID: h:2D160116-0F36-4737-8C07-9D759105E4EA
 :END:
@@ -4200,7 +4196,7 @@ The eshell is renamed to match that directory in order to make multiple eshell w
   (setq consult-org-roam-grep-func #'consult-ripgrep)
   (consult-org-roam-mode 1))
 #+end_src
-*** The =ITE= section that sets up =Org Roam UI=
+*** =Org Roam UI=
 :PROPERTIES:
 :CUSTOM_ID: h:82022D74-0BBA-4992-BE78-37CE0FD9789C
 :END:
@@ -4213,7 +4209,7 @@ The eshell is renamed to match that directory in order to make multiple eshell w
   (setq org-roam-ui-update-on-save nil)
   (setq org-roam-ui-open-on-start t))
 #+end_src
-*** The =ITE= section for =Org Anki=
+*** =Org Anki=
 :PROPERTIES:
 :CUSTOM_ID: h:314CF099-B35A-498E-AFC0-D4E89AB3E80C
 :END:
@@ -4224,16 +4220,19 @@ The eshell is renamed to match that directory in order to make multiple eshell w
   (setq org-anki-api-key nil
         org-anki-default-deck "get that main main"))
 #+end_src
-***  The =ITE= section for =Org QL=
+*** =Org QL=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
 (use-package org-ql
   :ensure t)
 #+end_src
-*** The =ITE= section that contains custom lisp
+*** Custom lisp
 :PROPERTIES:
 :CUSTOM_ID: h:423D93FE-5D46-4892-86DB-F7A6B564EB05
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
+(defvar kam-ite-reference-note-directory "~/Documents/Resources/Reference Notes/"
+  "Location of the ITE's reference note directory.")
+
 (defun kam-search-zettelkasten ()
   (interactive)
   (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS")
@@ -4287,7 +4286,7 @@ The eshell is renamed to match that directory in order to make multiple eshell w
 ** The =Term= module
 *** Purpose
 This module is designed to make a nice terminal emulator experience within Emacs.
-*** The =Term= section that sets up =EAT=
+*** =EAT=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-term.el") :mkdirp t
 ; (use-package eat
 ;  :ensure t
