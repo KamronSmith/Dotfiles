@@ -1789,6 +1789,7 @@ Used for hooking into Embark."
   ("M-SPC" . #'kam-push-mark-no-activate)
   ("M-<return>" . #'kam-insert-new-line-above)
   ("M-DEL" . backward-kill-sentence)
+  ("C-h p" . #'helpful-at-point)
   ("C-h F" . apropos-function)
   ("C-h V" . apropos-variable)
   ("C-x 1" . nil)
@@ -2025,7 +2026,9 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
 (use-package harpoon
    :ensure t
    :bind
-   ("<f11>" . harpoon-add-file)
+   ("<f9>" . harpoon-add-file)
+   ("C-(" . harpoon-go-to-1)
+   ("C-{" . harpoon-go-to-2)
    :config
    (setq harpoon-project-package 'project))
 #+end_src
