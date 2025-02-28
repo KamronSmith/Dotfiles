@@ -59,6 +59,9 @@
     libtool
     awscli2
     gh
+    clang-tools
+    clang-manpages
+    cppcheck
     # user apps
     kitty
     waybar
