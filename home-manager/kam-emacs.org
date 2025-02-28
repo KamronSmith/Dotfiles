@@ -233,7 +233,6 @@ I disable the custom file by making it disposable.
               fill-column 80
               indent-tabs-mode nil
               next-screen-context-lines 20
-              cursor-type 'bar
               tab-width 4
               truncate-partial-width-windows nil
               ;; scroll-margin 99999
@@ -242,6 +241,13 @@ I disable the custom file by making it disposable.
               echo-keystrokes-help nil
               next-error-recenter '(4)
               cursor-in-non-selected-windows nil)
+#+end_src
+** Cursor settings
+#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(setq-default cursor-type 'box)
+(blink-cursor-mode)
+(setq blink-cursor-interval 0.75)
+(set-cursor-color "yellow")
 #+end_src
 ** Minibuffer
 :PROPERTIES:
