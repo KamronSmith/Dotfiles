@@ -16,7 +16,7 @@
            exec-once = wl-paste --type image --watch cliphist store
 
            monitor= HDMI-A-1,2560x1440@144,0x0,1
-           $terminal = kitty
+           $terminal = ghostty
            $fileManager = emacsclient -c -a 
            $menu = rofi -show drun
            $editor = emacsclient -c -a ""
@@ -118,11 +118,13 @@
            bind = $mainMod, V, togglefloating
            bind = $mainMod, M, exit
            # bind = $mainMod, F, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
-           bind = Control_L&Super_L&Shift_L&Alt_L, B, exec, $menu
+           bind = $mainMod, X, exec, $menu
            bind = Control_L&Super_L&Shift_L&Alt_L, D, exec, playerctl play-pause
            bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
+           # bind = Control_L&Super_L&Shift_L&Alt_L, C, exec, emacsclient -c -a "" -e "(kam-shell-home-directory)"
+           bind = Control_L&Super_L&Shift_L&Alt_L, C, exec, $terminal
+           bind = Control_L&Super_L&Shift_L&Alt_L, F, exec, emacsclient -c -a "" -e "(dired \"~\")"
            bind = $mainMod, Tab, exec, rofi -show window
-           bind = $mainMod, X, togglespecialworkspace, kitty
 
            bind = $mainMod, b, movefocus, l
            bind = $mainMod, n, movefocus, d
@@ -172,7 +174,7 @@
            # windowrulev2 = bordersize 0, floating:0, onworkspace:f[1]
            # windowrulev2 = rounding 0, floating:0, onworkspace:f[1]
 
-           windowrulev2 = opacity 0.80 0.80, class:^(Emacs)$
+           windowrulev2 = opacity 0.80 0.80 0.80, class:^(Emacs)$
            windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
 
            workspace = name:Main,default:true,monitor:HDMI-A-1,id:1

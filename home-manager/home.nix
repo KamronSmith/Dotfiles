@@ -49,6 +49,7 @@
     sysstat
     pciutils # lspci
     usbutils # lsusb
+    backintime-qt
     gdb
     # coding
     git
@@ -62,9 +63,15 @@
     clang-tools
     clang-manpages
     cppcheck
+    tmux
     # user apps
+    OVMF
+    megasync
+    ghostty
     kitty
+    virtualbox
     waybar
+    gimp
     rofi-wayland
     swww
     mpvpaper
@@ -76,21 +83,27 @@
     calibre
     remmina
     anki
-    anki-sync-server
     pamixer
     playerctl
     waybar-mpris
+    lutris
+    obsidian
     wayshot
     prismlauncher
+    nexusmods-app-unfree
   ];
   
   home.file = {
-    
+    ".config/tmux/tmux.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/tmux.conf";
+    };
+    ".config/nvim/init.lua" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/init.lua";
+    };
+    ".config/kitty/kitty.conf" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/kitty.conf";
+    };
   };
-
-  # xdg.configFile = {
-  #   "hypr/hyprland.conf".source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/user/hyprland.conf";
-  # };
   
   home.sessionVariables = {
     # Doesnt work with nushell

@@ -35,13 +35,15 @@
                                               string: "#ffa07a"
                                               variable: "#eedd82"
                                 }
-                                keybindings: [{
-                                             name: ctrl_backspace
-                                             modifier: control
-                                             keycode: backspace
-                                             mode: emacs
-                                             event: {edit: backspaceword }
-                                }]
+                                keybindings: [
+                                             {
+                                              name: test_keybind
+                                              modifier: control
+                                              keycode: char_h
+                                              mode: emacs
+                                              event: { edit: backspaceword }
+                                             }
+                                ]
                   }
        '';
         environmentVariables = {
@@ -80,6 +82,7 @@
     zsh = {
       enable = true;
       autocd = true;
+      cdpath = [ " . ~ " ];
       sessionVariables = {
         XCURSOR_THEME = "Bibata-Modern-Ice";
         XCURSOR_SIZE = "30";
@@ -108,6 +111,27 @@
       };
       dotDir = ".config/zsh";
       enableCompletion = true;
+      history = {
+        share = true;
+        size = 10000;
+        expireDuplicatesFirst = true;
+      };
+      initExtra = ''
+        setopt AUTOPUSHD
+        setopt NO_CASE_GLOB
+        setopt NO_CASE_MATCH
+        setopt EXTENDGLOB
+      '';
+    };
+
+    bash = {
+      enable = true;
+      historyControl = ["ignoredups"];
+      enableVteIntegration = true;
+      shellAliases = {
+        ll = "ls -l";
+        ".." = "cd ..";
+      };      
     };
   };
 }

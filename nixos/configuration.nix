@@ -29,6 +29,12 @@
     "nvidia-uvm"
   ];
 
+  boot.kernelParams = [
+    "quiet"
+    "splash"
+    "amd_iommu=on"
+  ];
+
   boot.extraModprobeConfig = ''
   options nvidia-drm fbdev=1
   options nvidia-drm modeset=1
