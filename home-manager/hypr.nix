@@ -20,6 +20,7 @@
            $fileManager = emacsclient -c -a 
            $menu = rofi -show drun
            $editor = emacsclient -c -a ""
+           $browser = firefox
 
            general {
                gaps_in = 2
@@ -123,7 +124,7 @@
            bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
            # bind = Control_L&Super_L&Shift_L&Alt_L, C, exec, emacsclient -c -a "" -e "(kam-shell-home-directory)"
            bind = Control_L&Super_L&Shift_L&Alt_L, C, exec, $terminal
-           bind = Control_L&Super_L&Shift_L&Alt_L, F, exec, emacsclient -c -a "" -e "(dired \"~\")"
+           bind = Control_L&Super_L&Shift_L&Alt_L, F, exec, $browser
            bind = $mainMod, Tab, exec, rofi -show window
 
            bind = $mainMod, b, movefocus, l
