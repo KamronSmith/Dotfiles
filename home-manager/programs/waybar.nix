@@ -6,9 +6,9 @@
     settings = {
       mainBar = {
         layer = "top";
-        output = "HDMI-A-1";
         position = "top";
         height = 30;
+        output = "DP-2";
         
         modules-left = [
           "cpu"
