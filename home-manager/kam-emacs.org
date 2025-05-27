@@ -693,8 +693,9 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :config
   (setq tramp-encoding-shell (executable-find "sh")
-        sh-shell-file (executable-find "bash")
-        shell-file-name (executable-find "bash"))
+        sh-shell-file (executable-find "sh")
+        shell-file-name (executable-find "sh")
+	tramp-default-remote-shell (executable-find "sh"))
   
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "/sudo::")
