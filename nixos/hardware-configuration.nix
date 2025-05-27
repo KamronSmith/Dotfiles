@@ -24,6 +24,12 @@
       options = [ "fmask=0077" "dmask=0077" ];
     };
 
+  fileSystems."/run/media/kam/Backup" =
+    {
+      device = "/dev/disk/by-uuid/82debee8-e005-49e0-8b12-0aa018ef3e2f";
+      fsType = "ext4";
+    };
+
   swapDevices =
     [ { device = "/dev/disk/by-uuid/58ed7a96-76c6-4c55-9219-d1c6cd5837d6"; }
     ];
