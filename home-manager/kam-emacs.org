@@ -2174,6 +2174,9 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
 :CUSTOM_ID: h:FC224E32-F90A-4CDA-859B-967AA06176C5
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+(use-package vundo
+  :ensure t)
+
 (defvar undo-repeat-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "/") 'undo)
