@@ -193,7 +193,7 @@
     pkgs.iosevka-comfy.comfy-duo
     pkgs.libre-caslon
     pkgs.garamond-libre
-    (pkgs.nerdfonts.override { fonts = [ "DroidSansMono" ]; })
+    pkgs.nerd-fonts.droid-sans-mono
     pkgs.noto-fonts-cjk-sans ## japanese fonts
   ];
 
