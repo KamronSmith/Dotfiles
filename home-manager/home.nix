@@ -82,6 +82,7 @@
     mpv
     emacs30
     calibre
+    libreoffice
     remmina
     anki
     pamixer
