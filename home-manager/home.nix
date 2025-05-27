@@ -24,6 +24,7 @@
     # system utilities
     hyprpolkitagent
     inputs.hyprland-qtutils.packages."${pkgs.system}".default
+    gnupg
     pavucontrol
     dunst
     bluez
