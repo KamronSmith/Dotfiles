@@ -15,7 +15,7 @@
            exec-once = wl-paste --type text --watch cliphist store
            exec-once = wl-paste --type image --watch cliphist store
 
-           monitor= HDMI-A-1,2560x1440@144,0x0,1
+           monitor= DP-2, 2560x1440@180, 0x0, 1
            $terminal = ghostty
            $fileManager = emacsclient -c -a 
            $menu = rofi -show drun
