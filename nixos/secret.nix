@@ -8,4 +8,9 @@
     enable = true;
     polkitPolicyOwners = [ "kam" ];
   };
+
+  programs.gnupg.agent = {
+    enable = true;
+    pinentryPackage = pkgs.pinentry-gnome3;
+  };
 }
