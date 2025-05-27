@@ -91,6 +91,7 @@
     lutris
     obsidian
     wayshot
+    slurp
     prismlauncher
     nexusmods-app-unfree
   ];
