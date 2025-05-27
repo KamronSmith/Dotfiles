@@ -188,13 +188,13 @@
 
   programs.nix-ld.enable = true;
 
-  fonts.packages = with pkgs; [
-    iosevka-comfy.comfy
-    iosevka-comfy.comfy-duo
-    nerdfonts
-    libre-caslon
-    garamond-libre
-    noto-fonts-cjk-sans ## japanese fonts
+  fonts.packages = [
+    pkgs.iosevka-comfy.comfy
+    pkgs.iosevka-comfy.comfy-duo
+    pkgs.libre-caslon
+    pkgs.garamond-libre
+    (pkgs.nerdfonts.override { fonts = [ "DroidSansMono" ]; })
+    pkgs.noto-fonts-cjk-sans ## japanese fonts
   ];
 
  fonts.fontconfig = {
