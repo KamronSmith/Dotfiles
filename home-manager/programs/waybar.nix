@@ -6,9 +6,9 @@
     settings = {
       mainBar = {
         layer = "top";
-        position = "top";
-        height = 30;
         output = "DP-2";
+        position = "bottom";
+        height = 25;
         
         modules-left = [
           "cpu"
