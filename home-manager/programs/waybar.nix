@@ -11,8 +11,8 @@
         height = 25;
         
         modules-left = [
-          "cpu"
           "memory"
+          "cpu"
           "network"
           "hyprland/workspaces"
         ];
@@ -27,7 +27,6 @@
           "pulseaudio"
           "tray"
           "custom/power"
-          "clock"
         ];
         
         "hyprland/workspaces" = {
