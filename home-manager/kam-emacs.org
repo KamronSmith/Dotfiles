@@ -443,30 +443,31 @@ If there is more than one, let the user choose."
 #+end_src
 *** The =Dired= section for =dired-subtree=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
-;; (use-package dired-subtree
-;;   :ensure t
-;;   :after (dired)
-;;   :bind
-;;   (:map dired-mode-map
-;;         ("<tab>" . dired-subtree-toggle)
-;;         ("TAB" . dired-subtree-toggle)
-;;         ("C-<tab>" . kam-dired-subtree-up-toggle))
-;;   :config
-;;   (defun kam-dired-subtree-up-toggle ()
-;;     "Goes to the parent subtree and toggles the visiblity of it."
-;;     (interactive)
-;;     (dired-subtree-up)
-;;     (dired-subtree-toggle)))
+(use-package dired-subtree
+  :ensure t
+  :after (dired)
+  :bind
+  (:map dired-mode-map
+        ("<tab>" . dired-subtree-toggle)
+        ("TAB" . dired-subtree-toggle)
+        ("C-<tab>" . kam-dired-subtree-up-toggle))
+  :config
+  (defun kam-dired-subtree-up-toggle ()
+    "Goes to the parent subtree and toggles the visiblity of it."
+    (interactive)
+    (dired-subtree-up)
+    (dired-subtree-toggle)))
 #+end_src
 *** The =Dired= section for =dired-preview=
 #+begin_src emacs-lisp (format user-init-file "%s")
 (use-package dired-preview
   :ensure t
   :after (dired)
-  :hook (after-init . dired-preview-global-mode)
   :config
   (setq dired-preview-max-size (* (expt 2 20) 10)
-        dired-preview-delay 0.15))
+        dired-preview-delay 0.15)
+
+  (dired-preview-global-mode 1))
 #+end_src
 *** The =Dired= section for =image-dired=
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
