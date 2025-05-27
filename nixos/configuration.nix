@@ -129,7 +129,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.kam = {
     isNormalUser = true;
-    shell = pkgs.nushell;
+    shell = pkgs.zsh;
     useDefaultShell = true;
     description = "Kamron Smith";
     extraGroups = [ "docker" "libvirtd" "networkmanager" "wheel" "storage" ];
@@ -138,7 +138,9 @@
     ];
   };
 
-  users.defaultUserShell = pkgs.nushell;
+  users.defaultUserShell = pkgs.zsh;
+
+  programs.zsh.enable = true;
 
   # Enable automatic login for the user.
 
