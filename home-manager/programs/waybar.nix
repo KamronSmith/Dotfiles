@@ -118,7 +118,7 @@
           /* 26 27 38 0.5 */
           background-color: #000000; 
           color: #ffffff;
-          opacity: 0.8;
+          opacity: 1.0;
         }
 
         /* General styling for the individual modules */
