@@ -3936,11 +3936,8 @@ Numerical argument ARG determines the command being selected from to choose argu
    "Advises `compile' so it sets the argument COMINT to t."
    (ad-set-arg 1 t))
 #+end_src
-*** =Terraform-mode=
 *** Python
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package terraform-mode
-  :ensure t)
 (use-package python
   :ensure t
   :defer t
