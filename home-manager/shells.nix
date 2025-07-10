@@ -116,11 +116,10 @@
         size = 10000;
         expireDuplicatesFirst = true;
       };
-      initExtra = ''
+      initContent = ''
         setopt AUTOPUSHD
         setopt NO_CASE_GLOB
         setopt NO_CASE_MATCH
-        setopt EXTENDGLOB
       '';
     };
 
