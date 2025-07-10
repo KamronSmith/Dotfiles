@@ -603,10 +603,77 @@ Additional code is added to save the contents of registers after Emacs closes, s
   :config
   (setq org-imenu-depth 4))
 #+end_src
+** Docview
+#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(defun kam-docview-forward-paragraph ()
+  "Move point forward paragraph such that the first line is highlighted.
+
+This function is intended to be used with `hl-line-mode'."
+  (interactive)
+  (forward-paragraph)
+  (forward-line))
+
+(defun kam-docview-backward-paragraph ()
+  "Move point backward paragraph such that the first line is highlighted.
+
+This function is intended to be used with `hl-line-mode'."
+  (interactive)
+  (backward-paragraph 2)
+  (forward-line))
+#+end_src
 ** Help-mode
 :PROPERTIES:
 :CUSTOM_ID: h:D661E16E-B075-468A-AEEE-A68D3F817881
 :END:
+#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(use-package help
+  :ensure nil
+  :hook (help-mode . lin-mode)
+  :bind (:map help-mode-map
+	      ("q" . #'kam-common-quit-window)
+	      ("p" . 'kam-docview-backward-paragraph)
+	      ("n" . 'kam-docview-forward-paragraph)
+	      ("j" . 'forward-button)
+	      ("k" . 'backward-button)
+	      ("<mouse-9>" . 'help-go-back)
+	      ("<next>" . scroll-down-line)
+	      ("C-," . scroll-up)
+	      ("M-," . scroll-down)
+	      ("<prior>" . scroll-up-line)))
+#+end_src
+** Info-mode
+#+begin_src emacs-lisp :tangle (format user-init-file)
+(use-package info
+  :ensure nil
+  :hook (Info-mode . lin-mode)
+  :bind (:map Info-mode-map
+	      ("M-[" . 'Info-history-back)
+	      ("<mouse-9>" . #'Info-history-back)
+	      ("M-]" . 'Info-history-forward)
+	      ("C-," . scroll-up)
+	      ("M-," . scroll-down)
+	      ("p" . 'kam-docview-backward-paragraph)
+	      ("P" . 'Info-prev)
+	      ("n" . 'kam-docview-forward-paragraph)
+	      ("N" . 'Info-next)
+	      ("j" . 'Info-next-reference)
+	      ("k" . 'Info-prev-reference)
+	      ("<next>" . scroll-down-line)
+	      ("<prior>" . scroll-up-line)))
+#+end_src
+** Man-mode
+:PROPERTIES:
+:CUSTOM_ID: h:42C5BC72-EF43-4A8C-98A5-D68E3B7D7CAA
+:END:
+#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(use-package man
+  :ensure nil
+  :bind (:map Man-mode-map
+	      ("p" . #'kam-docview-backward-paragraph)
+	      ("n" . #'kam-docview-forward-paragraph))
+  :config
+  (setq Man-notify-method 'pushy))
+#+end_src
 ** Occur
 :PROPERTIES:
 :CUSTOM_ID: h:82B82CF0-FEF5-4431-93A3-C08576891A90
@@ -632,6 +699,8 @@ Occur is a command that shows all lines in a buffer that match a user given rege
   (multi-occur
    (kam-get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
+
+(define-key occur-mode-map (kbd "w") 'occur-edit-mode)
 #+end_src
 ** Re-Builder
 :PROPERTIES:
@@ -794,17 +863,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 (setq x-gtk-use-system-tooltips nil
       tooltip-reuse-hidden-frame t
       tooltip-use-echo-area t)
-#+end_src
-** =Manpages=
-:PROPERTIES:
-:CUSTOM_ID: h:42C5BC72-EF43-4A8C-98A5-D68E3B7D7CAA
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(use-package man
-  :ensure nil
-  ;;    :commands (man)
-  :config
-  (setq Man-notify-method 'pushy))
 #+end_src
 ** =Proced=
 :PROPERTIES:
