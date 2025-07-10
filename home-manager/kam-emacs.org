@@ -892,15 +892,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
       mouse-drag-and-drop-region-cross-program t
       mouse-drag-and-drop-region-scroll-margin t)
 #+end_src
-** Helpful
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(use-package helpful
-  :ensure t
-  :bind
-  ("C-h f" . helpful-callable)
-  ("C-h v" . helpful-variable)
-  ("C-h k" . helpful-key))
-#+end_src
 ** =Global-so-long-mode=
 :PROPERTIES:
 :CUSTOM_ID: h:1AD00154-0759-44D0-ADCB-0110D88C685B
@@ -1916,7 +1907,6 @@ Used for hooking into Embark."
   ("M-SPC" . #'kam-push-mark-no-activate)
   ("M-<return>" . #'kam-insert-new-line-above)
   ("M-DEL" . backward-kill-sentence)
-  ("C-h p" . #'helpful-at-point)
   ("C-h F" . apropos-function)
   ("C-h V" . apropos-variable)
   ("C-x 1" . nil)
