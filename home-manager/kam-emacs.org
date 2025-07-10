@@ -240,9 +240,10 @@ I disable the custom file by making it disposable.
 #+end_src
 ** Fill Column
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(use-package emacs
-  :ensure nil
-  (setq fill-column 80))
+  (use-package emacs
+    :ensure nil
+    :config
+    (setq fill-column 80))
 #+end_src
 ** Indentation
 #+begin_src emacs-lisp :tangle (format user-init-file "%s")
@@ -2793,6 +2794,7 @@ This module contains all the settings and configuration related to =Org= and all
   :ensure nil
   :config
   (setq org-auto-align-tags nil
+	org-M-RET-may-split-line nil
         org-directory "~/Documents/"
         org-tags-column 0
         org-catch-invisible-edits 'show-and-error
@@ -5011,7 +5013,7 @@ This library is dedicated to creating custom commands and behaviors for the =Con
   (interactive)
   (save-excursion
     (kam-consult-org-heading--action (org-store-link nil t)))
-  (kam-insert-last-stored-link-with-prompt))
+  (kam-org-insert-last-stored-link-with-prompt))
 
 (defvar kam-consult--previous-point nil
   "Location of point before entering minibuffer.
