@@ -3237,12 +3237,18 @@ The OS module is designed to integrate Emacs with the operating system, specific
   "Runs the command nixos-rebuild switch --flake."
   (interactive)
   (let ((default-directory kam-dotfiles-directory))
-  (compile "sudo nixos-rebuild switch --flake .#nixos" t)))
+    (compile "sudo nixos-rebuild switch --flake .#nixos" t)))
 
 (defun kam-os-nix-garbage-clean ()
   "Cleans up the garbage on the NixOS system."
   (interactive)
   (async-shell-command "nix-env --delete-generations 5d && nix-store --gc"))
+
+(defun kam-os-nix-update ()
+  "Updates the Nix flake and rebuilds the system."
+  (interactive)
+  (let ((default-directory kam-dotfiles-directory))
+    (compile "sudo nix flake update && sudo nixos-rebuild switch --flake .#nixos" t)))
 #+end_src
 *** Operating system commands
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el")
