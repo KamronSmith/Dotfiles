@@ -18,7 +18,12 @@
   # Bootloader.
   boot.loader.systemd-boot = {
     enable = true;
-    configurationLimit = 3;
+    configurationLimit = 2;
+    windows = {
+      "10".efiDeviceHandle = "HD1b";
+      # title = "Windows";
+    };
+    edk2-uefi-shell.enable = true;
   };
   
   boot.loader.efi.canTouchEfiVariables = true;
