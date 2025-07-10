@@ -804,18 +804,18 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (setq next-screen-context-lines 20))
 
-;; (use-package ultra-scroll
-;;   :ensure t
-;;   :vc (:url "https://github.com/jdtsmith/ultra-scroll"
-;;             :branch "main")
-;;   :bind
-;;   (("<wheel-up>" . ultra-scroll-up)
-;;    ("<wheel-down>" . ultra-scroll-down))
-;;   :init
-;;   (setq-default scroll-conservatively 101
-;;                 scroll-margin 0)
-;;   :config
-;;   (ultra-scroll-mode 1))
+(use-package ultra-scroll
+  :ensure t
+  :vc (:url "https://github.com/jdtsmith/ultra-scroll"
+            :branch "main")
+  :bind
+  (("<wheel-up>" . ultra-scroll-up)
+   ("<wheel-down>" . ultra-scroll-down))
+  :init
+  (setq-default scroll-conservatively 101
+                scroll-margin 0)
+  :config
+  (ultra-scroll-mode 1))
 #+end_src
 ** Keyfreq
 :PROPERTIES:
@@ -1035,14 +1035,14 @@ The purpose of this module is to load the configurations and packages that I con
   :bind
   (:map vertico-multiform-map
         ("<escape>" . #'kam-keyboard-quit-dwim)
-        ("<next>" . vertico-scroll-up)
-        ("<prior>" . vertico-scroll-down)
         ("<up>" . nil)
         ("<down>" . nil)
         ("C-<return>" . #'minibuffer-force-complete-and-exit)
         ("M-<return>" . vertico-exit-input)
         ("<f6>" . vertico-quick-exit)
         ("C-<f6>" . vertico-quick-insert)
+	("C-," . #'vertico-scroll-up)
+	("M-," . #'vertico-scroll-down)
         ("RET" . vertico-directory-enter)
         ("<backspace>" . vertico-directory-delete-char)
         ("C-<backspace>" . vertico-directory-delete-word)
@@ -1306,7 +1306,8 @@ The purpose of this module is to load the configurations and packages that I con
         ("<return>" . #'corfu-insert)
         ("SPC" . #'corfu-insert-separator)
         ("C-," . corfu-scroll-up)
-        ("M-," . corfu-scroll-down))
+        ("M-," . corfu-scroll-down)
+	("<escape>" . #'corfu-quit))
   :config
   (setq corfu-preview-current nil
         corfu-min-width 20)
@@ -1872,8 +1873,8 @@ Used for hooking into Embark."
   ("C-DEL" . kam-control-backspace)
   ("C-<next>" . scroll-other-window)
   ("C-<prior>" . scroll-other-window-down)
-  ("C-," . scroll-other-window)
-  ("M-," . scroll-other-window-down)
+  ("C-," . scroll-up)
+  ("M-," . scroll-down)
   ("C-&" . nil)
   ("C-=" . indent-region)
   ("C-^" . nil)
@@ -1893,7 +1894,6 @@ Used for hooking into Embark."
   ("C-<" . nil)
   ("C->" . nil)
   ("M-c" . capitalize-dwim)
-  ("M-i" . scroll-down)
   ("M-j" . open-line)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
@@ -3472,6 +3472,8 @@ For use with Avy.
   (add-to-list 'pulsar-pulse-functions 'avy-goto-char-timer)
   (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-down)
   (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-up)
+  (add-to-list 'pulsar-pulse-functions 'scroll-down)
+  (add-to-list 'pulsar-pulse-functions 'scroll-up)
   (add-to-list 'pulsar-pulse-functions 'ace-window)
 
   (advice-add 'avy-goto-char-timer :after 'pulsar-recenter-center))
