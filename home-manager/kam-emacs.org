@@ -2243,6 +2243,13 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
   (setq visible-mark-faces '((:background "#989898" :foreground "#000000")))
   (global-visible-mark-mode))
 #+end_src
+*** Vundo
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el") 
+(use-package vundo
+  :ensure t
+  :bind (:map vundo-mode-map
+	      ("<escape>" . #'vundo-quit)))
+#+end_src
 *** Display line numbers mode
 :PROPERTIES:
 :CUSTOM_ID: h:504347E5-339C-4586-81FB-99D203C80BF1
