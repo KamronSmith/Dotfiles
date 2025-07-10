@@ -56,6 +56,8 @@
     git
     docker
     gcc
+    man-pages
+    man-pages-posix
     direnv
     cmake # for Emacs + Vterm
     libtool

@@ -68,6 +68,11 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
+  documentation = {
+    dev.enable = true;
+    man.generateCaches = true;
+  };
+  
   # Enable the LXQT Desktop Environment.
   services.displayManager = {
     enable = true;
