@@ -32,13 +32,13 @@
         "hyprland/workspaces" = {
           format = "{icon}";
           format-icons = {
-            Main = "";
-            Side = "";
+            Emacs = "";
+            Internet = "󰖟";
             Gaming = "󰊴";
           };
           on-click = "activate";
           persistent-workspaces = {
-            "*" = [ "Main" "Side" "Gaming" ];
+            "*" = [ "Emacs" "Internet" "Gaming" ];
           };
           sort-by = "id";
         };

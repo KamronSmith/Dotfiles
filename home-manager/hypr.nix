@@ -11,7 +11,7 @@
     
     extraConfig = ''
            exec-once = dbus-update-activation-environment --systemd --all
-           exec-once = hyprctl dispatch workspace name:Main
+           exec-once = hyprctl dispatch workspace name:Emacs
            exec-once = wl-paste --type text --watch cliphist store
            exec-once = wl-paste --type image --watch cliphist store
 
@@ -117,7 +117,6 @@
            bind = $mainMod, Q, killactive
            bind = $mainMod, E, exec, $fileManager
            bind = $mainMod, V, togglefloating
-           bind = $mainMod, M, exit
            # bind = $mainMod, F, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
            bind = $mainMod, X, exec, $menu
            bind = Control_L&Super_L&Shift_L&Alt_L, D, exec, playerctl play-pause
@@ -134,12 +133,12 @@
            bind = $mainMod, i, layoutmsg, swapwithmaster
            bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
-           bind = $mainMod, d, workspace, name:Main
-           bind = $mainMod, r, workspace, name:Side
+           bind = $mainMod, d, workspace, name:Emacs
+           bind = $mainMod, r, workspace, name:Internet
            bind = $mainMod, t, workspace, name:Gaming
 
-           bind = $mainMod SHIFT, d, movetoworkspacesilent, name:Main
-           bind = $mainMod SHIFT, r, movetoworkspacesilent, name:Side
+           bind = $mainMod SHIFT, d, movetoworkspacesilent, name:Emacs
+           bind = $mainMod SHIFT, r, movetoworkspacesilent, name:Internet
            bind = $mainMod SHIFT, t, movetoworkspacesilent, name:Gaming
            bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
 
@@ -161,11 +160,11 @@
            bindl = , XF86AudioPlay, exec, playerctl play-pause
            bindl = , XF86AudioPrev, exec, playerctl previous
 
-           windowrulev2 = suppressevent maximize, class:.*
+           # windowrulev2 = suppressevent maximize, class:.*
            windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
            windowrulev2 = workspace name:Side,class:^(kitty)$,title:^(kitty)$
-           windowrulev2 = workspace name:Main,class:^(Emacs)$
-           windowrulev2 = workspace name:Main,class:^(firefox)$
+           windowrulev2 = workspace name:Emacs,class:^(Emacs)$
+           windowrulev2 = workspace name:Internet,class:^(firefox)$
 
            ## smart gaps
            # workspace = w[tv1], gapsout:0, gapsin:0
@@ -178,9 +177,10 @@
            windowrulev2 = opacity 0.80 0.80 0.80, class:^(Emacs)$
            windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
 
-           workspace = name:Main,default:true,monitor:HDMI-A-1,id:1
-           workspace = name:Side,monitor:HDMI-A-1,id:2
-           workspace = name:Gaming,monitor:HDMI-A-1,id:3
+           workspace = name:Emacs,default:true,monitor:DP-2
+           workspace = name:Side,monitor:DP-2
+           workspace = name:Internet,monitor:DP-2
+           workspace = name:Gaming,monitor:DP-2
            workspace = special:kitty
 
            layerrule = blur, waybar
@@ -190,10 +190,11 @@
            # gaming
            #### windowrulev2 = float,class:^(steam)$
            windowrulev2 = workspace name:Gaming,class:^(steam)$,title:^(Steam)$
-           windowrulev2 = fullscreen,class:^steam_app\d+$
+           windowrulev2 = fullscreen,class:^steam_app_\d+$
            windowrulev2 = workspace name:Gaming,class:^steam_app_\d+$
            windowrulev2 = workspace name:Gaming,class:^Minecraft\*
            workspace = Gaming, border:false, rounding:false
+           # windowrule = idleinhibit fullscreen
 
            # dialogs
            windowrulev2 = center,title:^(Open File)(.*)$
