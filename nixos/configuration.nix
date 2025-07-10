@@ -203,7 +203,7 @@
     pkgs.iosevka-comfy.comfy-duo
     pkgs.libre-caslon
     pkgs.garamond-libre
-    pkgs.nerd-fonts.droid-sans-mono
+    pkgs.nerd-fonts.sauce-code-pro
     pkgs.noto-fonts-cjk-sans ## japanese fonts
   ];
 
