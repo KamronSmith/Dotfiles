@@ -3675,7 +3675,8 @@ For use with Avy.
         ("C-c C-d" . #'kam-shell-cd)
         ("C-c C-k" . #'comint-clear-buffer)
         ("C-c C-w" . #'comint-write-buffer)
-        ("C-c C-j" . #'kam-comint-input-from-history)))
+        ("C-c C-j" . #'kam-comint-input-from-history)
+	("<escape>" . #'quit-window)))
 #+end_src
 **** The =Shell= section that sets the shell settings
 :PROPERTIES:
@@ -4088,6 +4089,9 @@ Numerical argument ARG determines the command being selected from to choose argu
 (use-package compile
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter)
+  :bind (:map compilation-mode-map
+	      ("<f5>" . #'recompile)
+	      ("<escape>" . #'quit-window))
   :config
   (setq compilation-always-kill t
         compilation-ask-about-save nil
@@ -4256,7 +4260,8 @@ as the initial input for completion, and return that directory."
   (("C-c e" . eshell)
    :map eshell-mode-map
    ("<tab>" . completion-at-point)
-   ("C-c d" . eshell/z))
+   ("C-c d" . eshell/z)
+   ("<escape>" . quit-window))
   :config
   ;; (add-to-list 'eshell-lisp-list 'eshell-smart)
   (defvar kam-eshell-prompt-regexp "\\[[[:punct:][:alnum:]]+ — [[:punct:][:alnum:]]+ \\$ "
@@ -4657,6 +4662,11 @@ This module is designed to make a nice terminal emulator experience within Emacs
         (while (and (looking-at "^\\([a-zA-Z]+: ?\\)?$")
                     (zerop (forward-line 1))))
         (eobp))))
+
+(defun kam-common-quit-window ()
+  "Quit the window and kill it."
+  (interactive)
+  (quit-window t))
 
 ;;;###autoload
 (defun kam-common-window-bounds ()
