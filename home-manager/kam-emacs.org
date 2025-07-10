@@ -2962,6 +2962,16 @@ This module contains all the settings and configuration related to =Org= and all
 :PROPERTIES:
 :CUSTOM_ID: h:272DB923-1673-4B0C-AFEC-73EA28D00467
 :END:
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+(use-package org
+  :ensure nil
+  :config
+  (setq org-export-with-toc nil
+	org-export-with-date nil
+	org-export-with-tags nil
+	org-export-with-title nil
+	org-export-with-author nil))
+#+end_src
 *** =Org Attach= 
 :PROPERTIES:
 :CUSTOM_ID: h:C083C5B7-0EB9-4696-BEB0-4173040C1E8D
