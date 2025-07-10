@@ -1116,6 +1116,7 @@ The purpose of this module is to load the configurations and packages that I con
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
 (use-package consult
   :ensure t
+  :demand t
   :init
   (setq register-preview-delay 0.5
         register-preview-function #'consult-register-format
@@ -1130,6 +1131,7 @@ The purpose of this module is to load the configurations and packages that I con
          ("C-M-x" . consult-mode-command)
          ("C-M-;" . consult-complex-command)
          ("M-y" . consult-yank-pop)
+	 ("C-x p b" . #'consult-project-buffer)
          :map isearch-mode-map
          ("M-e" . consult-isearch-history)
          ("M-s e" . consult-isearch-history)
@@ -1141,11 +1143,36 @@ The purpose of this module is to load the configurations and packages that I con
   (setq consult-narrow-key ">")
   (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
   (add-to-list 'consult-preview-allowed-hooks 'olivetti-mode)  
-  (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode))
+  (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
 
-  ;; (dolist (src consult-buffer-sources)
-  ;;   (unless (eq src 'consult--source-buffer)
-  ;;     (set src (plist-put (symbol-value src) :hidden t))))
+  (add-to-list 'consult-buffer-filter
+	       "\\*help\\*" t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*Man " t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*Async-native-compile-log\\*" t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*direnv\\*" t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*envrc\\*" t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*info\\*" t)
+  (add-to-list 'consult-buffer-filter
+	       "^\\*EGLOT " t)
+  (add-to-list 'consult-buffer-filter
+	       "-shell\\*$")
+  (add-to-list 'consult-buffer-filter
+	       "-eshell\\*$")
+  (add-to-list 'consult-buffer-filter
+	       "^\\*Backtrace\\*$" t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*Warnings\\*" t)
+  (add-to-list 'consult-buffer-filter
+	       "\\*Messages\\*" t))
+
+;; (dolist (src consult-buffer-sources)
+;;   (unless (eq src 'consult--source-buffer)
+;;     (set src (plist-put (symbol-value src) :hidden t))))
 #+end_src
 **** Consult dir
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
@@ -4932,7 +4959,7 @@ Use this as advice :after a noisy function."
 
 (provide 'kam-common)
 #+end_src
-** Consult
+** COMMENT Consult
 This library is dedicated to creating custom commands and behaviors for the =Consult= package. The configuration for Consult can be found [[#h:FC68FE2E-E1DF-4206-AB94-A89F62D9C09F][here]].
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-consult.el") :mkdirp yes :lexical t
 (defun kam-consult-imenu--select (prompt)
