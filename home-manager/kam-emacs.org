@@ -3463,7 +3463,7 @@ The majority of the functions are written in the [[id:90ecc2e2-ec44-444f-a373-6a
                 "  "
                 kam-modeline-major-mode
 		"  "
-		kam-modeline-buffer-stats
+		;; kam-modeline-buffer-stats
                 kam-modeline-process
                 " "
                 mode-line-format-right-align
