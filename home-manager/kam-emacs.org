@@ -1429,17 +1429,35 @@ The purpose of this module is to load the configurations and packages that I con
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
 (setq display-buffer-alist
-      '(("\\*Info\\*"
-         (display-buffer-in-side-window)
+      `(("\\*Info\\*"
+         (display-buffer-reuse-window display-buffer-in-side-window)
          (side . right)
          (window-width . 0.5)
          (mode Info-mode))
         ("\\*Help\\*"
-         (display-buffer-in-side-window)
+         (display-buffer-reuse-window display-buffer-in-side-window)
          (side . right)
          (window-width . 0.5)
          (mode help-mode)
          (window-parameters . ((mode-line-format . none))))
+	("\\*helpful "
+	 (display-buffer-in-side-window)
+	 (side . right)
+	 (window-width . 0.5)
+	 (mode Helpful-mode)
+	 (window-parameters . ((mode-line-format . none))))
+	("\\*Man "
+	 (display-buffer-in-side-window)
+	 (side . right)
+	 (window-width . 0.5)
+	 (mode Man-mode)
+	 (window-parameters . ((mode-line-format . none))))
+	("[P] " ;; dired-preview-mode
+	 (display-buffer-in-side-window)
+	 (side . right)
+	 (window-width . 0.5)
+	 ;; (mode . dired-preview)
+	 (window-parameters . ((mode-line-format . none))))
         ("\\*Org Links\\*" ;; Org Links
          (display-buffer-no-window)
          (allow-no-window . t))
@@ -1474,7 +1492,7 @@ The purpose of this module is to load the configurations and packages that I con
          (window-height . 0.35)
          (window-parameters . ((mode-line-format . none))))
         ("\\*compilation\\*"
-         (display-buffer-in-direction)
+         (display-buffer-reuse-window display-buffer-in-direction)
          (direction . below)
          (window . root)
          (window-height . 0.35)
@@ -1504,8 +1522,36 @@ The purpose of this module is to load the configurations and packages that I con
          (inhibit-same-window . t)
          (mode . eshell-mode)
          (window-parameters . ((mode-line-format . none))))
-        ("\\*Proced\\*"
-         (display-buffer-pop-up-frame))))
+	("-eshell\\*$" ;; matches title for `project-eshell'
+	 (display-buffer-in-direction)
+	 (direction . below)
+	 (window . root)
+	 (window-height . 0.35)
+	 (window-parameters . ((mode-line-format . none))))
+	("-shell\\*$" ;; matches title for `project-shell'
+	 (display-buffer-in-direction)
+	 (direction . below)
+	 (window . root)
+	 (window-height . 0.35)
+	 (window-parameters . ((mode-line-format . none))))
+	("^\\*Warnings\\*$"
+	 (display-buffer-in-direction)
+	 (direction . below)
+	 (window . root)
+	 (window-height . 0.35)
+	 (window-parameters . ((mode-line-format . none))))
+	("^\\*Messages\\*$"
+	 (display-buffer-in-direction)
+	 (direction . below)
+	 (window . root)
+	 (window-height . 0.35)
+	 (window-parameters . ((mode-line-format . none))))
+	((or (derived-mode . org-mode)
+	     (derived-mode . prog-mode)
+	     (derived-mode . dired-mode))
+	 (display-buffer-reuse-mode-window)
+	 (mode . (org-mode prog-mode dired-mode))
+	 (window . root))))
 
 (setq window-sides-slots '(1 0 1 0))
 #+end_src 
@@ -1518,69 +1564,77 @@ The purpose of this module is to load the configurations and packages that I con
          ("C-M-`" . popper-toggle-type))
   :init
   (setq popper-reference-buffers
-        '(("\\*Messages\\*" . hide)
+        '(("\\*Messages\\*")
           ("Output\\*$" . hide)
           ("\\*Async Shell Command\\*" . hide)
           ("\\Org Agenda\\*" . hide)
-          ("\\*Backtrace\\*" . hide)
-          ("\\*Warnings\\*" . hide)
+          ("\\*Backtrace\\*")
+          ("\\*Warnings\\*")
           ("\\*eshell[\:\*]")
           ("\\*compilation\\*")
           ("\\*Flycheck errors\\*")
+	  ("-eshell\\*$")
+	  ("-shell\\*$")
+	  ("\\*Helpful ")
+	  Man-mode
+	  helpful-mode
           help-mode
           Info-mode)
         popper-display-control nil)
   (popper-mode)
   (popper-echo-mode))
 #+end_src
-**** Beframed
+**** Tab-bar
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
-(use-package beframe
-  :ensure t
+;; (defun kam-tab-new-tab-one-command ()
+;;   "Create a rnew tab and and run a command in the newly created tab."
+;;   (interactive)
+;;   (tab-new)
+;;   (let* ((command (key-binding
+;; 		   (read-key-sequence
+;; 		    (format "Run in %s..." (tab-bar-tab-name-current)))))
+;; 	 (this-command command))
+;;     (call-interactively command)))
+
+(use-package tab-bar
+  :ensure nil
+  :defer t
+  :bind (:map tab-bar-mode-map
+	      ("C-<tab>" . nil))
+  :init
+  (defun tab-bar-tab-group-format-default (tab _i &optional current-p)
+    (propertize
+     (concat (funcall tab-bar-tab-group-function tab))
+     'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
+
+  (tab-bar-mode 1)
+  :custom
+  (tab-bar-close-button-show nil)
+  (tab-bar-new-button nil)
+  (tab-bar-tab-hints t)
+  (tab-bar-auto-width nil)
+  (tab-bar-separator " ")
+  (tab-bar-format '(tab-bar-format-tabs-groups
+   		    ;; tab-bar-format-tabs
+		    tab-bar-separator))
+
   :config
-  (setq beframe-global-buffers '("*scratch*" "*Messages*" "*Backtrace*")
-        beframe-functions-in-frames '()
-        beframe-create-frame-scratch-buffer nil)
-  (beframe-mode)
-
-  (declare-function consult--buffer-state "consult")
-
-  (with-eval-after-load 'consult
-    (defface beframe-buffer
-      '((t :inherit font-lock-string-face))
-      "Face for `consult' framed buffers.")
-
-    (defun kam-beframe-buffer-names-sorted (&optional frame)
-      "Return the list of buffers from `beframe-buffer-names' sorted by visibility.
-With optional argument FRAME, return the list of buffers of FRAME."
-      (beframe-buffer-names frame :sort #'beframe-buffer-sort-visibility))
-
-    (defun kam-beframe-buffer-sort-recency (buffers)
-      "Group the given BUFFERS by recency then sort them."
-      (let ((bufs (seq-group-by
-                   (lambda (buf)
-                     (cond
-                      ((eq buf (current-buffer)) :current)
-                      ((get-buffer-window buf 'visible) :visible)
-                      (t :hidden)))
-                   buffers)))
-        (nconc (alist-get :current bufs)
-               (alist-get :visible bufs)
-               (alist-get :hidden bufs))))
-
-    (defvar beframe-consult-source
-      `( :name "Buffer"
-         :narrow ?F
-         :category buffer
-         :history beframe-history
-         :items ,#'kam-beframe-buffer-names-sorted
-         :action ,#'switch-to-buffer
-         :state ,#'consult--buffer-state))
-
-    (setq consult-buffer-sources
-          '(beframe-consult-source
-            consult--source-bookmark
-            consult--source-recent-file))))
+  (defun kam-tab-bar-group-from-project ()
+    "Call `tab-group' with the current project name as the group."
+    (interactive)
+    (when-let* ((proj (project-current))
+		(name (file-name-nondirectory
+		       (directory-file-name (project-root proj)))))
+      (tab-group (format "[P] %s" name)))))
+#+end_src
+**** OTPP
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el") 
+(use-package otpp
+  :ensure t
+  :after project
+  :init
+  (otpp-mode 1)
+  (otpp-override-mode 1))
 #+end_src
 **** The =Window= section for custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
