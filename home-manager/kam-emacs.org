@@ -4137,30 +4137,84 @@ Numerical argument ARG determines the command being selected from to choose argu
 #+end_src
 *** Projects
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el")
-(defvar kam-task-projects-directory "~/Documents/Projects/"
-  "The default directory where projects are stored.")
+(use-package project
+  :ensure t
+  :bind
+  ("C-x p p" . #'kam-project-switch-project)
+  :config
+  (setq project-vc-ignores '("nix/store/"
+			     "node_modules/"
+			     "go/pkg/"
+			     ".direnv/")
+	project-vc-extra-root-markers '(".project"))
+  
+  (defvar kam-project-name-history nil)
 
-(defun kam-task-new-project ()
-  "Create a project in the `kam-task-projects-directory'."
+  (defvar kam-projects-directory "~/Documents/Projects/"
+    "The default directory where projects are stored.")
+
+  (setq project-prompter #'kam-project-read-project-by-name)
+
+  (defun kam-project--return-formatted-project-name ()
+    (when-let* ((proj (project-current))
+		(name (file-name-nondirectory
+		       (directory-file-name (project-root proj)))))
+      (format "[%s]" name)))
+
+  (defun kam-project-read-project-by-name ()
+    "Read a project name and return its root directory.
+
+If no known project matches the selected name, prompt for a
+sub-directory of `kam-projects-directory' using the selected name
+as the initial input for completion, and return that directory."
+    (let* ((name-dir-alist
+            (mapcar (lambda (dir)
+                      (cons (project-name (project-current nil dir))
+                            dir))
+                    (project-known-project-roots)))
+           (current (project-current))
+           (default (and current (project-name current)))
+           (name (completing-read (format-prompt "Project" default)
+                                  name-dir-alist
+                                  nil nil nil
+                                  'kam-project-name-history
+                                  default)))
+      (or (alist-get name name-dir-alist nil nil #'string=)
+          (let* ((dir (read-directory-name "Project root directory: "
+                                           kam-projects-directory
+                                           nil t name))
+		 (project (project-current nil dir)))
+            (when project (project-remember-project project))
+            dir))))
+
+(defun kam-project-new ()
+  "Create a project in the `kam-projects-directory'."
   (interactive)
-  (let* ((default-directory kam-task-projects-directory)
+  (let* ((default-directory kam-projects-directory)
          (project-name (read-directory-name "Project: "))
          (new-project
-          (concat kam-task-projects-directory
+          (concat kam-projects-directory
                   (s-replace " " "_" project-name))))
     (make-directory new-project)
     (async-shell-command (concat "git init " new-project))
-    (project-remember-project new-project)
-    (write-region (concat "* " project-name) nil kam-task-inbox-file 'append)))
+    (project--remember-dir new-project)))
 
-(defun kam-task-delete-project ()
+(defun kam-project-delete (proj)
   "Delete a project."
-  (interactive)
-  (let* ((default-directory kam-task-projects-directory)
-	(project-name (read-directory-name "Project to delete: "))
-	(project (concat kam-task-projects-directory project-name)))
-    (project-forget-project project)
-    (delete-directory project t t)))
+  (interactive (list (kam-project-read-project-by-name)))
+  (let* ((default-directory kam-projects-directory))
+    (project-forget-project proj)
+    (project--remove-from-project-list proj "nil")
+    (delete-directory proj t t))))
+
+(defun kam-project-switch-project (dir)
+  "Switch to another project."
+  (interactive (list (funcall project-prompter)))
+  (project--remember-dir dir)
+  (unwind-protect
+      (progn
+	(setq-local project-current-directory-override dir)
+	(call-interactively #'project-find-file))))
 #+end_src
 *** Areas
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el")
