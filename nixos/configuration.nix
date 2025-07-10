@@ -1,7 +1,3 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
 { inputs, outputs, lib, config, pkgs, ... }:
 
 {
@@ -66,11 +62,16 @@
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
-  xdg.icons.enable = true;  
-  xdg.portal = {
-    enable = true;
-    xdgOpenUsePortal = false;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+  
+  xdg = {
+    portal = {
+      enable = true;
+      xdgOpenUsePortal = false;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    };
+    icons = {
+      enable = true;
+    };
   };
 
   documentation = {
@@ -96,7 +97,6 @@
     enable = true;
   };
 
-  
   programs.hyprland = {
     enable = true;
     xwayland.enable = true;
