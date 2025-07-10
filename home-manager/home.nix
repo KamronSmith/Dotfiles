@@ -94,6 +94,8 @@
     obsidian
     wayshot
     slurp
+    python3
+    pyright
     prismlauncher
     nexusmods-app-unfree
   ];
