@@ -1914,7 +1914,7 @@ Used for hooking into Embark."
   ("C-<" . nil)
   ("C->" . nil)
   ("M-c" . capitalize-dwim)
-  ("M-j" . open-line)
+  ("M-j" . kam-open-line)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
   ("M-n" . forward-paragraph)
@@ -1986,7 +1986,7 @@ Used for hooking into Embark."
         ("C-<tab>" . #'kam-org-up-and-fold-heading)
         ("C-<f2>" . org-insert-subheading)
         ("<return>" . org-return)
-        ("M-j" . open-line)
+        ("M-j" . #'kam-open-line)
         ("C-j" . kam-join-line-dwim)
         ("M-<f2>" . #'kam-org-insert-super-heading)
         ("C-'" . org-edit-src-code)
@@ -2519,13 +2519,13 @@ This is the same as using \\[set-mark-command] with the prefix argument."
           (join-line))
       (join-line)))
 
-  (defun kam-open-line ()
-    " TODO
-  Opens the line and indents it to the proper place."
-    (interactive)
+(defun kam-open-line ()
+  "Opens the line and indents it to the proper place."
+  (interactive)
+  (save-excursion
     (open-line 1)
     (next-line)
-    (indent-according-to-mode))
+    (indent-according-to-mode)))
 
   (defun kam-yank-replace-line-or-region ()
     "Replace line or region with the latest kill.
