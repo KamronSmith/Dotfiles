@@ -973,6 +973,7 @@ The purpose of this module is to load the configurations and packages that I con
   :hook (after-init . vertico-mode)
   :bind
   (:map vertico-map
+	("<f1>" . embark-act)
         ("<escape>" . #'kam-keyboard-quit-dwim)
         ("C-," . vertico-scroll-up)
         ("M-," . vertico-scroll-down)
@@ -1057,7 +1058,7 @@ The purpose of this module is to load the configurations and packages that I con
       (vertico-preselect . prompt)))
   
   (setq vertico-multiform-categories
-        `((embark-keybinding ,@kam-vertico-multiform-maximal)
+        `((embark-keybinding (grid))
           (consult-location ,@kam-vertico-multiform-maximal)
           (imenu ,@kam-vertico-multiform-maximal)
           (jinx ,@kam-vertico-multiform-maximal)
@@ -1087,11 +1088,11 @@ The purpose of this module is to load the configurations and packages that I con
           ;; (consult-org-heading posframe
           ;;                      (vertico-posframe-poshandler . posframe-poshandler-window-center)
           ;;                      (vertico-posframe-border-width . 2))
-           (kam-window-switch-to-buffer posframe
-                                        (vertico-posframe-poshandler . posframe-poshandler-window-center)
-                                        (vertico-posframe-border-width . 2))
-           (org-roam-node-find (vertico-sort-function . nil))
-           (jinx-correct-nearest grid (vertico-grid-annotate . 20))
+          (kam-window-switch-to-buffer posframe
+                                       (vertico-posframe-poshandler . posframe-poshandler-window-center)
+                                       (vertico-posframe-border-width . 2))
+          (org-roam-node-find (vertico-sort-function . nil))
+          (jinx-correct-nearest grid (vertico-grid-annotate . 20))
           ))
   (vertico-multiform-mode 1))
 
@@ -1455,7 +1456,7 @@ The purpose of this module is to load the configurations and packages that I con
     (avy-with avy-goto-char-timer
       (avy-action-zap-to-char pt)))
 
-  (setf (alist-get ?. avy-dispatch-alist) 'kam-avy-action-embark)
+  (setf (alist-get ? avy-dispatch-alist) 'kam-avy-action-embark)
   (setf (alist-get ?w avy-dispatch-alist) 'kam-avy-action-kam-cut)
   (setf (alist-get ?o avy-dispatch-alist) 'kam-avy-action-org-refile)
   (setf (alist-get ?v avy-dispatch-alist) 'kam-avy-action-mark-to-char)
@@ -2103,11 +2104,11 @@ Used for hooking into Embark."
 #+end_src
 **** Which-key
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
-(use-package which-key
-  :ensure nil
-  :config
-  (which-key-mode 1)
-  (which-key-setup-minibuffer))
+;; (use-package which-key
+;;   :ensure nil
+;;   :config
+;;   (which-key-mode 1)
+;;   (which-key-setup-minibuffer))
 #+end_src
 *** Custom lisp
 :PROPERTIES:
