@@ -533,6 +533,11 @@ If there is more than one, let the user choose."
    (read-shell-command "Shell command: ")
    " "
    (dired-file-name-at-point)))
+
+(defun kam-dired-home-dir ()
+  "Opens the home directory."
+  (interactive)
+  (dired (getenv "HOME")))
 #+end_src
 ** Repeat-mode
 :PROPERTIES:
@@ -1150,17 +1155,17 @@ The purpose of this module is to load the configurations and packages that I con
   (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
 
   (add-to-list 'consult-buffer-filter
-	       "\\*help\\*" t)
+	       "^\\*help\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "\\*Man " t)
+	       "^\\*Man " t)
   (add-to-list 'consult-buffer-filter
-	       "\\*Async-native-compile-log\\*" t)
+	       "^\\*Async-native-compile-log\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "\\*direnv\\*" t)
+	       "^\\*direnv\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "\\*envrc\\*" t)
+	       "^\\*envrc\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "\\*info\\*" t)
+	       "^\\*info\\*" t)
   (add-to-list 'consult-buffer-filter
 	       "^\\*EGLOT " t)
   (add-to-list 'consult-buffer-filter
@@ -1170,9 +1175,9 @@ The purpose of this module is to load the configurations and packages that I con
   (add-to-list 'consult-buffer-filter
 	       "^\\*Backtrace\\*$" t)
   (add-to-list 'consult-buffer-filter
-	       "\\*Warnings\\*" t)
+	       "^\\*Warnings\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "\\*Messages\\*" t))
+	       "^\\*Messages\\*" t))
 
 ;; (dolist (src consult-buffer-sources)
 ;;   (unless (eq src 'consult--source-buffer)
