@@ -3439,11 +3439,11 @@ The OS module is designed to integrate Emacs with the operating system, specific
 (use-package spacious-padding
   :ensure t
   :config
-  (setq spacious-padding-subtle-mode-line
-        '(:mode-line-active "#fec43f"
-          :mode-line-inactive 'vertical-border))
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       '(:mode-line-active "#fec43f"
+  ;;         :mode-line-inactive 'vertical-border))
 
-  ;; (setq spacious-padding-subtle-mode-line nil)
+  (setq spacious-padding-subtle-mode-line nil)
   
   (setq spacious-padding-widths
         '( :internal-border-width 15
