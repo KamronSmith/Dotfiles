@@ -269,7 +269,9 @@ I disable the custom file by making it disposable.
   :config
   (setq-default cursor-type 'bar)
   (blink-cursor-mode)
-  (setq blink-cursor-interval 0.75)
+  (setq blink-cursor-interval 0.75
+	cursor-in-non-selected-windows nil
+	make-cursor-line-fully-visible t)
   (set-cursor-color "yellow"))
 #+end_src
 ** Minibuffer
@@ -813,7 +815,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (("<wheel-up>" . ultra-scroll-up)
    ("<wheel-down>" . ultra-scroll-down))
   :init
-  (setq-default scroll-conservatively 101
+  (setq-default scroll-conservatively 4
                 scroll-margin 0)
   :config
   (ultra-scroll-mode 1))
