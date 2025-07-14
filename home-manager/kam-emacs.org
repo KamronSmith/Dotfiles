@@ -4506,125 +4506,38 @@ The eshell is renamed to match that directory in order to make multiple eshell w
 :PROPERTIES:
 :CUSTOM_ID: h:537F628C-3766-4A29-B210-77603F2E687B
 :END:
-*** =Org-roam=
-:PROPERTIES:
-:CUSTOM_ID: h:2D160116-0F36-4737-8C07-9D759105E4EA
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el") :mkdirp yes
-;; -*- lexical-binding: t; -*-
-;; (use-package org-roam
-;;   :ensure t
-;;   :custom
-;;   (org-roam-directory (file-truename "~/Documents/Resources/Zettelkasten"))
-;;   (org-roam-completion-everywhere t)
-;;   (org-roam-capture-templates
-;;    '(("d" "Default" plain
-;;       "%?"
-;;       :if-new (file+head "${title}.org" "#+TITLE: ${title}\n#+FILETAGS:\n#+DATE: %U\n\n\n* References:")
-;;       :immediate-finish t
-;;       :unnarrowed t)
-;;      ("r" "Reference Note" plain "%?"
-;;       :if-new
-;;       (file+head "Reference/${title}.org" "#+TITLE: ${title}\n#+FILETAGS: \n#+DATE: %U\n")
-;;       :immediate-finish t
-;;       :unnarrowed t)
-;;      ("i" "Index Note" plain "%?"
-;;       :if-new
-;;       (file+head "${title}.org" "#+TITLE: ${title}\n#+FILETAGS: :Index:\n#+DATE: %U\n\n\n\n* References:")
-;;       :immediate-finish t
-;;       :unnarrowed t)))
-;;   :config
-;;   (defvar kam-ite-zettelkasten-dir "~/Documents/Resources/Zettelkasten/"
-;;     "Directory for the zettelkasten.")
-  
-;;   (defvar kam-ite-home-note "~/Documents/Resources/Zettelkasten/home.org"
-;;     "Home note for my ITE.")
-  
-;;   (defvar kam-ite-inbox-note "~/Documents/Resources/Zettelkasten/inbox.org"
-;;     "Inbox note for my ITE.")
-  
-;;   (setq org-roam-node-display-template "${title:*}"
-;;         ;; (concat "${title:*} " (propertize "${tags:*}" 'face 'org-tag))
-;;         org-roam-extract-new-file-path "${slug.org}"
-;;         org-roam-list-files-commands '(rg fd))
-;;   (org-roam-db-autosync-mode)
-  
-;;   (setq org-roam-db-node-include-function
-;;         (lambda ()
-;;           (not (org-current-level))))
-;;   (require 'org-roam-protocol) 
-;;   (org-roam-setup)
-
-;;   (defun kam-org-roam-node-insert ()
-;;     "Insert a node with an option to change the link text."
-;;     (interactive)
-;;     (let* ((description (read-string "Link Text: ")))
-;;       (org-roam-node-insert)
-;;       (org-insert-link)))
-
-;;   (defun kam-org-roam-node-insert-immediate (arg &rest args)
-;;   (interactive "P")
-;;   (let ((args (cons arg args))
-;;         (org-roam-node-capture-templates (list (append (car org-roam-capture-templates)                                                       '(:immediate-finish t)))))
-;;     (apply #'org-roam-node-insert args)))
-
-;;   (defun kam-org-roam-filter-by-tag (tag-name)
-;;     (lambda (node)
-;;       (member tag-name (org-roam-node-tags node))))
-
-;;   (defun kam-org-roam-find-notes-by-tag ()
-;;     "List all notes of a given tag, selected by minibuffer completion."
-;;     (interactive)
-;;     (org-roam-node-find nil nil
-;;                         (kam-org-roam-filter-by-tag
-;;                          (completing-read "Select tag: " (org-roam-tag-completions)))))
-
-;;   (defun kam-org-roam-find-index-notes ()
-;;     "Finds the nodes in the Zettelkasten with the tag Index."
-;;     (interactive)
-;;     (org-roam-node-find nil nil
-;;                         (kam-org-roam-filter-by-tag "Index")))
-
-;;   (defun kam-org-roam-find-baby-notes ()
-;;     "Finds the nodes in the Zettelkasten with the tag Baby."
-;;     (interactive)
-;;     (org-roam-node-find nil nil
-;;                         (kam-org-roam-filter-by-tag "Baby")))
-
-;;   (add-hook 'org-roam-mode-hook #'turn-on-visual-line-mode)
-;;   (add-hook 'org-roam-mode-hook #'variable-pitch-mode))
-
-(use-package consult-org-roam
-  :ensure t
-  :after org-roam
-  :bind
-  (("C-c r d" . consult-org-roam-file-find)
-   ("C-c r s" . consult-org-roam-search)
-   ("C-c r b" . consult-org-roam-backlinks))
-  :config
-  (setq consult-org-roam-grep-func #'consult-ripgrep)
-  (consult-org-roam-mode 1))
-#+end_src
-*** =Org Roam UI=
-:PROPERTIES:
-:CUSTOM_ID: h:82022D74-0BBA-4992-BE78-37CE0FD9789C
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-;; (use-package org-roam-ui
-;;   :ensure t
-;;   :config
-;;   (setq org-roam-ui-sync-theme t)
-;;   (setq org-roam-ui-follow t)
-;;   (setq org-roam-ui-update-on-save nil)
-;;   (setq org-roam-ui-open-on-start t))
-#+end_src
 *** Denote
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
 (use-package denote
   :ensure t
-  :hook (dired-mode . denote-dired-mode)
+  ;; :hook (dired-mode . denote-dired-mode)
   :config
-  (setq denote-directory (expand-file-name "~/Documents/Resources/Denote/")))
+  (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
+	denote-infer-keywords t
+	denote-sort-keywords t
+	denote-prompts '(title keywords)
+	denote-rename-confirmations '(rewrite-front-matter modify-file-name)
+	denote-date-prompt-use-org-read-date t))
+#+end_src
+*** Consult-Denote
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
+(use-package consult-denote
+  :ensure t
+  :custom
+  (consult-denote-find-command #'consult-fd)
+  (consult-denote-grep-command #'consult-ripgrep)
+  :config
+  (consult-denote-mode 1))
+#+end_src
+*** Denote-Org
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
+(use-package denote-org
+  :ensure t)
+#+end_src
+*** Denote-Explore
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
+(use-package denote-explore
+  :ensure t)
 #+end_src
 *** =Org Anki=
 :PROPERTIES:
@@ -4647,36 +4560,21 @@ The eshell is renamed to match that directory in order to make multiple eshell w
 :CUSTOM_ID: h:423D93FE-5D46-4892-86DB-F7A6B564EB05
 :END:
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(defvar kam-ite-reference-note-directory "~/Documents/Resources/Reference Notes/"
-  "Location of the ITE's reference note directory.")
+(defvar kam-ite-inbox-note) ;; todo
 
-;; (defvar kam-ite-workbench-note
-;;  (concat kam-ite-zettelkasten-dir "workbench.org"))
+(defvar kam-ite-workbench-note) ;; todo
 
-(defun kam-ite-zettelkasten-rg ()
+(defun kam-ite-notes-rg ()
   (interactive)
   (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS")
-       (dirs (list "~/Documents/Resources/Zettelkasten")))
+	(dirs denote-directory))
     (consult-ripgrep dirs)))
 
-(defun kam-ite-reference-notes-rg ()
-  "Searches through recorded reference notes."
-  (interactive)
-  (let ((consult-ripgrep-command "rg --null --ignore-case --type org --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS")
-       (dirs (list "~/Documents/Resources/Reference Notes")))
-    (consult-ripgrep dirs)))
-
-(defun kam-ite-reference-notes-fd ()
+(defun kam-ite-notes-fd ()
   "Performs `consult-fd' on the `kam-ite-reference-note-directory'."
   (interactive)
-  (let ((default-directory kam-ite-reference-note-directory))
+  (let ((default-directory denote-directory))
     (consult-fd)))
-
-(defun kam-ite-new-reference-note ()
-  "Makes a new reference note."
-  (interactive)
-  (let ((default-directory kam-ite-reference-note-directory))
-    (find-file (read-file-name "Find file: "))))
 
 (defun kam-ite-visit-inbox ()
   "Visits the `kam-ite-inbox-note'."
