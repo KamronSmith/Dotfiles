@@ -4904,7 +4904,7 @@ Use this as advice :after a noisy function."
 
 (provide 'kam-common)
 #+end_src
-** COMMENT Consult
+** Consult
 This library is dedicated to creating custom commands and behaviors for the =Consult= package. The configuration for Consult can be found [[#h:FC68FE2E-E1DF-4206-AB94-A89F62D9C09F][here]].
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-consult.el") :mkdirp yes :lexical t
 (defun kam-consult-imenu--select (prompt)
@@ -5059,6 +5059,27 @@ When the number of characters in a buffer exceeds this threshold,
                    :predicate pred)))
 
 (setq read-file-name-function #'kam-consult-find-file-with-preview)
+
+(setq project-read-file-name-function #'kam-consult-project-find-file-with-preview)
+
+(defun kam-consult-project-find-file-with-preview (prompt all-files &optional pred hist _mb)
+  (let ((prompt (if (and all-files
+                         (file-name-absolute-p (car all-files)))
+                    prompt
+                  (concat prompt
+                    (format " in %s"
+                      (consult--fast-abbreviate-file-name default-directory)))))
+        (minibuffer-completing-file-name t))
+    (consult--read (mapcar
+                    (lambda (file)
+                      (file-relative-name file))
+                    all-files)
+                   :state (consult--file-preview)
+                   :prompt (concat prompt ": ")
+                   :require-match t
+                   :history hist
+                   :category 'file
+                   :predicate pred)))
 
 (defun kam-menu ()
   "If the current buffer's major mode is Org mode, opens `consult-org-heading'. Otherwise opens `consult-imenu'."
