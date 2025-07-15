@@ -1231,6 +1231,9 @@ The purpose of this module is to load the configurations and packages that I con
   ([remap describe-bindings] . embark-bindings)
   ("<f1>" . #'embark-act)
   ("C-<f1>" . #'embark-dwim)
+  (:map vertico-map
+	("<f1>" . #'embark-act)
+	("C-<f1>" . #'embark-export))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   (setq embark-prompter #'embark-keymap-prompter)
@@ -1685,6 +1688,8 @@ The purpose of this module is to load the configurations and packages that I con
   :defer t
   :bind (:map tab-bar-mode-map
 	      ("C-<tab>" . nil))
+  ("C-x t n" . #'tab-next)
+  ("C-x t p" . #'tab-previous)
   :init
   (defun tab-bar-tab-group-format-default (tab _i &optional current-p)
     (propertize
@@ -1874,7 +1879,7 @@ Used for hooking into Embark."
 (use-package emacs
   :ensure nil
   :bind
-  ("<f3>" . #'kam-window-switch-to-alternate-buffer)
+  ("<f2>" . #'kam-window-switch-to-alternate-buffer)
   ("<f4>" . #'compile)
   ("<escape>" . #'kam-keyboard-quit-dwim)
   ("<home>" . nil)
@@ -1910,6 +1915,7 @@ Used for hooking into Embark."
   ("C-_" . nil)
   ("C-:" . #'pp-eval-expression)
   ("C-!" . shell-command)
+  ("C-?" . #'undo)
   ("C-+" . nil)
   ("C-|" . nil)
   ("C-{" . nil)
@@ -1933,6 +1939,7 @@ Used for hooking into Embark."
   ("M-w" . #'kam-kill-ring-save-dwim)
   ("M-z" . zap-up-to-char)
   ("M-!" . async-shell-command)
+  ("M-?" . #'undo-redo)
   ("M-;" . #'kam-comment-dwim)
   ("M-:" . pp-eval-expression)
   ("M-@" . nil)
@@ -1958,10 +1965,13 @@ Used for hooking into Embark."
   ("C-x k" . #'delete-window)
   ("C-x n" . #'kam-narrow-or-widen-dwim)
   ("C-x o" . kam-ace-window-prefix)
+  ("C-x u" . nil)
   ("C-x C-n" . nil)
   ("C-x C-e" . #'kam-eval-current-sexp)
   ("C-x C-v" . mark-paragraph)
   ("C-x C-k" . #'kam-kill-current-buffer)
+  ("C-x C-u" . nil)
+  ("C-x C-z" . nil)
   ("C-M-:" . #'kam-comment-dwim)
   ("C-M-/" . #'kam-window-switch-to-alternate-buffer)
   ("C-M-b" . sp-backward-sexp)
@@ -1973,7 +1983,6 @@ Used for hooking into Embark."
   ("C-M-v" . sp-mark-sexp)
   ("C-M-y" . #'kam-duplicate-line-or-region)
   ("C-M-DEL" . sp-backward-kill-sexp)
-  ("C-c f c" . (lambda () (interactive) (find-file "/home/kam/.dotfiles/home-manager/kam-emacs.org")))
   ([remap list-buffers] . ibuffer)
   ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
   :config
@@ -2029,8 +2038,8 @@ Used for hooking into Embark."
 (defvar-keymap kam-isearch-repeat-map
   :doc "Repeat map for Isearch"
   :repeat (:enter (isearch-repeat-forward) :exit (isearch-exit))
-  "d" #'isearch-repeat-forward
-  "n" #'isearch-repeat-backward)
+  "n" #'isearch-repeat-forward
+  "p" #'isearch-repeat-backward)
 #+end_src
 **** Prog mode bindings
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
