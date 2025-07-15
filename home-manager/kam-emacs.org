@@ -267,10 +267,10 @@ I disable the custom file by making it disposable.
 (use-package emacs
   :ensure nil
   :config
-  (setq-default cursor-type 'bar)
+  (setq-default cursor-type 'bar
+		cursor-in-non-selected-windows nil)
   (blink-cursor-mode)
   (setq blink-cursor-interval 0.75
-	cursor-in-non-selected-windows nil
 	make-cursor-line-fully-visible t)
   (set-cursor-color "yellow"))
 #+end_src
@@ -370,6 +370,7 @@ I disable the custom file by making it disposable.
   :hook (dired-mode . dired-hide-details-mode)
   :config
   (setq dired-recursive-deletes 'always
+	dired-recursive-copies 'always
         dired-kill-when-opening-new-dired-buffer t
         dired-dwim-target t
         dired-auto-revert-buffer #'dired-directory-changed-p
