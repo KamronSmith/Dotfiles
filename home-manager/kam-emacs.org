@@ -3413,6 +3413,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
     "Function which sets faces across the configuration using the `modus-themes-with-colors' macro."
     (modus-themes-with-colors
       (custom-set-faces
+       `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
        `(region ((,c :extend nil)))
        `(org-special-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
        `(org-meta-line ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
