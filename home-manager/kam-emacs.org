@@ -2178,13 +2178,30 @@ The =Naved= /"Navigation & Editing"/ module is concerned with the navigation and
   :ensure nil
   :bind
   (:map isearch-mode-map
-        ("<f6>" . avy-isearch))
+        ("<f6>" . avy-isearch)
+	("<backspace>" . #'kam-isearch-removed-failed-or-last-char)
+	("C-n" . isearch-fora))
   :config
   (setq isearch-lazy-count t
         isearch-lazy-count-prefix-format "(%s/%s)"
         isearch-lazy-count-suffix-format nil
         isearch-repeat-on-direction-change t
-        search-whitespace-regexp ".*?"))
+        search-whitespace-regexp ".*?")
+
+  (defun kam-isearch-removed-failed-or-last-char ()
+    "Remove failed part of search string, or last char if successful.
+Do nothing if search string is empty to start with."
+    (interactive)
+    (if (equal isearch-string "")
+	(isearch-update)
+      (if isearch-success
+	  (isearch-delete-char)
+	(while (isearch-fail-pos) (isearch-pop-state)))
+      (isearch-update)))
+
+  (defun kam-isearch-symbol-at-point ()
+    (interactive)
+    (isearch-forward (thing-at-point 'symbol))))
 #+end_src
 *** Harpoon
 :PROPERTIES:
@@ -2712,10 +2729,6 @@ Intelligently means: region, subtree, or defun, whichever applies first."
 Unlike `eval-last-sexp', the point doesn't need to be at the end of the expression, but can be at the beginning (on the parenthesis) or somewhere inside."
   (interactive)
   (eval-expression (kam-current-elisp-sexp)))
-
-(defun kam-isearch-symbol-at-point ()
-  (interactive)
-  (isearch-forward (thing-at-point 'symbol)))
 
 (defun kam-kill-inner-sexp ()
   "Intended to kill everything inside the closest pair of paired delimiters."
