@@ -4233,20 +4233,23 @@ Numerical argument ARG determines the command being selected from to choose argu
 (use-package project
   :ensure t
   :bind
-  ("C-x p p" . #'kam-project-switch-project)
+  ;; ("C-x p p" . #'kam-project-switch-project)
   :config
   (setq project-vc-ignores '("nix/store/"
 			     "node_modules/"
 			     "go/pkg/"
 			     ".direnv/")
 	project-vc-extra-root-markers '(".project"))
+
+  (add-to-list 'project-switch-commands '(magit-status "Git" "g"))
+  (remove '(project-vc-dir "VC-Dir") project-switch-commands)
   
   (defvar kam-project-name-history nil)
 
   (defvar kam-projects-directory "~/Documents/Projects/"
     "The default directory where projects are stored.")
 
-  (setq project-prompter #'kam-project-read-project-by-name)
+  ;; (setq project-prompter #'kam-project-read-project-by-name)
 
   (defun kam-project--return-formatted-project-name ()
     (when-let* ((proj (project-current))
@@ -4267,11 +4270,11 @@ as the initial input for completion, and return that directory."
                     (project-known-project-roots)))
            (current (project-current))
            (default (and current (project-name current)))
-           (name (completing-read (format-prompt "Project" default)
-                                  name-dir-alist
-                                  nil nil nil
-                                  'kam-project-name-history
-                                  default)))
+           (name (consult--read (cdr name-dir-alist)
+                                  :prompt "Project: "
+                                  :history 'kam-project-name-history
+                                  :annotate #'marginalia-annotate-project-file
+				  :state (consult--file-state))))
       (or (alist-get name name-dir-alist nil nil #'string=)
           (let* ((dir (read-directory-name "Project root directory: "
                                            kam-projects-directory
@@ -4287,9 +4290,9 @@ as the initial input for completion, and return that directory."
          (project-name (read-directory-name "Project: "))
          (new-project
           (concat kam-projects-directory
-                  (s-replace " " "_" project-name))))
+                  (s-replace " " "-" project-name))))
     (make-directory new-project)
-    (async-shell-command (concat "git init " new-project))
+    (make-empty-file (concat new-project "/.project"))
     (project--remember-dir new-project)))
 
 (defun kam-project-delete (proj)
@@ -4297,7 +4300,6 @@ as the initial input for completion, and return that directory."
   (interactive (list (kam-project-read-project-by-name)))
   (let* ((default-directory kam-projects-directory))
     (project-forget-project proj)
-    (project--remove-from-project-list proj "nil")
     (delete-directory proj t t))))
 
 (defun kam-project-switch-project (dir)
@@ -4308,6 +4310,8 @@ as the initial input for completion, and return that directory."
       (progn
 	(setq-local project-current-directory-override dir)
 	(call-interactively #'project-find-file))))
+
+(project-remember-projects-under kam-projects-directory t)
 #+end_src
 *** Areas
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el")
