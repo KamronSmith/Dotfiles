@@ -4622,12 +4622,12 @@ The eshell is renamed to match that directory in order to make multiple eshell w
 This module is designed to make a nice terminal emulator experience within Emacs.
 *** =EAT=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-term.el") :mkdirp t
-; (use-package eat
-;  :ensure t
-;  :config
-;  (setq eat-shell (getenv "SHELL"))
-;  (add-hook 'eshell-load-hook #'eat-eshell-mode)
- ; (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
+(use-package eat
+ :ensure t
+ :config
+ (setq eat-shell (getenv "SHELL"))
+ (add-hook 'eshell-load-hook #'eat-eshell-mode)
+ (add-hook 'eshell-load-hook #'eat-eshell-visual-command-mode))
 #+end_src
 *** The call to provide =Term=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-term.el")
