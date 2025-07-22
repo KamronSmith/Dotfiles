@@ -68,10 +68,16 @@ This causes problems, so its better to disable it
 ;; (setq package-enable-at-startup nil
 ;;       use-package-enable-imenu-support t)
 #+end_src
-** Setting the return and tab keys
+** Setting the control keys
 #+begin_src emacs-lisp :tangle (format early-init-file "%s")
-(key-translate "C-i" "H-i")
-(key-translate "C-m" "H-m")
+(add-hook 'after-make-frame-functions
+	  (defun kam-setup-control-keys (frame)
+	    "Sets up the control keys that are normally taken by terminal Emacs."
+	    (with-selected-frame frame
+	      (when (display-graphic-p)
+		(define-key input-decode-map (kbd "C-i") [kam-i])
+		(define-key input-decode-map (kbd "C-m") [kam-m])
+		(define-key input-decode-map (kbd "C-[") [kam-lsb])))))
 #+end_src
 * The =init.el= file
 :PROPERTIES:
@@ -1893,7 +1899,7 @@ Used for hooking into Embark."
   ("C-g" . #'kam-keyboard-quit-dwim)
   ("C-j" . #'kam-join-line-dwim)
   ("C-k" . kill-line)
-  ;; ("C-m" . back-to-indentation)
+  ([kam-m] . back-to-indentation)
   ("C-o" . #'kam-window-ace-window-one-command)
   ("C-v" . set-mark-command)
   ("C-w" . #'kam-cut-dwim)
