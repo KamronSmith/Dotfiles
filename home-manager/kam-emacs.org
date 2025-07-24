@@ -4197,6 +4197,15 @@ Numerical argument ARG determines the command being selected from to choose argu
   (python-indent-guess-indent-offset-verbose nil)
   :hook (python-mode . eglot-ensure))
 #+end_src
+*** Go
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
+(use-package go-mode
+  :ensure t)
+
+(use-package go-eldoc
+  :ensure t
+  :hook (go-mode . #'go-eldoc-setup))
+#+end_src
 *** Ediff
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
 (setq ediff-keep-variants nil
