@@ -1079,7 +1079,7 @@ The purpose of this module is to load the configurations and packages that I con
           (unicode-name ,@kam-vertico-multiform-maximal)
           (multi-category ,@kam-vertico-multiform-maximal)
           (file ,@kam-vertico-multiform-maximal
-                (vertico-sort-function . kam-vertico--sort-directories-first))
+                (vertico-sort-function . #'kam-vertico--sort-directories-first))
           
           (t ,@kam-vertico-posframe-maximal)))
   
@@ -1734,7 +1734,7 @@ The purpose of this module is to load the configurations and packages that I con
 #+end_src
 **** The =Window= section for custom lisp
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
-(defun kam-window-ace-window-prefix ()
+(defun kam-ace-window-prefix ()
   "Use `ace-window' to display the buffer of the next command.
   The next buffer is the buffer displayed by the next command invoked immediately after this command (ignoring reading from the minibuffer a new window before displaying the buffer.
   When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' commands are also supported."
@@ -1751,7 +1751,7 @@ The purpose of this module is to load the configurations and packages that I con
   (message "Use `ace-window' to display next command buffer"))
 
 ;;;###autoload
-(defun kam-window-ace-window-one-command ()
+(defun kam-ace-window-one-command ()
   "Select a window with `ace-window' and run any command in that window."
   (interactive)
   (if (one-window-p) (split-window-right))
@@ -1764,7 +1764,7 @@ The purpose of this module is to load the configurations and packages that I con
                (this-command command))
           (call-interactively command))))))
 
-(defun kam-window-next-buffer (&optional arg)
+(defun kam-next-buffer (&optional arg)
   "Swith to the next ARGth buffer.
 With a universal prefix arg, run in the next window."
   (interactive "P")
@@ -1775,7 +1775,7 @@ With a universal prefix arg, run in the next window."
         (setq prefix-arg current-prefix-arg))
     (next-buffer arg)))
 
-(defun kam-window-prev-buffer (&optional arg)
+(defun kam-prev-buffer (&optional arg)
   "Switch to the previous ARGth buffer.
 With a universal prefix arg, run in the next window."
   (interactive "P")
@@ -1787,7 +1787,7 @@ With a universal prefix arg, run in the next window."
     (previous-buffer arg)))
 
 ;;;###autoload
-(defun kam-window-switch-to-buffer (&optional arg)
+(defun kam-switch-to-buffer (&optional arg)
   (interactive "P")
   (run-at-time
    0 nil
@@ -1800,20 +1800,28 @@ With a universal prefix arg, run in the next window."
        (setq this-command 'consult-buffer)))
    arg))
 
-(defun kam-window-split-window-right ()
+(defun kam-switch-to-buffer-dwim (&optional all-buffers)
+  "Switch to a buffer. Switch to a project buffer."
+  (interactive "P")
+  (if (or (not (project-current))
+	  all-buffers)
+      (call-interactively #'consult-buffer)
+    (call-interactively #'consult-project-buffer)))
+
+(defun kam-split-window-right ()
   "Like the normal `split-window-right' but selects the newly formed window."
   (interactive)
   (split-window-right)
   (windmove-right))
 
-(defun kam-window-split-window-below ()
+(defun kam-split-window-below ()
   "Like the normal `split-window-below', but splits the window at the root if there are two windows. Additionally selects the newly formed window."
   (interactive)
   (if (kam-common-two-windows-p)
       (split-root-window-below)
     (split-window-below)))
 
-(defun kam-window-alternate-buffer (&optional window)
+(defun kam-get-alternate-buffer (&optional window)
   "Return the last buffer WINDOW has displayed other than the current one."
   (let* ((prev-buffers (window-prev-buffers))
          (head (car prev-buffers)))
@@ -1821,10 +1829,10 @@ With a universal prefix arg, run in the next window."
         (cadr prev-buffers)
       head)))
 
-(defun kam-window-switch-to-alternate-buffer ()
+(defun kam-switch-to-alternate-buffer ()
   "Switch to the last window used."
   (interactive)
-  (let* (alt-buffer (kam-window-alternate-buffer))
+  (let* (alt-buffer (kam-get-alternate-buffer))
     (switch-to-buffer alt-buffer)))
 
 (defun kam-window-delete-popup-frame (&rest _)
@@ -1848,23 +1856,24 @@ Also see `kam-window-delete-popup-frame'." command)
          ((quit error user-error)
           (delete-frame frame))))))
 
-(defvar-keymap kam-window-map
-  :doc"Keymap for windows related actions"
-  :repeat t
-  "n" #'kam-next-buffer
-  "p" #'kam-prev-buffer
-  "b" #'kam-window-switch-to-buffer
-  "u" #'winner-undo)
+;; what the fuck am i doing here
+;; (defvar-keymap kam-window-map
+;;   :doc"Keymap for windows related actions"
+;;   :repeat t
+;;   "n" #'kam-next-buffer
+;;   "p" #'kam-prev-buffer
+;;   "b" #'kam-window-switch-to-buffer
+;;   "u" #'winner-undo)
 
-(defvar-keymap kam-window-prefix-map
-  :doc "Keymap for various window-prefix commands.
-Used for hooking into Embark."
-  :suppress 'nodigits
-  "o" #'kam-ace-window-prefix
-  "0" #'kam-ace-window-prefix
-  "(" #'split-window-right
-  "{" #'split-window-horizontally
-  "}" #'other-frame-prefix)
+;; (defvar-keymap kam-window-prefix-map
+;;   :doc "Keymap for various window-prefix commands.
+;; Used for hooking into Embark."
+;;   :suppress 'nodigits
+;;   "o" #'kam-ace-window-prefix
+;;   "0" #'kam-ace-window-prefix
+;;   "(" #'split-window-right
+;;   "{" #'split-window-horizontally
+;;   "}" #'other-frame-prefix)
 #+end_src
 **** The =Window= section about various settings
 :PROPERTIES:
@@ -1897,10 +1906,10 @@ Used for hooking into Embark."
   ("<right>" . nil)
   ([remap keyboard-quit] . #'kam-keyboard-quit-dwim)
   ("C-g" . #'kam-keyboard-quit-dwim)
+  ([kam-i] . #'kam-split-window-right)
   ("C-j" . #'kam-join-line-dwim)
   ("C-k" . kill-line)
   ([kam-m] . back-to-indentation)
-  ("C-o" . #'kam-window-ace-window-one-command)
   ("C-v" . set-mark-command)
   ("C-w" . #'kam-cut-dwim)
   ("C-t" . #'kam-transpose-char)
@@ -1917,7 +1926,7 @@ Used for hooking into Embark."
   ("C-=" . indent-region)
   ("C-^" . nil)
   ("C-$" . jinx-correct-nearest)
-  ("C-/" . #'kam-window-prev-buffer)
+  ("C-/" . #'kam-prev-buffer)
   ("C-@" . nil)
   ("C-_" . nil)
   ("C-:" . #'pp-eval-expression)
@@ -1935,6 +1944,7 @@ Used for hooking into Embark."
   ("C->" . nil)
   ("M-c" . capitalize-dwim)
   ("M-j" . kam-open-line)
+  ("M-i" . #'kam-split-window-below)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
   ("M-n" . forward-paragraph)
@@ -1950,7 +1960,7 @@ Used for hooking into Embark."
   ("M-;" . #'kam-comment-dwim)
   ("M-:" . pp-eval-expression)
   ("M-@" . nil)
-  ("M-/" . #'kam-window-next-buffer)
+  ("M-/" . #'kam-next-buffer)
   ("M-*" . nil)
   ("M-_" . nil)
   ("M-+" . nil)
@@ -1967,7 +1977,7 @@ Used for hooking into Embark."
   ("C-x 1" . nil)
   ("C-x 2" . nil)
   ("C-x 3" . nil)
-  ("C-x b" . kam-window-switch-to-buffer)
+  ("C-x b" . #'kam-switch-to-buffer-dwim)
   ("C-x f" . find-file)
   ("C-x k" . #'delete-window)
   ("C-x n" . #'kam-narrow-or-widen-dwim)
@@ -1980,7 +1990,7 @@ Used for hooking into Embark."
   ("C-x C-u" . nil)
   ("C-x C-z" . nil)
   ("C-M-:" . #'kam-comment-dwim)
-  ("C-M-/" . #'kam-window-switch-to-alternate-buffer)
+  ("C-M-/" . #'kam-switch-to-alternate-buffer)
   ("C-M-b" . sp-backward-sexp)
   ("C-M-d" . sp-down-sexp)
   ("C-M-f" . #'sp-forward-sexp)
@@ -2418,7 +2428,7 @@ As god intended.
 :PROPERTIES:
 :CUSTOM_ID: h:F53E6ABC-575D-4B03-85C6-AE54C84FA3F5
 :END:
-**** The =Naved= section that defines the mark commands
+**** The Mark
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (defun kam--mark (bounds)
   "Mark between BOUNDS as a cons cell of beginning and end positions."
@@ -2491,7 +2501,7 @@ This is the same as using \\[set-mark-command] with the prefix argument."
              #'pop-to-buffer))
     (funcall pgm)))
 #+end_src
-**** The =Naved= section that defines the editing commands
+**** Editing
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (defun kam-cut-dwim ()
   "Kills based on the position of the point in the buffer.
@@ -2658,7 +2668,7 @@ This is the same as using \\[set-mark-command] with the prefix argument."
       (kam-forward-sexp (or arg 1))
       (kill-region old-point (point)))))
 #+end_src
-**** The =Naved= section that defines the navigation commands
+**** Navigation
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (defun kam-end-of-string ()
   (interactive)
@@ -2776,7 +2786,7 @@ This is like the default, but does not ask to visit a file, but does it outright
     (run-hooks 'kam-naved-file-to-register-jump-hook))
    (t (cl-call-next-method val delete))))
 #+end_src
-**** The =Naved= section that defines the scrolling commands
+**** Scrolling
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (defun kam-multi-line-below ()
   "Move a half screen below."
@@ -2790,6 +2800,9 @@ This is like the default, but does not ask to visit a file, but does it outright
   (forward-line (- (floor (window-height) 2)))
   (setq this-command 'scroll-down-command))
 #+end_src
+**** Commenting
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+#+end_src
 **** Indentation
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (defun kam-naved-indent-region-advice (&rest ignored)
@@ -2798,9 +2811,6 @@ This is like the default, but does not ask to visit a file, but does it outright
         (indent-region (region-beginning) (region-end))
       (indent-region (line-beginning-position) (line-end-position)))
     (setq deactivate-mark deactivate)))
-#+end_src
-**** The =Naved= section that defines commenting commands
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 #+end_src
 *** The call to provide =Naved=
 :PROPERTIES:
@@ -2877,7 +2887,7 @@ This module contains all the settings and configuration related to =Org= and all
 
 (add-hook 'olivetti-mode 'org-capture)
 #+end_src
-*** =Org Agenda=
+*** Org Agenda
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 (use-package org
   :ensure nil
@@ -2943,7 +2953,7 @@ This module contains all the settings and configuration related to =Org= and all
       (add-hook hook #'pulsar-recenter-center)
       (add-hook hook #'pulsar-reveal-entry))))
 #+end_src
-*** =Org Refile=
+*** Org Refile
 :PROPERTIES:
 :CUSTOM_ID: h:2B79A9C5-4C82-438A-BFA2-79BAEC7DADCC
 :STYLE:    test
@@ -2958,7 +2968,7 @@ This module contains all the settings and configuration related to =Org= and all
   (let ((org-refile-targets '((nil . (:maxlevel . 10)))))
     (org-refile)))
 #+end_src
-*** =Org Links=
+*** Org Links
 :PROPERTIES:
 :CUSTOM_ID: h:268257D7-80D5-4588-9BAF-8D5C6A8F0CB0
 :END:
@@ -2987,7 +2997,7 @@ This module contains all the settings and configuration related to =Org= and all
         (org-insert-link nil (car l) (read-from-minibuffer "Link Text: "))))))
 #+end_src
 
-*** =Org Babel=
+*** Org Babel
 :PROPERTIES:
 :CUSTOM_ID: h:468149A3-9868-47AD-83FE-C0A67D664B20
 :END:
@@ -3029,7 +3039,7 @@ This module contains all the settings and configuration related to =Org= and all
 
 #+RESULTS:
 : t
-*** =Org Export=
+*** Org Export
 :PROPERTIES:
 :CUSTOM_ID: h:272DB923-1673-4B0C-AFEC-73EA28D00467
 :END:
@@ -3043,19 +3053,7 @@ This module contains all the settings and configuration related to =Org= and all
 	org-export-with-title nil
 	org-export-with-author nil))
 #+end_src
-*** =Org Attach= 
-:PROPERTIES:
-:CUSTOM_ID: h:C083C5B7-0EB9-4696-BEB0-4173040C1E8D
-:END:
-*** =Org Protocol= 
-:PROPERTIES:
-:CUSTOM_ID: h:84FBE031-EE1F-4843-B3B4-27C7EDA2AAD2
-:END:
-*** =Org Time Logging=
-:PROPERTIES:
-:CUSTOM_ID: h:1F227018-1391-4386-842A-2E9C9AAD2D7C
-:END:
-*** =Org= extensions
+*** Org extensions
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 (use-package org-download
   :ensure t
@@ -3094,13 +3092,13 @@ This stops the mismatch parenthesis bug in Org source blocks."
 
 (use-package org
   :ensure nil
-  :hook ((org-mode . olivetti-mode)
+  :hook ( ; (org-mode . olivetti-mode)
          (org-mode . visual-line-mode))
   :config
   (setq org-pretty-entities t))
 
 #+end_src
-*** =Pomodoros=
+*** Pomodoros
 :PROPERTIES:
 :CUSTOM_ID: h:E527460D-12BC-444E-A111-D64A5B958AEF
 :END:
@@ -3108,7 +3106,7 @@ This stops the mismatch parenthesis bug in Org source blocks."
 ; (use-package tmr
  ; :ensure t)
 #+end_src
-*** =Toc-org=
+*** Toc-org
 :PROPERTIES:
 :CUSTOM_ID: h:BADF4859-DC2A-44D0-A8BE-C374BD29E494
 :END:
@@ -3999,15 +3997,15 @@ Numerical argument ARG determines the command being selected from to choose argu
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-calendar.el")
 (provide 'kam-calendar)
 #+end_src
-** The =Magit= module
+** the =Programming= module
+:PROPERTIES:
+:CUSTOM_ID: h:60A610DE-CB69-4EDD-9371-057095DA9EC7
+:END:
+*** Magit
 :PROPERTIES:
 :CUSTOM_ID: h:DB874FA0-F55B-4310-8D1A-0DA070D4FBC6
 :END:
-*** The =Magit= section that initializes =Magit=
-:PROPERTIES:
-:CUSTOM_ID: h:220E9447-2FE5-45ED-BCDC-CEFB8AF0E9B6
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-magit.el") :mkdirp yes
+#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el") :mkdirp yes
 (use-package magit
   :ensure t
   :init
@@ -4025,17 +4023,6 @@ Numerical argument ARG determines the command being selected from to choose argu
     (magit-section-up)
     (magit-section-hide-children (magit-section-at))))
 #+end_src
-*** The call to provide =Magit=
-:PROPERTIES:
-:CUSTOM_ID: h:5392FD8F-0D8E-45AB-85D7-74EAA048C817
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-magit.el")
-(provide 'kam-magit)
-#+end_src
-** The =Programming= module
-:PROPERTIES:
-:CUSTOM_ID: h:60A610DE-CB69-4EDD-9371-057095DA9EC7
-:END:
 *** Flycheck
 :PROPERTIES:
 :CUSTOM_ID: h:ADF0F138-BB8C-4F12-8497-F3DC450D2540
@@ -4240,6 +4227,9 @@ Numerical argument ARG determines the command being selected from to choose argu
   :ensure t
   :bind
   ;; ("C-x p p" . #'kam-project-switch-project)
+  ("C-x p b" . #'consult-project-buffer)
+  :custom
+  (project-switch-use-entire-map t)
   :config
   (setq project-vc-ignores '("nix/store/"
 			     "node_modules/"
@@ -4249,7 +4239,7 @@ Numerical argument ARG determines the command being selected from to choose argu
 
   (add-to-list 'project-switch-commands '(magit-status "Git" "g"))
   (remove '(project-vc-dir "VC-Dir") project-switch-commands)
-  
+
   (defvar kam-project-name-history nil)
 
   (defvar kam-projects-directory "~/Documents/Projects/"
@@ -4360,7 +4350,8 @@ as the initial input for completion, and return that directory."
    :map eshell-mode-map
    ("<tab>" . completion-at-point)
    ("C-c d" . eshell/z)
-   ("<escape>" . quit-window))
+   ;; ("<escape>" . quit-window)
+   )
   :config
   ;; (add-to-list 'eshell-lisp-list 'eshell-smart)
   (defvar kam-eshell-prompt-regexp "\\[[[:punct:][:alnum:]]+ — [[:punct:][:alnum:]]+ \\$ "
@@ -4524,14 +4515,6 @@ The eshell is renamed to match that directory in order to make multiple eshell w
     (insert (concat "ls"))
     (eshell-send-input)))
 #+end_src
-*** Useful Eshell keybindings
-:PROPERTIES:
-:CUSTOM_ID: h:EAA6033F-DE61-4F2D-A4CE-9AC194A06523
-:END:
-"C-c M-b" Inserts the printed buffer name at point
-"C-c M-i" Inserts the printed process name at point
-"C-c M-v" Inserts an environment variable at point
-"C-c M-d" Toggles between direct input and delayed input (send on RET)
 *** The call to provide =Eshell=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-eshell.el")
 (provide 'kam-eshell)
@@ -5057,18 +5040,18 @@ When the number of characters in a buffer exceeds this threshold,
   (interactive)
   (consult-info "org"))
 
-(defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
-  (interactive)
-  (let ((default-directory (or dir default-directory))
-        (minibuffer-completing-file-name t))
-    (consult--read #'read-file-name-internal
-                   :state (consult--file-preview)
-                   :prompt prompt
-                   :initial initial
-                   :require-match mustmatch
-                   :predicate pred)))
+;; (defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+;;   (interactive)
+;;   (let ((default-directory (or dir default-directory))
+;;         (minibuffer-completing-file-name t))
+;;     (consult--read #'read-file-name-internal
+;;                    :state (consult--file-preview)
+;;                    :prompt prompt
+;;                    :initial initial
+;;                    :require-match mustmatch
+;;                    :predicate pred)))
 
-(setq read-file-name-function #'kam-consult-find-file-with-preview)
+;; (setq read-file-name-function #'kam-consult-find-file-with-preview)
 
 (setq project-read-file-name-function #'kam-consult-project-find-file-with-preview)
 
