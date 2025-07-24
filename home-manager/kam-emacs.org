@@ -3339,6 +3339,13 @@ The OS module is designed to integrate Emacs with the operating system, specific
   "Restart the Emacsclient server using Systemd."
   (interactive)
   (async-shell-command "systemctl --user restart emacs"))
+
+(defun kam-os-screenshot ()
+  "Take a screenshot."
+  (interactive)
+  (let ((default-directory "~/Pictures"))
+    (setenv "WAYLAND_DISPLAY" "wayland-1")
+    (async-shell-command "wayshot -s \"$(slurp)\"")))
 #+end_src
 *** Provide =kam-os=
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el")
