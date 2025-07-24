@@ -1491,28 +1491,27 @@ The purpose of this module is to load the configurations and packages that I con
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
 (use-package ace-window
   :ensure t
-  :commands (ace-window)
   :bind
-  ("<f7>" . ace-window)
-  ("C-<f7>" . kam-ace-window)
+  ("C-o" . #'ace-window)
+  ("M-o" . #'kam-ace-window-dispatch)
   :config
   (setq aw-dispatch-always nil
         aw-keys '(?d ?n ?r ?e ?t ?a)
         aw-dispatch-alist
         '((?x aw-delete-window "Delete Window")
-	      (?m aw-swap-window "Swap Windows")
-	      (?M aw-move-window "Move Window")
-	      (?c aw-copy-window "Copy Window")
-	      (?j aw-switch-buffer-in-window "Select Buffer")
-	      (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
-	      (?c aw-split-window-fair "Split Fair Window")
-	      (?v aw-split-window-vert "Split Vert Window")
-	      (?b aw-split-window-horz "Split Horz Window")
-	      (?o delete-other-windows "Delete Other Windows")
-	      (?? aw-show-dispatch-help)))
+	  (?m aw-swap-window "Swap Windows")
+	  (?M aw-move-window "Move Window")
+	  (?c aw-copy-window "Copy Window")
+	  (?j aw-switch-buffer-in-window "Select Buffer")
+	  (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
+	  (?c aw-split-window-fair "Split Fair Window")
+	  (?v aw-split-window-vert "Split Vert Window")
+	  (?b aw-split-window-horz "Split Horz Window")
+	  (?o delete-other-windows "Delete Other Windows")
+	  (?? aw-show-dispatch-help)))
 
-  (defun kam-ace-window (&optional arg)
-    "Small wrapper for `ace-window' that doesn't use the dispatcher."
+  (defun kam-ace-window-dispatch (&optional arg)
+    "Small wrapper for `ace-window' that uses the dispatcher."
     (interactive)
     (let ((aw-dispatch-always t))
       (ace-window arg))))
