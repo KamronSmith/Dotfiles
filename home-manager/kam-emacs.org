@@ -4040,7 +4040,7 @@ Numerical argument ARG determines the command being selected from to choose argu
           left-margin-with 1
           right-margin-width 0))
 
-  ;; (defun kam-flycheck-eldoc (callback &rest _ignored)
+  ;; (Defun kam-flycheck-eldoc (callback &rest _ignored)
   ;;   "Print flycheck messages at point by calling CALLBACK."
   ;;   (when-let ((flycheck-errors (and flycheck-mode (flycheck-overlay-errors-at (point)))))
   ;;     (mapc
@@ -4066,17 +4066,18 @@ Numerical argument ARG determines the command being selected from to choose argu
   ;;   (setq flycheck-help-echo-function nil))
 
   :hook
-  (after-init . #'global-flycheck-mode)
+  (after-init . #'global-flycheck-mode))
   ;; (flycheck-mode . kam-flycheck-prefer-eldoc)
   ;; (flycheck-mode . kam-flycheck-set-margins)
-  )
 
 (use-package flycheck-eglot
   :ensure t
   :after (flycheck eglot)
-  :hook (flycheck-mode . #'flycheck-eglot-mode)
-  :custom
-  (flycheck-eglot-exclusive t))
+  :config
+  (global-flycheck-eglot-mode 1))
+
+(use-package consult-flycheck
+  :ensure t)
 #+end_src
 *** Flyover
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
@@ -4099,13 +4100,13 @@ Numerical argument ARG determines the command being selected from to choose argu
 *** Flymake
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el") :mkdirp yes
 (use-package flymake
-  :ensure t
+  :ensure nil
   :config
   (setq flymake-fringe-indicator-position 'left-fringe
         flymake-suppress-zero-counters nil
         flymake-no-changes-timeout nil
-        flymake-start-on-flymake-mode t
-        flymake-start-on-save-buffer t
+        flymake-start-on-flymake-mode nil
+        flymake-start-on-save-buffer nil
         flymake-wrap-around t
         flymake-show-diagnostics-at-end-of-line t))
 #+end_src
@@ -4123,7 +4124,9 @@ Numerical argument ARG determines the command being selected from to choose argu
   (
    ;; (eglot-managed-mode . kam-eglot-eldoc)
    (c-ts-mode . eglot-ensure)
-   (python-ts-mode . eglot-ensure)))
+   (python-ts-mode . eglot-ensure))
+  :config
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
 #+end_src
 *** Xref
 #+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
@@ -4190,7 +4193,8 @@ Numerical argument ARG determines the command being selected from to choose argu
   :ensure t
   :defer t
   :custom
-  (python-flymake-command '("pyright"))
+  ;; (python-flymake-command '("pyright"))
+  (python-indent-guess-indent-offset-verbose nil)
   :hook (python-mode . eglot-ensure))
 #+end_src
 *** Ediff
