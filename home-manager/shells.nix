@@ -120,6 +120,7 @@
         setopt AUTOPUSHD
         setopt NO_CASE_GLOB
         setopt NO_CASE_MATCH
+        eval "$(direnv hook zsh)"
       '';
     };
 
