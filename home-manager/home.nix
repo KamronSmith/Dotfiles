@@ -54,6 +54,7 @@
     gdb
     # coding
     git
+    bootdev-cli
     docker
     gcc
     man-pages
@@ -62,6 +63,7 @@
     cmake # for Emacs + Vterm
     libtool
     awscli2
+    xxd
     gh
     clang-tools
     clang-manpages
@@ -94,8 +96,6 @@
     obsidian
     wayshot
     slurp
-    python3
-    pyright
     prismlauncher
     nexusmods-app-unfree
   ];
