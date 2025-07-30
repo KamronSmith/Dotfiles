@@ -174,8 +174,8 @@
            # windowrulev2 = bordersize 0, floating:0, onworkspace:f[1]
            # windowrulev2 = rounding 0, floating:0, onworkspace:f[1]
 
-           # windowrulev2 = opacity 0.80 0.80 0.80, class:^(Emacs)$
-           windowrulev2 = opacity 1.0 1.0 1.0, class:^(Emacs)$
+           windowrulev2 = opacity 0.80 0.80 0.80, class:^(Emacs)$
+           # windowrulev2 = opacity 1.0 1.0 1.0, class:^(Emacs)$
            windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
 
            workspace = name:Emacs,default:true,monitor:DP-2
