@@ -3,7 +3,7 @@
 {
   programs.git = {
     enable = true;
-    userName = "Kamron";
+    userName = "Kamron Smith";
     userEmail = "kamrosmith@gmail.com";
     extraConfig = {
       gpg = {
