@@ -110,6 +110,12 @@
     ".config/kitty/kitty.conf" = {
       source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/kitty.conf";
     };
+    ".config/emacs/init.el" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/init.el";
+    };
+    ".config/emacs/early-init.el" = {
+      source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/early-init.el";
+    };
   };
   
   home.sessionVariables = {

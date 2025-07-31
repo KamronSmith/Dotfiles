@@ -133,8 +133,8 @@
            bind = $mainMod, i, layoutmsg, swapwithmaster
            bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
-           bind = $mainMod, d, workspace, name:Emacs
-           bind = $mainMod, r, workspace, name:Internet
+           bind = $mainMod, d, exec, /home/kam/.dotfiles/bin/emacs-program-launcher.sh
+           bind = $mainMod, r, exec, /home/kam/.dotfiles/bin/firefox-program-launcher.sh
            bind = $mainMod, t, workspace, name:Gaming
 
            bind = $mainMod SHIFT, d, movetoworkspacesilent, name:Emacs
