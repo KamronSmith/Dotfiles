@@ -1,103 +1,8 @@
-#+TITLE: Kam's Emacs Configuration
-#+AUTHOR: Kamron Smith
-#+LANGUAGE: en
-#+OPTIONS: ':t toc:nil author:t email:t num:t
-#+STARTUP: content indent
+;; (mapcar
+;;  (lambda (string)
+;;    (add-to-list 'load-path (locate-user-emacs-file string)))
+;;  '("lisp"))
 
-*Last revised and exported on {{{latest-export-date}}}*
-
-* Goals and purpose of my Emacs configuration
-:PROPERTIES:
-:CUSTOM_ID: h:097832D0-F925-4E00-B4CB-A45FB67C736A
-:ID:       20DC37BE-79FE-47D5-BFB7-7B43DE5A113A
-:END:
-The general goal is to organize everything into /projects/, which I will loosely define as more than 1 task that leads to a single outcome. Each project can have more than one file, buffer, or window associated with it. The goal of this configuration is to make managing projects, and their associated materials low effort to effortless.
-
-Additionally, I use this configuration to remind myself of useful Emacs features that I should be using.
-* Anatomy of this configuration
-:PROPERTIES:
-:CUSTOM_ID: h:61BD6B95-C538-4C93-8ADA-451D8594CC54
-:ID:       A9B2A56A-534B-40AC-9E0A-B8A6E3438633
-:END:
-This configuration is split into a few parts:
-- =early-init.el= :: Optimizes the Emacs startup and introduces some basic settings.
-- =init.el= :: Contains basic settings, settings about native Emacs packages, and loads the later modules.
-- =lisp= directory :: Includes all of the custom code created by the configuration.
-* The =early-init= file
-:PROPERTIES:
-:CUSTOM_ID: h:A364AC94-F527-4F61-8BD8-74E52286AE46
-:END:
-** Setting the garbage collection options
-:PROPERTIES:
-:CUSTOM_ID: h:1DDC7EBE-6854-4D88-B547-8C522E9C56EA
-:END:
-#+begin_src emacs-lisp :tangle (format early-init-file "%s")
-(setq gc-cons-threshold most-positive-fixnum
-      gc-cons-percentage 0.5)
-
-(setq load-prefer-newer t)
-
-(add-hook 'emacs-startup-hook
-          (lambda ()
-            (setq gc-cons-threshold (* 1000 1000 8)
-                  gc-cons-percentage 0.1)))
-#+end_src
-** Setting frame parameters
-:PROPERTIES:
-:CUSTOM_ID: h:E234E02E-5698-4338-B7E5-19592E721194
-:END:
-#+begin_src emacs-lisp :tangle (format early-init-file "%s")
-(setq frame-resize-pixel-wise t
-      frame-inhibit-implied-resize t
-      default-frame-alist '((fullscreen . maximized)
-                            ;; (background-color . "#1e1e1e")
-                            (ns-appearance . dark)
-                            (ns-transparent-titlebar . t))
-      ring-bell-function 'ignore
-      use-file-dialog nil
-      inhibit-splash-screen t
-      inhibit-startup-screen t
-      inhibit-x-resources t)
-#+end_src
-** Disabling the default package manager
-:PROPERTIES:
-:CUSTOM_ID: h:84E1F360-CA49-471E-8E12-9CDFC062DFC8
-:END:
-This causes problems, so its better to disable it
-#+begin_src emacs-lisp :tangle (format early-init-file "%s")
-;; (setq package-enable-at-startup nil
-;;       use-package-enable-imenu-support t)
-#+end_src
-** Setting the control keys
-#+begin_src emacs-lisp :tangle (format early-init-file "%s")
-(add-hook 'after-make-frame-functions
-	  (defun setup-control-keys (frame)
-	    "Sets up the control keys that are normally taken by terminal Emacs."
-	    (with-selected-frame frame
-	      (when (display-graphic-p)
-		(define-key input-decode-map (kbd "C-i") [kam-i])
-		(define-key input-decode-map (kbd "C-m") [kam-m])
-		(define-key input-decode-map (kbd "C-[") [kam-lsb])))))
-#+end_src
-* The =init.el= file
-:PROPERTIES:
-:CUSTOM_ID: h:6CA91EE7-5F41-4CA1-B9F2-4BD11386BFE7
-:End:
-** Putting all of the modules on the =load-path=
-:PROPERTIES:
-:CUSTOM_ID: h:EDED952C-4E83-4DD0-BF63-391F46DBE64E
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(mapcar
- (lambda (string)
-   (add-to-list 'load-path (locate-user-emacs-file string)))
- '("lisp"))
-#+end_src
-** Setting up the =package manager=
-:PROPERTIES:
-:CUSTOM_ID: h:73796FB2-63C2-44E4-B008-8EDC6E7AB645
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
 ;; (defvar elpaca-installer-version 0.9)
 ;; (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
 ;; (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
@@ -138,7 +43,8 @@ This causes problems, so its better to disable it
 
 ;; (elpaca elpaca-use-package
 ;;     (elpaca-use-package-mode))
-(setq use-package-always-ensure t)
+(setq use-package-always-ensure t
+      use-package-compute-statistics t)
 
 (setq package-archives
       '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
@@ -155,18 +61,13 @@ This causes problems, so its better to disable it
 
 (setq font-log nil
       package-install-upgrade-built-in t)
-      
-#+end_src
-** Default settings
-:PROPERTIES:
-:CUSTOM_ID: h:A667A06D-EDCE-41AF-A7FE-94775942BB26
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (setq-default eval-expression-print-length nil
               scroll-error-top-bottom t
               echo-keystrokes-help nil
               next-error-recenter '(4)
 	      line-spacing 0.4
+          cursor-type 'bar
 	      fill-column 80
 	      tab-width 4
 	      indent-tabs-mode nil
@@ -174,18 +75,11 @@ This causes problems, so its better to disable it
           line-move-visual t
           sentence-end-double-space nil
           kill-do-not-save-duplicates t)
-#+end_src
-** Adjusting native compilation
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (when (native-comp-available-p)
   (setq native-comp-async-report-warnings-errors 'silent
         native-comp-prune-cache t))
-#+end_src
-** Disabling the annoying bars and screens
-:PROPERTIES:
-:CUSTOM_ID: h:E482268C-9479-4F80-84A3-BBE7E385F567
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package emacs
   :ensure nil
   :custom
@@ -194,14 +88,8 @@ This causes problems, so its better to disable it
   (menu-bar-mode -1)
   (tab-bar-mode -1)
   (tool-bar-mode -1)
-  (scroll-bar-mode -1)
-  (blink-cursor-mode -1))
-#+end_src
-** Setting the =backup configurations=
-:PROPERTIES:
-:CUSTOM_ID: h:2A2501AB-D674-4B03-A259-7D62D815E6B8
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+  (scroll-bar-mode -1))
+
 (use-package emacs
   :ensure nil
   :custom
@@ -214,12 +102,7 @@ This causes problems, so its better to disable it
         `((".*" , (concat user-emacs-directory "auto-save-list/") t)))
 
   (setq kill-buffer-delete-auto-save-files t))
-#+end_src
-** Disabling annoying confirmation messages
-:PROPERTIES:
-:CUSTOM_ID: h:E8861DAD-4CA5-459F-8E4D-22CB4645568C
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package emacs
   :ensure nil
   :config
@@ -231,29 +114,17 @@ This causes problems, so its better to disable it
         (remq 'process-kill-buffer-query-function
               kill-buffer-query-functions))
   (setq initial-scratch-message ""))
-#+end_src
-** Using the system trash
-:PROPERTIES:
-:CUSTOM_ID: h:48570B02-C51A-46B2-B070-5F24F61B9E21
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package emacs
   :ensure nil
   :config
   (setq delete-by-moving-to-trash t))
-#+end_src
-** Disable the custom file
-:PROPERTIES:
-:CUSTOM_ID: h:05439142-3517-48DE-B997-F73434A7B79B
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package emacs
   :ensure nil
   :config
   (setq custom-file (make-temp-file "emacs-custom-")))
-#+end_src
-** Cursor settings
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package emacs
   :ensure nil
   :config
@@ -261,13 +132,8 @@ This causes problems, so its better to disable it
   (setq blink-cursor-interval 0.75
 	    make-cursor-line-fully-visible t))
 
-(set-cursor-color "yellow")
-#+end_src
-** Minibuffer
-:PROPERTIES:
-:CUSTOM_ID: h:93BE1CDF-9EC8-4408-85AE-1C4CB8BE79C1
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+(call-interactively )
+
 (use-package emacs
   :ensure nil
   :custom
@@ -303,12 +169,7 @@ This causes problems, so its better to disable it
   
   (setq resize-mini-windows t
         resize-mini-frames 't))
-#+end_src
-** Completions
-:PROPERTIES:
-:CUSTOM_ID: h:3A79B6A1-2534-4FF6-94BE-D8B00BBD835F
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (setq enable-recursive-minibuffers t
       completion-cycle-threshold 1
       completions-detailed t
@@ -320,27 +181,19 @@ This causes problems, so its better to disable it
       completion-auto-select 'second-tab
       completion-ignore-case t
       read-file-name-completion-ignore-case t)
-#+end_src
-** Dired
-:PROPERTIES:
-:CUSTOM_ID: h:8222A7B8-A808-48B0-9C0B-0F13346242C8
-:END:
-*** The =Dired= section that silences the confirmation messages
-:PROPERTIES:
-:CUSTOM_ID: h:B5774001-C854-45A8-B433-EFB2838CDEA9
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package dired
   :ensure nil
-  :hook (dired-mode . #'dired-hide-details-mode)
   :config
   (setq dired-clean-confirm-killing-deleted-buffers nil
         dired-confirm-shell-command nil
         dired-no-confirm t
-        dired-deletion-confirmer '(lambda (x) t)
-        dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso"))
+        dired-deletion-confirmer '(lambda (x) t)))
 
-
+(use-package dired
+  :ensure nil
+  :config
+  (setq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso"))
 
 (use-package dired
   :ensure nil
@@ -401,17 +254,13 @@ If there is more than one, let the user choose."
         dired-create-destination-dirs 'ask
         dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
         dired-create-destination-dirs-on-trailing-dirsep t))
-#+end_src
-*** Dired keybindings
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package dired
   :ensure nil
   :bind (:map dired-mode-map
 	      ("C-o" . #'ace-window)
 	      ([kam-i] . #'kam-split-window-right)))
-#+end_src
-*** The =Dired= section for =wdired=
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package wdired
   :ensure nil
   :bind
@@ -420,9 +269,7 @@ If there is more than one, let the user choose."
   :config
   (setq wdired-allow-to-change-permissions t
         wdired-create-parent-directories t))
-#+end_src
-*** The =Dired= section for =dired-subtree=
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package dired-subtree
   :ensure t
   :after (dired)
@@ -437,20 +284,7 @@ If there is more than one, let the user choose."
     (interactive)
     (dired-subtree-up)
     (dired-subtree-toggle)))
-#+end_src
-*** The =Dired= section for =dired-preview=
-#+begin_src emacs-lisp (format user-init-file "%s")
-(use-package dired-preview
-  :ensure t
-  ;; :after (dired)
-  :config
-  (setq dired-preview-max-size (* (expt 2 20) 10)
-        dired-preview-delay 0.15))
 
-(dired-preview-global-mode 1)
-#+end_src
-*** The =Dired= section for =image-dired=
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (use-package image-dired
   :ensure nil
   :commands (image-dired)
@@ -464,9 +298,7 @@ If there is more than one, let the user choose."
         image-dired-thumb-margin 2
         image-dired-thumb-relief 0
         image-dired-thumbs-per-row 4))
-#+end_src
-*** The =Dired= section for =ready-player=
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package ready-player
   :ensure t
   :mode
@@ -474,9 +306,7 @@ If there is more than one, let the user choose."
   :config
   (setq ready-player-auto-play nil
         ready-player-repeat nil))
-#+end_src
-*** The =Dired= section for =trashed.el=
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package trashed
   :ensure t
   :commands (trashed)
@@ -484,12 +314,7 @@ If there is more than one, let the user choose."
   (setq trashed-action-confirmer 'y-or-n-p
         trashed-use-header-line t
         trashed-sort-key '("Date deleted" . t)))
-#+end_src
-*** The =Dired= section for loading =Mac= specific settings
-:PROPERTIES:
-:CUSTOM_ID: h:09323889-FEF2-4F46-A532-3BA66DBFBE2E
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package dired
   :ensure nil
   :if (eq system-type 'darwin)
@@ -497,12 +322,7 @@ If there is more than one, let the user choose."
   (setq dired-use-ls-dired t
         insert-directory-program "/opt/homebrew/bin/gls"
         dired-listing-switches "-AGFhlv --group-directories-first"))
-#+end_src
-*** The =Dired= section that contains custom lisp
-:PROPERTIES:
-:CUSTOM_ID: h:8AF8A2E1-12BD-4F53-805D-6D3A22CD81ED
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (defun kam-dired-shell-command-on-file-at-point ()
   "Runs a shell command on the file at point."
   (interactive)
@@ -515,12 +335,7 @@ If there is more than one, let the user choose."
   "Opens the home directory."
   (interactive)
   (dired (getenv "HOME")))
-#+end_src
-** Repeat-mode
-:PROPERTIES:
-:CUSTOM_ID: h:1DADCF8B-7411-4908-8EB9-ED2CD0D4DA34
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package repeat
   :ensure nil
   :hook (after-init . repeat-mode)
@@ -540,12 +355,7 @@ If there is more than one, let the user choose."
      (when (symbolp cmd)
        (put cmd 'repeat-map keymap)))
    (symbol-value keymap)))
-#+end_src
-** Bookmarks
-:PROPERTIES:
-:CUSTOM_ID: h:25E3DCCC-A2B4-4C3D-8DB6-CD2D26BE360D
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package bookmark
   :ensure nil
   :commands (bookmark-set bookmark-jump bookmark-bmenu-list)
@@ -557,15 +367,7 @@ If there is more than one, let the user choose."
         bookmark-automatically-show-annotations nil
         bookmark-fringe-mark nil
         bookmark-save-flag 1))
-#+end_src
-** Registers
-:PROPERTIES:
-:CUSTOM_ID: h:72DA1A59-8097-461A-A9FA-78C315121F25
-:END:
-Registers in Emacs are similar to the ones found in Vim.
 
-Additional code is added to save the contents of registers after Emacs closes, so they are essentially permanent until the user deletes them.
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
 (use-package register
   :ensure nil
   :defer t
@@ -575,21 +377,14 @@ Additional code is added to save the contents of registers after Emacs closes, s
 
   (with-eval-after-load 'savehist
     (add-to-list 'savehist-additional-variables 'register-alist)))
-#+end_src
-** Imenu
-:PROPERTIES:
-:CUSTOM_ID: h:0360CC8E-0EA6-40C0-B88C-FC0C38B3986D
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package imenu
   :ensure nil
   :bind
   (([remap imenu] . consult-imenu))
   :config
   (setq org-imenu-depth 4))
-#+end_src
-** Docview
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (defun kam-docview-forward-paragraph ()
   "Move point forward paragraph such that the first line is highlighted.
 
@@ -605,12 +400,7 @@ This function is intended to be used with `hl-line-mode'."
   (interactive)
   (backward-paragraph 2)
   (forward-line))
-#+end_src
-** Help-mode
-:PROPERTIES:
-:CUSTOM_ID: h:D661E16E-B075-468A-AEEE-A68D3F817881
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package help
   :ensure nil
   :hook (help-mode . lin-mode)
@@ -625,9 +415,7 @@ This function is intended to be used with `hl-line-mode'."
 	      ("C-," . scroll-up)
 	      ("M-," . scroll-down)
 	      ("<prior>" . scroll-up-line)))
-#+end_src
-** Info-mode
-#+begin_src emacs-lisp :tangle (format user-init-file)
+
 (use-package info
   :ensure nil
   :hook (Info-mode . lin-mode)
@@ -645,12 +433,7 @@ This function is intended to be used with `hl-line-mode'."
 	      ("k" . 'Info-prev-reference)
 	      ("<next>" . scroll-down-line)
 	      ("<prior>" . scroll-up-line)))
-#+end_src
-** Man-mode
-:PROPERTIES:
-:CUSTOM_ID: h:42C5BC72-EF43-4A8C-98A5-D68E3B7D7CAA
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package man
   :ensure nil
   :bind (:map Man-mode-map
@@ -658,13 +441,7 @@ This function is intended to be used with `hl-line-mode'."
 	      ("n" . #'kam-docview-forward-paragraph))
   :config
   (setq Man-notify-method 'pushy))
-#+end_src
-** Occur
-:PROPERTIES:
-:CUSTOM_ID: h:82B82CF0-FEF5-4431-93A3-C08576891A90
-:END:
-Occur is a command that shows all lines in a buffer that match a user given regex.
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 ;;(use-package occur
 ;; :ensure nil)
 (setq list-matching-lines-default-context-lines 2)
@@ -686,12 +463,7 @@ Occur is a command that shows all lines in a buffer that match a user given rege
    (car (occur-read-primary-args))))
 
 (define-key occur-mode-map (kbd "w") 'occur-edit-mode)
-#+end_src
-** Re-Builder
-:PROPERTIES:
-:CUSTOM_ID: h:11D0AF31-C303-4331-807A-CE55374A6836
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package re-builder
   :ensure nil
   :bind
@@ -740,9 +512,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         (setq kam-re-builder-positions nil)
         (reb-quit)
         (query-replace-regexp re replacement delimited beg end)))))
-#+end_src
-** Tramp
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package tramp
   :ensure nil
   :config
@@ -758,32 +528,20 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "/sudo::")
                      "remote-shell" (executable-find "env"))))
-#+end_src
-** Create missing dirs in =Find-file=
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (defun kam-find-file-auto-create-missing-dirs ()
   (let ((target-dir (file-name-directory buffer-file-name)))
     (unless (file-exists-p target-dir)
       (make-directory target-dir t))))
 
 (add-to-list 'find-file-not-found-functions #'kam-find-file-auto-create-missing-dirs)
-#+end_src
-** Recentf-mode
-:PROPERTIES:
-:CUSTOM_ID: h:C206B5BA-3AC7-4346-A380-2C0A0D832D0C
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package recentf
   :ensure nil
   :hook (after-init . recentf-mode)
   :config
   (setq recentf-max-saved-items 100))
-#+end_src
-** Scrolling
-:PROPERTIES:
-:CUSTOM_ID: h:2D6B25C1-7F83-4AF9-B9D0-8B6382EE8ADD
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package emacs
   :ensure nil
   :config
@@ -801,34 +559,19 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
                 scroll-margin 0)
   :config
   (ultra-scroll-mode 1))
-#+end_src
-** Keyfreq
-:PROPERTIES:
-:CUSTOM_ID: h:9F15EF8E-6BAA-4E63-85AA-E35EC09ECFD8
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package keyfreq
   :ensure t
   :config
   (keyfreq-mode))
-#+end_src
-** Auto-revert mode
-:PROPERTIES:
-:CUSTOM_ID: h:2054818A-2C0D-45A9-A01D-B9F261921286
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package autorevert
   :ensure nil
   :hook (after-init . global-auto-revert-mode)
   :config
   (setq auto-revert-verbose nil
         global-auto-revert-non-file-buffers t))
-#+end_src
-** Savehist
-:PROPERTIES:
-:CUSTOM_ID: h:31033B87-D998-4952-A1E9-3F12073CBB44
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package savehist
   :ensure nil
   :hook (after-init . savehist-mode)
@@ -838,22 +581,12 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         savehist-save-minibuffer-history t
         savehist-file (locate-user-emacs-file "savehist"))
   (add-to-list 'savehist-additional-variables 'kill-ring))
-#+end_src
-** =Tooltips=
-:PROPERTIES:
-:CUSTOM_ID: h:C01A39EB-7EA5-4FF0-9B13-AAE577F85F79
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (tooltip-mode -1)
 (setq x-gtk-use-system-tooltips nil
       tooltip-reuse-hidden-frame t
       tooltip-use-echo-area t)
-#+end_src
-** =Proced=
-:PROPERTIES:
-:CUSTOM_ID: h:1CF5B0BC-B163-4BC8-B8B9-221C79C09475
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (use-package proced
   :ensure nil
   ;;   :commands (proced)
@@ -867,42 +600,20 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   
   (defun kam-proced-settings ()
     (proced-toggle-auto-update 1)))
-#+end_src
-** Cross program usage
-:PROPERTIES:
-:CUSTOM_ID: h:3FC7668F-D348-4F05-BD4B-D463E52641B1
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (setq save-interprogram-paste-before-kill t
       mouse-drag-and-drop-region-cross-program t
       mouse-drag-and-drop-region-scroll-margin t)
-#+end_src
-** =Global-so-long-mode=
-:PROPERTIES:
-:CUSTOM_ID: h:1AD00154-0759-44D0-ADCB-0110D88C685B
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (global-so-long-mode 1)
-#+end_src
-** Clipboards
-:PROPERTIES:
-:CUSTOM_ID: h:A21013CB-A2DA-4C20-990A-EF0E9B96DB74
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (setq x-select-enable-clipboard t
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-#+end_src
-** Linux specific settings
-:PROPERTIES:
-:CUSTOM_ID: h:057410F5-6704-4B86-86F3-3F800DF327EB
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (when (eq system-type 'gnu/linux)
   (setq x-super-keysym 'meta
         x-meta-keysym 'alt))
-#+end_src
-** Daemon
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (if (daemonp)
     (add-hook 'after-make-frame-functions
               (lambda (frame)
@@ -913,12 +624,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (load-theme 'modus-vivendi :no-confirm)
   (add-hook 'after-init-hook #'kam-set-custom-faces)
   (add-hook 'after-init-hook #'kam-set-font-faces))
-#+end_src
-** Mac specific settings
-:PROPERTIES:
-:CUSTOM_ID: h:67DE7323-31FA-459F-82E3-7FEC46D6D498
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
+
 (when (eq system-type 'darwin)
   (setq mac-option-key-is-meta nil
         mac-command-key-is-meta t
@@ -928,30 +634,120 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
-#+end_src
-** The call to load all of the modules
-:PROPERTIES:
-:CUSTOM_ID: h:FB459034-485D-4BB9-8CF1-030E0C45EA0A
-:END:
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(mapc (lambda (name)
-        (require (intern (file-name-sans-extension name))))
-      (directory-files (concat user-emacs-directory "lisp/") nil ".+\\.elc?$"))
-#+end_src
-* Modules
-:PROPERTIES:
-:CUSTOM_ID: h:24489BD3-FFC5-4686-B40D-D5311BCB4DF8
-:END:
-** The =Essentials= module
-:PROPERTIES:
-:CUSTOM_ID: h:27D008C9-A255-450C-8014-FD21D2FEB67A
-:END:
-The purpose of this module is to load the configurations and packages that I consider essential to my experience of Emacs.
-*** Vertico
-:PROPERTIES:
-:CUSTOM_ID: h:24EE7C95-8437-4A01-9186-333158BBC629
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el") :mkdirp yes
+
+(use-package emacs
+  :ensure nil
+  :bind
+  ("<f3>" . #'project-recompile)
+  ("<f4>" . #'project-compile)
+  ("<f7>" . #'kam-switch-to-alternate-buffer)
+  ("<escape>" . #'kam-keyboard-quit-dwim)
+  ("<home>" . nil)
+  ("<end>" . nil)
+  ("<up>" . nil)
+  ("<down>" . nil)
+  ("<left>" . nil)
+  ("<right>" . nil)
+  ([remap keyboard-quit] . #'kam-keyboard-quit-dwim)
+  ("C-g" . #'kam-keyboard-quit-dwim)
+  ([kam-i] . #'kam-split-window-right)
+  ("C-j" . #'kam-join-line-dwim)
+  ("C-k" . #'kill-line)
+  ([kam-m] . back-to-indentation)
+  ("C-v" . #'set-mark-command)
+  ("C-w" . #'kam-cut-dwim)
+  ("C-t" . #'kam-transpose-char)
+  ("C-q" . #'fill-paragraph)
+  ("C-z" . #'kam-kill-ring-save-dwim)
+  ("C-SPC" . #'kam-jump-to-mark)
+  ("C-<return>" . #'kam-insert-new-line-below)
+  ("C-DEL" . #'kam-control-backspace)
+  ("C-<next>" . #'scroll-other-window)
+  ("C-<prior>" . #'scroll-other-window-down)
+  ("C-," . #'scroll-up)
+  ("M-," . #'scroll-down)
+  ("C-&" . nil)
+  ("C-=" . #'indent-region)
+  ("C-^" . nil)
+  ("C-$" . #'jinx-correct-nearest)
+  ("C-/" . #'kam-prev-buffer)
+  ("C-@" . nil)
+  ("C-_" . nil)
+  ("C-:" . #'pp-eval-expression)
+  ("C-!" . #'shell-command)
+  ("C-?" . #'undo)
+  ("C-+" . #'delete-window)
+  ("C-|" . nil)
+  ("C-`" . nil)
+  ("C-)" . nil)
+  ("C-~" . nil)
+  ("C-<" . nil)
+  ("C->" . nil)
+  ("M-c" . capitalize-dwim)
+  ("M-j" . kam-open-line)
+  ("M-i" . #'kam-split-window-below)
+  ("M-l" . downcase-dwim)
+  ("M-m" . kam-mark-line)
+  ("M-n" . forward-paragraph)
+  ("M-p" . backward-paragraph)
+  ("M-q" . upcase-dwim)
+  ("M-t" . kam-transpose-words)
+  ("M-u" . universal-argument)
+  ("M-v" . mark-word)
+  ("M-w" . #'kam-cut-dwim)
+  ("M-z" . #'kam-kill-ring-save-dwim)
+  ("M-!" . async-shell-command)
+  ("M-?" . #'undo-redo)
+  ("M-;" . #'kam-comment-dwim)
+  ("M-:" . #'pp-eval-expression)
+  ("M-@" . nil)
+  ("M-/" . #'kam-next-buffer)
+  ("M-*" . nil)
+  ("M-_" . nil)
+  ("M-+" . #'delete-other-windows)
+  ("M-#" . nil)
+  ("M-SPC" . #'kam-push-mark-no-activate)
+  ("M-<return>" . #'kam-insert-new-line-above)
+  ("M-DEL" . #'backward-kill-sentence)
+  ("C-h c" . #'describe-char)
+  ("C-h r" . #'info-display-manual)
+  ("C-h s" . #'kam-consult-search-emacs-info-pages)
+  ("C-h F" . #'apropos-function)
+  ("C-h R" . #'info-emacs-manual)
+  ("C-h V" . #'apropos-variable)
+  ("C-x 1" . nil)
+  ("C-x 2" . nil)
+  ("C-x 3" . nil)
+  ("C-x b" . #'kam-switch-to-buffer-dwim)
+  ("C-x f" . #'find-file)
+  ("C-x n" . kam-narrow-or-widen-dwim)
+  ("C-x o" . kam-ace-window-prefix)
+  ("C-x u" . nil)
+  ("C-x C-d" . dired)
+  ("C-x C-n" . nil)
+  ("C-x C-e" . kam-eval-current-sexp)
+  ("C-x C-v" . mark-paragraph)
+  ("C-x C-k" . kam-kill-current-buffer)
+  ("C-x C-u" . nil)
+  ("C-x C-z" . nil)
+  ("C-M-:" . kam-comment-dwim)
+  ("C-M-/" . kam-switch-to-alternate-buffer)
+  ("C-M-=" . indent-region)
+  ("C-M-b" . sp-backward-sexp)
+  ("C-M-d" . sp-down-sexp)
+  ("C-M-f" . sp-forward-sexp)
+  ("C-M-k" . sp-kill-sexp)
+  ;; ("C-M-m" . kam-mark-point-to-end-of-line)
+  ("C-M-q". kam-kill-inner-sexp)
+  ("C-M-u" . sp-backward-up-sexp)
+  ("C-M-v" . sp-mark-sexp)
+  ("C-M-y" . kam-duplicate-line-or-region)
+  ("C-M-DEL" . sp-backward-kill-sexp)
+  ([remap list-buffers] . ibuffer)
+  ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
+  :config
+  (keymap-global-set "<f6>" 'avy-goto-char-timer))
+
 (use-package vertico
   :ensure t
   :hook (after-init . vertico-mode)
@@ -1073,12 +869,7 @@ The purpose of this module is to load the configurations and packages that I con
     '(posframe
       (vertico-posframe-poshandler . posframe-poshandler-window-center)
       (vertico-posframe-border-width . 2))))
-#+end_src
-*** Consult
-:PROPERTIES:
-:CUSTOM_ID: h:FC68FE2E-E1DF-4206-AB94-A89F62D9C09F
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package consult
   :ensure t
   :demand t
@@ -1147,24 +938,14 @@ The purpose of this module is to load the configurations and packages that I con
   :config
   (setq consult-dir-shadow-filenames nil
 	consult-dir-jump-file-command 'consult-fd))
-#+end_src
-*** Marginalia
-:PROPERTIES:
-:CUSTOM_ID: h:D3D58FF4-7BE7-41EF-ACB2-6F63FF339CB2
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el") :mkdirp yes
+
 (use-package marginalia
   :ensure t
   :config
   ;; (setq marginalia-align 'left
   ;; marginalia-align-offset 0)
   (marginalia-mode))
-#+end_src
-*** Embark
-:PROPERTIES:
-:CUSTOM_ID: h:A1826CA8-AA3B-4A2C-9B2F-F721CB6DE4FE
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package embark
   :bind
   ([remap describe-bindings] . embark-bindings)
@@ -1211,12 +992,7 @@ The purpose of this module is to load the configurations and packages that I con
 ;;                (keymap-set embark-general-map (key-description (make-vector 1 key))
 ;;                            #'kam-embark--set-window))
 ;;              kam-window-prefix-map)
-#+end_src
-*** Orderless
-:PROPERTIES:
-:CUSTOM_ID: h:86EC6A78-B549-417B-B810-5D2B7C2937C8
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package orderless
   :ensure t
   :config
@@ -1250,12 +1026,7 @@ The purpose of this module is to load the configurations and packages that I con
                                           #'orderless-affix-dispatch)))
 
 (setq read-buffer-completion-ignore-case t)
-#+end_src
-*** Corfu
-:PROPERTIES:
-:CUSTOM_ID: h:17B80903-0C9D-45F7-931F-212D328F1FDA
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package corfu
   :ensure t
   :init
@@ -1295,9 +1066,7 @@ The purpose of this module is to load the configurations and packages that I con
   :after (corfu)
   :config
   (corfu-popupinfo-mode))
-#+end_src
-*** Cape
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package cape
   :ensure t
   :bind ("C-c p" . cape-prefix-map)
@@ -1308,12 +1077,7 @@ The purpose of this module is to load the configurations and packages that I con
   (add-hook 'completion-at-point-functions #'cape-elisp-block)
   ;; (add-hook 'completion-at-point-functions #'cape-dict)
   )
-#+end_src
-*** Avy
-:PROPERTIES:
-:CUSTOM_ID: h:9BF7E490-FDB9-444B-BBE5-1B07E6624337
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package avy
   :ensure t
   :bind
@@ -1403,16 +1167,7 @@ The purpose of this module is to load the configurations and packages that I con
   (setf (alist-get ?l avy-dispatch-alist) 'kam-avy-action-org-store-link)
   (setf (alist-get ?p avy-dispatch-alist) 'kam-avy-action-consult-line-at-point)
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
-#+end_src
-*** Windows
-:PROPERTIES:
-:CUSTOM_ID: h:1AFC596B-DCCD-4B19-B10C-11D5FE19AE98
-:END:
-**** Ace-window
-:PROPERTIES:
-:CUSTOM_ID: h:59604AA1-4055-45DA-8F49-425565229423
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package ace-window
   :ensure t
   :bind
@@ -1439,9 +1194,7 @@ The purpose of this module is to load the configurations and packages that I con
     (interactive)
     (let ((aw-dispatch-always t))
       (ace-window arg))))
-#+end_src
-**** Display-buffer-alist
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (setq display-buffer-alist
       `(("\\*Info\\*"
          (display-buffer-reuse-window display-buffer-in-side-window)
@@ -1562,9 +1315,7 @@ The purpose of this module is to load the configurations and packages that I con
 	 (window-parameters . ((mode-line-format . none))))))
 
 (setq window-sides-slots '(0 0 1 1))
-#+end_src
-**** Popper
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (use-package popper
   :ensure t
   :bind (("<f8>" . popper-toggle)
@@ -1592,9 +1343,7 @@ The purpose of this module is to load the configurations and packages that I con
         popper-display-control nil)
   (popper-mode)
   (popper-echo-mode))
-#+end_src
-**** Tabs
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 ;; (defun kam-tab-new-tab-one-command ()
 ;;   "Create a rnew tab and and run a command in the newly created tab."
 ;;   (interactive)
@@ -1638,18 +1387,14 @@ The purpose of this module is to load the configurations and packages that I con
 		(name (file-name-nondirectory
 		       (directory-file-name (project-root proj)))))
       (tab-group (format "[P] %s" name)))))
-#+end_src
-**** OTPP
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el") 
+
 (use-package otpp
   :ensure t
   :after project
   :init
   (otpp-mode 1)
   (otpp-override-mode 1))
-#+end_src
-**** Window custom lisp
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (defun kam-ace-window-prefix ()
   "Use `ace-window' to display the buffer of the next command.
   The next buffer is the buffer displayed by the next command invoked immediately after this command (ignoring reading from the minibuffer a new window before displaying the buffer.
@@ -1790,12 +1535,7 @@ Also see `kam-window-delete-popup-frame'." command)
 ;;   "(" #'split-window-right
 ;;   "{" #'split-window-horizontally
 ;;   "}" #'other-frame-prefix)
-#+end_src
-**** Window various settings
-:PROPERTIES:
-:CUSTOM_ID: h:0FFAFB70-AA26-474E-A80D-9157B136344A
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (setq switch-to-buffer-in-dedicated-window 'pop
       switch-to-buffer-obey-display-actions t
       cursor-in-non-selected-windows nil
@@ -1803,137 +1543,13 @@ Also see `kam-window-delete-popup-frame'." command)
       help-window-select t
       help-window-keep-selected t
       truncate-partial-width-windows nil)
-#+end_src
-**** Window keybindings
-#+begin_src 
 
-#+end_src
-*** Keybindings
-**** Basic keybindings
-#+begin_src emacs-lisp :tangle (format user-init-file "%s")
-(use-package emacs
-  :ensure nil
-  :bind
-  ("<f3>" . #'project-recompile)
-  ("<f4>" . #'project-compile)
-  ("<f7>" . #'kam-switch-to-alternate-buffer)
-  ("<escape>" . #'kam-keyboard-quit-dwim)
-  ("<home>" . nil)
-  ("<end>" . nil)
-  ("<up>" . nil)
-  ("<down>" . nil)
-  ("<left>" . nil)
-  ("<right>" . nil)
-  ([remap keyboard-quit] . #'kam-keyboard-quit-dwim)
-  ("C-g" . #'kam-keyboard-quit-dwim)
-  ([kam-i] . #'kam-split-window-right)
-  ("C-j" . #'kam-join-line-dwim)
-  ("C-k" . #'kill-line)
-  ([kam-m] . back-to-indentation)
-  ("C-v" . #'set-mark-command)
-  ("C-w" . #'kam-cut-dwim)
-  ("C-t" . #'kam-transpose-char)
-  ("C-q" . #'fill-paragraph)
-  ("C-z" . #'kam-kill-ring-save-dwim)
-  ("C-SPC" . #'kam-jump-to-mark)
-  ("C-<return>" . #'kam-insert-new-line-below)
-  ("C-DEL" . #'kam-control-backspace)
-  ("C-<next>" . #'scroll-other-window)
-  ("C-<prior>" . #'scroll-other-window-down)
-  ("C-," . #'scroll-up)
-  ("M-," . #'scroll-down)
-  ("C-&" . nil)
-  ("C-=" . #'indent-region)
-  ("C-^" . nil)
-  ("C-$" . #'jinx-correct-nearest)
-  ("C-/" . #'kam-prev-buffer)
-  ("C-@" . nil)
-  ("C-_" . nil)
-  ("C-:" . #'pp-eval-expression)
-  ("C-!" . #'shell-command)
-  ("C-?" . #'undo)
-  ("C-+" . #'delete-window)
-  ("C-|" . nil)
-  ("C-`" . nil)
-  ("C-)" . nil)
-  ("C-~" . nil)
-  ("C-<" . nil)
-  ("C->" . nil)
-  ("M-c" . capitalize-dwim)
-  ("M-j" . kam-open-line)
-  ("M-i" . #'kam-split-window-below)
-  ("M-l" . downcase-dwim)
-  ("M-m" . kam-mark-line)
-  ("M-n" . forward-paragraph)
-  ("M-p" . backward-paragraph)
-  ("M-q" . upcase-dwim)
-  ("M-t" . kam-transpose-words)
-  ("M-u" . universal-argument)
-  ("M-v" . mark-word)
-  ("M-w" . #'kam-cut-dwim)
-  ("M-z" . #'kam-kill-ring-save-dwim)
-  ("M-!" . async-shell-command)
-  ("M-?" . #'undo-redo)
-  ("M-;" . #'kam-comment-dwim)
-  ("M-:" . #'pp-eval-expression)
-  ("M-@" . nil)
-  ("M-/" . #'kam-next-buffer)
-  ("M-*" . nil)
-  ("M-_" . nil)
-  ("M-+" . #'delete-other-windows)
-  ("M-#" . nil)
-  ("M-SPC" . #'kam-push-mark-no-activate)
-  ("M-<return>" . #'kam-insert-new-line-above)
-  ("M-DEL" . #'backward-kill-sentence)
-  ("C-h c" . #'describe-char)
-  ("C-h r" . #'info-display-manual)
-  ("C-h s" . #'kam-consult-search-emacs-info-pages)
-  ("C-h F" . #'apropos-function)
-  ("C-h R" . #'info-emacs-manual)
-  ("C-h V" . #'apropos-variable)
-  ("C-x 1" . nil)
-  ("C-x 2" . nil)
-  ("C-x 3" . nil)
-  ("C-x b" . #'kam-switch-to-buffer-dwim)
-  ("C-x f" . #'find-file)
-  ("C-x n" . kam-narrow-or-widen-dwim)
-  ("C-x o" . kam-ace-window-prefix)
-  ("C-x u" . nil)
-  ("C-x C-d" . dired)
-  ("C-x C-n" . nil)
-  ("C-x C-e" . kam-eval-current-sexp)
-  ("C-x C-v" . mark-paragraph)
-  ("C-x C-k" . kam-kill-current-buffer)
-  ("C-x C-u" . nil)
-  ("C-x C-z" . nil)
-  ("C-M-:" . kam-comment-dwim)
-  ("C-M-/" . kam-switch-to-alternate-buffer)
-  ("C-M-=" . indent-region)
-  ("C-M-b" . sp-backward-sexp)
-  ("C-M-d" . sp-down-sexp)
-  ("C-M-f" . sp-forward-sexp)
-  ("C-M-k" . sp-kill-sexp)
-  ;; ("C-M-m" . kam-mark-point-to-end-of-line)
-  ("C-M-q". kam-kill-inner-sexp)
-  ("C-M-u" . sp-backward-up-sexp)
-  ("C-M-v" . sp-mark-sexp)
-  ("C-M-y" . kam-duplicate-line-or-region)
-  ("C-M-DEL" . sp-backward-kill-sexp)
-  ([remap list-buffers] . ibuffer)
-  ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
-  :config
-  (keymap-global-set "<f6>" 'avy-goto-char-timer))
-#+end_src
-**** Prog mode bindings
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
 (use-package emacs
   :ensure nil
   :bind
   (:map prog-mode-map
 	("C-M-q" . #'kam-kill-inner-sexp)))
-#+end_src
-**** The =Keybindings= section that defines the =prefix-map=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (defvar-keymap kam-prefix-map
   :doc "Prefix map"
   :name "Prefix"
@@ -1947,9 +1563,7 @@ Also see `kam-window-delete-popup-frame'." command)
   "C-f" #'find-file
   "C-r" (cons "ITE" 'kam-prefix-ite)
   "C-o" (cons "Org" 'kam-prefix-org))
-#+end_src
-**** The =Keybindings= section that defines the =search-map=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 ;; (defvar-keymap kam-prefix-search-map
 ;;   :doc "Prefix map for searching or going"
 ;;   :name "Search"
@@ -1982,9 +1596,7 @@ Also see `kam-window-delete-popup-frame'." command)
 	      ("M-l" . #'consult-line)
 	      ("M-o" . #'kam-menu)
 	      ("M-p" . #'kam-consult-line-symbol-at-point)))
-#+end_src
-**** The =Keybindings= section that defines the =ite-map=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (defvar-keymap kam-prefix-ite-map
     :doc "Prefix map for the ITE"
     :name "ITE"
@@ -1997,9 +1609,7 @@ Also see `kam-window-delete-popup-frame'." command)
     "C-l" #'org-roam-tag-add
     "C-h" (lambda () (interactive) (find-file kam-ite-home-note))
     "H-i" (lambda () (interactive) (find-file kam-ite-inbox-note)))
-#+end_src
-**** The =Keybindings= section that defines the =org-map=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (defvar-keymap kam-prefix-org-map
   :doc "Prefix map for Org mode."
   :name "Org"
@@ -2008,12 +1618,7 @@ Also see `kam-window-delete-popup-frame'." command)
   "C-o" #'kam-org-refile-region
   "C-p" #'org-set-property
   "C-l" #'kam-consult-org-heading-link)
-#+end_src
-*** Custom lisp
-:PROPERTIES:
-:CUSTOM_ID: h:3227C69B-A699-4F5E-B1C5-182A92367C89
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
+
 (defun kam-keyboard-quit-dwim ()
   (interactive)
   (cond
@@ -2035,24 +1640,59 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
             (and (not (one-window-p))))
         (kill-buffer-and-window)
       (kill-buffer))))
-#+end_src
-*** The call to provide =Essentials=
-:PROPERTIES:
-:CUSTOM_ID: h:5B6745C0-21F1-44C2-9E6F-A8D86CE51480
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
-(provide 'kam-essentials)
-#+end_src
-** The =Naved= module
-:PROPERTIES:
-:CUSTOM_ID: h:04E42333-CAB3-4B71-A869-EBA2666DCA82
-:END:
-The =Naved= /"Navigation & Editing"/ module is concerned with the navigation and editing of files.
-*** Isearch
-:PROPERTIES:
-:CUSTOM_ID: h:F12F3EA5-DE72-4169-A6F2-397F2F7F961C
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el") :mkdirp yes
+
+(use-package org
+  :ensure t
+  :bind
+  (:map org-mode-map
+        ("C-," . #'scroll-up)
+	("C-/" . #'scroll-other-window)
+	("M-/" . #'scroll-other-window-down)
+        ("M-," . #'scroll-down)
+	("M-{" . #'kam-org-metadown)
+	("M-}" . #'kam-org-metaup)
+	("<f2>" . #'org-meta-return)
+        ("C-<return>" . #'kam-insert-new-line-below)
+        ("C-<backspace>" . #'kam-control-backspace)
+        ("C-<tab>" . #'kam-org-up-and-fold-heading)
+        ("C-<f2>" . #'org-insert-subheading)
+        ("<return>" . #'org-return)
+        ("M-j" . #'kam-open-line)
+        ("C-j" . #'kam-join-line-dwim)
+        ("M-<f2>" . #'kam-org-insert-super-heading)
+        ("C-'" . org-edit-src-code)
+        ("M-m" . kam-mark-line)
+	("M-h" . #'mark-paragraph)
+        ("C-'" . org-edit-src-exit)
+        ("M-<up>" . #'kam-org-metaup)
+        ("M-<down>" . #'kam-org-metadown)
+        ("C-M-<up>" . #'kam-org-control-metaup)
+        ("C-M-<down>" . #'kam-org-control-metadown)
+        ("C-M-<left>" . kam-org-promote-subtrees)
+        ("C-M-<right>" . kam-org-demote-subtrees)
+	("C-M-<return>" . org-meta-return)
+	("C-M-h" . #'mark-defun)
+	("C-M-m" . #'kam-mark-point-to-end-of-line)
+        ("C-M-q" . #'kam-kill-inner-sexp)
+	("C-M-v" . #'sp-mark-sexp)
+        ("C-x C-v" . #'org-mark-element)
+        ("C-x C-k" . #'kam-kill-current-buffer)
+        ("C-x k" . #'delete-window)
+        ("C-x n" . kam-narrow-or-widen-dwim)
+  (:map org-src-mode-map
+        ("M-'" . org-edit-src-exit)
+        ("C-<backspace>" . kam-control-backspace))
+  ("C-c o l" . #'kam-consult-org-heading-link)
+  ("C-c o o" . #'kam-org-refile-region)
+  ("C-c o p" . #'org-set-property)
+  ("C-c o w" . #'kam-org-refile-to-current-file)))
+
+(defvar-keymap kam-org-repeat-map
+  :repeat t
+  :doc "Repeat map for Org"
+  "<up>" #'kam-org-up-heading
+  "<down>" #'kam-org-down-heading)
+
 ;;; Isearch
 (use-package isearch
   :ensure nil
@@ -2081,13 +1721,7 @@ Do nothing if search string is empty to start with."
   (defun kam-isearch-symbol-at-point ()
     (interactive)
     (isearch-forward (thing-at-point 'symbol))))
-#+end_src
-*** Harpoon
-:PROPERTIES:
-:CUSTOM_ID: h:72BCFB72-E439-478C-B258-1B7BB7419E48
-:END:
-Harpoon is intended to be used alongside the =Project= module, where =Project= will manage the projects and associated buffers, and =Harpoon= will allow me to quickly navigate between files.
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package harpoon
    :ensure t
    :custom
@@ -2101,12 +1735,7 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
    ("<kam-lsb>" . #'harpoon-go-to-4)
    :config
    (setq harpoon-project-package 'project))
-#+end_src
-*** Move-text
-:PROPERTIES:
-:CUSTOM_ID: h:33AEDDD3-F155-4D7B-A6B5-F98E4D29AE32
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package move-text
   :bind
   (("H-<up>" . move-text-up)
@@ -2115,61 +1744,36 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
 
 (advice-add 'move-text-up :after 'kam-indent-region-advice)
 (advice-add 'move-text-down :after 'kam-indent-region-advice)
-#+end_src
-*** Wgrep
-:PROPERTIES:
-:CUSTOM_ID: h:D7ED13ED-B551-484C-8ABD-7C20A2F4C774
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package wgrep
   :ensure t)
-#+end_src
-*** Link-hint
-:PROPERTIES:
-:CUSTOM_ID: h:1165FB72-9BDE-4291-94C5-935F6AFA621B
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package link-hint
   :ensure t
   :bind
   ("C-<f6>" . link-hint-open-link))
-#+end_src
-*** Smartparens
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package smartparens
   :ensure t)
-#+end_src
-*** Hippie-expand
-:PROPERTIES:
-:CUSTOM_ID: h:A5C2FE9A-2249-4A5E-A05E-FBF32C7D878F
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package hippie-expand
   :ensure nil
   :bind
   ([remap dabbrev-expand] . hippie-expand))
-#+end_src
-*** Show-paren mode
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package paren
   :ensure nil
   :config
   (setq show-paren-context-when-offscreen 'child-frame
         show-paren-delay .75))
-#+end_src
-*** Delete-selection mode
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package delsel
   :ensure nil
   :config
   (delete-selection-mode t))
-#+end_src
-*** Subword mode
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (global-subword-mode)
-#+end_src
-*** Indentation
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package electric
   :ensure nil
   :hook ((prog-mode . electric-indent-local-mode)
@@ -2178,39 +1782,25 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
   (electric-pair-mode)
   (electric-quote-mode -1)
   (electric-indent-mode))
-#+end_src
-*** Visible mark
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package visible-mark
   :ensure t
   :config
   (set-face-attribute 'visible-mark-active nil :background "yellow" :underline t)
   (setq visible-mark-faces '((:background "#989898" :foreground "#000000")))
   (global-visible-mark-mode))
-#+end_src
-*** Vundo
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el") 
+
 (use-package vundo
   :ensure t
   :bind (:map vundo-mode-map
 	      ("<escape>" . #'vundo-quit)))
-#+end_src
-*** Display line numbers mode
-:PROPERTIES:
-:CUSTOM_ID: h:504347E5-339C-4586-81FB-99D203C80BF1
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package emacs
   :ensure nil
   :config
   (setq display-line-numbers-type 'relative
         display-line-numbers-width 3))
-#+end_src
-*** Undo
-:PROPERTIES:
-:CUSTOM_ID: h:FC224E32-F90A-4CDA-859B-967AA06176C5
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package vundo
   :ensure t)
 
@@ -2221,22 +1811,12 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
 
 (dolist (cmd '(undo))
   (put cmd 'repeat-map 'undo-repeat-map))
-#+end_src
-*** Abbrev mode
-:PROPERTIES:
-:CUSTOM_ID: h:5DAC9775-CDE6-4199-A338-AAA2E952DA94
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package abbrev
   :ensure nil
   :config
   (setq-default abbrev-mode t))
-#+end_src
-*** Keyboard macros
-:PROPERTIES:
-:CUSTOM_ID: h:5F327C1F-2868-4C45-9533-8B95E54AA4FC
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (use-package kmacro
   :ensure nil
   :bind
@@ -2244,17 +1824,9 @@ Harpoon is intended to be used alongside the =Project= module, where =Project= w
         ("I" . #'kmacro-insert-macro))
   :config
   (defalias 'kmacro-insert-macro 'insert-keyboard-macro))
-#+end_src
 
-*** Killing not saving duplicates
-:PROPERTIES:
-:CUSTOM_ID: h:2F3308B3-AB74-4561-A73C-F9AF284162D7
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
 (setq kill-do-not-save-duplicates t)
-#+end_src
-*** Custom lisp
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
+
 (defun kam--mark (bounds)
   "Mark between BOUNDS as a cons cell of beginning and end positions."
   (push-mark (car bounds))
@@ -2341,16 +1913,16 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (interactive)
   (cond ((region-active-p)
          (kill-region nil nil t)
-	 (setq this-command 'kill-region))
-        ((org-at-heading-p)
+	     (setq this-command 'kill-region))
+        ((and (org-at-heading-p) (derived-mode-p 'org-mode))
          (org-cut-subtree)
-	 (setq this-command 'org-cut-subtree))
-        ((and (derived-mode-p 'org-mode) (org-in-item-p))
+	     (setq this-command 'org-cut-subtree))
+        ((and (org-in-item-p) (derived-mode-p 'org-mode))
          (kam-org-kill-item)
-	 (setq this-command 'kill-region))
+	     (setq this-command 'kill-region))
         (t
-  	 (kam-kill-whole-line 1)
-	 (setq this-command 'kill-region))))
+  	     (kam-kill-whole-line 1)
+	     (setq this-command 'kill-region))))
 
 (defun kam-kill-ring-save-dwim ()
   "If the region is active, copy the region. If the region is inactive, copy the line. If point is at an Org heading, copy the subtree. If the point is at an Org item, copy the item. Else, copy the line."
@@ -2641,37 +2213,7 @@ This is like the default, but does not ask to visit a file, but does it outright
         (indent-region (region-beginning) (region-end))
       (indent-region (line-beginning-position) (line-end-position)))
     (setq deactivate-mark deactivate)))
-#+end_src
-*** The call to provide =Naved=
-:PROPERTIES:
-:CUSTOM_ID: h:FCBA1872-E558-435C-9F82-C8F20E9ED025
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-naved.el")
-(provide 'kam-naved)
-#+end_src
-** The =Org= module
-:PROPERTIES:
-:CUSTOM_ID: h:EE4EAA46-7B24-4A59-96DF-A1570C3E8B21
-:END:
-This module contains all the settings and configuration related to =Org= and all of the software that comes with it.
 
-=Org= is the killer feature of this configuration, and most of my time with Emacs so far has been in =Org-mode=. =Org= has a number of features that are really cool such as:
-
-- Cycle the visibility of heading and subheadings.
-- Mix prose and code in the same document. You can do this to either to make a whole program or to evaluate some snippets like in a programming notebook. See [[#h:468149A3-9868-47AD-83FE-C0A67D664B20][The =Org= section that sets up =Org Babel=.]]
-- Export =Org= documents to a variety of different formats, like HTML, PDF, Markdown.
-- Manage TODO lists.
-- Use LaTeX inside of =Org= files to produce technical documents without having to write all of the markup.
-- Quickly shift a /thing/ up and down in a document.
-- Capture data or fleeting thoughts efficiently. See [[#h:3AECA5FA-E8C8-42BB-8673-D37771491AF4][The =Org= section that enables =Org Capture=.]]
-- Maintain an agenda. See [[#h:EDEF7F9E-0EA7-4CEA-8F54-E54FCF880B6E][The =Org= section that enables =Org Agenda.=]]
-- Clock in and out of tasks, enabling you to keep track of your time.
-- Links to files regardless of file type. See [[#h:268257D7-80D5-4588-9BAF-8D5C6A8F0CB0][The =Org= section for =Org= link settings]] 
-*** Basic settings
-:PROPERTIES:
-:CUSTOM_ID: h:31F7379A-6E8A-4BC7-A1D6-FF3604904994
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el") :mkdirp yes
 (use-package org
   :ensure nil
   :config
@@ -2696,66 +2238,7 @@ This module contains all the settings and configuration related to =Org= and all
         org-hide-emphasis-markers t
         org-fold-catch-invisible-edits 'show
         org-fontify-todo-headline t))
-#+end_src
-*** Org-mode keybindings
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-essentials.el")
-(use-package org
-  :ensure t
-  :bind
-  (:map org-mode-map
-        ("C-," . #'scroll-up)
-	("C-/" . #'scroll-other-window)
-	("M-/" . #'scroll-other-window-down)
-        ("M-," . #'scroll-down)
-	("M-{" . #'kam-org-metadown)
-	("M-}" . #'kam-org-metaup)
-	("<f2>" . #'org-meta-return)
-        ("C-<return>" . #'kam-insert-new-line-below)
-        ("C-<backspace>" . #'kam-control-backspace)
-        ("C-<tab>" . #'kam-org-up-and-fold-heading)
-        ("C-<f2>" . #'org-insert-subheading)
-        ("<return>" . #'org-return)
-        ("M-j" . #'kam-open-line)
-        ("C-j" . #'kam-join-line-dwim)
-        ("M-<f2>" . #'kam-org-insert-super-heading)
-        ("C-'" . org-edit-src-code)
-        ("M-m" . kam-mark-line)
-	("M-h" . #'mark-paragraph)
-        ("C-'" . org-edit-src-exit)
-        ("M-<up>" . #'kam-org-metaup)
-        ("M-<down>" . #'kam-org-metadown)
-        ("C-M-<up>" . #'kam-org-control-metaup)
-        ("C-M-<down>" . #'kam-org-control-metadown)
-        ("C-M-<left>" . kam-org-promote-subtrees)
-        ("C-M-<right>" . kam-org-demote-subtrees)
-	("C-M-<return>" . org-meta-return)
-	("C-M-h" . #'mark-defun)
-	("C-M-m" . #'kam-mark-point-to-end-of-line)
-        ("C-M-q" . #'kam-kill-inner-sexp)
-	("C-M-v" . #'sp-mark-sexp)
-        ("C-x C-v" . #'org-mark-element)
-        ("C-x C-k" . #'kam-kill-current-buffer)
-        ("C-x k" . #'delete-window)
-        ("C-x n" . kam-narrow-or-widen-dwim)
-  (:map org-src-mode-map
-        ("M-'" . org-edit-src-exit)
-        ("C-<backspace>" . kam-control-backspace))
-  ("C-c o l" . #'kam-consult-org-heading-link)
-  ("C-c o o" . #'kam-org-refile-region)
-  ("C-c o p" . #'org-set-property)
-  ("C-c o w" . #'kam-org-refile-to-current-file)))
 
-(defvar-keymap kam-org-repeat-map
-  :repeat t
-  :doc "Repeat map for Org"
-  "<up>" #'kam-org-up-heading
-  "<down>" #'kam-org-down-heading)
-#+end_src
-*** Org Capture
-:PROPERTIES:
-:CUSTOM_ID: h:3AECA5FA-E8C8-42BB-8673-D37771491AF4
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 (use-package org
   :ensure nil
   :bind
@@ -2770,9 +2253,7 @@ This module contains all the settings and configuration related to =Org= and all
   (setq org-bookmark-names-plist nil))
 
 (add-hook 'olivetti-mode 'org-capture)
-#+end_src
-*** Org Agenda
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 (use-package org
   :ensure nil
   :bind
@@ -2836,13 +2317,7 @@ This module contains all the settings and configuration related to =Org= and all
     (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
       (add-hook hook #'pulsar-recenter-center)
       (add-hook hook #'pulsar-reveal-entry))))
-#+end_src
-*** Org Refile
-:PROPERTIES:
-:CUSTOM_ID: h:2B79A9C5-4C82-438A-BFA2-79BAEC7DADCC
-:STYLE:    test
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 (setq org-refile-use-outline-path t
       org-outline-path-complete-in-steps nil)
 
@@ -2851,12 +2326,7 @@ This module contains all the settings and configuration related to =Org= and all
   (interactive)
   (let ((org-refile-targets '((nil . (:maxlevel . 10)))))
     (org-refile)))
-#+end_src
-*** Org Links
-:PROPERTIES:
-:CUSTOM_ID: h:268257D7-80D5-4588-9BAF-8D5C6A8F0CB0
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 (use-package org
   :ensure nil
   :bind
@@ -2879,13 +2349,7 @@ This module contains all the settings and configuration related to =Org= and all
           (user-error "No links to insert")
         (setq l (pop links))
         (org-insert-link nil (car l) (read-from-minibuffer "Link Text: "))))))
-#+end_src
 
-*** Org Babel
-:PROPERTIES:
-:CUSTOM_ID: h:468149A3-9868-47AD-83FE-C0A67D664B20
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 (use-package org-babel
   :no-require
   :ensure nil
@@ -2919,15 +2383,7 @@ This module contains all the settings and configuration related to =Org= and all
           ("T" . "src emacs-lisp :tangle FILENAME :mkdirp yes")
           ("w" . "warning")
           ("q" . "quote"))))
-#+end_src
 
-#+RESULTS:
-: t
-*** Org Export
-:PROPERTIES:
-:CUSTOM_ID: h:272DB923-1673-4B0C-AFEC-73EA28D00467
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 (use-package org
   :ensure nil
   :config
@@ -2936,22 +2392,11 @@ This module contains all the settings and configuration related to =Org= and all
 	org-export-with-tags nil
 	org-export-with-title nil
 	org-export-with-author nil))
-#+end_src
-*** Org extensions
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
-(use-package org-download
-  :ensure t
-  :after org)
 
 (use-package ob-mermaid
   :ensure t
   :after org)
-#+end_src
-*** Org modifying the syntax table
-:PROPERTIES:
-:CUSTOM_ID: h:9FBB7D12-610C-4449-B147-61B66B970ACC
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 (defun kam-org-syntax-table-modify ()
   "Modify `org-mode-syntax-table' for the current Org buffer.
 
@@ -2960,12 +2405,7 @@ This stops the mismatch parenthesis bug in Org source blocks."
   (modify-syntax-entry ?> "." org-mode-syntax-table))
 
 (add-hook 'org-mode-hook #'kam-org-syntax-table-modify)
-#+end_src
-*** Prettifies Org
-:PROPERTIES:
-:CUSTOM_ID: h:C0BADBF4-F85F-41B4-B375-31D7248ADAC4
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 (use-package org-modern
   :ensure t
   :after org
@@ -2981,29 +2421,13 @@ This stops the mismatch parenthesis bug in Org source blocks."
   :config
   (setq org-pretty-entities t))
 
-#+end_src
-*** Pomodoros
-:PROPERTIES:
-:CUSTOM_ID: h:E527460D-12BC-444E-A111-D64A5B958AEF
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
 ; (use-package tmr
  ; :ensure t)
-#+end_src
-*** Toc-org
-:PROPERTIES:
-:CUSTOM_ID: h:BADF4859-DC2A-44D0-A8BE-C374BD29E494
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 (use-package toc-org
   :commands toc-org-enable
   :init (add-hook 'org-mode-hook 'toc-org-enable))
-#+end_src
-*** Custom lisp
-:PROPERTIES:
-:CUSTOM_ID: h:15B7C4B7-8411-405D-BAD1-4B56C20A4CB0
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
+
 ;;;###autoload
 (defun kam-org-metaup ()
   "Go to the previous heading or item, or to a higher level heading.
@@ -3157,28 +2581,11 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (interactive "p")
   (kam-org-metaup)
   (org-cycle))
-#+end_src
-*** The call to provide =Org=
-:PROPERTIES:
-:CUSTOM_ID: h:4AA20E95-0CF6-47B8-BCFB-13402E6111A6
-:END: 
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-org.el")
-(provide 'kam-org)
-#+end_src 
-** The =OS= module
-The OS module is designed to integrate Emacs with the operating system, specifically NixOS.
-*** Require =kam-common=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el") :mkdirp yes
-(require 'kam-common)
-#+end_src
-*** Installing Nix-mode
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el")
+
 (use-package nix-mode
    :ensure t
    :mode "\\.nix\\'")
-#+end_src
-*** Nix Commands
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el")
+
 (defvar kam-dotfiles-directory "~/.dotfiles/")
 
 (defun kam-os-nix-rebuild ()
@@ -3197,9 +2604,7 @@ The OS module is designed to integrate Emacs with the operating system, specific
   (interactive)
   (let ((default-directory kam-dotfiles-directory))
     (compile "sudo nix flake update && sudo nixos-rebuild switch --flake .#nixos" t)))
-#+end_src
-*** Operating system commands
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el")
+
 (defun kam-os-reboot ()
   "Restarts the computer."
   (interactive)
@@ -3227,339 +2632,160 @@ The OS module is designed to integrate Emacs with the operating system, specific
 	(name (read-string "Name of screenshot: ")))
     (setenv "WAYLAND_DISPLAY" "wayland-1")
     (async-shell-command (concat "wayshot -s \"$(slurp)\" -f " name ".jpg"))))
-#+end_src
-*** Provide =kam-os=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-os.el")
-(provide 'kam-os)
-#+end_src
-** The =Themes= module
-:PROPERTIES:
-:CUSTOM_ID: h:88A597D4-AEF0-4AA9-B147-F7AF0F80B3B5
-:END:
-*** Use case
-:PROPERTIES:
-:CUSTOM_ID: h:739A9D33-046A-4176-883E-11BA86F77F43
-:END:
-*** =Modus Themes=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package modus-themes
+
+(use-package denote
+  :ensure t
+  :hook (dired-mode . denote-dired-mode)
+  :bind
+  ("C-c n h" . #'kam-ite-visit-home)
+  :config
+  (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
+	;; denote-infer-keywords t
+	denote-sort-keywords t
+	denote-prompts '(title keywords)
+	denote-rename-confirmations '(rewrite-front-matter modify-file-name)
+	denote-date-prompt-use-org-read-date t)
+
+  (defvar kam-ite-inbox-note)
+
+  (defvar kam-ite-home-note
+    (concat denote-directory "20230928T043448--home__index.org")
+    "The home note for my ITE.")
+
+  (defvar kam-ite-workbench-note)
+
+  (defun kam-ite-visit-home ()
+    "Visits the `kam-ite-home-note'."
+    (interactive)
+    (find-file kam-ite-home-note))
+
+  ;; (defun kam-ite-visit-inbox ()
+  ;;   "Visits the `kam-ite-inbox-note'."
+  ;;   (interactive)
+  ;;   (find-file kam-ite-inbox-note))
+
+  ;; (defun kam-ite-visit-workbench ()
+  ;;   "Visits the `kam-ite-workbench-note'."
+  ;;   (interactive)
+  ;;   (find-file kam-ite-workbench-note))
+  )
+
+(use-package consult-denote
+  :ensure t
+  :custom
+  (consult-denote-find-command #'consult-fd)
+  (consult-denote-grep-command #'consult-ripgrep)
+  :config
+  (consult-denote-mode 1))
+
+(use-package denote-org
   :ensure t
   :config
-  (setq modus-themes-disable-other-themes t
-        modus-themes-italic-constructs t
-        modus-themes-bold-constructs t
-        modus-themes-mixed-fonts t
-        modus-themes-prompts '(heavy)
-        modus-themes-org-blocks nil
-        modus-themes-completions '((selection . (bold)))
-        modus-theme-headings '((1 . (variable-pitch 1.5))
-                               (2 . (variable-pitch 1.3))
-                               (3 . (variable-pitch 1.1))
-                               (t . (variable-pitch 1)))
-        
-        modus-vivendi-palette-user '((kam-comment "#ff7f24")
-                                     (kam-constant "#7fffd4")
-                                     (kam-fnname "#87cefa")
-                                     (kam-keyword "#00ffff")
-                                     (kam-preprocessor "#b0c4de")
-                                     (kam-string "#ffa07a")
-                                     (kam-type "#98fb98")
-                                     (kam-variable "#eedd82"))
-        
-        modus-vivendi-palette-overrides '(
-                                          (bg-main "#000000")
-                                          (bg-active bg-main)
-                                          ;; (bg-mode-line-active bg-blue-subtle)
-                                          ;; (border-mode-line-active unspecified)
-                                          ;; (fg-region unspecified)
-                                          ;; (bg-heading-1 bg-main)
-                                          ;; (fg-heading-1 fg-main)
-                                          ;; (fg-heading-2 fg-changed)
-                                          ;; (bg-heading-2 bg-main)
-                                          ;; (fg-heading-3 blue-cooler)
-                                          ;; (bg-heading-3 and bg-main)
-                                          ;; (builtin "#b0c4de")
-                                          ;; (Comment "#ff7f24") ;; these ;custom values are taken from standard-themes-dark
-                                          (constant "#7fffd4")
-                                          (fnname "#87cefa")
-                                          (keyword "#00ffff")
-                                          (preprocessor "#b0c4de")
-                                          (docstring "#ffa07a")
-                                          (string "#ffa07a")
-                                          (type "#98fb98")
-                                          (variable "#eedd82")
-                                          (rx-escape "#44cc44")
-                                          (rx-construct "#ffffff")
-                                          (fg-prompt cyan)
-                                          ;; (bg-prompt unspecified)
-                                          (fg-completion-match-0 fg-main)
-                                          ;; (bg-completion-match-0 unspecified)
-                                          (fg-completion-match-1 fg-main)
-                                          (bg-prose-block-delimiter "#312f34")
-                                          (bg-prose-block-contents "#29272c")
-                                          ;; (bg-completion-match-1 unspecified)
-                                          ))
+  (setq denote-org-store-link-to-heading 'id))
 
-  (defun kam-set-custom-faces (&rest _)
-    "Function which sets faces across the configuration using the `modus-themes-with-colors' macro."
-    (modus-themes-with-colors
-      (custom-set-faces
-       `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
-       `(region ((,c :extend nil)))
-       `(org-special-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-meta-line ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-document-title ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-document-info ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-document-info-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-drawer ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-property-value ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-ellipsis ((,c :height 1.0 :foreground ,fg-dim)))
-       `(org-block-end-line ((,c :background ,bg-prose-block-delimiter)))
-       `(denote-faces-keywords ((,c :foreground ,keyword)))
-       `(olivetti-fringe ((,c :background ,bg-main))))))
-
-  (defun kam-modus-themes-org-block-faces (&rest _)
-    "Function for setting custom org block faces."
-    (modus-themes-with-colors
-      (setq org-src-block-faces
-            `(("emacs-lisp" bg-dim)))))
-
-  (add-hook 'modus-themes-post-load-hook #'kam-set-custom-faces)
-  (add-hook 'modus-themes-post-load-hook #'kam-modus-themes-org-block-faces))
-  #+end_src
-*** =EF Themes=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package ef-themes
+(use-package denote-explore
   :ensure t)
-#+end_src
-*** =Olivetti=
-:PROPERTIES:
-:CUSTOM_ID: h:216AA5B4-C126-4271-9F4F-B34DE364E881
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package olivetti
+
+(use-package org-anki
   :ensure t
   :config
-  (setq olivetti-style 'fancy
-        olivetti-margin-width 5
-        olivetti-body-width .7
-        ;; olivetti-minimum-body-width 80
-         olivetti-recall-visual-line-mode-entry-state t))
+  (setq org-anki-api-key nil
+        org-anki-default-deck "get that main main"))
 
-#+end_src
-*** =Spacious Padding=
-:PROPERTIES:
-:CUSTOM_ID: h:DA5B3A2F-EF18-45BF-84C0-31FED395BD50
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package spacious-padding
+(use-package project
   :ensure t
+  :bind
+  ;; ("C-x p p" . #'kam-project-switch-project)
+  ("C-x p b" . #'consult-project-buffer)
+  :custom
+  (project-switch-use-entire-map t)
   :config
-  ;; (setq spacious-padding-subtle-mode-line
-  ;;       '(:mode-line-active "#fec43f"
-  ;;         :mode-line-inactive 'vertical-border))
+  (setq project-vc-ignores '("nix/store/"
+			     "node_modules/"
+			     "go/pkg/"
+			     ".direnv/")
+	project-vc-extra-root-markers '(".project"))
 
-  (setq spacious-padding-subtle-mode-line nil)
-  
-  (setq spacious-padding-widths
-        '( :internal-border-width 15
-           :header-line-width 4
-           :mode-line-width 8
-           :tab-width 4
-           :right-divider-width 30
-           :scroll-bar-width 8
-           :fringe-width 4))
-  (spacious-padding-mode))
-#+end_src
-*** =Modeline=
-:PROPERTIES:
-:ID:       81aad2f2-a0f6-4b9a-a657-23451985e93d
-:END:
-This is the section that sets the default modeline format. The goal of the modeline is to look nice, but also to show useful information in an easy to read way. The default modeline looks pretty bad, none of the information is spaced correctly, and worst of all shows information in an almost cryptic way. Not to mention the information it shows that isn't needed at all.
+  (add-to-list 'project-switch-commands '(magit-status "Git" "g"))
+  (remove '(project-vc-dir "VC-Dir") project-switch-commands)
 
-The majority of the functions are written in the [[id:90ecc2e2-ec44-444f-a373-6aca647070e7][modeline library]].
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(setq mode-line-compact nil
-      mode-line-right-align-edge 'right-fringe)
+  (defvar kam-project-name-history nil)
 
-(setq-default mode-line-format
-              '("%e"
-                kam-modeline-nix
-                kam-modeline-kbd-macro
-                kam-modeline-narrow
-                kam-modeline-buffer-modified
-                kam-modeline-buffer-status
-                "  "
-                kam-modeline-buffer-identification
-                "  "
-                kam-modeline-major-mode
-		"  "
-		;; kam-modeline-buffer-stats
-                kam-modeline-process
-                " "
-                mode-line-format-right-align
-                kam-modeline-vc-branch))
+  (defvar kam-projects-directory "~/Documents/Projects/"
+    "The default directory where projects are stored.")
 
-(with-eval-after-load 'spacious-padding
-  (defun kam-modeline--spacious-indicators ()
-    "Set box attribute to `'kam-modeline-indicator-button' if spacious-padding is enabled."
-    (if (bound-and-true-p spacious-padding-mode)
-        (set-face-attribute 'kam-modeline-indicator-button nil :box t)
-      (set-face-attribute 'kam-modeline-indicator-button nil :box 'unspecified)))
+  ;; (setq project-prompter #'kam-project-read-project-by-name)
 
-  (kam-modeline--spacious-indicators)
-  (add-hook 'spacious-padding-mode-hook #'kam-modeline--spacious-indicators))
-#+end_src
-*** =Logos=
-:PROPERTIES:
-:CUSTOM_ID: h:6D85E383-3981-4C92-A294-D36FA6DC09FC
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package logos
-  :ensure t
-  :config
-  (setq-default logos-hide-mode-line t
-                logos-hide-header-line t
-                logos-hide-buffer-boundaries t
-                logos-hide-fringe nil
-                logos-olivetti t))
-#+end_src
-*** =Lin=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package lin
-  :ensure t
-  :hook (after-init . lin-global-mode)
-  :config
-  (setq lin-face 'lin-yellow))
-#+end_src
-*** =Pulsar=
-For use with Avy.
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package pulsar
-  :ensure t
-  :hook ((next-error . pulsar-pulse-line)
-         (minibuffer-setup . pulsar-pulse-line)
-         (consult-after-jump . pulsar-recenter-center)
-         (consult-after-jump . pulsar-reveal-entry)
-         (imenu-after-jump . pulsar-recenter-center)
-         (imenu-after-jump . pulsar-reveal-entry))
-  :config
-  (setq pulsar-pulse t
-        pulsar-face 'ansi-color-yellow)
-  (setopt pulsar-delay 0.03
-          pulsar-iterations 17)
-  (pulsar-global-mode)
+  (defun kam-project--return-formatted-project-name ()
+    (when-let* ((proj (project-current))
+		(name (file-name-nondirectory
+		       (directory-file-name (project-root proj)))))
+      (format "[%s]" name)))
 
-  (add-to-list 'pulsar-pulse-functions 'avy-goto-char-timer)
-  (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-down)
-  (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-up)
-  (add-to-list 'pulsar-pulse-functions 'scroll-down)
-  (add-to-list 'pulsar-pulse-functions 'scroll-up)
-  (add-to-list 'pulsar-pulse-functions 'ace-window)
+  (defun kam-project-read-project-by-name ()
+    "Read a project name and return its root directory.
 
-  (advice-add 'avy-goto-char-timer :after 'pulsar-recenter-center))
+If no known project matches the selected name, prompt for a
+sub-directory of `kam-projects-directory' using the selected name
+as the initial input for completion, and return that directory."
+    (let* ((name-dir-alist
+            (mapcar (lambda (dir)
+                      (cons (project-name (project-current nil dir))
+                            dir))
+                    (project-known-project-roots)))
+           (current (project-current))
+           (default (and current (project-name current)))
+           (name (consult--read name-dir-alist
+                                  :prompt "Project: "
+                                  :history 'kam-project-name-history
+                                  :annotate #'marginalia-annotate-file
+				  :state (consult--file-state)
+				  :category 'file)))
+      (or (alist-get name name-dir-alist nil nil #'string=)
+          (let* ((dir (read-directory-name "Project root directory: "
+                                           kam-projects-directory
+                                           nil t name))
+		 (project (project-current nil dir)))
+            (when project (project-remember-project project))
+            dir))))
 
-#+end_src 
-*** Sets up icons
-:PROPERTIES:
-:CUSTOM_ID: h:1187DBE8-7AC4-4A4C-8FF7-40067F0818D6
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :commands all-the-icons-install-fonts
-  :init
-  (unless (find-font (font-spec :name "all-the-icons"))
-    (all-the-icons-install-fonts t))
-  :config
-  (setq all-the-icons-scale-factor 1.1))
-
-(use-package all-the-icons-ibuffer
-  :ensure t
-  :hook (ibuffer-mode . all-the-icons-ibuffer-mode))
-
-(use-package all-the-icons-dired
-  :ensure t
-  :hook (dired-mode . all-the-icons-dired-mode)
-  :config
-  (setq all-the-icons-dired-monochrome nil))
-
-(use-package all-the-icons-completion 
-  :ensure t
-  :after marginalia
-  :hook (marginalia-mode . #'all-the-icons-completion-marginalia-setup))
-
-(all-the-icons-completion-mode 1)
-
-(use-package nerd-icons
-  :config
-  (setq nerd-icons-font-family "SauceCodePro Nerd Font"))
-
-(use-package nerd-icons-corfu
-  :ensure t
-  :after (corfu)
-  :config
-  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
-#+end_src
-*** Sets up fonts
-:PROPERTIES:
-:CUSTOM_ID: h:96ADA93B-F10F-49F4-BEC6-76E082CF28B7
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(defun kam-set-font-faces ()
-  (set-face-attribute 'default nil :font "SauceCodePro Nerd Font Mono" :height 130 :weight 'regular :width 'regular)
-  (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 1.0 :weight 'regular :width 'regular)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Comfy Duo" :height 1.0 :weight 'regular :width 'regular)
-  (set-face-attribute 'mode-line nil :font "SauceCodePro Nerd Font Mono" :height 1.0 :weight 'regular)
-  (set-face-attribute 'mode-line-active nil :font "SauceCodePro Nerd Font Mono" :height .9  :weight 'regular)
-  (set-face-attribute 'mode-line-inactive nil :family "SauceCodePro Nerd Font Mono" :height .9 :weight 'regular))
-
-(defun prog-mode-buffer-variable ()
-  "Intended to set the font in prog mode"
+(defun kam-project-new ()
+  "Create a project in the `kam-projects-directory'."
   (interactive)
-  (setq buffer-face-mode-face 'fixed-pitch)
-  (buffer-face-mode))
+  (let* ((default-directory kam-projects-directory)
+         (project-name (read-directory-name "Project: "))
+         (new-project
+          (concat kam-projects-directory
+                  (s-replace " " "-" project-name))))
+    (make-directory new-project)
+    (make-empty-file (concat new-project "/.project"))
+    (project--remember-dir new-project)))
 
-;; (add-hook 'text-mode-hook #'variable-pitch-mode)
-(add-hook 'prog-mode-hook #'display-line-numbers-mode)
-(add-hook 'org-mode-hook #'variable-pitch-mode)
-(add-hook 'prog-mode-hook 'prog-mode-buffer-variable)
-(add-hook 'info-mode-hook #'variable-pitch-mode)
+(defun kam-project-delete (proj)
+  "Delete a project."
+  (interactive (list (kam-project-read-project-by-name)))
+  (let* ((default-directory kam-projects-directory))
+    (project-forget-project proj)
+    (delete-directory proj t t))))
 
-(global-font-lock-mode 1)
-(setq font-lock-maximum-decoration t
-      font-lock-maximum-size nil
-      font-lock-support-mode 'jit-lock-mode
-      font-lock-multiline t
-      jit-lock-stealth 0.5
-      jit-lock-defer-contextually t
-      jit-lock-stealth-time 16)
+(defun kam-project-switch-project (dir)
+  "Switch to another project."
+  (interactive (list (funcall project-prompter)))
+  (project--remember-dir dir)
+  (unwind-protect
+      (progn
+	(setq-local project-current-directory-override dir)
+	(call-interactively #'project-find-file))))
 
-(setq x-underline-at-descent-line nil
-      inhibit-compacting-font-caches nil)
-#+end_src
+(project-remember-projects-under kam-projects-directory t)
 
-#+RESULTS:
-*** Sets up the Emacs Daemon Make Frame
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
+(use-package eat
+ :ensure t
+ :hook ((eshell-load . #'eat-eshell-mode)
+	(eshell-load . #'eat-eshell-visual-command-mode))
+ :config
+ (setq eat-shell (getenv "SHELL")))
 
-#+end_src
-*** The call to provide =Themes=
-:PROPERTIES:
-:CUSTOM_ID: h:8C9E8882-01E5-4821-B4F4-1A587EBF0E67
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-themes.el")
-(provide 'kam-themes)
-#+end_src
-** The =Books= module
-:PROPERTIES:
-:CUSTOM_ID: h:5FB4541E-F907-4424-AF92-79D13478F664
-:END:
-*** Books
-:PROPERTIES:
-:CUSTOM_ID: h:4975553E-EE29-4152-A762-CCC9CA107ABA
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-books.el") :mkdirp yes
 (use-package calibredb
   :defer t
   :config
@@ -3590,31 +2816,14 @@ For use with Avy.
   :config
   (setq nov-text-width 80))
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
-#+end_src
-*** The call to provide =Books=
-:PROPERTIES:
-:CUSTOM_ID: h:10F5F5E7-7512-4EC8-924D-D9DA486C7E3F
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-books.el")
-(provide 'kam-books)
-#+end_src
-** The =Comint= module
-*** Keybindings
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el") :mkdirp yes
-;;; -*- lexical-binding: t; -*-
+
 (use-package emacs
   :ensure nil
   :bind
   (:map comint-mode-map
         ("C-c C-l" . #'kam-consult-comint-history)
         ("C-." . #'kam-comint-insert-arguments-from-command)))
-#+end_src
-*** =Shell-mode=
-:PROPERTIES:
-:CUSTOM_ID: h:8082CEBF-DCD1-43A4-A246-920408F81492
-:END:
-**** The =Shell= section for keybindings
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
+
 (use-package emacs
   :ensure nil
   :bind
@@ -3626,12 +2835,7 @@ For use with Avy.
         ("C-c C-w" . #'comint-write-buffer)
         ("C-c C-j" . #'kam-comint-input-from-history)
 	("<escape>" . #'quit-window)))
-#+end_src
-**** The =Shell= section that sets the shell settings
-:PROPERTIES:
-:CUSTOM_ID: h:AEAF747B-0541-4A7B-A23D-33BB3F6C423A
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
+
 (use-package shell
   :ensure nil
   :hook (shell-mode . kam-shell-mode-setup)
@@ -3659,10 +2863,7 @@ For use with Avy.
 (defun kam-shell-mode-setup ()
   (setq-local comint-process-echoes t
               outline-regexp comint-prompt-regexp))
-#+end_src
-**** The =Shell= section for custom lisp
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
-;;; -*- lexical-binding: t; -*-
+
 (defvar kam-shell-cd--directories nil
   "List of accumulated `shell-last-dir'.")
 
@@ -3738,9 +2939,7 @@ The shell is renamed to make opening multiple shells easier."
   (interactive)
   (let ((default-directory (getenv "HOME")))
     (shell)))
-#+end_src
-*** Custom lisp
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
+
 (defun kam-comint--beginning-of-prompt-p ()
   "Return non-nil if the point is at the beginning of a shell prormpt."
   (if comint-use-prompt-regexp
@@ -3834,349 +3033,7 @@ Numerical argument ARG determines the command being selected from to choose argu
      nil
      default
      nil)))
-#+end_src
-*** The =Comint= section to provide =Comint=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-comint.el")
-(provide 'kam-comint)
-#+end_src
-** the =Programming= module
-:PROPERTIES:
-:CUSTOM_ID: h:60A610DE-CB69-4EDD-9371-057095DA9EC7
-:END:
-*** Magit
-:PROPERTIES:
-:CUSTOM_ID: h:DB874FA0-F55B-4310-8D1A-0DA070D4FBC6
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el") :mkdirp yes
-(use-package magit
-  :ensure t
-  :init
-  (setq magit-define-global-key-bindings nil)
-  :bind
-  ("C-x g" . magit-status)
-  (:map magit-section-mode-map
-        ("C-<tab>" . kam-magit-toggle-parent-section))
-  :config
-  (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1
-        magit-bury-buffer-function 'magit-restore-window-configuration)
-  (defun kam-magit-toggle-parent-section ()
-    "Toggles the parent section header."
-    (interactive)
-    (magit-section-up)
-    (magit-section-hide-children (magit-section-at))))
-#+end_src
-*** Flycheck
-:PROPERTIES:
-:CUSTOM_ID: h:ADF0F138-BB8C-4F12-8497-F3DC450D2540
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el") :mkdirp yes
-(use-package flycheck
-  :ensure t
-  :custom
-  (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-  (flycheck-indication-mode nil)
-  :init
-  (defun kam-flycheck-set-margins ()
-    "Adjust margin and fringe widths in Flycheck-enabled buffers."
-    (setq left-fringe-width 8
-          right-fringe-width 8
-          left-margin-with 1
-          right-margin-width 0))
 
-  ;; (Defun kam-flycheck-eldoc (callback &rest _ignored)
-  ;;   "Print flycheck messages at point by calling CALLBACK."
-  ;;   (when-let ((flycheck-errors (and flycheck-mode (flycheck-overlay-errors-at (point)))))
-  ;;     (mapc
-  ;;      (lambda (err)
-  ;;        (funcall callback
-  ;;                 (format "%s: %s"
-  ;;                         (let ((level (flycheck-error-level err)))
-  ;;                           (pcase level
-  ;;                             ('info (propertize "I" 'face 'flycheck-error-list-info))
-  ;;                             ('error (propertize "E" 'face 'flycheck-error-list-error))
-  ;;                             ('warning (propertize "W" 'face 'flycheck-error-list-warning))
-  ;;                             (_ level)))
-  ;;                         (flycheck-error-message err))
-  ;;                 :thing (or (flycheck-error-id err)
-  ;;                            (flycheck-error-group err))
-  ;;                 :face 'font-lock-doc-face))
-  ;;      flycheck-errors)))
-
-  ;; (defun kam-flycheck-prefer-eldoc ()
-  ;;   (add-hook 'eldoc-documentation-functions #'kam-flycheck-eldoc nil t)
-  ;;   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-  ;;   (setq flycheck-display-errors-function nil)
-  ;;   (setq flycheck-help-echo-function nil))
-
-  :hook
-  (after-init . #'global-flycheck-mode))
-  ;; (flycheck-mode . kam-flycheck-prefer-eldoc)
-  ;; (flycheck-mode . kam-flycheck-set-margins)
-
-(use-package flycheck-eglot
-  :ensure t
-  :after (flycheck eglot)
-  :config
-  (global-flycheck-eglot-mode 1))
-
-(use-package consult-flycheck
-  :ensure t)
-#+end_src
-*** Flyover
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-;; (use-package flyover
-;;   :ensure t
-;;   ;; :after flycheck
-;;   :custom
-;;   (flyover-checkers '(flycheck))
-;;   (flyover-debounce-interval .1)
-;;   (flyover-text-tint nil)
-;;   (flyover-line-position-offset 1)
-;;   (flyover-show-at-eol t)
-;;   (flyover-virtual-line-type nil)
-;;   (flyover-show-virtual-line nil)
-;;   (flyover-icon-left-padding .9)
-;;   (flyover-icon-right-padding .1)
-;;   :hook
-;;   (flycheck-mode . #'flyover-mode))
-#+end_src
-*** Flymake
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el") :mkdirp yes
-(use-package flymake
-  :ensure nil
-  :config
-  (setq flymake-fringe-indicator-position 'left-fringe
-        flymake-suppress-zero-counters nil
-        flymake-no-changes-timeout nil
-        flymake-start-on-flymake-mode nil
-        flymake-start-on-save-buffer nil
-        flymake-wrap-around t
-        flymake-show-diagnostics-at-end-of-line t))
-#+end_src
-*** Eglot
-:PROPERTIES:
-:CUSTOM_ID: h:AF0DCA87-D5FB-4F14-B446-E4698E1799A1
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package eglot
-  :ensure t
-  :init
-  ;; (defun kam-eglot-eldoc ()
-  ;;   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
-  :hook
-  (
-   ;; (eglot-managed-mode . kam-eglot-eldoc)
-   (c-ts-mode . eglot-ensure)
-   (python-ts-mode . eglot-ensure))
-  :config
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
-#+end_src
-*** Xref
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package xref
-  :ensure t
-  :bind
-  ("C-." . #'xref-find-definitions)
-  ("M-." . #'xref-find-references)
-  :config
-  (add-to-list 'xref-after-jump-hook 'pulsar-pulse-line t))
-#+end_src
-*** Eldoc
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package eldoc
-  :ensure nil
-  :custom
-  (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
-#+end_src
-*** Tree-sitter
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package treesit-auto
-  :ensure t
-  :custom
-  (treesit-auto-install 'prompt)
-  :config
-  (treesit-auto-add-to-auto-mode-alist 'all)
-  (global-treesit-auto-mode))
-#+end_src
-*** Emacs-direnv
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package direnv
-  :ensure t
-  :config
-  (setq direnv-always-show-summary nil)
-  (direnv-mode))
-#+end_src
-*** Envrc
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package envrc
-  :hook (after-init . envrc-global-mode))
-#+end_src
-*** Compilation-mode
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package compile
-  :ensure nil
-  :hook (compilation-filter . ansi-color-compilation-filter)
-  :bind (:map compilation-mode-map
-	      ("<f5>" . #'recompile)
-	      ("<escape>" . #'quit-window))
-  :config
-  (setq compilation-always-kill t
-        compilation-ask-about-save nil
-        compilation-scroll-output t
-        compilation-max-output-line-length nil
-        compilation-scroll-output 'first-error))
-
- (defadvice compile (before ad-compile-smart activate)
-   "Advises `compile' so it sets the argument COMINT to t."
-   (ad-set-arg 1 t))
-#+end_src
-*** Python
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package python
-  :ensure t
-  :defer t
-  :custom
-  ;; (python-flymake-command '("pyright"))
-  (python-indent-guess-indent-offset-verbose nil)
-  :hook (python-mode . eglot-ensure))
-#+end_src
-*** Go
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package go-mode
-  :ensure t)
-
-(use-package go-eldoc
-  :ensure t
-  :hook (go-mode . #'go-eldoc-setup))
-#+end_src
-*** Markdown-mode
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(use-package markdown-mode
-  :ensure t
-  :mode ("README\\.md\\'" . gfm-mode))
-#+end_src
-*** Ediff
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(setq ediff-keep-variants nil
-      ediff-make-buffers-readonly-at-startup nil
-      ediff-merge-revisions-with-ancestor t
-      ediff-show-clashes-only t
-      ediff-split-window-function 'split-window-horizontally
-      ediff-window-setup-function 'ediff-setup-windows-plain)
-#+end_src
-*** Prettify symbols
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(global-prettify-symbols-mode)
-#+end_src
-*** The call to provide the =Programming= module
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-programming.el")
-(provide 'kam-programming)
-#+end_src
-** The Project module
-*** Project
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el")
-(use-package project
-  :ensure t
-  :bind
-  ;; ("C-x p p" . #'kam-project-switch-project)
-  ("C-x p b" . #'consult-project-buffer)
-  :custom
-  (project-switch-use-entire-map t)
-  :config
-  (setq project-vc-ignores '("nix/store/"
-			     "node_modules/"
-			     "go/pkg/"
-			     ".direnv/")
-	project-vc-extra-root-markers '(".project"))
-
-  (add-to-list 'project-switch-commands '(magit-status "Git" "g"))
-  (remove '(project-vc-dir "VC-Dir") project-switch-commands)
-
-  (defvar kam-project-name-history nil)
-
-  (defvar kam-projects-directory "~/Documents/Projects/"
-    "The default directory where projects are stored.")
-
-  ;; (setq project-prompter #'kam-project-read-project-by-name)
-
-  (defun kam-project--return-formatted-project-name ()
-    (when-let* ((proj (project-current))
-		(name (file-name-nondirectory
-		       (directory-file-name (project-root proj)))))
-      (format "[%s]" name)))
-
-  (defun kam-project-read-project-by-name ()
-    "Read a project name and return its root directory.
-
-If no known project matches the selected name, prompt for a
-sub-directory of `kam-projects-directory' using the selected name
-as the initial input for completion, and return that directory."
-    (let* ((name-dir-alist
-            (mapcar (lambda (dir)
-                      (cons (project-name (project-current nil dir))
-                            dir))
-                    (project-known-project-roots)))
-           (current (project-current))
-           (default (and current (project-name current)))
-           (name (consult--read name-dir-alist
-                                  :prompt "Project: "
-                                  :history 'kam-project-name-history
-                                  :annotate #'marginalia-annotate-file
-				  :state (consult--file-state)
-				  :category 'file)))
-      (or (alist-get name name-dir-alist nil nil #'string=)
-          (let* ((dir (read-directory-name "Project root directory: "
-                                           kam-projects-directory
-                                           nil t name))
-		 (project (project-current nil dir)))
-            (when project (project-remember-project project))
-            dir))))
-
-(defun kam-project-new ()
-  "Create a project in the `kam-projects-directory'."
-  (interactive)
-  (let* ((default-directory kam-projects-directory)
-         (project-name (read-directory-name "Project: "))
-         (new-project
-          (concat kam-projects-directory
-                  (s-replace " " "-" project-name))))
-    (make-directory new-project)
-    (make-empty-file (concat new-project "/.project"))
-    (project--remember-dir new-project)))
-
-(defun kam-project-delete (proj)
-  "Delete a project."
-  (interactive (list (kam-project-read-project-by-name)))
-  (let* ((default-directory kam-projects-directory))
-    (project-forget-project proj)
-    (delete-directory proj t t))))
-
-(defun kam-project-switch-project (dir)
-  "Switch to another project."
-  (interactive (list (funcall project-prompter)))
-  (project--remember-dir dir)
-  (unwind-protect
-      (progn
-	(setq-local project-current-directory-override dir)
-	(call-interactively #'project-find-file))))
-
-(project-remember-projects-under kam-projects-directory t)
-#+end_src
-*** The call to provide =Task=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-task.el")
-(provide 'kam-task)
-#+end_src
-** The =Eshell= module
-:PROPERTIES:
-:CUSTOM_ID: h:B2F95D9E-E719-4EDD-AC6F-F1F34EF2E556
-:END:
-*** Use case
-*** Eshell configuration
-:PROPERTIES:
-:CUSTOM_ID: h:5215F24B-D6EB-43A1-9C86-D7825D8126D6
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-eshell.el") :mkdirp yes
-;; -*- lexical-binding: t; -*-
 (use-package eshell
   :ensure nil
   ;; :hook ((eshell-mode . #'kam-eshell--set-env)
@@ -4286,9 +3143,7 @@ Used for setting Eshell's `outline-regexp'.")
 (use-package eshell-syntax-highlighting
   :ensure t
   :after eshell-mode)
-#+end_src
-*** Custom lisp
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-eshell.el")
+
 (defun kam-eshell--history-to-list ()
   "Returns the current Eshell buffer's history as a list of strings."
   (when (and (ring-p eshell-history-ring)
@@ -4350,126 +3205,11 @@ The eshell is renamed to match that directory in order to make multiple eshell w
     (rename-buffer (concat "*eshell: " name "*"))
     (insert (concat "ls"))
     (eshell-send-input)))
-#+end_src
-*** The call to provide =Eshell=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-eshell.el")
-(provide 'kam-eshell)
-#+end_src
-** The =ITE= module
-:PROPERTIES:
-:CUSTOM_ID: h:537F628C-3766-4A29-B210-77603F2E687B
-:END:
-*** Denote
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(use-package denote
-  :ensure t
-  :hook (dired-mode . denote-dired-mode)
-  :bind
-  ("C-c n h" . #'kam-ite-visit-home)
-  :config
-  (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
-	;; denote-infer-keywords t
-	denote-sort-keywords t
-	denote-prompts '(title keywords)
-	denote-rename-confirmations '(rewrite-front-matter modify-file-name)
-	denote-date-prompt-use-org-read-date t)
 
-  (defvar kam-ite-inbox-note)
-
-  (defvar kam-ite-home-note
-    (concat denote-directory "20230928T043448--home__index.org")
-    "The home note for my ITE.")
-
-  (defvar kam-ite-workbench-note)
-
-  (defun kam-ite-visit-home ()
-    "Visits the `kam-ite-home-note'."
-    (interactive)
-    (find-file kam-ite-home-note))
-
-  ;; (defun kam-ite-visit-inbox ()
-  ;;   "Visits the `kam-ite-inbox-note'."
-  ;;   (interactive)
-  ;;   (find-file kam-ite-inbox-note))
-
-  ;; (defun kam-ite-visit-workbench ()
-  ;;   "Visits the `kam-ite-workbench-note'."
-  ;;   (interactive)
-  ;;   (find-file kam-ite-workbench-note))
-  )
-#+end_src
-*** Consult-Denote
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(use-package consult-denote
-  :ensure t
-  :custom
-  (consult-denote-find-command #'consult-fd)
-  (consult-denote-grep-command #'consult-ripgrep)
-  :config
-  (consult-denote-mode 1))
-#+end_src
-*** Denote-Org
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(use-package denote-org
-  :ensure t
-  :config
-  (setq denote-org-store-link-to-heading 'id))
-#+end_src
-*** Denote-Explore
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(use-package denote-explore
-  :ensure t)
-#+end_src
-*** =Org Anki=
-:PROPERTIES:
-:CUSTOM_ID: h:314CF099-B35A-498E-AFC0-D4E89AB3E80C
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(use-package org-anki
-  :ensure t
-  :config
-  (setq org-anki-api-key nil
-        org-anki-default-deck "get that main main"))
-#+end_src
-*** The call to provide =ITE=
-:PROPERTIES:
-:CUSTOM_ID: h:62D42F86-9152-416B-9E29-C011AFCF969A
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-ite.el")
-(provide 'kam-ite)
-#+end_src
-** The =Term= module
-*** Purpose
-This module is designed to make a nice terminal emulator experience within Emacs.
-*** =EAT=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-term.el") :mkdirp t
-(use-package eat
- :ensure t
- :hook ((eshell-load . #'eat-eshell-mode)
-	(eshell-load . #'eat-eshell-visual-command-mode))
- :config
- (setq eat-shell (getenv "SHELL")))
-#+end_src
-*** The call to provide =Term=
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-term.el")
-(provide 'kam-term)
-#+end_src
-* Libraries
-:PROPERTIES:
-:CUSTOM_ID: h:353F263C-E6D4-4028-B295-05ACA4CF122B
-:END:
-** Common
-=Kam-common= is a library created to house all of the custom behaviors and functions that are used throughout the configuration and other libraries.
-:PROPERTIES:
-:CUSTOM_ID: h:B9F8EBD6-92FE-4808-94FC-4BEE8536D690
-:END:
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-common.el") :mkdirp yes
-;;; -*- lexical-binding: t -*-
 (eval-when-compile
   (require 'subr-x)
   (require 'cl-lib))
 
-;;;###autoload
 (defun kam-common-empty-buffer-p ()
   "Test whether the buffer is empty."
   (or (= (point-min) (point-max))
@@ -4723,244 +3463,259 @@ Use this as advice :after a noisy function."
   "Return the first character from STR."
   (substring str 0 1))
 
-(provide 'kam-common)
-#+end_src
-** Consult
-This library is dedicated to creating custom commands and behaviors for the =Consult= package. The configuration for Consult can be found [[#h:FC68FE2E-E1DF-4206-AB94-A89F62D9C09F][here]].
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-consult.el") :mkdirp yes :lexical t
-(defun kam-consult-imenu--select (prompt)
-  "Returns a selection from `consult-imenu'."
-  (let ((items (consult-imenu--items)))
-    (consult-imenu--deduplicate items)
-    (consult--read
-     (or items (user-error "Imenu is empty"))
-     :state
-     (let* ((preview (consult--jump-preview)))
-       `(lambda (action cand)
-          (funcall ',preview action (and (markerp (cdr cand)) (cdr cand)))))
-     :narrow
-     (when-let (narrow (consult-imenu--narrow))
-       (list :predicate
-             (lambda (cand)
-               (eq (get-text-property 0 'consult-type (car cand))
-                   consult--narrow))
-             :keys narrow))
-     :group (consult-imenu--group)
-     :prompt prompt
-     :require-match t
-     :category 'imenu
-     :history 'consult-imenu--history
-     :add-history 'consult-imenu--history
-     :lookup #'consult--lookup-cons
-     :sort nil)))
+(use-package modus-themes
+  :ensure t
+  :config
+  (setq modus-themes-disable-other-themes t
+        modus-themes-italic-constructs t
+        modus-themes-bold-constructs t
+        modus-themes-mixed-fonts t
+        modus-themes-prompts '(heavy)
+        modus-themes-org-blocks nil
+        modus-themes-completions '((selection . (bold)))
+        modus-theme-headings '((1 . (variable-pitch 1.5))
+                               (2 . (variable-pitch 1.3))
+                               (3 . (variable-pitch 1.1))
+                               (t . (variable-pitch 1)))
+        
+        modus-vivendi-palette-user '((kam-comment "#ff7f24")
+                                     (kam-constant "#7fffd4")
+                                     (kam-fnname "#87cefa")
+                                     (kam-keyword "#00ffff")
+                                     (kam-preprocessor "#b0c4de")
+                                     (kam-string "#ffa07a")
+                                     (kam-type "#98fb98")
+                                     (kam-variable "#eedd82"))
+        
+        modus-vivendi-palette-overrides '(
+                                          (bg-main "#000000")
+                                          (bg-active bg-main)
+                                          ;; (bg-mode-line-active bg-blue-subtle)
+                                          ;; (border-mode-line-active unspecified)
+                                          ;; (fg-region unspecified)
+                                          ;; (bg-heading-1 bg-main)
+                                          ;; (fg-heading-1 fg-main)
+                                          ;; (fg-heading-2 fg-changed)
+                                          ;; (bg-heading-2 bg-main)
+                                          ;; (fg-heading-3 blue-cooler)
+                                          ;; (bg-heading-3 and bg-main)
+                                          ;; (builtin "#b0c4de")
+                                          ;; (Comment "#ff7f24") ;; these ;custom values are taken from standard-themes-dark
+                                          (constant "#7fffd4")
+                                          (fnname "#87cefa")
+                                          (keyword "#00ffff")
+                                          (preprocessor "#b0c4de")
+                                          (docstring "#ffa07a")
+                                          (string "#ffa07a")
+                                          (type "#98fb98")
+                                          (variable "#eedd82")
+                                          (rx-escape "#44cc44")
+                                          (rx-construct "#ffffff")
+                                          (fg-prompt cyan)
+                                          ;; (bg-prompt unspecified)
+                                          (fg-completion-match-0 fg-main)
+                                          ;; (bg-completion-match-0 unspecified)
+                                          (fg-completion-match-1 fg-main)
+                                          (bg-prose-block-delimiter "#312f34")
+                                          (bg-prose-block-contents "#29272c")
+                                          ;; (bg-completion-match-1 unspecified)
+                                          ))
 
-(defmacro kam-consult-imenu--action (prompt &rest body)
-  "Execute forms in BODY at the location of an `consult-imenu' selection."
-  `(let ((item (kam-consult-imenu--select ',prompt)))
-     (pcase item
-       (`(,name ,pos ,fn . ,args)
-        (push-mark nil t)
-        (apply fn name pos args))
-       (`(,_ . ,pos)
-        (save-excursion
-          (consult--jump pos)
-          ,@body))
-       (_ (error "Unknown imenu item: %S" item)))))
+  (defun kam-set-custom-faces (&rest _)
+    "Function which sets faces across the configuration using the `modus-themes-with-colors' macro."
+    (modus-themes-with-colors
+      (custom-set-faces
+       `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
+       `(region ((,c :extend nil)))
+       `(org-special-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-meta-line ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-document-title ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-document-info ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-document-info-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-drawer ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-property-value ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
+       `(org-ellipsis ((,c :height 1.0 :foreground ,fg-dim)))
+       `(org-block-end-line ((,c :background ,bg-prose-block-delimiter)))
+       `(denote-faces-keywords ((,c :foreground ,keyword)))
+       `(olivetti-fringe ((,c :background ,bg-main))))))
 
-(defmacro kam-consult-org-heading--action (&rest body)
-  "Execute forms in BODY at the location of an `consult-org-heading' selection."
-  `(let* ((headings (consult-org-heading)))
-     ,@body))
+  (defun kam-modus-themes-org-block-faces (&rest _)
+    "Function for setting custom org block faces."
+    (modus-themes-with-colors
+      (setq org-src-block-faces
+            `(("emacs-lisp" bg-dim)))))
 
-(defun kam-consult-org-heading-link ()
-  "Insert a link at point to the location of an Org heading using minibuffer completion."
+  (add-hook 'modus-themes-post-load-hook #'kam-set-custom-faces)
+  (add-hook 'modus-themes-post-load-hook #'kam-modus-themes-org-block-faces))
+
+(use-package ef-themes
+  :ensure t)
+
+(use-package olivetti
+  :ensure t
+  :config
+  (setq olivetti-style 'fancy
+        olivetti-margin-width 5
+        olivetti-body-width .7
+        ;; olivetti-minimum-body-width 80
+         olivetti-recall-visual-line-mode-entry-state t))
+
+(use-package spacious-padding
+  :ensure t
+  :config
+  ;; (setq spacious-padding-subtle-mode-line
+  ;;       '(:mode-line-active "#fec43f"
+  ;;         :mode-line-inactive 'vertical-border))
+
+  (setq spacious-padding-subtle-mode-line nil)
+  
+  (setq spacious-padding-widths
+        '( :internal-border-width 15
+           :header-line-width 4
+           :mode-line-width 8
+           :tab-width 4
+           :right-divider-width 30
+           :scroll-bar-width 8
+           :fringe-width 4))
+  (spacious-padding-mode))
+
+(setq mode-line-compact nil
+      mode-line-right-align-edge 'right-fringe)
+
+(setq-default mode-line-format
+              '("%e"
+                kam-modeline-nix
+                kam-modeline-kbd-macro
+                kam-modeline-narrow
+                kam-modeline-buffer-modified
+                kam-modeline-buffer-status
+                "  "
+                kam-modeline-buffer-identification
+                "  "
+                kam-modeline-major-mode
+		"  "
+		;; kam-modeline-buffer-stats
+                kam-modeline-process
+                " "
+                mode-line-format-right-align
+                kam-modeline-vc-branch))
+
+;; (with-eval-after-load 'spacious-padding
+;;   (defun kam-modeline--spacious-indicators ()
+;;     "Set box attribute to `'kam-modeline-indicator-button' if spacious-padding is enabled."
+;;     (if (bound-and-true-p spacious-padding-mode)
+;;         (set-face-attribute 'kam-modeline-indicator-button nil :box t)
+;;       (set-face-attribute 'kam-modeline-indicator-button nil :box 'unspecified)))
+
+;;   (kam-modeline--spacious-indicators)
+;;   (add-hook 'spacious-padding-mode-hook #'kam-modeline--spacious-indicators))
+
+(use-package logos
+  :ensure t
+  :config
+  (setq-default logos-hide-mode-line t
+                logos-hide-header-line t
+                logos-hide-buffer-boundaries t
+                logos-hide-fringe nil
+                logos-olivetti t))
+
+(use-package lin
+  :ensure t
+  :hook (after-init . lin-global-mode)
+  :config
+  (setq lin-face 'lin-yellow))
+
+(use-package pulsar
+  :ensure t
+  :hook ((next-error . pulsar-pulse-line)
+         (minibuffer-setup . pulsar-pulse-line)
+         (consult-after-jump . pulsar-recenter-center)
+         (consult-after-jump . pulsar-reveal-entry)
+         (imenu-after-jump . pulsar-recenter-center)
+         (imenu-after-jump . pulsar-reveal-entry))
+  :config
+  (setq pulsar-pulse t
+        pulsar-face 'ansi-color-yellow)
+  (setopt pulsar-delay 0.03
+          pulsar-iterations 17)
+  (pulsar-global-mode)
+
+  (add-to-list 'pulsar-pulse-functions 'avy-goto-char-timer)
+  (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-down)
+  (add-to-list 'pulsar-pulse-functions 'pixel-scroll-interpolate-up)
+  (add-to-list 'pulsar-pulse-functions 'scroll-down)
+  (add-to-list 'pulsar-pulse-functions 'scroll-up)
+  (add-to-list 'pulsar-pulse-functions 'ace-window)
+
+  (advice-add 'avy-goto-char-timer :after 'pulsar-recenter-center))
+
+(use-package all-the-icons
+  :if (display-graphic-p)
+  :commands all-the-icons-install-fonts
+  :init
+  (unless (find-font (font-spec :name "all-the-icons"))
+    (all-the-icons-install-fonts t))
+  :config
+  (setq all-the-icons-scale-factor 1.1))
+
+(use-package all-the-icons-ibuffer
+  :ensure t
+  :hook (ibuffer-mode . all-the-icons-ibuffer-mode))
+
+(use-package all-the-icons-dired
+  :ensure t
+  :hook (dired-mode . all-the-icons-dired-mode)
+  :config
+  (setq all-the-icons-dired-monochrome nil))
+
+(use-package all-the-icons-completion 
+  :ensure t
+  :after marginalia
+  :hook (marginalia-mode . #'all-the-icons-completion-marginalia-setup))
+
+(all-the-icons-completion-mode 1)
+
+(use-package nerd-icons
+  :config
+  (setq nerd-icons-font-family "SauceCodePro Nerd Font"))
+
+(use-package nerd-icons-corfu
+  :ensure t
+  :after (corfu)
+  :config
+  (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
+
+(defun kam-set-font-faces ()
+  (set-face-attribute 'default nil :font "SauceCodePro Nerd Font Mono" :height 130 :weight 'regular :width 'regular)
+  (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 1.0 :weight 'regular :width 'regular)
+  (set-face-attribute 'variable-pitch nil :family "Iosevka Comfy Duo" :height 1.0 :weight 'regular :width 'regular)
+  (set-face-attribute 'mode-line nil :font "SauceCodePro Nerd Font Mono" :height 1.0 :weight 'regular)
+  (set-face-attribute 'mode-line-active nil :font "SauceCodePro Nerd Font Mono" :height .9  :weight 'regular)
+  (set-face-attribute 'mode-line-inactive nil :family "SauceCodePro Nerd Font Mono" :height .9 :weight 'regular))
+
+(defun prog-mode-buffer-variable ()
+  "Intended to set the font in prog mode"
   (interactive)
-  (save-excursion
-    (kam-consult-org-heading--action (org-store-link nil t)))
-  (kam-org-insert-last-stored-link-with-prompt))
+  (setq buffer-face-mode-face 'fixed-pitch)
+  (buffer-face-mode))
 
-(defvar kam-consult--previous-point nil
-  "Location of point before entering minibuffer.
-Used to preselect nearest headings and imenu items.")
+;; (add-hook 'text-mode-hook #'variable-pitch-mode)
+(add-hook 'prog-mode-hook #'display-line-numbers-mode)
+(add-hook 'org-mode-hook #'variable-pitch-mode)
+(add-hook 'prog-mode-hook 'prog-mode-buffer-variable)
+(add-hook 'info-mode-hook #'variable-pitch-mode)
 
-(defun kam-consult--set-previous-point (&optional arg1 arg2)
-  "Save location of point. Used before entering the minibuffer."
-  (setq kam-consult--previous-point (point)))
+(global-font-lock-mode 1)
+(setq font-lock-maximum-decoration t
+      font-lock-maximum-size nil
+      font-lock-support-mode 'jit-lock-mode
+      font-lock-multiline t
+      jit-lock-stealth 0.5
+      jit-lock-defer-contextually t
+      jit-lock-stealth-time 16)
 
-(advice-add #'consult-org-heading :before #'kam-consult--set-previous-point)
-(advice-add #'consult-outline :before #'kam-consult--set-previous-point)
-
-;; (advice-add #'vertico--update :after #'kam-consult-vertico--update-choose)
-
-(defun kam-consult-vertico--update-choose (&rest _)
-  "Pick the nearest candidate rather than the first after updating candidates."
-  (when (and kam-consult--previous-point
-             (memq current-minibuffer-command
-                   '(consult-org-heading consult-outline)))
-    (setq vertico--index
-          (max 0
-               (1- (or (seq-position
-                        vertico--candidates
-                        kam-consult--previous-point
-                        (lambda (cand point-pos)
-                          (> (cl-case current-minibuffer-command
-                               (consult-outline
-                                (car (consult--get-location cand)))
-                               (consult-org-heading
-                                (get-text-property 0 'consult--candidate cand)))
-                             point-pos)))
-                       (length vertico--candidates))))))
-  (setq kam-consult--previous-point nil))
-
-(defcustom kam-consult-ripgrep-or-line-limit 300000
-  "Buffer size threshold for `kam-consult-ripgrep-or-line'.
-When the number of characters in a buffer exceeds this threshold,
-`consult-ripgrep' will be used instead of `consult-line'."
-  :type 'integer)
-
-(defun kam-consult-ripgrep-or-line ()
-  "Call `consult-line' for small buffers and `consult-ripgrep' for large files."
-  (interactive)
-  (if (or (not buffer-file-name)
-          (buffer-narrowed-p)
-          (ignore-errors
-            (file-remote-p buffer-file-name))
-          (jka-compr-get-compression-info buffer-file-name)
-          (>= (buffer-size)
-              (/ kam-consult-ripgrep-or-line-limit
-                 (if (eq major-mode 'org-mode) 4 1))))
-      (progn
-        (let ((consult)))
-        (consult-line)
-        (setq this-command 'consult-line))
-    (when (file-writable-p buffer-file-name)
-      (save-buffer))
-    (let ((consult-ripgrep-args
-           (concat consult-ripgrep-args
-                   " -g "
-                   (shell-quote-argument (file-name-nondirectory buffer-file-name))
-                   " ")))
-      (consult-ripgrep))))
-
-(defun kam-consult-line-symbol-at-point ()
-  "Start a `consult-line' search with the symbol at point."
-  (interactive)
-  (consult-line (thing-at-point 'symbol)))
-
-(defun kam-consult-ripgrep-symbol-at-point ()
-  "Start a `consult-ripgrep' search with the symbol at point."
-  (interactive)
-  (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
-  (consult-ripgrep nil (thing-at-point 'symbol))))
-
-(defun kam-consult-search-emacs-info-pages ()
-  "Search through the Emacs info pages."
-  (interactive)
-  (consult-info "emacs" "efaq"))
-
-(defun kam-consult-search-elisp-info-pages ()
-  "Search through the Emacs Lisp pages."
-  (interactive)
-  (consult-info "elisp" "eintr"))
-
-(defun kam-consult-search-org-info-pages ()
-  "Search through the Org info pages."
-  (interactive)
-  (consult-info "org"))
-
-;; (defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
-;;   (interactive)
-;;   (let ((default-directory (or dir default-directory))
-;;         (minibuffer-completing-file-name t))
-;;     (consult--read #'read-file-name-internal
-;;                    :state (consult--file-preview)
-;;                    :prompt prompt
-;;                    :initial initial
-;;                    :require-match mustmatch
-;;                    :predicate pred)))
-
-;; (setq read-file-name-function #'kam-consult-find-file-with-preview)
-
-(setq project-read-file-name-function #'kam-consult-project-find-file-with-preview)
-
-(defun kam-consult-project-find-file-with-preview (prompt all-files &optional pred hist _mb)
-  (let ((prompt (if (and all-files
-                         (file-name-absolute-p (car all-files)))
-                    prompt
-                  (concat prompt
-                    (format " in %s"
-                      (consult--fast-abbreviate-file-name default-directory)))))
-        (minibuffer-completing-file-name t))
-    (consult--read (mapcar
-                    (lambda (file)
-                      (file-relative-name file))
-                    all-files)
-                   :state (consult--file-preview)
-                   :prompt (concat prompt ": ")
-                   :require-match t
-                   :history hist
-                   :category 'file
-                   :predicate pred)))
-
-(defun kam-menu ()
-  "If the current buffer's major mode is Org mode, opens `consult-org-heading'. Otherwise opens `consult-imenu'."
-  (interactive)
-  (cond
-   ((derived-mode-p 'org-mode)
-      (progn
-        (consult-org-heading)
-        (setq this-command 'consult-org-heading)))
-   ((derived-mode-p 'prog-mode)
-    (progn
-      (consult-imenu)
-      (setq this-command 'consult-imenu)))))
-
-(defvar kam-org-refile-region-format "\n\n%s")
-
-(defvar kam-org-refile-region-position 'bottom
-  "Where to refile a region. Use 'top to refile the region at the beginning of the subtree.")
-
-(defun kam-consult-org-refile-region (beg end copy)
-  "Refile the active region with minibuffer completion.
-If no region is active, refile the current paragraph.
-With prefix arg C-u, copy region instead of killing it."
-  (interactive "r\nP")
-  (unless (use-region-p)
-    (setq beg (save-excursion
-                (backward-paragraph)
-                (skip-chars-forward "\n\t ")
-                (point))
-          end (save-excursion
-                (forward-paragraph)
-                (skip-chars-forward "\n\t ")
-                (point))))
-  (deactivate-mark)
-  (let* ((text (buffer-substring-no-properties beg end))
-         (target (save-excursion (consult-org-heading)))
-         (buffer (marker-buffer target))
-         (pos (marker-position target)))
-    (unless copy (kill-region beg end))
-    (deactivate-mark)
-    (with-current-buffer buffer
-        (save-excursion
-          (goto-char pos)
-          (if (eql kam-org-refile-region-position 'bottom)
-              (org-end-of-subtree)
-            (org-end-of-meta-data-and-drawers))
-          (insert (format kam-org-refile-region-format text))))))
-
-;; (defun kam-org-refile)
-
-(provide 'kam-consult)
-#+end_src
-** Modeline
-:PROPERTIES:
-:ID: 90ecc2e2-ec44-444f-a373-6aca647070e7
-:END:
-*** Defining the faces
-This library is dedicated to defining the functions needed to generate the modeline created [[id:81aad2f2-a0f6-4b9a-a657-23451985e93d][here]].
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-modeline.el") :mkdirp yes :lexical t
-(require 'kam-common)
+(setq x-underline-at-descent-line nil
+      inhibit-compacting-font-caches nil)
 
 (defgroup kam-modeline nil
   "My custom modeline."
@@ -5120,9 +3875,7 @@ This library is dedicated to defining the functions needed to generate the model
     (t :inverse-video t))
   "Face for modeline indicators with a background."
   :group 'kam-modeline-faces)
-#+end_src
-*** Creating the helper functions
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-modeline.el") :mkdirp yes :lexical t
+
 (defun kam-modeline--string-truncate-p (str)
   "Return non-nil if the string should be truncated."
   (cond
@@ -5185,9 +3938,7 @@ Also see `kam-modeline-string-abbreviate-but-last'."
 (defun kam-modeline-buffer-lines ()
   "Return how many lines there are in the current buffer."
   (car (buffer-line-statistics)))
-#+end_src
-*** Defining the modeline variables
-#+begin_src emacs-lisp :tangle (concat user-emacs-directory "lisp/kam-modeline.el") :mkdirp yes :lexical t
+
 (defvar-local kam-modeline-nix
     '(:eval
       (propertize "  " 'face
@@ -5455,5 +4206,410 @@ The string is truncated if the width of the window is smaller than `split-width-
                      kam-modeline-vc-branch))
   (put construct 'risky-local-variable t))
 
-(provide 'kam-modeline)
-#+end_src
+(defun kam-consult-imenu--select (prompt)
+  "Returns a selection from `consult-imenu'."
+  (let ((items (consult-imenu--items)))
+    (consult-imenu--deduplicate items)
+    (consult--read
+     (or items (user-error "Imenu is empty"))
+     :state
+     (let* ((preview (consult--jump-preview)))
+       `(lambda (action cand)
+          (funcall ',preview action (and (markerp (cdr cand)) (cdr cand)))))
+     :narrow
+     (when-let (narrow (consult-imenu--narrow))
+       (list :predicate
+             (lambda (cand)
+               (eq (get-text-property 0 'consult-type (car cand))
+                   consult--narrow))
+             :keys narrow))
+     :group (consult-imenu--group)
+     :prompt prompt
+     :require-match t
+     :category 'imenu
+     :history 'consult-imenu--history
+     :add-history 'consult-imenu--history
+     :lookup #'consult--lookup-cons
+     :sort nil)))
+
+(defmacro kam-consult-imenu--action (prompt &rest body)
+  "Execute forms in BODY at the location of an `consult-imenu' selection."
+  `(let ((item (kam-consult-imenu--select ',prompt)))
+     (pcase item
+       (`(,name ,pos ,fn . ,args)
+        (push-mark nil t)
+        (apply fn name pos args))
+       (`(,_ . ,pos)
+        (save-excursion
+          (consult--jump pos)
+          ,@body))
+       (_ (error "Unknown imenu item: %S" item)))))
+
+(defmacro kam-consult-org-heading--action (&rest body)
+  "Execute forms in BODY at the location of an `consult-org-heading' selection."
+  `(let* ((headings (consult-org-heading)))
+     ,@body))
+
+(defun kam-consult-org-heading-link ()
+  "Insert a link at point to the location of an Org heading using minibuffer completion."
+  (interactive)
+  (save-excursion
+    (kam-consult-org-heading--action (org-store-link nil t)))
+  (kam-org-insert-last-stored-link-with-prompt))
+
+(defvar kam-consult--previous-point nil
+  "Location of point before entering minibuffer.
+Used to preselect nearest headings and imenu items.")
+
+(defun kam-consult--set-previous-point (&optional arg1 arg2)
+  "Save location of point. Used before entering the minibuffer."
+  (setq kam-consult--previous-point (point)))
+
+(advice-add #'consult-org-heading :before #'kam-consult--set-previous-point)
+(advice-add #'consult-outline :before #'kam-consult--set-previous-point)
+
+;; (advice-add #'vertico--update :after #'kam-consult-vertico--update-choose)
+
+(defun kam-consult-vertico--update-choose (&rest _)
+  "Pick the nearest candidate rather than the first after updating candidates."
+  (when (and kam-consult--previous-point
+             (memq current-minibuffer-command
+                   '(consult-org-heading consult-outline)))
+    (setq vertico--index
+          (max 0
+               (1- (or (seq-position
+                        vertico--candidates
+                        kam-consult--previous-point
+                        (lambda (cand point-pos)
+                          (> (cl-case current-minibuffer-command
+                               (consult-outline
+                                (car (consult--get-location cand)))
+                               (consult-org-heading
+                                (get-text-property 0 'consult--candidate cand)))
+                             point-pos)))
+                       (length vertico--candidates))))))
+  (setq kam-consult--previous-point nil))
+
+(defcustom kam-consult-ripgrep-or-line-limit 300000
+  "Buffer size threshold for `kam-consult-ripgrep-or-line'.
+When the number of characters in a buffer exceeds this threshold,
+`consult-ripgrep' will be used instead of `consult-line'."
+  :type 'integer)
+
+(defun kam-consult-ripgrep-or-line ()
+  "Call `consult-line' for small buffers and `consult-ripgrep' for large files."
+  (interactive)
+  (if (or (not buffer-file-name)
+          (buffer-narrowed-p)
+          (ignore-errors
+            (file-remote-p buffer-file-name))
+          (jka-compr-get-compression-info buffer-file-name)
+          (>= (buffer-size)
+              (/ kam-consult-ripgrep-or-line-limit
+                 (if (eq major-mode 'org-mode) 4 1))))
+      (progn
+        (let ((consult)))
+        (consult-line)
+        (setq this-command 'consult-line))
+    (when (file-writable-p buffer-file-name)
+      (save-buffer))
+    (let ((consult-ripgrep-args
+           (concat consult-ripgrep-args
+                   " -g "
+                   (shell-quote-argument (file-name-nondirectory buffer-file-name))
+                   " ")))
+      (consult-ripgrep))))
+
+(defun kam-consult-line-symbol-at-point ()
+  "Start a `consult-line' search with the symbol at point."
+  (interactive)
+  (consult-line (thing-at-point 'symbol)))
+
+(defun kam-consult-ripgrep-symbol-at-point ()
+  "Start a `consult-ripgrep' search with the symbol at point."
+  (interactive)
+  (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
+  (consult-ripgrep nil (thing-at-point 'symbol))))
+
+(defun kam-consult-search-emacs-info-pages ()
+  "Search through the Emacs info pages."
+  (interactive)
+  (consult-info "emacs" "efaq"))
+
+(defun kam-consult-search-elisp-info-pages ()
+  "Search through the Emacs Lisp pages."
+  (interactive)
+  (consult-info "elisp" "eintr"))
+
+(defun kam-consult-search-org-info-pages ()
+  "Search through the Org info pages."
+  (interactive)
+  (consult-info "org"))
+
+;; (defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+;;   (interactive)
+;;   (let ((default-directory (or dir default-directory))
+;;         (minibuffer-completing-file-name t))
+;;     (consult--read #'read-file-name-internal
+;;                    :state (consult--file-preview)
+;;                    :prompt prompt
+;;                    :initial initial
+;;                    :require-match mustmatch
+;;                    :predicate pred)))
+
+;; (setq read-file-name-function #'kam-consult-find-file-with-preview)
+
+(setq project-read-file-name-function #'kam-consult-project-find-file-with-preview)
+
+(defun kam-consult-project-find-file-with-preview (prompt all-files &optional pred hist _mb)
+  (let ((prompt (if (and all-files
+                         (file-name-absolute-p (car all-files)))
+                    prompt
+                  (concat prompt
+                    (format " in %s"
+                      (consult--fast-abbreviate-file-name default-directory)))))
+        (minibuffer-completing-file-name t))
+    (consult--read (mapcar
+                    (lambda (file)
+                      (file-relative-name file))
+                    all-files)
+                   :state (consult--file-preview)
+                   :prompt (concat prompt ": ")
+                   :require-match t
+                   :history hist
+                   :category 'file
+                   :predicate pred)))
+
+(defun kam-menu ()
+  "If the current buffer's major mode is Org mode, opens `consult-org-heading'. Otherwise opens `consult-imenu'."
+  (interactive)
+  (cond
+   ((derived-mode-p 'org-mode)
+      (progn
+        (consult-org-heading)
+        (setq this-command 'consult-org-heading)))
+   ((derived-mode-p 'prog-mode)
+    (progn
+      (consult-imenu)
+      (setq this-command 'consult-imenu)))))
+
+(defvar kam-org-refile-region-format "\n\n%s")
+
+(defvar kam-org-refile-region-position 'bottom
+  "Where to refile a region. Use 'top to refile the region at the beginning of the subtree.")
+
+(defun kam-consult-org-refile-region (beg end copy)
+  "Refile the active region with minibuffer completion.
+If no region is active, refile the current paragraph.
+With prefix arg C-u, copy region instead of killing it."
+  (interactive "r\nP")
+  (unless (use-region-p)
+    (setq beg (save-excursion
+                (backward-paragraph)
+                (skip-chars-forward "\n\t ")
+                (point))
+          end (save-excursion
+                (forward-paragraph)
+                (skip-chars-forward "\n\t ")
+                (point))))
+  (deactivate-mark)
+  (let* ((text (buffer-substring-no-properties beg end))
+         (target (save-excursion (consult-org-heading)))
+         (buffer (marker-buffer target))
+         (pos (marker-position target)))
+    (unless copy (kill-region beg end))
+    (deactivate-mark)
+    (with-current-buffer buffer
+        (save-excursion
+          (goto-char pos)
+          (if (eql kam-org-refile-region-position 'bottom)
+              (org-end-of-subtree)
+            (org-end-of-meta-data-and-drawers))
+          (insert (format kam-org-refile-region-format text))))))
+
+;; (defun kam-org-refile)
+
+(use-package magit
+  :ensure t
+  :init
+  (setq magit-define-global-key-bindings nil)
+  :bind
+  ("C-x g" . magit-status)
+  (:map magit-section-mode-map
+        ("C-<tab>" . kam-magit-toggle-parent-section))
+  :config
+  (setq magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1
+        magit-bury-buffer-function 'magit-restore-window-configuration)
+  (defun kam-magit-toggle-parent-section ()
+    "Toggles the parent section header."
+    (interactive)
+    (magit-section-up)
+    (magit-section-hide-children (magit-section-at))))
+
+(use-package flycheck
+  :ensure t
+  :custom
+  (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+  (flycheck-indication-mode nil)
+  :init
+  (defun kam-flycheck-set-margins ()
+    "Adjust margin and fringe widths in Flycheck-enabled buffers."
+    (setq left-fringe-width 8
+          right-fringe-width 8
+          left-margin-with 1
+          right-margin-width 0))
+
+  ;; (Defun kam-flycheck-eldoc (callback &rest _ignored)
+  ;;   "Print flycheck messages at point by calling CALLBACK."
+  ;;   (when-let ((flycheck-errors (and flycheck-mode (flycheck-overlay-errors-at (point)))))
+  ;;     (mapc
+  ;;      (lambda (err)
+  ;;        (funcall callback
+  ;;                 (format "%s: %s"
+  ;;                         (let ((level (flycheck-error-level err)))
+  ;;                           (pcase level
+  ;;                             ('info (propertize "I" 'face 'flycheck-error-list-info))
+  ;;                             ('error (propertize "E" 'face 'flycheck-error-list-error))
+  ;;                             ('warning (propertize "W" 'face 'flycheck-error-list-warning))
+  ;;                             (_ level)))
+  ;;                         (flycheck-error-message err))
+  ;;                 :thing (or (flycheck-error-id err)
+  ;;                            (flycheck-error-group err))
+  ;;                 :face 'font-lock-doc-face))
+  ;;      flycheck-errors)))
+
+  ;; (defun kam-flycheck-prefer-eldoc ()
+  ;;   (add-hook 'eldoc-documentation-functions #'kam-flycheck-eldoc nil t)
+  ;;   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+  ;;   (setq flycheck-display-errors-function nil)
+  ;;   (setq flycheck-help-echo-function nil))
+
+  :hook
+  (after-init . #'global-flycheck-mode))
+  ;; (flycheck-mode . kam-flycheck-prefer-eldoc)
+  ;; (flycheck-mode . kam-flycheck-set-margins)
+
+(use-package flycheck-eglot
+  :ensure t
+  :after (flycheck eglot)
+  :config
+  (global-flycheck-eglot-mode 1))
+
+(use-package consult-flycheck
+  :ensure t)
+
+;; (use-package flyover
+;;   :ensure t
+;;   ;; :after flycheck
+;;   :custom
+;;   (flyover-checkers '(flycheck))
+;;   (flyover-debounce-interval .1)
+;;   (flyover-text-tint nil)
+;;   (flyover-line-position-offset 1)
+;;   (flyover-show-at-eol t)
+;;   (flyover-virtual-line-type nil)
+;;   (flyover-show-virtual-line nil)
+;;   (flyover-icon-left-padding .9)
+;;   (flyover-icon-right-padding .1)
+;;   :hook
+;;   (flycheck-mode . #'flyover-mode))
+
+(use-package flymake
+  :ensure nil
+  :config
+  (setq flymake-fringe-indicator-position 'left-fringe
+        flymake-suppress-zero-counters nil
+        flymake-no-changes-timeout nil
+        flymake-start-on-flymake-mode nil
+        flymake-start-on-save-buffer nil
+        flymake-wrap-around t
+        flymake-show-diagnostics-at-end-of-line t))
+
+(use-package eglot
+  :ensure t
+  :init
+  ;; (defun kam-eglot-eldoc ()
+  ;;   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
+  :hook
+  (
+   ;; (eglot-managed-mode . kam-eglot-eldoc)
+   (c-ts-mode . eglot-ensure)
+   (python-ts-mode . eglot-ensure))
+  :config
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+
+(use-package xref
+  :ensure t
+  :bind
+  ("C-." . #'xref-find-definitions)
+  ("M-." . #'xref-find-references)
+  :config
+  (add-to-list 'xref-after-jump-hook 'pulsar-pulse-line t)
+  (add-to-list 'xref-prompt-for-identifier 'xref-find-references t))
+
+(use-package eldoc
+  :ensure nil
+  :custom
+  (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
+
+(use-package treesit-auto
+  :ensure t
+  :custom
+  (treesit-auto-install 'prompt)
+  :config
+  (treesit-auto-add-to-auto-mode-alist 'all)
+  (global-treesit-auto-mode))
+
+(use-package direnv
+  :ensure t
+  :config
+  (setq direnv-always-show-summary nil)
+  (direnv-mode))
+
+(use-package envrc
+  :hook (after-init . envrc-global-mode))
+
+(use-package compile
+  :ensure nil
+  :hook (compilation-filter . ansi-color-compilation-filter)
+  :bind (:map compilation-mode-map
+	      ("<f5>" . #'recompile)
+	      ("<escape>" . #'quit-window))
+  :config
+  (setq compilation-always-kill t
+        compilation-ask-about-save nil
+        compilation-scroll-output t
+        compilation-max-output-line-length nil
+        compilation-scroll-output 'first-error))
+
+ (defadvice compile (before ad-compile-smart activate)
+   "Advises `compile' so it sets the argument COMINT to t."
+   (ad-set-arg 1 t))
+
+(use-package python
+  :ensure t
+  :defer t
+  :custom
+  ;; (python-flymake-command '("pyright"))
+  (python-indent-guess-indent-offset-verbose nil)
+  :hook (python-mode . eglot-ensure))
+
+(use-package go-mode
+  :ensure t)
+
+(use-package go-eldoc
+  :ensure t
+  :hook (go-mode . #'go-eldoc-setup))
+
+(use-package markdown-mode
+  :ensure t
+  :mode ("README\\.md\\'" . gfm-mode))
+
+(setq ediff-keep-variants nil
+      ediff-make-buffers-readonly-at-startup nil
+      ediff-merge-revisions-with-ancestor t
+      ediff-show-clashes-only t
+      ediff-split-window-function 'split-window-horizontally
+      ediff-window-setup-function 'ediff-setup-windows-plain)
+
+(global-prettify-symbols-mode)
