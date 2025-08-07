@@ -66,15 +66,16 @@
               scroll-error-top-bottom t
               echo-keystrokes-help nil
               next-error-recenter '(4)
-	      line-spacing 0.4
-          cursor-type 'bar
-	      fill-column 80
-	      tab-width 4
-	      indent-tabs-mode nil
-          next-line-add-newlines t
-          line-move-visual t
-          sentence-end-double-space nil
-          kill-do-not-save-duplicates t)
+	          line-spacing 0.4
+              cursor-type 'bar
+              cursor-in-non-selected-windows nil
+	          fill-column 80
+	          tab-width 4
+	          indent-tabs-mode nil
+              next-line-add-newlines t
+              line-move-visual t
+              sentence-end-double-space nil
+              kill-do-not-save-duplicates t)
 
 (when (native-comp-available-p)
   (setq native-comp-async-report-warnings-errors 'silent
@@ -97,7 +98,6 @@
   (backup-inhibited t)
   (create-lockfiles nil)
   :config
-
   (setq auto-save-file-name-transforms
         `((".*" , (concat user-emacs-directory "auto-save-list/") t)))
 
@@ -131,8 +131,6 @@
   (blink-cursor-mode)
   (setq blink-cursor-interval 0.75
 	    make-cursor-line-fully-visible t))
-
-(call-interactively )
 
 (use-package emacs
   :ensure nil
@@ -244,14 +242,14 @@ If there is more than one, let the user choose."
   :after dired
   :config
   (setq dired-clean-up-buffers-too t
-        dired-clean-confirm-killing-deleted-buffers t))
+        dired-clean-confirm-killing-deleted-buffers nil))
 
 (use-package dired-aux
   :ensure nil
   :after dired
   :config
   (setq dired-isearch-filenames 'dwim
-        dired-create-destination-dirs 'ask
+        dired-create-destination-dirs 'always
         dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
         dired-create-destination-dirs-on-trailing-dirsep t))
 
@@ -1538,7 +1536,6 @@ Also see `kam-window-delete-popup-frame'." command)
 
 (setq switch-to-buffer-in-dedicated-window 'pop
       switch-to-buffer-obey-display-actions t
-      cursor-in-non-selected-windows nil
       switch-to-buffer-preserve-window-point t
       help-window-select t
       help-window-keep-selected t
@@ -1644,14 +1641,20 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
 (use-package org
   :ensure t
   :bind
+  ("C-c o l" . #'kam-consult-org-heading-link)
+  ("C-c o o" . #'kam-org-refile-region)
+  ("C-c o p" . #'org-set-property)
+  ("C-c o w" . #'kam-org-refile-to-current-file)
   (:map org-mode-map
         ("C-," . #'scroll-up)
-	("C-/" . #'scroll-other-window)
-	("M-/" . #'scroll-other-window-down)
+	    ("C-/" . #'scroll-other-window)
+	    ("M-/" . #'scroll-other-window-down)
         ("M-," . #'scroll-down)
-	("M-{" . #'kam-org-metadown)
-	("M-}" . #'kam-org-metaup)
-	("<f2>" . #'org-meta-return)
+        ("C-{" . #'org-next-visible-heading)
+	    ("M-{" . #'kam-org-metadown)
+        ("C-}" . #'org-previous-visible-heading)
+	    ("M-}" . #'kam-org-metaup)
+	    ("<f2>" . #'org-meta-return)
         ("C-<return>" . #'kam-insert-new-line-below)
         ("C-<backspace>" . #'kam-control-backspace)
         ("C-<tab>" . #'kam-org-up-and-fold-heading)
@@ -1662,7 +1665,7 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
         ("M-<f2>" . #'kam-org-insert-super-heading)
         ("C-'" . org-edit-src-code)
         ("M-m" . kam-mark-line)
-	("M-h" . #'mark-paragraph)
+	    ("M-h" . #'mark-paragraph)
         ("C-'" . org-edit-src-exit)
         ("M-<up>" . #'kam-org-metaup)
         ("M-<down>" . #'kam-org-metadown)
@@ -1670,22 +1673,18 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
         ("C-M-<down>" . #'kam-org-control-metadown)
         ("C-M-<left>" . kam-org-promote-subtrees)
         ("C-M-<right>" . kam-org-demote-subtrees)
-	("C-M-<return>" . org-meta-return)
-	("C-M-h" . #'mark-defun)
-	("C-M-m" . #'kam-mark-point-to-end-of-line)
+	    ("C-M-<return>" . org-meta-return)
+	    ("C-M-h" . #'mark-defun)
+	    ("C-M-m" . #'kam-mark-point-to-end-of-line)
         ("C-M-q" . #'kam-kill-inner-sexp)
-	("C-M-v" . #'sp-mark-sexp)
+	    ("C-M-v" . #'sp-mark-sexp)
         ("C-x C-v" . #'org-mark-element)
         ("C-x C-k" . #'kam-kill-current-buffer)
         ("C-x k" . #'delete-window)
         ("C-x n" . kam-narrow-or-widen-dwim)
-  (:map org-src-mode-map
-        ("M-'" . org-edit-src-exit)
-        ("C-<backspace>" . kam-control-backspace))
-  ("C-c o l" . #'kam-consult-org-heading-link)
-  ("C-c o o" . #'kam-org-refile-region)
-  ("C-c o p" . #'org-set-property)
-  ("C-c o w" . #'kam-org-refile-to-current-file)))
+        (:map org-src-mode-map
+              ("M-'" . org-edit-src-exit)
+              ("C-<backspace>" . kam-control-backspace))))
 
 (defvar-keymap kam-org-repeat-map
   :repeat t
@@ -1722,19 +1721,19 @@ Do nothing if search string is empty to start with."
     (interactive)
     (isearch-forward (thing-at-point 'symbol))))
 
-(use-package harpoon
-   :ensure t
-   :custom
-   (harpoon-project-package 'project)
-   :bind
-   ("C-c h f" . #'harpoon-file)
-   ("C-c h c" . #'harpoon-clear)
-   ("C-(" . #'harpoon-go-to-1)
-   ("C-{" . #'harpoon-go-to-2)
-   ("C-}" . #'harpoon-go-to-3)
-   ("<kam-lsb>" . #'harpoon-go-to-4)
-   :config
-   (setq harpoon-project-package 'project))
+;; (use-package harpoon
+;;    :ensure t
+;;    :custom
+;;    (harpoon-project-package 'project)
+;;    :bind
+;;    ("C-c h f" . #'harpoon-file)
+;;    ("C-c h c" . #'harpoon-clear)
+;;    ("C-(" . #'harpoon-go-to-1)
+;;    ("C-{" . #'harpoon-go-to-2)
+;;    ("C-}" . #'harpoon-go-to-3)
+;;    ("<kam-lsb>" . #'harpoon-go-to-4)
+;;    :config
+;;    (setq harpoon-project-package 'project))
 
 (use-package move-text
   :bind
@@ -1914,10 +1913,10 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (cond ((region-active-p)
          (kill-region nil nil t)
 	     (setq this-command 'kill-region))
-        ((and (org-at-heading-p) (derived-mode-p 'org-mode))
+        ((and (derived-mode-p 'org-mode) (org-at-heading-p))
          (org-cut-subtree)
 	     (setq this-command 'org-cut-subtree))
-        ((and (org-in-item-p) (derived-mode-p 'org-mode))
+        ((and (derived-mode-p 'org-mode) (org-in-item-p))
          (kam-org-kill-item)
 	     (setq this-command 'kill-region))
         (t
@@ -1929,17 +1928,17 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (interactive)
   (cond ((region-active-p)
          (copy-region-as-kill nil nil t)
-	 (setq this-command 'copy-region-as-kill))
-        ((org-at-heading-p)
+	     (setq this-command 'copy-region-as-kill))
+        ((and (derived-mode-p 'org-mode) (org-at-heading-p))
          (org-copy-subtree)
-	 (setq this-command 'org-copy-subtree))
+	     (setq this-command 'org-copy-subtree))
         ((and (derived-mode-p 'org-mode) (org-in-item-p)) ;; Org-in-item-p doesnt work if out of org mode
          (copy-region-as-kill (car (kam-org-item-bounds)) (cdr (kam-org-item-bounds)))
-	 (setq this-command 'copy-region-as-kill))
+	     (setq this-command 'copy-region-as-kill))
         (t
          (kam-mark-line-with-newline)
          (kill-ring-save nil nil t)
-	 (setq this-command 'kill-ring-save))))
+	     (setq this-command 'kill-ring-save))))
 
 (defun kam-duplicate-line-or-region ()
   "Duplicate the current line or active region."
@@ -2393,6 +2392,10 @@ This is like the default, but does not ask to visit a file, but does it outright
 	org-export-with-title nil
 	org-export-with-author nil))
 
+(use-package ox-gfm
+  :ensure t
+  :after org)
+
 (use-package ob-mermaid
   :ensure t
   :after org)
@@ -2428,7 +2431,6 @@ This stops the mismatch parenthesis bug in Org source blocks."
   :commands toc-org-enable
   :init (add-hook 'org-mode-hook 'toc-org-enable))
 
-;;;###autoload
 (defun kam-org-metaup ()
   "Go to the previous heading or item, or to a higher level heading.
 If not on a heading or item, finds the previous heading backwards. If already on a heading, goes up higher in the tree."
@@ -2439,7 +2441,6 @@ If not on a heading or item, finds the previous heading backwards. If already on
    ((kam-org-at-level-one-heading-p) (org-backward-heading-same-level 1))
    (t (org-up-element))))
 
-;;;###autoload
 (defun kam-org-metadown ()
   "Go to the next heading or item, or to a higher level heading.
 If not on a heading or item, finds the next heading forwards. If already on a heading, goes up "
@@ -2453,7 +2454,6 @@ If not on a heading or item, finds the next heading forwards. If already on a he
 (defvar kam-org-end-block-regexp "#\\+end_\\w+"
   "Regexp that matches the end of an Org Babel block.")
 
-;;;###autoload
 (defun kam-org-babel-goto-src-block-foot ()
   "Go to the end of an Org Babel block."
   (interactive)
@@ -2477,7 +2477,6 @@ If not on a heading or item, finds the next heading forwards. If already on a he
    ((org-at-heading-p) (org-promote))
    ((org-at-item-p) (org-indent-item))))
 
-;;;###autoload
 (defun kam-org-kill-item ()
   "Kills the Org item at point."
   (interactive)
@@ -2497,7 +2496,6 @@ If not on a heading or item, finds the next heading forwards. If already on a he
    nil
    'tree))
 
-;;;###autoload
 (defun kam-org-up-heading (&optional arg)
   (interactive "p")
   (cond
@@ -2505,7 +2503,6 @@ If not on a heading or item, finds the next heading forwards. If already on a he
    ((kam-org-at-level-one-heading-p) (org-backward-heading-same-level arg))
    (t (org-up-element))))
 
-;;;###autoload
 (defun kam-org-archive-done-tasks ()
   (interactive)
   (org-map-entries
@@ -2527,7 +2524,6 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
 (declare-function org-map-entries "org")
 
-;;;###autoload
 (defun kam-org-promote-subtrees ()
   "Promote the subtree and all subtrees under it at point."
   (interactive)
@@ -2536,7 +2532,6 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
    nil
    'tree))
 
-;;;###autoload
 (defun kam-org-demote-subtrees ()
   "Demote the subtree and all subtrees at point."
   (interactive)
@@ -2545,14 +2540,12 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
    nil
    'tree))
 
-;;;###autoload
 (defun kam-org-id-headlines ()
   "Add missing CUSTOM_ID to all headlines in the current file."
   (interactive)
   (org-map-entries
    (lambda () (kam-org--id-get))))
 
-;;;###autoload
 (defun kam-org-id-headline ()
   "Add missing CUSTOM_ID to headline at point."
   (interactive)
@@ -2635,9 +2628,12 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
 (use-package denote
   :ensure t
-  :hook (dired-mode . denote-dired-mode)
+  :hook ((dired-mode . denote-dired-mode)
+          (after-init . denote-rename-buffer-mode))
   :bind
   ("C-c n h" . #'kam-ite-visit-home)
+  ("C-c n c" . #'denote-open-or-create)
+  ("C-c n b" . #'denote-backlinks)
   :config
   (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
 	;; denote-infer-keywords t
@@ -2694,11 +2690,12 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
 (use-package project
   :ensure t
-  :bind
-  ;; ("C-x p p" . #'kam-project-switch-project)
-  ("C-x p b" . #'consult-project-buffer)
+  :bind (:map project-prefix-map
+              ("b" . #'hconsult-project-buffer)
+              ("g" . #'consult-ripgrep))
   :custom
-  (project-switch-use-entire-map t)
+  (project-switch-use-entire-map nil)
+  ;; (project-prompter 'kam-project--read-project-by-name)
   :config
   (setq project-vc-ignores '("nix/store/"
 			     "node_modules/"
@@ -2706,7 +2703,9 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 			     ".direnv/")
 	project-vc-extra-root-markers '(".project"))
 
-  (add-to-list 'project-switch-commands '(magit-status "Git" "g"))
+  (add-to-list 'project-switch-commands '(consult-ripgrep "Grep" "g"))
+  (add-to-list 'project-switch-commands '(magit-status "Git" "G"))
+  
   (remove '(project-vc-dir "VC-Dir") project-switch-commands)
 
   (defvar kam-project-name-history nil)
@@ -2714,7 +2713,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (defvar kam-projects-directory "~/Documents/Projects/"
     "The default directory where projects are stored.")
 
-  ;; (setq project-prompter #'kam-project-read-project-by-name)
+  ;; (setq project-prompter #'kam-project--read-project-by-name)
 
   (defun kam-project--return-formatted-project-name ()
     (when-let* ((proj (project-current))
@@ -2722,10 +2721,10 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 		       (directory-file-name (project-root proj)))))
       (format "[%s]" name)))
 
-  (defun kam-project-read-project-by-name ()
+  (defun kam-project--read-project-by-name ()
     "Read a project name and return its root directory.
 
-If no known project matches the selected name, prompt for a
+if no known project matches the selected name, prompt for a
 sub-directory of `kam-projects-directory' using the selected name
 as the initial input for completion, and return that directory."
     (let* ((name-dir-alist
@@ -2754,19 +2753,20 @@ as the initial input for completion, and return that directory."
   (interactive)
   (let* ((default-directory kam-projects-directory)
          (project-name (read-directory-name "Project: "))
-         (new-project
-          (concat kam-projects-directory
-                  (s-replace " " "-" project-name))))
-    (make-directory new-project)
-    (make-empty-file (concat new-project "/.project"))
-    (project--remember-dir new-project)))
+         (response (y-or-n-p "Do you want to initialize the project with a Git repository?")))
+    (make-directory project-name)
+    (if response
+        (async-shell-command (concat "git init " project-name))
+      (make-empty-file (concat project-name "/.project")))))
+
+(advice-add 'kam-project-new :after #'kam-project-remember-advice)
 
 (defun kam-project-delete (proj)
   "Delete a project."
-  (interactive (list (kam-project-read-project-by-name)))
+  (interactive (list (project-prompt-project-name)))
   (let* ((default-directory kam-projects-directory))
     (project-forget-project proj)
-    (delete-directory proj t t))))
+    (delete-directory proj t t)))
 
 (defun kam-project-switch-project (dir)
   "Switch to another project."
@@ -2777,7 +2777,10 @@ as the initial input for completion, and return that directory."
 	(setq-local project-current-directory-override dir)
 	(call-interactively #'project-find-file))))
 
-(project-remember-projects-under kam-projects-directory t)
+(defun kam-project-remember-advice ()
+  "Advice intended to be run after project creation commands to properly remember the projects."
+  (project-remember-projects-under kam-projects-directory t)
+  (kam-common-clear-echo-area)))
 
 (use-package eat
  :ensure t
@@ -3206,10 +3209,6 @@ The eshell is renamed to match that directory in order to make multiple eshell w
     (insert (concat "ls"))
     (eshell-send-input)))
 
-(eval-when-compile
-  (require 'subr-x)
-  (require 'cl-lib))
-
 (defun kam-common-empty-buffer-p ()
   "Test whether the buffer is empty."
   (or (= (point-min) (point-max))
@@ -3224,7 +3223,6 @@ The eshell is renamed to match that directory in order to make multiple eshell w
   (interactive)
   (quit-window t))
 
-;;;###autoload
 (defun kam-common-window-bounds ()
   "Return the start and end points of the window as a cons cell."
   (cons (window-start) (window-end)))
@@ -3593,8 +3591,8 @@ Use this as advice :after a noisy function."
                 kam-modeline-buffer-identification
                 "  "
                 kam-modeline-major-mode
-		"  "
-		;; kam-modeline-buffer-stats
+		        "  "
+		        ;; kam-modeline-buffer-stats
                 kam-modeline-process
                 " "
                 mode-line-format-right-align
