@@ -5,7 +5,7 @@
     enable = true;
     package = pkgs.rofi-wayland;
     location = "center";
-    theme = "/dev/null";
+    theme = "android_notification";
     font = "Iosevka Comfy";
     extraConfig = {
       display-drun = "Applications";
