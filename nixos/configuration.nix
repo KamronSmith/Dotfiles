@@ -111,9 +111,20 @@
     variant = "";
   };
 
-  services.devmon.enable = true;
-  services.udisks2.enable = true;
-  services.gvfs.enable = true;
+  services.udev = {
+    extraRules = ''
+        SUBSYSTEMS=="usb", SUBSYSTEM=="block", ACTION=="add", ENV{ID_FS_USAGE}=="filesystem", RUN+="${pkgs.writeShellScript "udev-mount.sh" ''
+                           ${pkgs.systemd}/bin/systemd-mount --no-block --automount=yes --collect --options=X-mount.mkdir "$DEVNAME" "/run/media/kam/$ID_FS_LABEL"
+                           ''}"
+        SUBSYSTEMS=="usb", SUBSYSTEM=="block", ACTION=="remove", ENV{ID_FS_USAGE}=="filesystem", RUN+="${pkgs.writeShellScript "udev-unmount.sh" ''
+                           ${pkgs.systemd}/bin/systemd-umount "$DEVNAME" "/run/media/kam/$ID_FS_LABEL"
+                           ${pkgs.coreutils}/bin/rmdir "/run/media/kam/$ID_FS_LABEL"
+                           ''}"
+    '';
+  };
+  # services.devmon.enable = true;
+  # services.udisks2.enable = true;
+  # services.gvfs.enable = true;
   
   # Enable cups to print documents.
   services.printing.enable = true;
