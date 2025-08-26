@@ -162,6 +162,18 @@ vim.opt.confirm = true
 -- Clear highlights on search when pressing <Esc> in normal mode
 --  See `:help hlsearch`
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+vim.keymap.set("n", "<c-n>", "<down>")
+vim.keymap.set("n", "<c-p>", "<up>")
+vim.keymap.set("n", "<c-f>", "<right>")
+vim.keymap.set("n", "<c-b>", "<left>")
+vim.keymap.set("i", "<c-n>", "<down>")
+vim.keymap.set("i", "<c-p>", "<up>")
+vim.keymap.set("i", "<c-f>", "<right>")
+vim.keymap.set("i", "<c-b>", "<left>")
+vim.keymap.set("v", "<c-n>", "<down>")
+vim.keymap.set("v", "<c-p>", "<up>")
+vim.keymap.set("v", "<c-f>", "<right>")
+vim.keymap.set("v", "<c-b>", "<left>")
 
 -- Diagnostic keymaps
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
@@ -917,7 +929,7 @@ require("lazy").setup({
 			-- Load the colorscheme here.
 			-- Like many other themes, this one has different styles, and you could load
 			-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-			vim.cmd.colorscheme("tokyonight-night")
+			-- vim.cmd.colorscheme("tokyonight-night")
 		end,
 	},
 
