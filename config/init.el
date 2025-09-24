@@ -62,20 +62,27 @@
 (setq font-log nil
       package-install-upgrade-built-in t)
 
+
+
 (setq-default eval-expression-print-length nil
               scroll-error-top-bottom t
               echo-keystrokes-help nil
               next-error-recenter '(4)
 	          line-spacing 0.4
-              cursor-type 'bar
+              cursor-type 'box
               cursor-in-non-selected-windows nil
+              make-cursor-line-fully-visible t
 	          fill-column 80
 	          tab-width 4
 	          indent-tabs-mode nil
               next-line-add-newlines t
               line-move-visual t
               sentence-end-double-space nil
-              kill-do-not-save-duplicates t)
+              kill-do-not-save-duplicates t
+              text-scale-remap-header-line t
+              display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
+                                           (reusable-frames . t))
+              even-window-sizes nil)
 
 (when (native-comp-available-p)
   (setq native-comp-async-report-warnings-errors 'silent
@@ -83,29 +90,150 @@
 
 (use-package emacs
   :ensure nil
+  :bind
+  ("<f3>" . #'project-recompile)
+  ("<f4>" . #'project-compile)
+  ("<f7>" . #'kam-switch-to-alternate-buffer)
+  ("<escape>" . #'kam-keyboard-quit-dwim)
+  ("<home>" . nil)
+  ("<end>" . nil)
+  ("<up>" . nil)
+  ("<down>" . nil)
+  ("<left>" . nil)
+  ("<right>" . nil)
+  ([remap keyboard-quit] . #'kam-keyboard-quit-dwim)
+  ([remap yank] . #'kam-yank)
+  ("C-g" . #'kam-keyboard-quit-dwim)
+  ([kam-i] . #'kam-split-window-right)
+  ("C-j" . #'kam-join-line-dwim)
+  ("C-k" . #'kill-line)
+  ([kam-m] . back-to-indentation)
+  ("C-v" . #'set-mark-command)
+  ("C-w" . #'kam-cut-dwim)
+  ("C-t" . #'kam-transpose-char)
+  ("C-q" . #'fill-paragraph)
+  ("C-z" . #'kam-kill-ring-save-dwim)
+  ("C-SPC" . #'kam-jump-to-mark)
+  ("C-<return>" . #'kam-insert-new-line-below)
+  ("C-DEL" . #'kam-control-backspace)
+  ("C-<next>" . #'scroll-other-window)
+  ("C-<prior>" . #'scroll-other-window-down)
+  ("C-," . #'scroll-up)
+  ("M-," . #'scroll-down)
+  ("C-&" . nil)
+  ("C-=" . #'indent-region)
+  ("C-^" . nil)
+  ("C-$" . #'jinx-correct-nearest)
+  ("C-/" . #'kam-prev-buffer)
+  ("C-@" . nil)
+  ("C-_" . nil)
+  ("C-:" . #'pp-eval-expression)
+  ("C-!" . #'shell-command)
+  ("C-?" . #'undo)
+  ("C-+" . #'delete-window)
+  ("C-|" . nil)
+  ("C-`" . nil)
+  ("C-(" . insert-parentheses)
+  ("C-)" . nil)
+  ("C-~" . nil)
+  ("C-<" . nil)
+  ("C->" . nil)
+  ("M-c" . capitalize-dwim)
+  ("M-j" . kam-open-line)
+  ("M-i" . #'kam-split-window-below)
+  ("M-l" . downcase-dwim)
+  ("M-m" . kam-mark-line)
+  ("M-n" . forward-paragraph)
+  ("M-p" . backward-paragraph)
+  ("M-q" . upcase-dwim)
+  ("M-t" . kam-transpose-words)
+  ("M-u" . universal-argument)
+  ("M-v" . mark-word)
+  ("M-w" . #'kam-cut-dwim)
+  ("M-z" . #'kam-kill-ring-save-dwim)
+  ("M-!" . async-shell-command)
+  ("M-?" . #'undo-redo)
+  ("M-;" . #'kam-comment-dwim)
+  ("M-:" . #'pp-eval-expression)
+  ("M-@" . nil)
+  ("M-/" . #'kam-next-buffer)
+  ("M-*" . nil)
+  ("M-_" . nil)
+  ("M-+" . #'delete-other-windows)
+  ("M-#" . nil)
+  ("M-SPC" . #'kam-push-mark-no-activate)
+  ("M-<return>" . #'kam-insert-new-line-above)
+  ("M-DEL" . #'backward-kill-sentence)
+  ("C-h c" . #'describe-char)
+  ("C-h r" . #'info-display-manual)
+  ("C-h s" . #'kam-consult-search-emacs-info-pages)
+  ("C-h F" . #'apropos-function)
+  ("C-h R" . #'info-emacs-manual)
+  ("C-h V" . #'apropos-variable)
+  ("C-x 1" . nil)
+  ("C-x 2" . nil)
+  ("C-x 3" . nil)
+  ("C-x b" . #'kam-switch-to-buffer-dwim)
+  ("C-x f" . #'find-file)
+  ("C-x n" . kam-narrow-or-widen-dwim)
+  ("C-x o" . kam-ace-window-prefix)
+  ("C-x u" . nil)
+  ("C-x C-d" . dired)
+  ("C-x C-n" . nil)
+  ("C-x C-e" . kam-eval-current-sexp)
+  ("C-x C-v" . mark-paragraph)
+  ("C-x C-k" . kam-kill-current-buffer)
+  ("C-x C-u" . nil)
+  ("C-x C-z" . nil)
+  ("C-M-:" . kam-comment-dwim)
+  ("C-M-(" . insert-parenthesis)
+  ("C-M-/" . kam-switch-to-alternate-buffer)
+  ("C-M-=" . indent-region)
+  ("C-M-b" . sp-backward-sexp)
+  ("C-M-d" . sp-down-sexp)
+  ("C-M-f" . sp-forward-sexp)
+  ("C-M-k" . sp-kill-sexp)
+  ;; ("M-[kam-m]" . kam-mark-point-to-end-of-line)
+  ("C-M-q". kam-kill-inner-sexp)
+  ("C-M-u" . sp-backward-up-sexp)
+  ("C-M-v" . sp-mark-sexp)
+  ("C-M-y" . kam-duplicate-line-or-region)
+  ("C-M-DEL" . sp-backward-kill-sexp)
+  ([remap list-buffers] . ibuffer)
+  ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
+  (:map search-map
+	    ("M-c" . #'goto-char)
+	    ("M-f" . #'consult-fd)
+	    ("M-g" . #'consult-ripgrep)
+        ("M-i" . #'consult-imenu)
+	    ("M-k" . #'consult-mark)
+	    ("M-l" . #'consult-line)
+	    ("M-o" . #'kam-menu)
+	    ("M-p" . #'kam-consult-line-symbol-at-point))
+  (:map prog-mode-map
+	    ("C-M-q" . #'kam-kill-inner-sexp))
+  (:map emacs-lisp-mode-map
+        ("C-M-q" . #'kam-kill-inner-sexp))
+;  (:map comint-mode-map
+;       ("C-c C-l" . #'kam-consult-comint-history)
+;       ("C-." . #'kam-comint-insert-arguments-from-command))
   :custom
-  (inhibit-splash-screen t)
-  :config
-  (menu-bar-mode -1)
-  (tab-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1))
-
-(use-package emacs
-  :ensure nil
-  :custom
+  ;; (inhibit-splash-screen nil)
   (make-backup-files nil)
   (backup-inhibited t)
   (create-lockfiles nil)
+  (confirm-kill-emacs nil)
+  (confirm-kill-processes nil)
   :config
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (blink-cursor-mode -1)
+
   (setq auto-save-file-name-transforms
         `((".*" , (concat user-emacs-directory "auto-save-list/") t)))
 
-  (setq kill-buffer-delete-auto-save-files t))
-
-(use-package emacs
-  :ensure nil
-  :config
+  (setq kill-buffer-delete-auto-save-files t)
   (setq confirm-kill-emacs nil)
   (setq confirm-kill-processes nil)
   (setq confirm-non-existent-file-or-buffer nil)
@@ -113,43 +241,13 @@
   (setq kill-buffer-query-functions
         (remq 'process-kill-buffer-query-function
               kill-buffer-query-functions))
-  (setq initial-scratch-message ""))
-
-(use-package emacs
-  :ensure nil
-  :config
-  (setq delete-by-moving-to-trash t))
-
-(use-package emacs
-  :ensure nil
-  :config
-  (setq custom-file (make-temp-file "emacs-custom-")))
-
-(use-package emacs
-  :ensure nil
-  :config
-  (blink-cursor-mode)
-  (setq blink-cursor-interval 0.75
-	    make-cursor-line-fully-visible t))
-
-(use-package emacs
-  :ensure nil
-  :custom
-  (read-extended-command-predicate #'command-completion-default-include-p)
-  :init
-  (defun crm-indicator (args)
-    (cons (format "[CRM%s] %s"
-                  (replace-regexp-in-string
-                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
-                   crm-separator)
-                  (car args))
-          (cdr args)))
-  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
-
+  (setq initial-scratch-message "")
+  (setq delete-by-moving-to-trash t)
+  (setq custom-file (make-temp-file "emacs-custom-"))
+  (setq read-extended-command-predicate #'command-completion-default-include-p)
+  (setq next-screen-context-lines 20)
   (setq minibuffer-prompt-properties
         '(read-only t cursor-intangible t face minibuffer-prompt))
-
-  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 
   (defun kam-minibuffer-setup-hook ()
     "Function for settings as the minibuffer starts."
@@ -157,68 +255,80 @@
           truncate-lines nil)
     (setq-local fill-column 200))
 
-  (add-hook 'minibuffer-setup-hook #'kam-minibuffer-setup-hook)
-
   (defun kam-minibuffer-exit-hook ()
     "Function for settings as the minibuffer exits."
     (setq gc-cons-threshold (* 1000 1000 8)))
 
-  (add-hook 'minibuffer-exit-hook #'kam-minibuffer-exit-hook)
-  
+  (keymap-global-set "<f6>" 'avy-goto-char-timer)
+  (keymap-global-set "C-M-(" 'insert-parentheses)
+  (keymap-global-set "C-\"" 'kam-insert-quote)
+
   (setq resize-mini-windows t
-        resize-mini-frames 't))
+        resize-mini-frames t)
 
-(setq enable-recursive-minibuffers t
-      completion-cycle-threshold 1
-      completions-detailed t
-      tab-always-indent 'complete
-      completion-auto-help 'lazy
-      completions-max-height 20
-      completions-format 'one-column
-      completions-group t
-      completion-auto-select 'second-tab
-      completion-ignore-case t
-      read-file-name-completion-ignore-case t)
+  (setq enable-recursive-minibuffers t
+        completion-cycle-threshold 1
+        completions-detailed t
+        tab-always-indent 'complete
+        completion-auto-help 'lazy
+        completions-max-height 20
+        completions-format 'one-column
+        completions-group t
+        completion-auto-select 'second-tab
+        completion-ignore-case t
+        read-file-name-completion-ignore-case t)
 
-(use-package dired
-  :ensure nil
-  :config
-  (setq dired-clean-confirm-killing-deleted-buffers nil
-        dired-confirm-shell-command nil
-        dired-no-confirm t
-        dired-deletion-confirmer '(lambda (x) t)))
+  (setq display-line-numbers-type 'relative
+        display-line-numbers-width 3)
 
-(use-package dired
-  :ensure nil
-  :config
-  (setq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso"))
+  (defun crm-indicator (args)
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
 
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
+  (add-hook 'minibuffer-setup-hook #'kam-minibuffer-setup-hook)
+  (add-hook 'minibuffer-exit-hook #'kam-minibuffer-exit-hook))
+
 (use-package dired
   :ensure nil
   :hook (dired-mode . dired-hide-details-mode)
+  :bind
+  (:map dired-mode-map
+        ("<mouse-2>" . #'dired-mouse-find-file)
+        ("C-o" . #'ace-window)
+        ("f" . #'find-name-dired)
+        ("o" . #'dired-do-open)
+	    ([kam-i] . #'kam-split-window-right))
   :config
+  (setq dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso")
+  (setq dired-clean-confirm-killing-deleted-buffers nil
+        dired-confirm-shell-command nil
+        dired-no-confirm t
+        dired-deletion-confirmer '(lambda (x) t))
   (setq dired-recursive-deletes 'always
-	dired-recursive-copies 'always
+	    dired-recursive-copies 'always
         dired-kill-when-opening-new-dired-buffer t
         dired-dwim-target t
         dired-auto-revert-buffer #'dired-directory-changed-p
         dired-make-directory-clickable t
         dired-free-space nil
-        dired-mouse-drag-files t))
+        dired-mouse-drag-files t)
+  (setq dired-guess-shell-alist-user
+        '(("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
+          ("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
+          (".*" "xdg-open"))))
 
 (use-package dired-open
   :ensure t)
 
 (use-package dired-rainbow
   :ensure t)
-
-(use-package dired
-  :ensure nil
-  :config
-  (setq dired-guess-shell-alist-user
-        '(("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "mpv" "xdg-open")
-          ("\\.\\(png\\|jpe?g\\|tiff\\)" "feh" "xdg-open")
-          (".*" "xdg-open"))))
 
 (defvar kam-automount-directory (format "/run/media/%s" user-login-name)
   "Directory under which drives are automounted.")
@@ -252,12 +362,6 @@ If there is more than one, let the user choose."
         dired-create-destination-dirs 'always
         dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
         dired-create-destination-dirs-on-trailing-dirsep t))
-
-(use-package dired
-  :ensure nil
-  :bind (:map dired-mode-map
-	      ("C-o" . #'ace-window)
-	      ([kam-i] . #'kam-split-window-right)))
 
 (use-package wdired
   :ensure nil
@@ -313,14 +417,6 @@ If there is more than one, let the user choose."
         trashed-use-header-line t
         trashed-sort-key '("Date deleted" . t)))
 
-(use-package dired
-  :ensure nil
-  :if (eq system-type 'darwin)
-  :config
-  (setq dired-use-ls-dired t
-        insert-directory-program "/opt/homebrew/bin/gls"
-        dired-listing-switches "-AGFhlv --group-directories-first"))
-
 (defun kam-dired-shell-command-on-file-at-point ()
   "Runs a shell command on the file at point."
   (interactive)
@@ -333,6 +429,8 @@ If there is more than one, let the user choose."
   "Opens the home directory."
   (interactive)
   (dired (getenv "HOME")))
+
+
 
 (use-package repeat
   :ensure nil
@@ -403,40 +501,40 @@ This function is intended to be used with `hl-line-mode'."
   :ensure nil
   :hook (help-mode . lin-mode)
   :bind (:map help-mode-map
-	      ("q" . #'kam-common-quit-window)
-	      ("p" . 'kam-docview-backward-paragraph)
-	      ("n" . 'kam-docview-forward-paragraph)
-	      ("j" . 'forward-button)
-	      ("k" . 'backward-button)
-	      ("<mouse-9>" . 'help-go-back)
-	      ("<next>" . scroll-down-line)
-	      ("C-," . scroll-up)
-	      ("M-," . scroll-down)
-	      ("<prior>" . scroll-up-line)))
+	          ("q" . #'kam-common-quit-window)
+	          ("p" . 'kam-docview-backward-paragraph)
+	          ("n" . 'kam-docview-forward-paragraph)
+	          ("j" . 'forward-button)
+	          ("k" . 'backward-button)
+	          ("<mouse-9>" . 'help-go-back)
+	          ("<next>" . scroll-down-line)
+	          ("C-," . scroll-up)
+	          ("M-," . scroll-down)
+	          ("<prior>" . scroll-up-line)))
 
 (use-package info
   :ensure nil
   :hook (Info-mode . lin-mode)
   :bind (:map Info-mode-map
-	      ("M-[" . 'Info-history-back)
-	      ("<mouse-9>" . #'Info-history-back)
-	      ("M-]" . 'Info-history-forward)
-	      ("C-," . scroll-up)
-	      ("M-," . scroll-down)
-	      ("p" . 'kam-docview-backward-paragraph)
-	      ("P" . 'Info-prev)
-	      ("n" . 'kam-docview-forward-paragraph)
-	      ("N" . 'Info-next)
-	      ("j" . 'Info-next-reference)
-	      ("k" . 'Info-prev-reference)
-	      ("<next>" . scroll-down-line)
-	      ("<prior>" . scroll-up-line)))
+	          ("M-[" . 'Info-history-back)
+	          ("<mouse-9>" . #'Info-history-back)
+	          ("M-]" . 'Info-history-forward)
+	          ("C-," . scroll-up)
+	          ("M-," . scroll-down)
+	          ("p" . 'kam-docview-backward-paragraph)
+	          ("P" . 'Info-prev)
+	          ("n" . 'kam-docview-forward-paragraph)
+	          ("N" . 'Info-next)
+	          ("j" . 'Info-next-reference)
+	          ("k" . 'Info-prev-reference)
+	          ("<next>" . scroll-down-line)
+	          ("<prior>" . scroll-up-line)))
 
 (use-package man
   :ensure nil
   :bind (:map Man-mode-map
-	      ("p" . #'kam-docview-backward-paragraph)
-	      ("n" . #'kam-docview-forward-paragraph))
+	          ("p" . #'kam-docview-backward-paragraph)
+	          ("n" . #'kam-docview-forward-paragraph))
   :config
   (setq Man-notify-method 'pushy))
 
@@ -517,7 +615,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (setq tramp-encoding-shell (executable-find "sh")
         sh-shell-file (executable-find "sh")
         shell-file-name (executable-find "sh")
-	tramp-default-remote-shell (executable-find "sh"))
+	    tramp-default-remote-shell (executable-find "sh"))
   
   (add-to-list 'tramp-connection-properties
                (list (regexp-quote "/sudo::")
@@ -540,23 +638,30 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (setq recentf-max-saved-items 100))
 
-(use-package emacs
+(use-package ispell
   :ensure nil
-  :config
-  (setq next-screen-context-lines 20))
+  :custom
+  (ispell-program-name (executable-find "aspell")))
 
-(use-package ultra-scroll
-  :ensure t
-  :vc (:url "https://github.com/jdtsmith/ultra-scroll"
-            :branch "main")
-  :bind
-  (("<wheel-up>" . ultra-scroll-up)
-   ("<wheel-down>" . ultra-scroll-down))
+(use-package jinx
   :init
-  (setq-default scroll-conservatively 4
-                scroll-margin 0)
-  :config
-  (ultra-scroll-mode 1))
+  (setenv "ASPELL_CONF" "dict-dir /nix/store/361h5gykf4ycq622dn52z4bfhqbfrxdp-aspell-env/lib/aspell")
+  :custom
+  (jinx-languages "en")
+  :ensure nil)
+
+;; (use-package ultra-scroll
+;;   :ensure t
+;;   :vc (:url "https://github.com/jdtsmith/ultra-scroll"
+;;             :branch "main")
+;;   :bind
+;;   (("<wheel-up>" . ultra-scroll-up)
+;;    ("<wheel-down>" . ultra-scroll-down))
+;;   :init
+;;   (setq-default scroll-conservatively 4
+;;                 scroll-margin 0)
+;;   :config
+;;   (ultra-scroll-mode 1))
 
 (use-package keyfreq
   :ensure t
@@ -633,130 +738,17 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
-(use-package emacs
-  :ensure nil
-  :bind
-  ("<f3>" . #'project-recompile)
-  ("<f4>" . #'project-compile)
-  ("<f7>" . #'kam-switch-to-alternate-buffer)
-  ("<escape>" . #'kam-keyboard-quit-dwim)
-  ("<home>" . nil)
-  ("<end>" . nil)
-  ("<up>" . nil)
-  ("<down>" . nil)
-  ("<left>" . nil)
-  ("<right>" . nil)
-  ([remap keyboard-quit] . #'kam-keyboard-quit-dwim)
-  ("C-g" . #'kam-keyboard-quit-dwim)
-  ([kam-i] . #'kam-split-window-right)
-  ("C-j" . #'kam-join-line-dwim)
-  ("C-k" . #'kill-line)
-  ([kam-m] . back-to-indentation)
-  ("C-v" . #'set-mark-command)
-  ("C-w" . #'kam-cut-dwim)
-  ("C-t" . #'kam-transpose-char)
-  ("C-q" . #'fill-paragraph)
-  ("C-z" . #'kam-kill-ring-save-dwim)
-  ("C-SPC" . #'kam-jump-to-mark)
-  ("C-<return>" . #'kam-insert-new-line-below)
-  ("C-DEL" . #'kam-control-backspace)
-  ("C-<next>" . #'scroll-other-window)
-  ("C-<prior>" . #'scroll-other-window-down)
-  ("C-," . #'scroll-up)
-  ("M-," . #'scroll-down)
-  ("C-&" . nil)
-  ("C-=" . #'indent-region)
-  ("C-^" . nil)
-  ("C-$" . #'jinx-correct-nearest)
-  ("C-/" . #'kam-prev-buffer)
-  ("C-@" . nil)
-  ("C-_" . nil)
-  ("C-:" . #'pp-eval-expression)
-  ("C-!" . #'shell-command)
-  ("C-?" . #'undo)
-  ("C-+" . #'delete-window)
-  ("C-|" . nil)
-  ("C-`" . nil)
-  ("C-)" . nil)
-  ("C-~" . nil)
-  ("C-<" . nil)
-  ("C->" . nil)
-  ("M-c" . capitalize-dwim)
-  ("M-j" . kam-open-line)
-  ("M-i" . #'kam-split-window-below)
-  ("M-l" . downcase-dwim)
-  ("M-m" . kam-mark-line)
-  ("M-n" . forward-paragraph)
-  ("M-p" . backward-paragraph)
-  ("M-q" . upcase-dwim)
-  ("M-t" . kam-transpose-words)
-  ("M-u" . universal-argument)
-  ("M-v" . mark-word)
-  ("M-w" . #'kam-cut-dwim)
-  ("M-z" . #'kam-kill-ring-save-dwim)
-  ("M-!" . async-shell-command)
-  ("M-?" . #'undo-redo)
-  ("M-;" . #'kam-comment-dwim)
-  ("M-:" . #'pp-eval-expression)
-  ("M-@" . nil)
-  ("M-/" . #'kam-next-buffer)
-  ("M-*" . nil)
-  ("M-_" . nil)
-  ("M-+" . #'delete-other-windows)
-  ("M-#" . nil)
-  ("M-SPC" . #'kam-push-mark-no-activate)
-  ("M-<return>" . #'kam-insert-new-line-above)
-  ("M-DEL" . #'backward-kill-sentence)
-  ("C-h c" . #'describe-char)
-  ("C-h r" . #'info-display-manual)
-  ("C-h s" . #'kam-consult-search-emacs-info-pages)
-  ("C-h F" . #'apropos-function)
-  ("C-h R" . #'info-emacs-manual)
-  ("C-h V" . #'apropos-variable)
-  ("C-x 1" . nil)
-  ("C-x 2" . nil)
-  ("C-x 3" . nil)
-  ("C-x b" . #'kam-switch-to-buffer-dwim)
-  ("C-x f" . #'find-file)
-  ("C-x n" . kam-narrow-or-widen-dwim)
-  ("C-x o" . kam-ace-window-prefix)
-  ("C-x u" . nil)
-  ("C-x C-d" . dired)
-  ("C-x C-n" . nil)
-  ("C-x C-e" . kam-eval-current-sexp)
-  ("C-x C-v" . mark-paragraph)
-  ("C-x C-k" . kam-kill-current-buffer)
-  ("C-x C-u" . nil)
-  ("C-x C-z" . nil)
-  ("C-M-:" . kam-comment-dwim)
-  ("C-M-/" . kam-switch-to-alternate-buffer)
-  ("C-M-=" . indent-region)
-  ("C-M-b" . sp-backward-sexp)
-  ("C-M-d" . sp-down-sexp)
-  ("C-M-f" . sp-forward-sexp)
-  ("C-M-k" . sp-kill-sexp)
-  ;; ("C-M-m" . kam-mark-point-to-end-of-line)
-  ("C-M-q". kam-kill-inner-sexp)
-  ("C-M-u" . sp-backward-up-sexp)
-  ("C-M-v" . sp-mark-sexp)
-  ("C-M-y" . kam-duplicate-line-or-region)
-  ("C-M-DEL" . sp-backward-kill-sexp)
-  ([remap list-buffers] . ibuffer)
-  ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
-  :config
-  (keymap-global-set "<f6>" 'avy-goto-char-timer))
-
 (use-package vertico
   :ensure t
   :hook (after-init . vertico-mode)
   :bind
   (:map vertico-map
-	("<f1>" . #'embark-act)
-	("<f2>" . #'consult-dir)
+	    ("<f1>" . #'embark-act)
+	    ("<f2>" . #'consult-dir)
         ("<escape>" . #'kam-keyboard-quit-dwim)
         ("C-," . vertico-scroll-up)
         ("M-," . vertico-scroll-down)
-        ("M-RET" . vertico-exit-input)
+        ("M-<return>" . vertico-exit-input)
         ("<up>" . nil)
         ("<down>" . nil)
         ("C-<return>" . #'minibuffer-force-complete-and-exit)
@@ -764,24 +756,14 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (setq vertico-resize t
         vertico-cycle t
-        vertico-scroll-margin 0)
-
-  (defun kam-vertico--match-directory (str)
-    "Match directory delimiter in STR."
-    (string-suffix-p "/" str))
-
-  (defun kam-vertico--sort-directories-first (files)
-    "Sort directories before files."
-    (setq files (vertico-sort-alpha files))
-    (nconc (seq-filter #'kam-vertico--match-directory files)
-           (seq-remove #'kam-vertico--match-directory files))))
+        vertico-scroll-margin 0))
 
 (use-package vertico-quick
   :after vertico
   :ensure nil
   :bind
   (:map vertico-map
-	("<f6>" . #'vertico-quick-exit))
+	    ("<f6>" . #'vertico-quick-exit))
   :config
   (setq vertico-quick1 "dnreta"
         vertico-quick2 "columq"))
@@ -792,14 +774,14 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :hook (rfn-eshadow-update-overlay . #'vertico-directory-tidy)
   :bind
   (:map vertico-map
-	("RET" . vertico-directory-enter)
         ("<backspace>" . vertico-directory-delete-char)
         ("C-<backspace>" . vertico-directory-delete-word)))
 
 (use-package vertico-multiform
   :ensure nil
-  :after vertico
-  :config
+  :after vertico-posframe
+  :hook (after-init . vertico-multiform-mode)
+  :init
   (defvar kam-vertico-multiform-maximal
     '((vertico-count . 10)
       (vertico-preselect . no-prompt)
@@ -817,43 +799,31 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
       (vertico-preselect . prompt)))
   
   (setq vertico-multiform-categories
-        `((embark-keybinding (grid))
+        `((embark-keybinding grid)
           (consult-location ,@kam-vertico-multiform-maximal)
           (imenu ,@kam-vertico-multiform-maximal)
           (jinx ,@kam-vertico-multiform-maximal)
           (unicode-name ,@kam-vertico-multiform-maximal)
           (multi-category ,@kam-vertico-multiform-maximal)
-          (file ,@kam-vertico-multiform-maximal
-                (vertico-sort-function . #'kam-vertico--sort-directories-first))))
-  
+          (file ,@kam-vertico-posframe-maximal)))
+        
   (setq vertico-multiform-commands
-        `(
-          ("consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\)" ,@kam-vertico-multiform-maximal)
-          ;; (consult-line posframe
-          ;;               (vertico-posframe-poshandler . posframe-poshandler-window-center)
-          ;;               (vertico-posframe-border-width . 2))
-          
-          (kam-consult-line-symbol-at-point posframe
-                                            (vertico-posframe-poshandler . posframe-poshandler-window-center)
-                                            (vertico-posframe-border-width . 2))
+        `(("consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)" buffer)
           (execute-extended-command ,@kam-vertico-posframe-maximal)
-          ;; (kam-menu posframe
-          ;;           (vertico-posframe-poshandler . posframe-poshandler-window-center)
-          ;;           (vertico-posframe-border-width . 2))
-          ;; (kam-search-notes buffer)
-          ;; (consult-imenu buffer indexed)
-          ;; (consult-org-heading posframe
-          ;;                      (vertico-posframe-poshandler . posframe-poshandler-window-center)
-          ;;                      (vertico-posframe-border-width . 2))
-          (kam-window-switch-to-buffer posframe
-                                       (vertico-posframe-poshandler . posframe-poshandler-window-center)
-                                       (vertico-posframe-border-width . 2))
-          (org-roam-node-find (vertico-sort-function . nil))
-          (jinx-correct-nearest grid (vertico-grid-annotate . 20))
-          ))
+          (describe-variable ,@kam-vertico-posframe-maximal)
+          (describe-function ,@kam-vertico-posframe-maximal)
+          (find-file ,@kam-vertico-posframe-maximal)
+          (consult-dir ,@kam-vertico-posframe-maximal)
+          (project-switch-project ,@kam-vertico-posframe-maximal)
+          (kam-menu ,@kam-vertico-posframe-maximal)
+          (dired-do-rename ,@kam-vertico-posframe-maximal)
+          (dired-do-copy ,@kam-vertico-posframe-maximal)
+          (dired-create-directory ,@kam-vertico-posframe-maximal)
+          (find-name-dired ,@kam-vertico-posframe-maximal)
+          (jinx-correct-nearest grid (vertico-grid-annotate . 20))))
   (vertico-multiform-mode 1))
 
-(use-package vertico-reverse
+(use-package vertico-sort
   :ensure nil
   :after vertico)
 
@@ -862,11 +832,19 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :vc (:url "https://github.com/tumashu/vertico-posframe"
             :branch "main")
   :after vertico
-  :config
+  :init
   (defvar kam-vertico-posframe-maximal
     '(posframe
-      (vertico-posframe-poshandler . posframe-poshandler-window-center)
-      (vertico-posframe-border-width . 2))))
+      (vertico-posframe-poshandler . posframe-poshandler-frame-center)
+      (vertico-posframe-border-width . 2)))
+
+  ;; (add-to-list 'vertico-multiform-commands `(execute-extended-command ,@kam-vertico-posframe-maximal))
+  ;; (add-to-list 'vertico-multiform-commands `(describe-function ,@kam-vertico-posframe-maximal))
+  ;; (add-to-list 'vertico-multiform-commands `(describe-variable ,@kam-vertico-posframe-maximal))
+  ;; (add-to-list 'vertico-multiform-commands `(find-file ,@kam-vertico-posframe-maximal))
+  ;; (add-to-list 'vertico-multiform-commands `(consult-dir ,@kam-vertico-posframe-maximal))
+  ;; (add-to-list 'vertico-multiform-commands `(project-switch-project ,@kam-vertico-posframe-maximal))
+  )
 
 (use-package consult
   :ensure t
@@ -884,15 +862,14 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ("C-x C-r" . consult-recent-file)
          ("C-M-x" . consult-mode-command)
          ("C-M-;" . consult-complex-command)
+         ("M-g M-g" . consult-goto-line)
          ("M-y" . consult-yank-pop)
-	 ("C-x p b" . #'consult-project-buffer)
+	     ("C-x p b" . #'consult-project-buffer)
          :map isearch-mode-map
          ("M-e" . consult-isearch-history)
-         ("M-s e" . consult-isearch-history)
-         ("M-s l" . consult-line)
+         ("M-s M-l" . consult-line)
          :map minibuffer-local-map
-         ("M-s" . consult-history)
-         ("M-r" . consult-history)))
+         ("M-e" . consult-history)))
   :config
   (setq consult-narrow-key ">")
   (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
@@ -900,29 +877,40 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
 
   (add-to-list 'consult-buffer-filter
-	       "^\\*help\\*" t)
+	           "^\\*help\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*Man " t)
+	           "^\\*Man " t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*Async-native-compile-log\\*" t)
+	           "^\\*Async-native-compile-log\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*direnv\\*" t)
+	           "^\\*direnv\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*envrc\\*" t)
+	           "^\\*envrc\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*info\\*" t)
+	           "^\\*info\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*EGLOT " t)
+	           "^\\*EGLOT " t)
   (add-to-list 'consult-buffer-filter
-	       "-shell\\*$")
+	           "-shell\\*$")
   (add-to-list 'consult-buffer-filter
-	       "-eshell\\*$")
+	           "-eshell\\*$")
   (add-to-list 'consult-buffer-filter
-	       "^\\*Backtrace\\*$" t)
+	           "^\\*Backtrace\\*$" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*Warnings\\*" t)
+	           "^\\*Warnings\\*" t)
   (add-to-list 'consult-buffer-filter
-	       "^\\*Messages\\*" t))
+	           "^\\*Messages\\*" t)
+
+  (defun kam-consult-directory-files-recursively ()
+    "Find file recursively"
+    (interactive)
+    (find-file
+     (consult--read
+      (directory-files-recursively default-directory "" nil (lambda (x) (not (string-match-p "/\\." x))))
+      :state (consult--file-preview)
+      :prompt "Find File: "
+      :require-match t
+      :category 'file))))
 
 ;; (dolist (src consult-buffer-sources)
 ;;   (unless (eq src 'consult--source-buffer)
@@ -930,12 +918,20 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
 (use-package consult-dir
   :ensure t
-  :bind (:map vertico-map
+  :bind
+  ("<f2>" . #'consult-dir)
+  ("C-c f" . #'kam-consult-dir-find-file)
+  (:map vertico-map
               ("<f2>" . consult-dir)
               ("C-<f2>" . consult-dir-jump-file))
   :config
   (setq consult-dir-shadow-filenames nil
-	consult-dir-jump-file-command 'consult-fd))
+	    consult-dir-jump-file-command 'consult-fd)
+
+  (defun kam-consult-dir-find-file ()
+    (interactive)
+    (let ((consult-dir-default-command 'kam-consult-directory-files-recursively))
+      (consult-dir))))
 
 (use-package marginalia
   :ensure t
@@ -950,8 +946,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   ("<f1>" . #'embark-act)
   ("C-<f1>" . #'embark-dwim)
   (:map vertico-map
-	("<f1>" . #'embark-act)
-	("C-<f1>" . #'embark-export))
+	    ("<f1>" . #'embark-act)
+	    ("C-<f1>" . #'embark-export))
   :init
   (setq prefix-help-command #'embark-prefix-help-command)
   (setq embark-prompter #'embark-keymap-prompter)
@@ -1015,6 +1011,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
     (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
   
   (setq completion-styles '(orderless basic)
+        completion-category-defaults nil
         completion-category-overrides '((file (styles partial-completion))
                                         (command (styles kam-orderless-with-initialism))
                                         (variable (styles kam-orderless-with-initialism))
@@ -1039,7 +1036,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         ("SPC" . #'corfu-insert-separator)
         ("C-," . corfu-scroll-up)
         ("M-," . corfu-scroll-down)
-	("<escape>" . #'corfu-quit))
+	    ("<escape>" . #'corfu-quit))
   :config
   (setq corfu-preview-current nil
         corfu-min-width 20)
@@ -1176,16 +1173,16 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         aw-keys '(?d ?n ?r ?e ?t ?a)
         aw-dispatch-alist
         '((?x aw-delete-window "Delete Window")
-	  (?m aw-swap-window "Swap Windows")
-	  (?M aw-move-window "Move Window")
-	  (?c aw-copy-window "Copy Window")
-	  (?j aw-switch-buffer-in-window "Select Buffer")
-	  (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
-	  (?c aw-split-window-fair "Split Fair Window")
-	  (?v aw-split-window-vert "Split Vert Window")
-	  (?b aw-split-window-horz "Split Horz Window")
-	  (?o delete-other-windows "Delete Other Windows")
-	  (?? aw-show-dispatch-help)))
+	      (?m aw-swap-window "Swap Windows")
+	      (?M aw-move-window "Move Window")
+	      (?c aw-copy-window "Copy Window")
+	      (?j aw-switch-buffer-in-window "Select Buffer")
+	      (?u aw-switch-buffer-other-window "Switch Buffer Other Window")
+	      (?c aw-split-window-fair "Split Fair Window")
+	      (?v aw-split-window-vert "Split Vert Window")
+	      (?b aw-split-window-horz "Split Horz Window")
+	      (?o delete-other-windows "Delete Other Windows")
+	      (?? aw-show-dispatch-help)))
 
   (defun kam-ace-window-dispatch (&optional arg)
     "Small wrapper for `ace-window' that uses the dispatcher."
@@ -1205,12 +1202,12 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          (window-width . 0.3)
          (mode help-mode)
          (window-parameters . ((mode-line-format . none))))
-	("[P] " ;; dired-preview-mode
-	 (display-buffer-in-side-window)
-	 (side . right)
-	 (window-width . 0.5)
-	 ;; (mode . dired-preview)
-	 (window-parameters . ((mode-line-format . none))))
+	    ("[P] " ;; dired-preview-mode
+	     (display-buffer-in-side-window)
+	     (side . right)
+	     (window-width . 0.5)
+	     ;; (mode . dired-preview)
+	     (window-parameters . ((mode-line-format . none))))
         ("\\*Org Links\\*" ;; Org Links
          (display-buffer-no-window)
          (allow-no-window . t))
@@ -1256,12 +1253,12 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          (window . root)
          (window-height . 0.35)
          (window-parameters . ((mode-line-format . none))))
-	("\\*eat\\*"
-	 (display-buffer-in-side-window)
-	 (side . bottom)
-	 (window . root)
-	 (window-height . 0.35)
-	 (window-parameters . ((mode-line-format . none))))
+	    ("\\*eat\\*"
+	     (display-buffer-in-side-window)
+	     (side . bottom)
+	     (window . root)
+	     (window-height . 0.35)
+	     (window-parameters . ((mode-line-format . none))))
         ("^\\*eldoc for"
          (display-buffer-in-side-window)
          (side . bottom)
@@ -1281,36 +1278,36 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          (inhibit-same-window . t)
          (mode . eshell-mode)
          (window-parameters . ((mode-line-format . none))))
-	("-eshell\\*$" ;; matches title for `project-eshell'
-	 (display-buffer-in-side-window)
-	 (side . bottom)
-	 (window . root)
-	 (window-height . 0.35)
-	 (window-parameters . ((mode-line-format . none))))
-	("-shell\\*$" ;; matches title for `project-shell'
-	 (display-buffer-in-side-window)
-	 (side . bottom)
-	 (window . root)
-	 (window-height . 0.35)
-	 (window-parameters . ((mode-line-format . none))))
-	("^\\*Warnings\\*$"
-	 (display-buffer-in-side-window)
-	 (side . bottom)
-	 (window . root)
-	 (window-height . 0.35)
-	 (window-parameters . ((mode-line-format . none))))
-	("^\\*Messages\\*$"
-	 (display-buffer-in-side-window)
-	 (side . bottom)
-	 (window . root)
-	 (window-height . 0.35)
-	 (window-parameters . ((mode-line-format . none))))
-	((derived-mode . harpoon-mode)
-	 (display-buffer-in-side-window)
-	 (side . bottom)
-	 (mode harpoon-mode)
-	 (window-height . 0.35)
-	 (window-parameters . ((mode-line-format . none))))))
+	    ("-eshell\\*$" ;; matches title for `project-eshell'
+	     (display-buffer-in-side-window)
+	     (side . bottom)
+	     (window . root)
+	     (window-height . 0.35)
+	     (window-parameters . ((mode-line-format . none))))
+	    ("-shell\\*$" ;; matches title for `project-shell'
+	     (display-buffer-in-side-window)
+	     (side . bottom)
+	     (window . root)
+	     (window-height . 0.35)
+	     (window-parameters . ((mode-line-format . none))))
+	    ("^\\*Warnings\\*$"
+	     (display-buffer-in-side-window)
+	     (side . bottom)
+	     (window . root)
+	     (window-height . 0.35)
+	     (window-parameters . ((mode-line-format . none))))
+	    ("^\\*Messages\\*$"
+	     (display-buffer-in-side-window)
+	     (side . bottom)
+	     (window . root)
+	     (window-height . 0.35)
+	     (window-parameters . ((mode-line-format . none))))
+	    ((derived-mode . harpoon-mode)
+	     (display-buffer-in-side-window)
+	     (side . bottom)
+	     (mode harpoon-mode)
+	     (window-height . 0.35)
+	     (window-parameters . ((mode-line-format . none))))))
 
 (setq window-sides-slots '(0 0 1 1))
 
@@ -1330,12 +1327,12 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           ("\\*eshell[\:\*]")
           ("\\*compilation\\*")
           ("\\*Flycheck errors\\*")
-	  ("-eshell\\*$")
-	  ("-shell\\*$")
-	  ("\\*eat\\*")
-	  ("\\*Helpful ")
-	  Man-mode
-	  helpful-mode
+	      ("-eshell\\*$")
+	      ("-shell\\*$")
+	      ("\\*eat\\*")
+	      ("\\*Helpful ")
+	      Man-mode
+	      helpful-mode
           help-mode
           Info-mode)
         popper-display-control nil)
@@ -1356,7 +1353,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :defer t
   :bind (:map tab-bar-mode-map
-	      ("C-<tab>" . nil))
+	          ("C-<tab>" . nil))
   ("C-x t n" . #'tab-next)
   ("C-x t p" . #'tab-previous)
   ("C-x t +" . #'tab-close)
@@ -1366,7 +1363,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
      (concat (funcall tab-bar-tab-group-function tab))
      'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
 
-  (tab-bar-mode 1)
+  ;; (tab-bar-mode 1)
   :custom
   (tab-bar-close-button-show nil)
   (tab-bar-new-button nil)
@@ -1374,16 +1371,16 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (tab-bar-auto-width nil)
   (tab-bar-separator " ")
   (tab-bar-format '(tab-bar-format-tabs-groups
-   		    ;; tab-bar-format-tabs
-		    tab-bar-separator))
+   		            ;; tab-bar-format-tabs
+		            tab-bar-separator))
 
   :config
   (defun kam-tab-bar-group-from-project ()
     "Call `tab-group' with the current project name as the group."
     (interactive)
     (when-let* ((proj (project-current))
-		(name (file-name-nondirectory
-		       (directory-file-name (project-root proj)))))
+		        (name (file-name-nondirectory
+		               (directory-file-name (project-root proj)))))
       (tab-group (format "[P] %s" name)))))
 
 (use-package otpp
@@ -1463,7 +1460,7 @@ With a universal prefix arg, run in the next window."
   "Switch to a buffer. Switch to a project buffer."
   (interactive "P")
   (if (or (not (project-current))
-	  all-buffers)
+	      all-buffers)
       (call-interactively #'consult-buffer)
     (call-interactively #'consult-project-buffer)))
 
@@ -1515,9 +1512,17 @@ Also see `kam-window-delete-popup-frame'." command)
          ((quit error user-error)
           (delete-frame frame))))))
 
+(defun kam-clone-buffer-and-narrow ()
+  (interactive)
+  (clone-indirect-buffer-other-window nil 'pop-to-buffer)
+  (cond ((region-active-p)
+         (narrow-to-region (region-beginning) (region-end)))
+        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
+        (t (narrow-to-defun))))
+
 ;; what the fuck am i doing here
 ;; (defvar-keymap kam-window-map
-;;   :doc"Keymap for windows related actions"
+;;   :doc "Keymap for windows related actions"
 ;;   :repeat t
 ;;   "n" #'kam-next-buffer
 ;;   "p" #'kam-prev-buffer
@@ -1540,12 +1545,6 @@ Also see `kam-window-delete-popup-frame'." command)
       help-window-select t
       help-window-keep-selected t
       truncate-partial-width-windows nil)
-
-(use-package emacs
-  :ensure nil
-  :bind
-  (:map prog-mode-map
-	("C-M-q" . #'kam-kill-inner-sexp)))
 
 (defvar-keymap kam-prefix-map
   :doc "Prefix map"
@@ -1583,29 +1582,18 @@ Also see `kam-window-delete-popup-frame'." command)
 ;;   "C-r" #'consult-ripgrep
 ;;   "C-s" #'isearch-forward)
 
-(use-package emacs
-  :ensure nil
-  :bind (:map search-map
-	      ("M-c" . #'goto-char)
-	      ("M-f" . #'consult-fd)
-	      ("M-g" . #'consult-ripgrep)
-	      ("M-k" . #'consult-global-mark)
-	      ("M-l" . #'consult-line)
-	      ("M-o" . #'kam-menu)
-	      ("M-p" . #'kam-consult-line-symbol-at-point)))
-
 (defvar-keymap kam-prefix-ite-map
-    :doc "Prefix map for the ITE"
-    :name "ITE"
-    :prefix 'kam-prefix-ite
-    "C-c" #'org-roam-node-insert
-    "C-d" #'consult-org-roam-file-find
-    "C-s" #'consult-org-roam-search
-    "C-b" #'consult-org-roam-backlinks
-    "C-f" #'org-roam-ref-add
-    "C-l" #'org-roam-tag-add
-    "C-h" (lambda () (interactive) (find-file kam-ite-home-note))
-    "H-i" (lambda () (interactive) (find-file kam-ite-inbox-note)))
+  :doc "Prefix map for the ITE"
+  :name "ITE"
+  :prefix 'kam-prefix-ite
+  "C-c" #'org-roam-node-insert
+  "C-d" #'consult-org-roam-file-find
+  "C-s" #'consult-org-roam-search
+  "C-b" #'consult-org-roam-backlinks
+  "C-f" #'org-roam-ref-add
+  "C-l" #'org-roam-tag-add
+  "C-h" (lambda () (interactive) (find-file kam-ite-home-note))
+  "H-i" (lambda () (interactive) (find-file kam-ite-inbox-note)))
 
 (defvar-keymap kam-prefix-org-map
   :doc "Prefix map for Org mode."
@@ -1640,7 +1628,12 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
 
 (use-package org
   :ensure t
+  ;; :hook ((org-agenda-after-show . #'visual-line-mode))
+         ;; (org-mode . visual-line-mode))
   :bind
+  ("C-c a" . #'org-agenda)
+  ("C-c c" . #'org-capture)
+  ("C-c l" . #'org-store-link)
   ("C-c o l" . #'kam-consult-org-heading-link)
   ("C-c o o" . #'kam-org-refile-region)
   ("C-c o p" . #'org-set-property)
@@ -1684,7 +1677,102 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
         ("C-x n" . kam-narrow-or-widen-dwim)
         (:map org-src-mode-map
               ("M-'" . org-edit-src-exit)
-              ("C-<backspace>" . kam-control-backspace))))
+              ("C-<backspace>" . kam-control-backspace)))
+  :config
+  (setq org-auto-align-tags nil
+	    org-M-RET-may-split-line nil
+        org-directory "~/Documents/"
+        org-tags-column 0
+        org-catch-invisible-edits 'show-and-error
+        org-startup-indented t
+        org-insert-heading-respect-content t
+        org-special-ctrl-a/e t
+        org-indirect-buffer-display 'other-window
+        org-use-fast-todo-selection t
+        org-enforce-todo-dependencies t
+        org-return-follows-link t
+        org-cycle-separator-lines 2
+        org-use-speed-commands t
+        org-hide-macro-markers t
+        org-blank-before-new-entry '((heading . nil)
+                                     (plain-list-item . auto))
+        org-ellipsis " ⌄"
+        org-hide-emphasis-markers t
+        org-fold-catch-invisible-edits 'show
+        org-fontify-todo-headline t)
+
+  (setq org-capture-templates
+        '(("t" "Task" entry (file kam-task-inbox-file)
+           "* TODO %?")
+          ("p" "Project" entry )
+          ("w" "Writing" entry (file+headline kam-task-task-file "Writing") "* TODO %?\n")
+          ("d" "Default" entry (file "~/Documents/Inbox/inbox.org"))))
+
+  (setq org-bookmark-names-plist nil)
+
+  (setq org-refile-use-outline-path t
+        org-outline-path-complete-in-steps nil)
+
+  (setq org-export-with-toc nil
+	    org-export-with-date nil
+	    org-export-with-tags nil
+	    org-export-with-title nil
+	    org-export-with-author nil)
+
+  (setq org-pretty-entities t)
+
+  (defun kam-org-refile-to-current-file ()
+    "Refile the heading under the point to a heading in the current file only."
+    (interactive)
+    (let ((org-refile-targets '((nil . (:maxlevel . 10)))))
+      (org-refile)))
+
+  (defun kam-org-agenda-refile ()
+    "Refile in the `org-agenda'. Intended to only be used in the agenda."
+    (interactive)
+    (let (org-refile-targets `((,kam-task-task-file . (:maxlevel . 2))))
+      (org-refile)))
+
+  (defun kam-org-agenda-inbox ()
+    "Go to your Inbox in `org-agenda'."
+    (interactive)
+    (org-agenda nil "i" nil))
+
+  (defun kam-org-agenda-tasks ()
+    "Go to your tasks in `org-agenda'."
+    (interactive)
+    (org-agenda nil "t" nil))
+
+  (defun kam-org-agenda-skip-entry-if-property (prop val)
+    "Skip the entry if it marked with PROP property with the value VAL. PROP and VAL should be a string."
+    (let ((end (org-entry-end-position))
+          (prop-regexp (org-re-property prop nil nil val)))
+      (if (re-search-forward prop-regxep end t)
+          nil
+        end)))
+
+  (setq org-link-context-for-files t
+        org-link-keep-stored-after-insertion nil
+        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
+        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
+                               (vm-imap . vm-visit-imap-folder-other-frame)
+                               (gnus . org-gnus-no-new-news)
+                               (file . find-file)
+                               (wl . wl-other-frame)))
+
+  (defun kam-org-insert-last-stored-link-with-prompt ()
+    "Inserts the last stored link in `org-stored-links' while prompting for the description of the link."
+    (interactive)
+    (let ((links (copy-sequence org-stored-links)))
+      (if (null org-stored-links)
+          (user-error "No links to insert")
+        (setq l (pop links))
+        (org-insert-link nil (car l) (read-from-minibuffer "Link Text: ")))))
+
+  (with-eval-after-load 'pulsar
+    (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
+      (add-hook hook #'pulsar-recenter-center)
+      (add-hook hook #'pulsar-reveal-entry))))
 
 (defvar-keymap kam-org-repeat-map
   :repeat t
@@ -1698,7 +1786,7 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
   :bind
   (:map isearch-mode-map
         ("<f6>" . avy-isearch)
-	("<backspace>" . #'kam-isearch-removed-failed-or-last-char))
+	    ("<backspace>" . #'kam-isearch-removed-failed-or-last-char))
   :config
   (setq isearch-lazy-count t
         isearch-lazy-count-prefix-format "(%s/%s)"
@@ -1711,10 +1799,10 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
 Do nothing if search string is empty to start with."
     (interactive)
     (if (equal isearch-string "")
-	(isearch-update)
+	    (isearch-update)
       (if isearch-success
-	  (isearch-delete-char)
-	(while (isearch-fail-pos) (isearch-pop-state)))
+	      (isearch-delete-char)
+	    (while (isearch-fail-pos) (isearch-pop-state)))
       (isearch-update)))
 
   (defun kam-isearch-symbol-at-point ()
@@ -1737,12 +1825,12 @@ Do nothing if search string is empty to start with."
 
 (use-package move-text
   :bind
-  (("H-<up>" . move-text-up)
-   ("H-<down>" . move-text-down))
+  (("M-<up>" . move-text-up)
+   ("M-<down>" . move-text-down))
   :ensure t)
 
-(advice-add 'move-text-up :after 'kam-indent-region-advice)
-(advice-add 'move-text-down :after 'kam-indent-region-advice)
+(advice-add 'move-text-up :after 'kam-naved-indent-region-advice)
+(advice-add 'move-text-down :after 'kam-naved-indent-region-advice)
 
 (use-package wgrep
   :ensure t)
@@ -1769,7 +1857,15 @@ Do nothing if search string is empty to start with."
 (use-package delsel
   :ensure nil
   :config
-  (delete-selection-mode t))
+  (delete-selection-mode 1))
+
+(use-package saveplace
+  :ensure nil
+  :init
+  (save-place-mode 1)
+  :custom
+  (save-place-file (concat user-emacs-directory ".saved-places"))
+  (save-place-forget-unreadable-files t))
 
 (global-subword-mode)
 
@@ -1791,17 +1887,15 @@ Do nothing if search string is empty to start with."
 
 (use-package vundo
   :ensure t
-  :bind (:map vundo-mode-map
-	      ("<escape>" . #'vundo-quit)))
+  :bind
+  ("C-M-?" . #'vundo)
+  (:map vundo-mode-map
+	    ("<escape>" . #'vundo-quit)))
 
-(use-package emacs
-  :ensure nil
-  :config
-  (setq display-line-numbers-type 'relative
-        display-line-numbers-width 3))
-
-(use-package vundo
-  :ensure t)
+;; (use-package centered-cursor-mode
+;;   :ensure t
+;;   :init
+;;   (global-centered-cursor-mode))
 
 (defvar undo-repeat-map
   (let ((map (make-sparse-keymap)))
@@ -1865,13 +1959,35 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (exchange-point-and-mark)
   (deactivate-mark nil))
 
-(defun kam-mark-line ()
-  "Marks the current line."
-  (interactive)
-  (kam--mark
-   (cons
-    (line-beginning-position)
-    (line-end-position))))
+(defun kam-mark-line (&optional arg allow-extend)
+  "Put point at beginning of the line, mark at end.
+
+With argument ARG, puts mark at end of a following line, so that
+the number of lines marked equals ARG.
+
+If ARG is negative, point is put at end of this line, mark is put
+at beginning of this or a previous line.
+
+Interactively (or if ALLOW-EXTEND is non-nil), if this command is
+repeated or (in Transient Mark mode) if the mark is active,
+it marks the next ARG lines after the ones already marked."
+  (interactive "p\np")
+  (unless arg (setq arg 1))
+  (when (zerop arg)
+    (error "Cannot mark zero lines"))
+  (cond ((and allow-extend
+	          (or (and (eq last-command this-command) (mark t))
+		          (and transient-mark-mode mark-active)))       
+         (save-excursion
+           (goto-char (mark))
+           (beginning-of-line)
+           (forward-line arg)
+           (end-of-line)
+           (push-mark nil t t)))
+	    (t
+	     (goto-char (line-end-position))
+         (push-mark nil t t)
+         (beginning-of-line))))
 
 (defun kam-mark-line-with-newline ()
   "Selects the whole line with the newline of the previous line."
@@ -1881,15 +1997,6 @@ This is the same as using \\[set-mark-command] with the prefix argument."
          (save-excursion
            (next-line)
            (line-beginning-position)))))
-
-(defun kam-mark-line-end-of-prev-line ()
-  (interactive)
-  (kam--mark
-   (cons
-    (save-excursion
-      (previous-line)
-      (line-end-position))
-    (line-end-position))))
 
 (defun kam-mark-point-to-end-of-line ()
   (interactive)
@@ -1948,9 +2055,12 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (kam-common--duplicate-buffer-substring
    (if (region-active-p)
        (cons (region-beginning) (region-end))
+       (cons (region-beginning) (region-end))
      (cons (line-beginning-position) (line-end-position)))))
 
-(advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
+(advice-add #'kam-duplicate-line-or-region :after #'kam-naved-indent-region-advice)
+
+(advice-add #'yank :after #'kam-naved-indent-region-advice)
 
 (defun kam-insert-new-line-below (n)
   "Create N empty lines below the current one.
@@ -2166,6 +2276,12 @@ Unlike `eval-last-sexp', the point doesn't need to be at the end of the expressi
   (backward-up-list)
   (kam-kill-sexp))
 
+(defun kam-insert-quote (&optional arg)
+  "Enclose following ARG sexps in quotes."
+  (interactive "P")
+  (insert-pair arg ?\" ?\"))
+
+"test test test"
 (cl-defmethod register--type ((_regval vector)) 'vector)
 
 (cl-defmethod register-val-describe ((val vector) _verbose)
@@ -2213,141 +2329,18 @@ This is like the default, but does not ask to visit a file, but does it outright
       (indent-region (line-beginning-position) (line-end-position)))
     (setq deactivate-mark deactivate)))
 
-(use-package org
-  :ensure nil
-  :config
-  (setq org-auto-align-tags nil
-	org-M-RET-may-split-line nil
-        org-directory "~/Documents/"
-        org-tags-column 0
-        org-catch-invisible-edits 'show-and-error
-        org-startup-indented t
-        org-insert-heading-respect-content t
-        org-special-ctrl-a/e t
-        org-indirect-buffer-display 'other-window
-        org-use-fast-todo-selection t
-        org-enforce-todo-dependencies t
-        org-return-follows-link t
-        org-cycle-separator-lines 2
-        org-use-speed-commands t
-        org-hide-macro-markers t
-        org-blank-before-new-entry '((heading . nil)
-                                     (plain-list-item . auto))
-        org-ellipsis " ⌄"
-        org-hide-emphasis-markers t
-        org-fold-catch-invisible-edits 'show
-        org-fontify-todo-headline t))
-
-(use-package org
-  :ensure nil
-  :bind
-  ("C-c c" . org-capture)
-  :config
-  (setq org-capture-templates
-        '(("t" "Task" entry (file kam-task-inbox-file)
-           "* TODO %?")
-          ("p" "Project" entry )
-          ("w" "Writing" entry (file+headline kam-task-task-file "Writing") "* TODO %?\n")
-          ("d" "Default" entry (file "~/Documents/Inbox/inbox.org"))))
-  (setq org-bookmark-names-plist nil))
-
-(add-hook 'olivetti-mode 'org-capture)
-
-(use-package org
-  :ensure nil
-  :bind
-  ("C-c a" . org-agenda)
-  :config
-  (setq org-agenda-files (list kam-task-task-file)
-        org-agenda-custom-commands '(("z" "Things to write about"
-                                      ((todo "" ((org-agenda-files `(,kam-ite-inbox-note))
-                                                 (org-agenda-overriding-header "Things to write about")
-                                                 ))))
-                                     
-                                     ("i" "Inbox" todo "TODO" ((org-agenda-files `(,kam-task-inbox-file))
-                                                               (org-agenda-overriding-header "Unprocessed Inbox Items")))
-                                     
-                                     ("d" "Daily Agenda"
-                                      ((agenda "" ((org-agenda-span 'day)
-                                                   (org-deadline-warning-days 7)))
-
-                                       (tags-todo "+PRIORITY=\"A\""
-                                                  ((org-agenda-overriding-header "High Priority Tasks")))))
-                                     ("w" "Weekly Review"
-                                      ((agenda ""
-                                               ((org-agenda-overriding-header "Completed Tasks")
-                                                (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo 'done))
-                                                (org-agenda-span 'week)))
-                                       (agenda ""
-                                               ((org-agenda-overriding-header "Unfinished Scheduled Tasks")
-                                                (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-                                                (org-agenda-span 'week))))))
-        org-agenda-hide-tags-regexp "."
-        org-log-done-time 'time
-        org-todo-keywords '((sequence "TODO(t)" "NEXT(n)" "WAITING(w)" "|" "DONE(d)" "CANCELLED(c)")))
-
-  (defun kam-org-agenda-refile ()
-    "Refile in the `org-agenda'. Intended to only be used in the agenda."
-    (interactive)
-    (let (org-refile-targets `((,kam-task-task-file . (:maxlevel . 2))))
-      (org-refile)))
-
-  (defun kam-org-agenda-inbox ()
-    "Go to your Inbox in `org-agenda'."
-    (interactive)
-    (org-agenda nil "i" nil))
-
-  (defun kam-org-agenda-tasks ()
-    "Go to your tasks in `org-agenda'."
-    (interactive)
-    (org-agenda nil "t" nil))
-
-  (defun kam-org-agenda-skip-entry-if-property (prop val)
-    "Skip the entry if it marked with PROP property with the value VAL. PROP and VAL should be a string."
-    (let ((end (org-entry-end-position))
-          (prop-regexp (org-re-property prop nil nil val)))
-      (if (re-search-forward prop-regxep end t)
-          nil
-        end)))
-
-  (add-hook 'org-agenda-after-show-hook 'visual-line-mode)
-
-  (with-eval-after-load 'pulsar
-    (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
-      (add-hook hook #'pulsar-recenter-center)
-      (add-hook hook #'pulsar-reveal-entry))))
-
-(setq org-refile-use-outline-path t
-      org-outline-path-complete-in-steps nil)
-
-(defun kam-org-refile-to-current-file ()
-  "Refile the heading under the point to a heading in the current file only."
+(defun kam-yank ()
   (interactive)
-  (let ((org-refile-targets '((nil . (:maxlevel . 10)))))
-    (org-refile)))
+  (let ((yank-transform-functions
+         '(kam-yank--string-transform)))
+    (yank)))
 
-(use-package org
-  :ensure nil
-  :bind
-  ("C-c l" .  org-store-link)
-  :config
-  (setq org-link-context-for-files t
-        org-link-keep-stored-after-insertion nil
-        org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id
-        org-link-frame-setup '((vm . vm-visit-folder-other-frame)
-                               (vm-imap . vm-visit-imap-folder-other-frame)
-                               (gnus . org-gnus-no-new-news)
-                               (file . find-file)
-                               (wl . wl-other-frame)))
+(defun kam-yank--string-transform (string)
+  (let* ((newline-string (string-chop-newline string))
+        (beginning-whitespace-string (string-trim-left newline-string)))
+    beginning-whitespace-string))
 
-  (defun kam-org-insert-last-stored-link-with-prompt ()
-    "Inserts the last stored link in `org-stored-links' while prompting for the description of the link."
-    (interactive)
-    (let ((links (copy-sequence org-stored-links)))
-      (if (null org-stored-links)
-          (user-error "No links to insert")
-        (setq l (pop links))
-        (org-insert-link nil (car l) (read-from-minibuffer "Link Text: "))))))
+
 
 (use-package org-babel
   :no-require
@@ -2383,22 +2376,16 @@ This is like the default, but does not ask to visit a file, but does it outright
           ("w" . "warning")
           ("q" . "quote"))))
 
-(use-package org
-  :ensure nil
-  :config
-  (setq org-export-with-toc nil
-	org-export-with-date nil
-	org-export-with-tags nil
-	org-export-with-title nil
-	org-export-with-author nil))
-
 (use-package ox-gfm
   :ensure t
   :after org)
 
-(use-package ob-mermaid
+(use-package org-contrib
   :ensure t
-  :after org)
+  :after org
+  :config
+  (require 'ox-extra)
+  (ox-extras-activate '(ignore-headlines)))
 
 (defun kam-org-syntax-table-modify ()
   "Modify `org-mode-syntax-table' for the current Org buffer.
@@ -2417,19 +2404,8 @@ This stops the mismatch parenthesis bug in Org source blocks."
   (set-face-attribute 'org-modern-symbol nil :family "SF Mono")
   (global-org-modern-mode))
 
-(use-package org
-  :ensure nil
-  :hook ( ; (org-mode . olivetti-mode)
-         (org-mode . visual-line-mode))
-  :config
-  (setq org-pretty-entities t))
-
-; (use-package tmr
- ; :ensure t)
-
-(use-package toc-org
-  :commands toc-org-enable
-  :init (add-hook 'org-mode-hook 'toc-org-enable))
+;; (use-package tmr
+;;  :ensure t)
 
 (defun kam-org-metaup ()
   "Go to the previous heading or item, or to a higher level heading.
@@ -2469,7 +2445,7 @@ If not on a heading or item, finds the next heading forwards. If already on a he
               (org-end-of-item)
               (point)))
     (user-error "%s" "Point is not in an Org item")))
-     
+
 (defun kam-org-insert-super-heading (arg)
   (interactive "P")
   (org-insert-heading arg)
@@ -2576,8 +2552,8 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (org-cycle))
 
 (use-package nix-mode
-   :ensure t
-   :mode "\\.nix\\'")
+  :ensure t
+  :mode "\\.nix\\'")
 
 (defvar kam-dotfiles-directory "~/.dotfiles/")
 
@@ -2622,33 +2598,35 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   "Take a screenshot."
   (interactive)
   (let ((default-directory "~/Pictures/Screenshots/")
-	(name (read-string "Name of screenshot: ")))
+	    (name (read-string "Name of screenshot: ")))
     (setenv "WAYLAND_DISPLAY" "wayland-1")
     (async-shell-command (concat "wayshot -s \"$(slurp)\" -f " name ".jpg"))))
 
 (use-package denote
   :ensure t
   :hook ((dired-mode . denote-dired-mode)
-          (after-init . denote-rename-buffer-mode))
+         (after-init . denote-rename-buffer-mode))
   :bind
   ("C-c n h" . #'kam-ite-visit-home)
-  ("C-c n c" . #'denote-open-or-create)
+  ("C-c n w" . #'kam-ite-visit-workbench)
+  ("C-c n d" . #'denote-open-or-create)
   ("C-c n b" . #'denote-backlinks)
+  ("C-c n c" . #'denote-link)
   :config
   (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
-	;; denote-infer-keywords t
-	denote-sort-keywords t
-	denote-prompts '(title keywords)
-	denote-rename-confirmations '(rewrite-front-matter modify-file-name)
-	denote-date-prompt-use-org-read-date t)
-
-  (defvar kam-ite-inbox-note)
-
+	    ;; denote-infer-keywords t
+	    denote-sort-keywords t
+	    denote-prompts '(title keywords)
+	    denote-rename-confirmations '(rewrite-front-matter modify-file-name)
+	    denote-date-prompt-use-org-read-date t)
+  
   (defvar kam-ite-home-note
     (concat denote-directory "20230928T043448--home__index.org")
     "The home note for my ITE.")
 
-  (defvar kam-ite-workbench-note)
+  (defvar kam-ite-workbench-note
+    (concat denote-directory "20250807T185237--workbench__index.org")
+    "The workbench note for my ITE.")
 
   (defun kam-ite-visit-home ()
     "Visits the `kam-ite-home-note'."
@@ -2660,17 +2638,19 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   ;;   (interactive)
   ;;   (find-file kam-ite-inbox-note))
 
-  ;; (defun kam-ite-visit-workbench ()
-  ;;   "Visits the `kam-ite-workbench-note'."
-  ;;   (interactive)
-  ;;   (find-file kam-ite-workbench-note))
-  )
+  (defun kam-ite-visit-workbench ()
+    "Visits the `kam-ite-workbench-note'."
+    (interactive)
+    (find-file kam-ite-workbench-note)))
 
 (use-package consult-denote
   :ensure t
   :custom
   (consult-denote-find-command #'consult-fd)
   (consult-denote-grep-command #'consult-ripgrep)
+  :bind
+  ("C-c n g" . #'consult-denote-grep)
+  ("C-c n f" . #'consult-denote-find)
   :config
   (consult-denote-mode 1))
 
@@ -2698,10 +2678,10 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   ;; (project-prompter 'kam-project--read-project-by-name)
   :config
   (setq project-vc-ignores '("nix/store/"
-			     "node_modules/"
-			     "go/pkg/"
-			     ".direnv/")
-	project-vc-extra-root-markers '(".project"))
+			                 "node_modules/"
+			                 "go/pkg/"
+			                 ".direnv/")
+	    project-vc-extra-root-markers '(".project"))
 
   (add-to-list 'project-switch-commands '(consult-ripgrep "Grep" "g"))
   (add-to-list 'project-switch-commands '(magit-status "Git" "G"))
@@ -2717,8 +2697,8 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
   (defun kam-project--return-formatted-project-name ()
     (when-let* ((proj (project-current))
-		(name (file-name-nondirectory
-		       (directory-file-name (project-root proj)))))
+		        (name (file-name-nondirectory
+		               (directory-file-name (project-root proj)))))
       (format "[%s]" name)))
 
   (defun kam-project--read-project-by-name ()
@@ -2735,59 +2715,59 @@ as the initial input for completion, and return that directory."
            (current (project-current))
            (default (and current (project-name current)))
            (name (consult--read name-dir-alist
-                                  :prompt "Project: "
-                                  :history 'kam-project-name-history
-                                  :annotate #'marginalia-annotate-file
-				  :state (consult--file-state)
-				  :category 'file)))
+                                :prompt "Project: "
+                                :history 'kam-project-name-history
+                                :annotate #'marginalia-annotate-file
+				                :state (consult--file-state)
+				                :category 'file)))
       (or (alist-get name name-dir-alist nil nil #'string=)
           (let* ((dir (read-directory-name "Project root directory: "
                                            kam-projects-directory
                                            nil t name))
-		 (project (project-current nil dir)))
+		         (project (project-current nil dir)))
             (when project (project-remember-project project))
             dir))))
 
-(defun kam-project-new ()
-  "Create a project in the `kam-projects-directory'."
-  (interactive)
-  (let* ((default-directory kam-projects-directory)
-         (project-name (read-directory-name "Project: "))
-         (response (y-or-n-p "Do you want to initialize the project with a Git repository?")))
-    (make-directory project-name)
-    (if response
-        (async-shell-command (concat "git init " project-name))
-      (make-empty-file (concat project-name "/.project")))))
+  (defun kam-project-new ()
+    "Create a project in the `kam-projects-directory'."
+    (interactive)
+    (let* ((default-directory kam-projects-directory)
+           (project-name (read-directory-name "Project: "))
+           (response (y-or-n-p "Do you want to initialize the project with a Git repository?")))
+      (make-directory project-name)
+      (if response
+          (async-shell-command (concat "git init " project-name))
+        (make-empty-file (concat project-name "/.project")))))
 
-(advice-add 'kam-project-new :after #'kam-project-remember-advice)
+  (advice-add 'kam-project-new :after #'kam-project-remember-advice)
 
-(defun kam-project-delete (proj)
-  "Delete a project."
-  (interactive (list (project-prompt-project-name)))
-  (let* ((default-directory kam-projects-directory))
-    (project-forget-project proj)
-    (delete-directory proj t t)))
+  (defun kam-project-delete (proj)
+    "Delete a project."
+    (interactive (list (project-prompt-project-name)))
+    (let* ((default-directory kam-projects-directory))
+      (project-forget-project proj)
+      (delete-directory proj t t)))
 
-(defun kam-project-switch-project (dir)
-  "Switch to another project."
-  (interactive (list (funcall project-prompter)))
-  (project--remember-dir dir)
-  (unwind-protect
-      (progn
-	(setq-local project-current-directory-override dir)
-	(call-interactively #'project-find-file))))
+  (defun kam-project-switch-project (dir)
+    "Switch to another project."
+    (interactive (list (funcall project-prompter)))
+    (project--remember-dir dir)
+    (unwind-protect
+        (progn
+	      (setq-local project-current-directory-override dir)
+	      (call-interactively #'project-find-file))))
 
-(defun kam-project-remember-advice ()
-  "Advice intended to be run after project creation commands to properly remember the projects."
-  (project-remember-projects-under kam-projects-directory t)
-  (kam-common-clear-echo-area)))
+  (defun kam-project-remember-advice ()
+    "Advice intended to be run after project creation commands to properly remember the projects."
+    (project-remember-projects-under kam-projects-directory t)
+    (kam-common-clear-echo-area)))
 
 (use-package eat
- :ensure t
- :hook ((eshell-load . #'eat-eshell-mode)
-	(eshell-load . #'eat-eshell-visual-command-mode))
- :config
- (setq eat-shell (getenv "SHELL")))
+  :ensure t
+  :hook ((eshell-load . #'eat-eshell-mode)
+	     (eshell-load . #'eat-eshell-visual-command-mode))
+  :config
+  (setq eat-shell (getenv "SHELL")))
 
 (use-package calibredb
   :defer t
@@ -2820,15 +2800,9 @@ as the initial input for completion, and return that directory."
   (setq nov-text-width 80))
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
-(use-package emacs
+(use-package shell
   :ensure nil
-  :bind
-  (:map comint-mode-map
-        ("C-c C-l" . #'kam-consult-comint-history)
-        ("C-." . #'kam-comint-insert-arguments-from-command)))
-
-(use-package emacs
-  :ensure nil
+  :hook (shell-mode . kam-shell-mode-setup)
   :bind
   (:map shell-mode-map
         ("SPC" . #'comint-magic-space)
@@ -2837,15 +2811,11 @@ as the initial input for completion, and return that directory."
         ("C-c C-k" . #'comint-clear-buffer)
         ("C-c C-w" . #'comint-write-buffer)
         ("C-c C-j" . #'kam-comint-input-from-history)
-	("<escape>" . #'quit-window)))
-
-(use-package shell
-  :ensure nil
-  :hook (shell-mode . kam-shell-mode-setup)
+	    ("<escape>" . #'quit-window))
   :config
   (setq shell-command-prompt-show-cwd t
         explicit-shell-file-name (executable-find "zsh")
-	explicit-zsh-args '("--interactive" "--login")
+	    explicit-zsh-args '("--interactive" "--login")
         tramp-default-remote-shell "/bin/bash"
         ansi-color-for-comint-mode t
         shell-command-prompt-show-cwd t
@@ -3209,6 +3179,11 @@ The eshell is renamed to match that directory in order to make multiple eshell w
     (insert (concat "ls"))
     (eshell-send-input)))
 
+(use-package vterm
+  :ensure nil
+  :custom
+  (vterm-shell "/bin/bash"))
+
 (defun kam-common-empty-buffer-p ()
   "Test whether the buffer is empty."
   (or (= (point-min) (point-max))
@@ -3278,7 +3253,7 @@ Return the exit code and output in a list."
 (defun kam-common-execute-command-on-file-buffer (cmd)
   (interactive "sCommand to excute: ")
   (let* ((file-name (buffer-file-name))
-	 (full-cmd (concat cmd " " file-name)))
+	     (full-cmd (concat cmd " " file-name)))
     (async-shell-command full-cmd)))
 
 ;;;###autoload
@@ -3309,7 +3284,7 @@ This is intended for bespoke functions that can then be parsed by other tools."
   (interactive)
   (let ((destination (or buffer-file-name default-directory)))
     (if (string= (file-remote-p destination 'method) "sudo")
-	(user-error "Already using `sudo'")
+	    (user-error "Already using `sudo'")
       (find-file (format "/sudo::/%s" destination)))))
 
 ;;;###autoload
@@ -3351,7 +3326,7 @@ With optional N, search in the Nth line from point."
   "Return true if there are only spaces or tabs before the point on the current line."
   (if (looking-back (alist-get 'indent kam-common--line-regexp-alist))
       t
-  nil))
+    nil))
 
 (defun kam-common-line-only-spaces-or-symbols-p ()
   "Return true if there are only spaces or symbols before the point on the current line."
@@ -3556,7 +3531,7 @@ Use this as advice :after a noisy function."
         olivetti-margin-width 5
         olivetti-body-width .7
         ;; olivetti-minimum-body-width 80
-         olivetti-recall-visual-line-mode-entry-state t))
+        olivetti-recall-visual-line-mode-entry-state t))
 
 (use-package spacious-padding
   :ensure t
@@ -3644,8 +3619,10 @@ Use this as advice :after a noisy function."
   (add-to-list 'pulsar-pulse-functions 'scroll-down)
   (add-to-list 'pulsar-pulse-functions 'scroll-up)
   (add-to-list 'pulsar-pulse-functions 'ace-window)
+  (add-to-list 'pulsar-pulse-functions 'kam-jump-to-mark)
 
-  (advice-add 'avy-goto-char-timer :after 'pulsar-recenter-center))
+  (advice-add 'avy-goto-char-timer :after 'pulsar-recenter-center)
+  (advice-add 'kam-jump-to-mark :after 'pulsar-recenter-center))
 
 (use-package all-the-icons
   :if (display-graphic-p)
@@ -3684,18 +3661,22 @@ Use this as advice :after a noisy function."
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (defun kam-set-font-faces ()
-  (set-face-attribute 'default nil :font "SauceCodePro Nerd Font Mono" :height 130 :weight 'regular :width 'regular)
-  (set-face-attribute 'fixed-pitch nil :font "Iosevka Comfy" :height 1.0 :weight 'regular :width 'regular)
-  (set-face-attribute 'variable-pitch nil :family "Iosevka Comfy Duo" :height 1.0 :weight 'regular :width 'regular)
+  (set-face-attribute 'default nil :font "SauceCodePro Nerd Font" :height 140 :weight 'regular :width 'regular)
+  (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
+  (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
   (set-face-attribute 'mode-line nil :font "SauceCodePro Nerd Font Mono" :height 1.0 :weight 'regular)
-  (set-face-attribute 'mode-line-active nil :font "SauceCodePro Nerd Font Mono" :height .9  :weight 'regular)
-  (set-face-attribute 'mode-line-inactive nil :family "SauceCodePro Nerd Font Mono" :height .9 :weight 'regular))
+  (set-face-attribute 'mode-line-active nil :font "SauceCodePro Nerd Font Mono" :height 1.0  :weight 'regular)
+  (set-face-attribute 'mode-line-inactive nil :family "SauceCodePro Nerd Font Mono" :height 1.0 :weight 'regular))
 
 (defun prog-mode-buffer-variable ()
   "Intended to set the font in prog mode"
   (interactive)
   (setq buffer-face-mode-face 'fixed-pitch)
   (buffer-face-mode))
+
+(use-package visual-fill-column
+  :ensure t
+  :hook (org-mode . #'visual-line-fill-column-mode))
 
 ;; (add-hook 'text-mode-hook #'variable-pitch-mode)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
@@ -3946,27 +3927,27 @@ Also see `kam-modeline-string-abbreviate-but-last'."
 (defvar-local kam-modeline-kbd-macro
     '(:eval
       (if (and (mode-line-window-selected-p) defining-kbd-macro)
-        (propertize " Recording " 'face 'kam-modeline-indicator-orange-bg)
-	""))
+          (propertize " Recording " 'face 'kam-modeline-indicator-orange-bg)
+	    ""))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current windows mode-line.")
 
 (defvar-local kam-modeline-narrow
     '(:eval
       (if (and (mode-line-window-selected-p)
-                 (buffer-narrowed-p)
-                 (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
-        (propertize " Narrow " 'face 'kam-modeline-indicator-cyan-bg)
-	""))
+               (buffer-narrowed-p)
+               (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
+          (propertize " Narrow " 'face 'kam-modeline-indicator-cyan-bg)
+	    ""))
   "Mode line construct to report the narrowed state of the current buffer.")
 
 (defvar-local kam-modeline-buffer-status
     '(:eval
       (if (file-remote-p default-directory)
-        (propertize " 󰢹 "
-                    'face 'kam-modeline-indicator-red-bg
-                    'mouse-face 'mode-line-highlight)
-	""))
+          (propertize " 󰢹 "
+                      'face 'kam-modeline-indicator-red-bg
+                      'mouse-face 'mode-line-highlight)
+	    ""))
   "Mode line construct for showing remote file name.")
 
 (defun kam-modeline-buffer-identification-face ()
@@ -4047,7 +4028,7 @@ See `kam-modeline-string-cut-middle'."
      '(:eval
        (concat
         (kam-modeline-major-mode-indicator)
-	" "
+	    " "
         (propertize
          (kam-modeline-string-abbreviate-but-last
           (kam-modeline-major-mode-name)
@@ -4071,9 +4052,9 @@ See `kam-modeline-string-cut-middle'."
 (defun kam-modeline--buffer-percentage ()
   "Return the percentage of how far through the current buffer the point is."
   (let ((percent (round (* (/
-			    (float (line-number-at-pos))
-			    (float (kam-modeline-buffer-lines)))
-			   100))))
+			                (float (line-number-at-pos))
+			                (float (kam-modeline-buffer-lines)))
+			               100))))
     (cond
      ((= percent 0)
       "Top")
@@ -4198,9 +4179,9 @@ The string is truncated if the width of the window is smaller than `split-width-
                      kam-modeline-buffer-status
                      kam-modeline-buffer-identification
                      kam-modeline-major-mode
-		     kam-modeline-buffer-stats
+		             kam-modeline-buffer-stats
                      kam-modeline-process
-		     kam-modeline-nix
+		             kam-modeline-nix
                      kam-modeline-vc-branch))
   (put construct 'risky-local-variable t))
 
@@ -4323,11 +4304,16 @@ When the number of characters in a buffer exceeds this threshold,
   (interactive)
   (consult-line (thing-at-point 'symbol)))
 
+(defun kam-consult-isearch ()
+  "Start a `consult-line' search within an Isearch session."
+  (interactive)
+  (consult-line isearch-string))
+
 (defun kam-consult-ripgrep-symbol-at-point ()
   "Start a `consult-ripgrep' search with the symbol at point."
   (interactive)
   (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
-  (consult-ripgrep nil (thing-at-point 'symbol))))
+    (consult-ripgrep nil (thing-at-point 'symbol))))
 
 (defun kam-consult-search-emacs-info-pages ()
   "Search through the Emacs info pages."
@@ -4364,8 +4350,8 @@ When the number of characters in a buffer exceeds this threshold,
                          (file-name-absolute-p (car all-files)))
                     prompt
                   (concat prompt
-                    (format " in %s"
-                      (consult--fast-abbreviate-file-name default-directory)))))
+                          (format " in %s"
+                                  (consult--fast-abbreviate-file-name default-directory)))))
         (minibuffer-completing-file-name t))
     (consult--read (mapcar
                     (lambda (file)
@@ -4383,13 +4369,13 @@ When the number of characters in a buffer exceeds this threshold,
   (interactive)
   (cond
    ((derived-mode-p 'org-mode)
-      (progn
-        (consult-org-heading)
-        (setq this-command 'consult-org-heading)))
+    (progn
+      (consult-org-heading)
+      (setq this-command 'consult-org-heading)))
    ((derived-mode-p 'prog-mode)
     (progn
-      (consult-imenu)
-      (setq this-command 'consult-imenu)))))
+      (consult-outline)
+      (setq this-command 'consult-outline)))))
 
 (defvar kam-org-refile-region-format "\n\n%s")
 
@@ -4418,12 +4404,12 @@ With prefix arg C-u, copy region instead of killing it."
     (unless copy (kill-region beg end))
     (deactivate-mark)
     (with-current-buffer buffer
-        (save-excursion
-          (goto-char pos)
-          (if (eql kam-org-refile-region-position 'bottom)
-              (org-end-of-subtree)
-            (org-end-of-meta-data-and-drawers))
-          (insert (format kam-org-refile-region-format text))))))
+      (save-excursion
+        (goto-char pos)
+        (if (eql kam-org-refile-region-position 'bottom)
+            (org-end-of-subtree)
+          (org-end-of-meta-data-and-drawers))
+        (insert (format kam-org-refile-region-format text))))))
 
 ;; (defun kam-org-refile)
 
@@ -4484,8 +4470,8 @@ With prefix arg C-u, copy region instead of killing it."
 
   :hook
   (after-init . #'global-flycheck-mode))
-  ;; (flycheck-mode . kam-flycheck-prefer-eldoc)
-  ;; (flycheck-mode . kam-flycheck-set-margins)
+;; (flycheck-mode . kam-flycheck-prefer-eldoc)
+;; (flycheck-mode . kam-flycheck-set-margins)
 
 (use-package flycheck-eglot
   :ensure t
@@ -4571,8 +4557,8 @@ With prefix arg C-u, copy region instead of killing it."
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter)
   :bind (:map compilation-mode-map
-	      ("<f5>" . #'recompile)
-	      ("<escape>" . #'quit-window))
+	          ("<f5>" . #'recompile)
+	          ("<escape>" . #'quit-window))
   :config
   (setq compilation-always-kill t
         compilation-ask-about-save nil
@@ -4580,9 +4566,9 @@ With prefix arg C-u, copy region instead of killing it."
         compilation-max-output-line-length nil
         compilation-scroll-output 'first-error))
 
- (defadvice compile (before ad-compile-smart activate)
-   "Advises `compile' so it sets the argument COMINT to t."
-   (ad-set-arg 1 t))
+(defadvice compile (before ad-compile-smart activate)
+  "Advises `compile' so it sets the argument COMINT to t."
+  (ad-set-arg 1 t))
 
 (use-package python
   :ensure t
@@ -4611,3 +4597,15 @@ With prefix arg C-u, copy region instead of killing it."
       ediff-window-setup-function 'ediff-setup-windows-plain)
 
 (global-prettify-symbols-mode)
+(put 'narrow-to-region 'disabled nil)
+
+(use-package emms
+  :ensure t
+  :config
+  (require 'emms-setup)
+  (require 'emms-mpris)
+  (emms-all)
+  (emms-default-players)
+  (emms-mpris-enable)
+  :custom
+  (emms-browser-covers #'emms-browser-cache-thumbnail-async))

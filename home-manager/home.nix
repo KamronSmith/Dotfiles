@@ -50,6 +50,8 @@
     sysstat
     pciutils # lspci
     usbutils # lsusb
+    udiskie
+    udisks
     backintime-qt
     gdb
     # coding
@@ -70,34 +72,33 @@
     cppcheck
     tmux
     # user apps
-    OVMF
-    megasync
+    kdePackages.qt6ct
+    # OVMF
+    megacmd
     ghostty
-    kitty
-    virtualbox
     waybar
     gimp
     rofi-wayland
     swww
     mpvpaper
     ffmpeg
-    neofetch
     vlc
-    mpv
-    emacs30
+    reaper # audio
+    davinci-resolve # editing
+    bitwig-studio # music
+    obs-studio # recording screen
     calibre
     libreoffice
-    remmina
     anki
     pamixer
     playerctl
     waybar-mpris
-    lutris
     obsidian
     wayshot
     slurp
     prismlauncher
-    nexusmods-app-unfree
+    qbittorrent
+    (aspellWithDicts (dicts: with dicts; [ en en-computers en-science ]))
   ];
   
   home.file = {

@@ -15,6 +15,14 @@
            exec-once = wl-paste --type text --watch cliphist store
            exec-once = wl-paste --type image --watch cliphist store
 
+           # env = QT_QPA_PLATFORM,wayland
+           # env = QT_QPA_PLATFORMTHEME,qt6ct
+           # # env = QT_STYLE_OVERRIDE,qt6ct
+           # env = QT_WAYLAND_DISABLE_WINDOW_DECORATION,0
+           # env = QT_AUTO_SCREEN_SCALE_FACTOR,1
+           env = ASPELL_CONF,dict-dir /nix/store/361h5gykf4ycq622dn52z4bfhqbfrxdp-aspell-env/lib/aspell
+
+
            monitor= DP-2, 2560x1440@180, 0x0, 1
            $terminal = ghostty
            $fileManager = emacsclient -c -a 
@@ -111,19 +119,15 @@
                  }
            }
 
-           $mainMod = ALT
+           $mainMod = Control_L&Super_L&Shift_L&Alt_L
 
-           bind = $mainMod, C, fullscreen, 0
+           # bind = $mainMod, C, fullscreen, 0
            bind = $mainMod, Q, killactive
            bind = $mainMod, E, exec, $fileManager
            bind = $mainMod, V, togglefloating
            # bind = $mainMod, F, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy
            bind = $mainMod, X, exec, $menu
-           bind = Control_L&Super_L&Shift_L&Alt_L, D, exec, playerctl play-pause
-           bind = Control_L&Super_L&Shift_L&Alt_L, W, exec, $editor
-           # bind = Control_L&Super_L&Shift_L&Alt_L, C, exec, emacsclient -c -a "" -e "(kam-shell-home-directory)"
-           bind = Control_L&Super_L&Shift_L&Alt_L, C, exec, $terminal
-           bind = Control_L&Super_L&Shift_L&Alt_L, F, exec, $browser
+           # bind = ALT_L&SHIFT_L, X, exec, /home/kam/.dotfiles/bin/rofi-power-menu.sh
            bind = $mainMod, Tab, exec, rofi -show window
 
            bind = $mainMod, b, movefocus, l
@@ -131,16 +135,19 @@
            bind = $mainMod, p, movefocus, u
            bind = $mainMod, f, movefocus, r
            bind = $mainMod, i, layoutmsg, swapwithmaster
-           bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
+           # bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
-           bind = $mainMod, d, exec, /home/kam/.dotfiles/bin/emacs-program-launcher.sh
-           bind = $mainMod, r, exec, /home/kam/.dotfiles/bin/firefox-program-launcher.sh
+           bind = $mainMod, r, exec, /home/kam/.dotfiles/bin/emacs-program-launcher.sh
+           bind = $mainMod, d, exec, /home/kam/.dotfiles/bin/firefox-program-launcher.sh
            bind = $mainMod, t, workspace, name:Gaming
 
-           bind = $mainMod SHIFT, d, movetoworkspacesilent, name:Emacs
-           bind = $mainMod SHIFT, r, movetoworkspacesilent, name:Internet
-           bind = $mainMod SHIFT, t, movetoworkspacesilent, name:Gaming
-           bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
+           bind = $mainMod, c, movetoworkspacesilent, name:Emacs
+           bind = $mainMod, l, movetoworkspacesilent, name:Internet
+           bind = $mainMod, m, movetoworkspacesilent, name:Gaming
+           # bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
+
+           # bind = $mainMod, r, movetoworkspacesilent, name:Emacs
+
 
            bind = $mainMod, mouse_down, workspace, e+1
            bind = $mainMod, mouse_up, workspace, e-1
@@ -177,6 +184,7 @@
            windowrulev2 = opacity 0.80 0.80 0.80, class:^(Emacs)$
            # windowrulev2 = opacity 1.0 1.0 1.0, class:^(Emacs)$
            windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
+           windowrulev2 = opacity 0.80 0.80, class:^(com.mitchellh.ghostty)$
 
            workspace = name:Emacs,default:true,monitor:DP-2
            workspace = name:Side,monitor:DP-2

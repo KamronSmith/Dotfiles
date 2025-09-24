@@ -19,10 +19,10 @@
       size = 24;
     };
   };
-  
+ 
     qt = {
       enable = true;
-      platformTheme.name = "gtk";
+      platformTheme.name = "kde6";
       style.name = "adwaita-dark"; ## to test
       style.package = pkgs.adwaita-qt;
     };

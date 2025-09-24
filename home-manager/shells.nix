@@ -97,12 +97,10 @@
         XDG_SESSION_DESKTOP = "wayland";
         GDK_BACKEND = "wayland";
         CLUTTER_BACKEND = "wayland";
-        QT_QPA_PLATFORM = "wayland";
-        QT_WAYLAND_DISABLE_WINDOW_DECORATION = 0;
-        QT_AUTO_SCREEN_SCALE_FACTOR = 1;
         SDL_VIDEO_DRIVER = "wayland";
         MOZ_ENABLE_WAYLAND = 1;
         SSH_AUTH_SOCK= "~/.1password/agent.sock";
+        ASPELL_CONF = "dict-dir /nix/store/361h5gykf4ycq622dn52z4bfhqbfrxdp-aspell-env/lib/aspell";
         # WAYLAND_DISPLAY = ":0";
         # DISPLAY = ":0";
       };

@@ -29,14 +29,7 @@
     };
   };
   
-  services.emacs = {
-    enable = true;
-    package = pkgs.emacs30;
-    defaultEditor = true;
-    socketActivation.enable = true;
-    startWithUserSession = true;
-    client.enable = true; 
-  };
-
   services.lorri.enable = true;
+
+  services.udiskie.enable = true;
 }

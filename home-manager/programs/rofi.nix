@@ -20,9 +20,10 @@
       width = "45%";
     };
     plugins = [
- #    pkgs.rofi-power-menu
- #    pkgs.rofi-systemd
- #    pkgs.rofi-mpd
+    # pkgs.rofi-power-menu
+    # pkgs.rofi-systemd
+    # pkgs.rofi-mpd
+    # pkgs.rofi-bluetooth
     ];
   };
 }
