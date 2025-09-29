@@ -780,12 +780,11 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
 (use-package vertico-multiform
   :ensure nil
-  :after vertico-posframe
+  ;; :after vertico-posframe
   :hook (after-init . vertico-multiform-mode)
   :init
   (defvar kam-vertico-multiform-maximal
     '((vertico-count . 10)
-      (vertico-preselect . no-prompt)
       (vertico-resize . t))
     "List of configurations for maximal Vertico multiform.")
 
@@ -806,21 +805,22 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           (jinx ,@kam-vertico-multiform-maximal)
           (unicode-name ,@kam-vertico-multiform-maximal)
           (multi-category ,@kam-vertico-multiform-maximal)
-          (file ,@kam-vertico-posframe-maximal)))
+          (file ,@kam-vertico-multiform-maximal
+                (vertico-sort-function . vertico-sort-directories-first))))
         
   (setq vertico-multiform-commands
         `(("consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)" buffer)
-          (execute-extended-command ,@kam-vertico-posframe-maximal)
-          (describe-variable ,@kam-vertico-posframe-maximal)
-          (describe-function ,@kam-vertico-posframe-maximal)
-          (find-file ,@kam-vertico-posframe-maximal)
-          (consult-dir ,@kam-vertico-posframe-maximal)
-          (project-switch-project ,@kam-vertico-posframe-maximal)
-          (kam-menu ,@kam-vertico-posframe-maximal)
-          (dired-do-rename ,@kam-vertico-posframe-maximal)
-          (dired-do-copy ,@kam-vertico-posframe-maximal)
+          (execute-extended-command ,@kam-vertico-multiform-maximal)
+          (describe-variable ,@kam-vertico-multiform-maximal)
+          (describe-function ,@kam-vertico-multiform-maximal)
+          (find-file ,@kam-vertico-multiform-maximal)
+          (consult-dir ,@kam-vertico-multiform-maximal)
+          (project-switch-project ,@kam-vertico-multiform-maximal)
+          (kam-menu ,@kam-vertico-multiform-maximal)
+          (dired-do-rename ,@kam-vertico-multiform-maximal)
+          (dired-do-copy ,@kam-vertico-multiform-maximal)
           (dired-create-directory ,@kam-vertico-posframe-maximal)
-          (find-name-dired ,@kam-vertico-posframe-maximal)
+          (find-name-dired ,@kam-vertico-multiform-maximal)
           (jinx-correct-nearest grid (vertico-grid-annotate . 20))))
   (vertico-multiform-mode 1))
 
