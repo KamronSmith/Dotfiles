@@ -224,6 +224,7 @@
   (create-lockfiles nil)
   (confirm-kill-emacs nil)
   (confirm-kill-processes nil)
+  (initial-major-mode 'emacs-lisp-mode)
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
