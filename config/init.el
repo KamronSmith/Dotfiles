@@ -756,7 +756,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (setq vertico-resize t
         vertico-cycle t
-        vertico-scroll-margin 0))
+        vertico-scroll-margin 0
+        vertico-preselect 'prompt))
 
 (use-package vertico-quick
   :after vertico
