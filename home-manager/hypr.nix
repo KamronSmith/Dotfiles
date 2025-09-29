@@ -141,8 +141,8 @@
            bind = $mainMod, d, exec, /home/kam/.dotfiles/bin/firefox-program-launcher.sh
            bind = $mainMod, t, workspace, name:Gaming
 
-           bind = $mainMod, c, movetoworkspacesilent, name:Emacs
-           bind = $mainMod, l, movetoworkspacesilent, name:Internet
+           bind = $mainMod, l, movetoworkspacesilent, name:Emacs
+           bind = $mainMod, c, movetoworkspacesilent, name:Internet
            bind = $mainMod, m, movetoworkspacesilent, name:Gaming
            # bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
 
