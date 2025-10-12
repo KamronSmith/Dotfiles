@@ -7,19 +7,18 @@
       mainBar = {
         layer = "top";
         output = "DP-2";
-        position = "bottom";
+        position = "top";
         height = 25;
         
         modules-left = [
+          "hyprland/workspaces"
           "memory"
           "cpu"
           "network"
-          "hyprland/workspaces"
         ];
         
         modules-center = [
           "clock"
-          "hyprland/window"
         ];
         
         modules-right = [
@@ -30,15 +29,14 @@
         ];
         
         "hyprland/workspaces" = {
-          format = "{icon}";
+          format = "{name}: {icon}";
           format-icons = {
-            Emacs = "";
-            Internet = "󰖟";
-            Gaming = "󰊴";
+            active = "";
+            default = "";
           };
           on-click = "activate";
           persistent-workspaces = {
-            "*" = [ "Emacs" "Internet" "Gaming" ];
+            "*" = [ "1" "2" "3" ];
           };
           sort-by = "id";
         };
@@ -104,59 +102,71 @@
         };
       };
     };
-
+    
     style = ''
-        * {
-          font-family: Iosevka Comfy, JetBrainsMono Nerd Font;
-          font-size: 17px;
-          border: none;
-          border-radius: 0;
-          min-height: 0;
-        }
+       * {
+       font-family: SauceCodePro Mono Nerd Font;
+       font-size: 14px;
+       min-height: 0;
+       padding-right: 2px;
+       padding-left: 2px;
+       padding-bottom: 0px;
+       }
 
-        window#waybar {
-          /* 26 27 38 0.5 */
-          background-color: #000000; 
-          color: #ffffff;
-          opacity: 1.0;
-        }
-
-        /* General styling for the individual modules */
-        #clock,
-        #cpu,
-        #memory,
-        #mpris,
-        #workspaces,
-        #window,
-        #tray {
-          background-color: #222034;
-          font-size: 14px;
-          color: #8a909e;
-          padding: 3px 8px;
-          border-radius: 8px;
-          margin: 8px 2px;
-          opacity: 1.0;
-        }
-
-        #workspaces button.active {
-          color: #bbbbbb;
-        }
-
-        #network,
-        #pulseaudio {
-          background-color: #222034;
-          font-size: 20px;
-          padding: 3px 8px;
-          margin: 8px 2px;
-          border-radius: 8px;
-        }
-
-        #cpu { color: #fb958b; }
-
-        #network.ethernet { color: #50C878; }
-        #network.disconnected { color: #90EE90; }
-
-        
-      '';
+       #waybar {
+       background: transparent;
+       color: #c6d0f5;
+       margin: 2px 2px;
+       }
+       
+       #workspaces {
+       border-radius: 5px;
+       margin: 5px;
+       background: #101010;
+       margin-left: 2px;
+       }
+       
+       #workspaces button {
+       color: #babbf1;
+       border-radius: 5px;
+       padding: 0.4rem;
+       }
+       
+       #workspaces button.active {
+       color: #99d1db;
+       border-radius: 5px;
+       }
+       
+       button {
+       background: transparent;
+       }
+       
+       #workspaces button:hover {
+       background: #1e1e1e;
+       border: 0px solid transparent;
+       }
+       
+       #tray,
+       #clock,
+       #pulseaudio,
+       #network,
+       #cpu,
+       #memory,
+       #mpris {
+                      background-color: #101010;
+                      padding: 0.5rem 1rem;
+                      margin: 5px 0;
+       }
+       
+       #clock {
+              color: #8caaee;
+              border-radius: 5px;
+       }
+              
+       #pulseaudio {
+                   color: #ea999c;
+                   border-radius: 5px 0px 0px 5px;
+       }
+          '';
   };
 }
