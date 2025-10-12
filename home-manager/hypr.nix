@@ -135,7 +135,7 @@
            bind = $mainMod, p, movefocus, u
            bind = $mainMod, f, movefocus, r
            bind = $mainMod, i, layoutmsg, swapwithmaster
-           # bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
+           bind = Control_L&Super_L&Shift_L&Alt_L, A, focuscurrentorlast
 
            bind = $mainMod, r, exec, /home/kam/.dotfiles/bin/emacs-program-launcher.sh
            bind = $mainMod, d, exec, /home/kam/.dotfiles/bin/firefox-program-launcher.sh
