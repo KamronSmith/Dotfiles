@@ -75,11 +75,13 @@
       "text/x-makefile" = [ "emacsclient.text" ];
       "desktop/x-c++scr" = [ "emacsclient.desktop" ];
       "text/plain" = [ "emacsclient.desktop" ];
+      "text/org" = [ "emacsclient.desktop" ];
       "text/tcl" = [ "emacsclient.desktop" ];
       "text/x-java" = [ "emacsclient.desktop" ];
       "application/pdf" = [ "emacsclient.desktop" ];
       "application/epub+zip" = [ "emacsclient.desktop" ];
       "application/zip" = [ "emacsclient.desktop" ];
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document" = [ "Libreoffice.desktop" ];
     };
   };
 }
