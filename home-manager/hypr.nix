@@ -139,15 +139,12 @@
 
            bind = $mainMod, r, exec, /home/kam/.dotfiles/bin/emacs-program-launcher.sh
            bind = $mainMod, d, exec, /home/kam/.dotfiles/bin/firefox-program-launcher.sh
-           bind = $mainMod, t, workspace, name:Gaming
+           bind = $mainMod, t, workspace, 3
 
-           bind = $mainMod, l, movetoworkspacesilent, name:Emacs
-           bind = $mainMod, c, movetoworkspacesilent, name:Internet
-           bind = $mainMod, m, movetoworkspacesilent, name:Gaming
+           bind = $mainMod, l, movetoworkspacesilent, 2
+           bind = $mainMod, c, movetoworkspacesilent, 1
+           bind = $mainMod, m, movetoworkspacesilent, 3
            # bind = $mainMod SHIFT, s, movetoworkspacesilent, 4
-
-           # bind = $mainMod, r, movetoworkspacesilent, name:Emacs
-
 
            bind = $mainMod, mouse_down, workspace, e+1
            bind = $mainMod, mouse_up, workspace, e-1
@@ -170,8 +167,8 @@
            # windowrulev2 = suppressevent maximize, class:.*
            windowrulev2 = nofocus,class:^$,title:^$,xwayland:1,floating:1,fullscreen:0,pinned:0
            windowrulev2 = workspace name:Side,class:^(kitty)$,title:^(kitty)$
-           windowrulev2 = workspace name:Emacs,class:^(Emacs)$
-           windowrulev2 = workspace name:Internet,class:^(firefox)$
+           windowrulev2 = workspace 2,class:^(Emacs)$
+           windowrulev2 = workspace 1,class:^(firefox)$
 
            ## smart gaps
            # workspace = w[tv1], gapsout:0, gapsin:0
@@ -186,10 +183,9 @@
            windowrulev2 = opacity 0.80 0.80, class:^(Kitty)$
            windowrulev2 = opacity 0.80 0.80, class:^(com.mitchellh.ghostty)$
 
-           workspace = name:Emacs,default:true,monitor:DP-2
-           workspace = name:Side,monitor:DP-2
-           workspace = name:Internet,monitor:DP-2
-           workspace = name:Gaming,monitor:DP-2
+           workspace = name:1,default:true,monitor:DP-2
+           workspace = name:2,monitor:DP-2
+           workspace = name:3,monitor:DP-2
            workspace = special:kitty
 
            layerrule = blur, waybar
@@ -198,11 +194,11 @@
 
            # gaming
            #### windowrulev2 = float,class:^(steam)$
-           windowrulev2 = workspace name:Gaming,class:^(steam)$,title:^(Steam)$
+           windowrulev2 = workspace name:3,class:^(steam)$,title:^(Steam)$
            windowrulev2 = fullscreen,class:^steam_app_\d+$
-           windowrulev2 = workspace name:Gaming,class:^steam_app_\d+$
-           windowrulev2 = workspace name:Gaming,class:^Minecraft\*
-           workspace = Gaming, border:false, rounding:false
+           windowrulev2 = workspace name:3,class:^steam_app_\d+$
+           windowrulev2 = workspace name:3,class:^Minecraft\*
+           # workspace = Gaming, border:false, rounding:false
            # windowrule = idleinhibit fullscreen
 
            # dialogs

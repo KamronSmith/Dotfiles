@@ -6,7 +6,7 @@ frame_exists() {
 }
 
 if frame_exists; then
-    hyprctl dispatch workspace name:Internet
+    hyprctl dispatch workspace name:1
 else
     firefox &
 fi
