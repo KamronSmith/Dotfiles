@@ -51,7 +51,7 @@
           NVD_BACKEND = "direct";
           __GLX_VENDOR_LIBRARY_NAME = "nvidia";
           EDITOR = "emacsclient -c -a \"\"";
-          TERM = "kitty";
+          TERM = "ghostty";
           NIXOS_OZONE_WL = 1;
           ELECTRON_OZONE_PLATFORM_HINT = "auto";
           NIXPKGS_ALLOW_UNFREE = 1;
@@ -89,7 +89,6 @@
         LIBVA_DRIVER_NAME = "nvidia";
         __GLX_VENDOR_LIBRARY_NAME = "nvidia";
         EDITOR = "emacsclient -c -a \"\"";
-        TERM = "kitty";
         NIXOS_OZONE_WL = 1;
         NIXPKGS_ALLOW_UNFREE = 1;
         XDG_CURRENT_DESKTOP = "Hyprland";
@@ -108,6 +107,7 @@
         ll = "ls -al";
       };
       dotDir = ".config/zsh";
+      syntaxHighlighting.enable = true;
       enableCompletion = true;
       history = {
         share = true;
@@ -115,16 +115,21 @@
         expireDuplicatesFirst = true;
       };
       initContent = ''
+        if [[ "dumb" == $TERM ]] ; then
+        export TERM=xterm-256color
+        export PROMPT="%n@%m:%~ $ "
+        fi
+
         setopt AUTOPUSHD
         setopt NO_CASE_GLOB
         setopt NO_CASE_MATCH
-        eval "$(direnv hook zsh)"
+        eval "$(direnv hook zsh)
       '';
     };
 
     bash = {
       enable = true;
-      historyControl = ["ignoredups"];
+      historyControl = [ "ignoredups" ];
       enableVteIntegration = true;
       shellAliases = {
         ll = "ls -l";
