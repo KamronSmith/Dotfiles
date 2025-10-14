@@ -43,6 +43,11 @@
 
 ;; (elpaca elpaca-use-package
 ;;     (elpaca-use-package-mode))
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
 (setq use-package-always-ensure t
       use-package-compute-statistics t)
 
@@ -855,7 +860,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         mac-command-key-is-meta t
         mac-control-modifier 'control
         mac-command-modifier 'meta
-        mac-option-modifier 'hyper))
+        mac-option-modifier 'hyper
+        insert-directory-program (executable-find "gls")))
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
