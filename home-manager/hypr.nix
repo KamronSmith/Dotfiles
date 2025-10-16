@@ -70,7 +70,7 @@
            }
 
            animations {
-                      enabled = true
+                      enabled = false
                       bezier = easeOutQuint,0.23,1,0.32,1
                       bezier = easeInOutCubic,0.65,0.05,0.36,1
                       bezier = linear,0,0,1,1
@@ -188,7 +188,7 @@
            workspace = name:3,monitor:DP-2
            workspace = special:kitty
 
-           layerrule = blur, waybar
+           # layerrule = blur, waybar
            layerrule = blur, rofi
            layerrule = order 1, address:0x254e4ae0
 
