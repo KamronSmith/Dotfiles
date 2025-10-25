@@ -1,74 +1,33 @@
-;; (mapcar
-;;  (lambda (string)
-;;    (add-to-list 'load-path (locate-user-emacs-file string)))
-;;  '("lisp"))
+;; -*- lexical-binding: t -*-
 
-;; (defvar elpaca-installer-version 0.9)
-;; (defvar elpaca-directory (expand-file-name "elpaca/" user-emacs-directory))
-;; (defvar elpaca-builds-directory (expand-file-name "builds/" elpaca-directory))
-;; (defvar elpaca-repos-directory (expand-file-name "repos/" elpaca-directory))
-;; (defvar elpaca-order '(elpaca :repo "https://github.com/progfolio/elpaca.git"
-;;                               :ref nil
-;;                               :files (:defaults (:exclude "extensions"))
-;;                               :build (:not elpaca--activate-package)))
-;; (let* ((repo  (expand-file-name "elpaca/" elpaca-repos-directory))
-;;        (build (expand-file-name "elpaca/" elpaca-builds-directory))
-;;        (order (cdr elpaca-order))
-;;        (default-directory repo))
-;;   (add-to-list 'load-path (if (file-exists-p build) build repo))
-;;   (unless (file-exists-p repo)
-;;     (make-directory repo t)
-;;     (when (< emacs-major-version 28) (require 'subr-x))
-;;     (condition-case-unless-debug err
-;;         (if-let ((buffer (pop-to-buffer-same-window "*elpaca-bootstrap*"))
-;;                  ((zerop (call-process "git" nil buffer t "clone"
-;;                                        (plist-get order :repo) repo)))
-;;                  ((zerop (call-process "git" nil buffer t "checkout"
-;;                                        (or (plist-get order :ref) "--"))))
-;;                  (emacs (concat invocation-directory invocation-name))
-;;                  ((zerop (call-process emacs nil buffer nil "-Q" "-L" "." "--batch"
-;;                                        "--eval" "(byte-recompile-directory \".\" 0 'force)")))
-;;                  ((require 'elpaca))
-;;                  ((elpaca-generate-autoloads "elpaca" repo)))
-;;             (progn (message "%s" (buffer-string)) (kill-buffer buffer))
-;;           (error "%s" (with-current-buffer buffer (buffer-string))))
-;;       ((error) (warn "%s" err) (delete-directory repo 'recursive))))
-;;   (unless (require 'elpaca-autoloads nil t)
-;;     (require 'elpaca)
-;;     (elpaca-generate-autoloads "elpaca" repo)
-;;     (load "./elpaca-autoloads")))
-;; (add-hook 'after-init-hook #'elpaca-process-queues)
-;; (elpaca `(,@elpaca-order))
-;; (elpaca-wait)
+(use-package package
+  :ensure nil
+  :config
+  (setq use-package-always-ensure t
+        use-package-compute-statistics t)
 
-;; (elpaca elpaca-use-package
-;;     (elpaca-use-package-mode))
-(setq use-package-always-ensure t
-      use-package-compute-statistics t)
+  (setq package-archives
+        '(("gnu-elpa"       . "https://elpa.gnu.org/packages/")
+          ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+          ("nongnu"         . "https://elpa.nongnu.org/nongnu/")
+          ("melpa"          . "https://melpa.org/packages/")))
 
-(setq package-archives
-      '(("gnu-elpa" . "https://elpa.gnu.org/packages/")
-        ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
-        ("nongnu" . "https://elpa.nongnu.org/nongnu/")
-        ("melpa" . "https://melpa.org/packages/")))
+  (setq package-archive-priorities
+        '(("gnu-elpa" . 3)
+          ("melpa"    . 1)
+          ("nongnu"   . 2)))
 
-(setq package-archive-priorities
-      '(("gnu-elpa" . 3)
-        ("melpa" . 1)
-        ("nongnu" . 2)))
+  (setq package-vc-register-as-project nil
+        package-install-upgrade-built-in t))
 
-(setq package-vc-register-as-project nil)
 
-(setq font-log nil
-      package-install-upgrade-built-in t)
-
+(setq font-log nil)
 
-
 (setq-default eval-expression-print-length nil
               scroll-error-top-bottom t
               echo-keystrokes-help nil
               next-error-recenter '(4)
-	          line-spacing 0.4
+	          line-spacing nil
               cursor-type 'box
               cursor-in-non-selected-windows nil
               make-cursor-line-fully-visible t
