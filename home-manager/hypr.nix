@@ -121,7 +121,7 @@
 
            $mainMod = Control_L&Super_L&Shift_L&Alt_L
 
-           # bind = $mainMod, C, fullscreen, 0
+           bind = $mainMod, G, fullscreen, 0
            bind = $mainMod, Q, killactive
            bind = $mainMod, E, exec, $fileManager
            bind = $mainMod, V, togglefloating
