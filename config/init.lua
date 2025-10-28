@@ -84,19 +84,27 @@ vim.opt.rtp:prepend(lazypath)
 local plugins = {
 	{
 		'nvim-telescope/telescope.nvim', tag = '0.1.8',
-		dependencies = { 'nvim-lua/plenary.nvim' }
+		dependencies = { 'nvim-lua/plenary.nvim' },
+        opts = {}
 	},
 
 	{
-		"nvim-treesitter/nvim-treesitter", branch = 'master', lazy = false, build = ":TSUpdate"
-	},
+		"nvim-treesitter/nvim-treesitter",
+        branch = 'master',
+        lazy = false,
+        build = ":TSUpdate",
+        opts = {}
+    },
 	{
 		"mason-org/mason.nvim",
 		opts = {}
 	},
 	{
 		"ThePrimeagen/Harpoon",
-        dependencies = { "nvim-lua/plenary.lua" }
+        dependencies = { "nvim-lua/plenary.lua" },
+        config = function()
+            require("harpoon").setup({})
+        end,
 	}
 }
 local opts = {}
