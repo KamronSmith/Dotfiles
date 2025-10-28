@@ -43,6 +43,23 @@
                                            (reusable-frames . t))
               even-window-sizes nil)
 
+(defun kam-setup-initial ()
+  "Sets up basic OS settings and if in the terminal.
+To be used as a hook after "
+  (cond
+   ((eq system-type 'gnu/linux)
+    (setq x-super-keysym 'meta
+          x-meta-keysym 'alt))
+   ((eq system-type 'darwin)
+    (setq mac-option-key-is-meta nil
+          mac-command-key-is-meta t
+          mac-control-modifier 'control
+          mac-command-modifier 'meta
+          mac-option-modifier 'hyper))
+   ((not (display-graphic-p)))))
+
+(add-hook 'after-init-hook 'kam-setup-initial)
+
 (when (native-comp-available-p)
   (setq native-comp-async-report-warnings-errors 'silent
         native-comp-prune-cache t))
@@ -67,13 +84,15 @@
   ("C-j" . #'kam-join-line-dwim)
   ("C-k" . #'kill-line)
   ([kam-m] . back-to-indentation)
+  ("C-o" . kam-open-line)
   ("C-v" . #'set-mark-command)
   ("C-w" . #'kam-cut-dwim)
   ("C-t" . #'kam-transpose-char)
   ("C-q" . #'fill-paragraph)
-  ("C-z" . #'kam-kill-ring-save-dwim)
+  ("C-z" . #'zap-to-char)
   ("C-SPC" . #'kam-jump-to-mark)
   ("C-<return>" . #'kam-insert-new-line-below)
+  ("C-<backspace>" . kam-control-backspace)
   ("C-DEL" . #'kam-control-backspace)
   ("C-<next>" . #'scroll-other-window)
   ("C-<prior>" . #'scroll-other-window-down)
@@ -82,11 +101,11 @@
   ("C-&" . nil)
   ("C-=" . #'indent-region)
   ("C-^" . nil)
-  ("C-$" . #'jinx-correct-nearest)
   ("C-/" . #'kam-prev-buffer)
   ("C-@" . nil)
   ("C-_" . nil)
   ("C-:" . #'pp-eval-expression)
+  ("C-;" . kam-comment-dwim)
   ("C-!" . #'shell-command)
   ("C-?" . #'undo)
   ("C-+" . #'delete-window)
@@ -98,18 +117,18 @@
   ("C-<" . nil)
   ("C->" . nil)
   ("M-c" . capitalize-dwim)
-  ("M-j" . kam-open-line)
   ("M-i" . #'kam-split-window-below)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
   ("M-n" . forward-paragraph)
+  ("M-o" . ace-window)
   ("M-p" . backward-paragraph)
   ("M-q" . upcase-dwim)
   ("M-t" . kam-transpose-words)
   ("M-u" . universal-argument)
   ("M-v" . mark-word)
-  ("M-w" . #'kam-cut-dwim)
-  ("M-z" . #'kam-kill-ring-save-dwim)
+  ("M-w" . #'kam-kill-ring-save-dwim)
+  ("M-z" . #'zap-up-to-char)
   ("M-!" . async-shell-command)
   ("M-?" . #'undo-redo)
   ("M-;" . #'kam-comment-dwim)
@@ -136,6 +155,7 @@
   ("C-x f" . #'find-file)
   ("C-x n" . kam-narrow-or-widen-dwim)
   ("C-x o" . kam-ace-window-prefix)
+  ("C-x s" . kam-shell-here)
   ("C-x u" . nil)
   ("C-x C-d" . dired)
   ("C-x C-n" . nil)
@@ -144,7 +164,10 @@
   ("C-x C-k" . kam-kill-current-buffer)
   ("C-x C-u" . nil)
   ("C-x C-z" . nil)
+  ("C-M-<left>" . indent-rigidly-left)
+  ("C-M-<right>" . indent-rigidly-right)
   ("C-M-:" . kam-comment-dwim)
+  ("C-M-," . nil)
   ("C-M-(" . insert-parenthesis)
   ("C-M-/" . kam-switch-to-alternate-buffer)
   ("C-M-=" . indent-region)
@@ -152,7 +175,6 @@
   ("C-M-d" . sp-down-sexp)
   ("C-M-f" . sp-forward-sexp)
   ("C-M-k" . sp-kill-sexp)
-  ;; ("M-[kam-m]" . kam-mark-point-to-end-of-line)
   ("C-M-q". kam-kill-inner-sexp)
   ("C-M-u" . sp-backward-up-sexp)
   ("C-M-v" . sp-mark-sexp)
@@ -161,23 +183,20 @@
   ([remap list-buffers] . ibuffer)
   ([remap exchange-point-and-mark] . #'kam-exchange-point-and-mark-no-activate)
   (:map search-map
-	    ("M-c" . #'goto-char)
-	    ("M-f" . #'consult-fd)
-	    ("M-g" . #'consult-ripgrep)
+ 	    ("M-c" . #'goto-char)
+ 	    ("M-f" . #'consult-fd)
+ 	    ("M-g" . #'consult-ripgrep)
         ("M-i" . #'consult-imenu)
-	    ("M-k" . #'consult-mark)
-	    ("M-l" . #'consult-line)
-	    ("M-o" . #'kam-menu)
-	    ("M-p" . #'kam-consult-line-symbol-at-point))
+ 	    ("M-k" . #'consult-mark)
+ 	    ("M-l" . #'consult-line)
+ 	    ("M-o" . #'kam-menu)
+ 	    ("M-p" . #'kam-consult-line-symbol-at-point))
   (:map prog-mode-map
-	    ("C-M-q" . #'kam-kill-inner-sexp))
+ 	    ("C-M-q" . kam-kill-inner-sexp))
   (:map emacs-lisp-mode-map
-        ("C-M-q" . #'kam-kill-inner-sexp))
-;  (:map comint-mode-map
-;       ("C-c C-l" . #'kam-consult-comint-history)
-;       ("C-." . #'kam-comint-insert-arguments-from-command))
+        ("C-M-q" . kam-kill-inner-sexp))
   :custom
-  ;; (inhibit-splash-screen nil)
+  (inhibit-splash-screen nil)
   (make-backup-files nil)
   (backup-inhibited t)
   (create-lockfiles nil)
@@ -222,6 +241,7 @@
   (keymap-global-set "<f6>" 'avy-goto-char-timer)
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
+  (keymap-global-set "C-M-m" 'kam-mark-point-to-end-of-line)
 
   (setq resize-mini-windows t
         resize-mini-frames t)
@@ -619,8 +639,6 @@ This function is intended to be used with `hl-line-mode'."
   :config
   (setq Man-notify-method 'pushy))
 
-;;(use-package occur
-;; :ensure nil)
 (setq list-matching-lines-default-context-lines 2)
 
 (defun kam-get-buffers-matching-mode (mode)
@@ -724,31 +742,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :custom
   (ispell-program-name (executable-find "aspell")))
 
-(use-package jinx
-  :init
-  (setenv "ASPELL_CONF" "dict-dir /nix/store/361h5gykf4ycq622dn52z4bfhqbfrxdp-aspell-env/lib/aspell")
-  :custom
-  (jinx-languages "en")
-  :ensure nil)
-
-;; (use-package ultra-scroll
-;;   :ensure t
-;;   :vc (:url "https://github.com/jdtsmith/ultra-scroll"
-;;             :branch "main")
-;;   :bind
-;;   (("<wheel-up>" . ultra-scroll-up)
-;;    ("<wheel-down>" . ultra-scroll-down))
-;;   :init
-;;   (setq-default scroll-conservatively 4
-;;                 scroll-margin 0)
-;;   :config
-;;   (ultra-scroll-mode 1))
-
-(use-package keyfreq
-  :ensure t
-  :config
-  (keyfreq-mode))
-
 (use-package autorevert
   :ensure nil
   :hook (after-init . global-auto-revert-mode)
@@ -795,8 +788,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
       x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 
 (when (eq system-type 'gnu/linux)
-  (setq x-super-keysym 'meta
-        x-meta-keysym 'alt))
+  )
 
 (if (daemonp)
     (add-hook 'after-make-frame-functions
@@ -808,13 +800,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (load-theme 'modus-vivendi :no-confirm)
   (add-hook 'after-init-hook #'kam-set-custom-faces)
   (add-hook 'after-init-hook #'kam-set-font-faces))
-
-(when (eq system-type 'darwin)
-  (setq mac-option-key-is-meta nil
-        mac-command-key-is-meta t
-        mac-control-modifier 'control
-        mac-command-modifier 'meta
-        mac-option-modifier 'hyper))
 
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
@@ -861,9 +846,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
 (use-package vertico-multiform
   :ensure nil
-  ;; :after vertico-posframe
   :hook (after-init . vertico-multiform-mode)
-  :init
+  :config
   (defvar kam-vertico-multiform-maximal
     '((vertico-count . 10)
       (vertico-resize . t))
@@ -909,25 +893,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :after vertico)
 
-(use-package vertico-posframe
-  :ensure t
-  :vc (:url "https://github.com/tumashu/vertico-posframe"
-            :branch "main")
-  :after vertico
-  :init
-  (defvar kam-vertico-posframe-maximal
-    '(posframe
-      (vertico-posframe-poshandler . posframe-poshandler-frame-center)
-      (vertico-posframe-border-width . 2)))
-
-  ;; (add-to-list 'vertico-multiform-commands `(execute-extended-command ,@kam-vertico-posframe-maximal))
-  ;; (add-to-list 'vertico-multiform-commands `(describe-function ,@kam-vertico-posframe-maximal))
-  ;; (add-to-list 'vertico-multiform-commands `(describe-variable ,@kam-vertico-posframe-maximal))
-  ;; (add-to-list 'vertico-multiform-commands `(find-file ,@kam-vertico-posframe-maximal))
-  ;; (add-to-list 'vertico-multiform-commands `(consult-dir ,@kam-vertico-posframe-maximal))
-  ;; (add-to-list 'vertico-multiform-commands `(project-switch-project ,@kam-vertico-posframe-maximal))
-  )
-
 (use-package consult
   :ensure t
   :demand t
@@ -947,6 +912,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ("M-g M-g" . consult-goto-line)
          ("M-y" . consult-yank-pop)
 	     ("C-x p b" . #'consult-project-buffer)
+         ("M-g M-l" . consult-flymake)
          :map isearch-mode-map
          ("M-e" . consult-isearch-history)
          ("M-s M-l" . consult-line)
@@ -983,12 +949,12 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (add-to-list 'consult-buffer-filter
 	           "^\\*Messages\\*" t)
 
-  (defun kam-consult-directory-files-recursively ()
+  (defun kam-consult-directory-files-recursively (dir)
     "Find file recursively"
     (interactive)
     (find-file
      (consult--read
-      (directory-files-recursively default-directory "" nil (lambda (x) (not (string-match-p "/\\." x))))
+      (directory-files-recursively dir "" nil (lambda (x) (not (string-match-p "/\\." x))))
       :state (consult--file-preview)
       :prompt "Find File: "
       :require-match t
@@ -1010,10 +976,31 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (setq consult-dir-shadow-filenames nil
 	    consult-dir-jump-file-command 'consult-fd)
 
-  (defun kam-consult-dir-find-file ()
-    (interactive)
-    (let ((consult-dir-default-command 'kam-consult-directory-files-recursively))
-      (consult-dir))))
+  (defvar kam-consult-dir--directories
+    '("~/Documents"
+      "~/Documents/Projects/"
+      "~/Documents/Areas/"
+      "~/Documents/Resources/"))
+
+  (defun kam-consult-dir-jumps--get-dirs ()
+    "Returns a flat list of directories based on `kam-consult-dir--directories'."
+    (seq-filter
+     #'file-directory-p
+     (cl-mapcan
+      #'identity
+      (mapcar (lambda (dir)
+                (directory-files dir t directory-files-no-dot-files-regexp))
+              kam-consult-dir--directories))))
+
+  (defvar kam-consult-dir--source-jumps
+    `(:name "My directories"
+            :narrow ?f
+            :category file
+            :face consult-file
+            :history file-name-history
+            :items kam-consult-dir-jumps--get-dirs))
+
+  (add-to-list 'consult-dir-sources 'kam-consult-dir--source-jumps t))
 
 (use-package marginalia
   :ensure t
@@ -1043,31 +1030,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 (use-package embark-consult
   :ensure t
   :hook (embark-collect-mode . consult-preview-at-point-mode))
-
-;; Look up the key in `kam-window-prefix-map' and call that function first
-;; then run the default embark action
-;; (cl-defun kam-embark--call-prefix-action (&rest rest &key run type &allow-other-keys)
-;;   (when-let ((cmd (keymap-lookup
-;;                    kam-window-prefix-map
-;;                    (key-description (this-command-keys-vector)))))
-;;     (funcall cmd))
-;;   (funcall run :action (embark--default-action type) :type type rest))
-
-;; Dummy function, will be overridden by running `embark-around-action-hook'
-;; (defun kam-embark--set-window () (interactive))
-
-;; (setf (alist-get 'kam-embark--set-window embark-around-action-hooks)
-;;   '(kam-embark--call-prefix-action))
-
-;; (setf (alist-get 'buffer embark-default-action-overrides) #'pop-to-buffer-same-window
-;;      (alist-get 'file embark-default-action-overrides) #'find-file
-;;      (alist-get 'bookmark embark-default-action-overrides) #'bookmark-jump
-;;      (alist-get 'library default-action-overrides) #'find-library)
-
-;; (map-keymap (lambda (key cmd)
-;;                (keymap-set embark-general-map (key-description (make-vector 1 key))
-;;                            #'kam-embark--set-window))
-;;              kam-window-prefix-map)
 
 (use-package orderless
   :ensure t
@@ -1248,8 +1210,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 (use-package ace-window
   :ensure t
   :bind
-  ("C-o" . #'ace-window)
-  ("M-o" . #'kam-ace-window-dispatch)
+  ;; ("C-o" . #'ace-window)
+  ;; ("M-o" . #'kam-ace-window-dispatch)
   :config
   (setq aw-dispatch-always nil
         aw-keys '(?d ?n ?r ?e ?t ?a)
@@ -1372,6 +1334,13 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 	     (window . root)
 	     (window-height . 0.35)
 	     (window-parameters . ((mode-line-format . none))))
+        ("\\*shell[\\*\\:]"
+         (display-buffer-in-side-window)
+         (side . bottom)
+         (window . root)
+         (inhibit-same-window . t)
+         (window-height . 0.35)
+         (window-parameters . ((mode-line-format . none)))) 
 	    ("^\\*Warnings\\*$"
 	     (display-buffer-in-side-window)
 	     (side . bottom)
@@ -1664,19 +1633,6 @@ Also see `kam-window-delete-popup-frame'." command)
 ;;   "C-r" #'consult-ripgrep
 ;;   "C-s" #'isearch-forward)
 
-(defvar-keymap kam-prefix-ite-map
-  :doc "Prefix map for the ITE"
-  :name "ITE"
-  :prefix 'kam-prefix-ite
-  "C-c" #'org-roam-node-insert
-  "C-d" #'consult-org-roam-file-find
-  "C-s" #'consult-org-roam-search
-  "C-b" #'consult-org-roam-backlinks
-  "C-f" #'org-roam-ref-add
-  "C-l" #'org-roam-tag-add
-  "C-h" (lambda () (interactive) (find-file kam-ite-home-note))
-  "H-i" (lambda () (interactive) (find-file kam-ite-inbox-note)))
-
 (defvar-keymap kam-prefix-org-map
   :doc "Prefix map for Org mode."
   :name "Org"
@@ -1710,52 +1666,53 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
 
 (use-package org
   :ensure t
-  ;; :hook ((org-agenda-after-show . #'visual-line-mode))
-         ;; (org-mode . visual-line-mode))
+  :hook ((org-agenda-after-show . visual-line-mode)
+         (org-mode . variable-pitch-mode)
+         (org-mode . visual-line-mode))
   :bind
-  ("C-c a" . #'org-agenda)
-  ("C-c c" . #'org-capture)
-  ("C-c l" . #'org-store-link)
-  ("C-c o l" . #'kam-consult-org-heading-link)
-  ("C-c o o" . #'kam-org-refile-region)
-  ("C-c o p" . #'org-set-property)
-  ("C-c o w" . #'kam-org-refile-to-current-file)
+  ("C-c a" . org-agenda)
+  ("C-c c" . org-capture)
+  ("C-c l" . org-store-link)
+  ("C-c o l" . kam-consult-org-heading-link)
+  ("C-c o o" . kam-org-refile-region)
+  ("C-c o p" . org-set-property)
+  ("C-c o w" . kam-org-refile-to-current-file)
   (:map org-mode-map
-        ("C-," . #'scroll-up)
-	    ("C-/" . #'scroll-other-window)
-	    ("M-/" . #'scroll-other-window-down)
-        ("M-," . #'scroll-down)
-        ("C-{" . #'org-next-visible-heading)
-	    ("M-{" . #'kam-org-metadown)
-        ("C-}" . #'org-previous-visible-heading)
-	    ("M-}" . #'kam-org-metaup)
-	    ("<f2>" . #'org-meta-return)
-        ("C-<return>" . #'kam-insert-new-line-below)
-        ("C-<backspace>" . #'kam-control-backspace)
-        ("C-<tab>" . #'kam-org-up-and-fold-heading)
-        ("C-<f2>" . #'org-insert-subheading)
-        ("<return>" . #'org-return)
-        ("M-j" . #'kam-open-line)
-        ("C-j" . #'kam-join-line-dwim)
-        ("M-<f2>" . #'kam-org-insert-super-heading)
+        ("C-," . scroll-up)
+	    ("C-/" . scroll-other-window)
+	    ("M-/" . scroll-other-window-down)
+        ("M-," . scroll-down)
+        ("C-{" . org-next-visible-heading)
+	    ("M-{" . kam-org-metadown)
+        ("C-}" . org-previous-visible-heading)
+	    ("M-}" . kam-org-metaup)
+	    ("<f2>" . org-meta-return)
+        ("C-<return>" . kam-insert-new-line-below)
+        ("C-<backspace>" . kam-control-backspace)
+        ("C-<tab>" . kam-org-up-and-fold-heading)
+        ("C-<f2>" . org-insert-subheading)
+        ("<return>" . org-return)
+        ("M-j" . kam-open-line)
+        ("C-j" . kam-join-line-dwim)
+        ("M-<f2>" . kam-org-insert-super-heading)
         ("C-'" . org-edit-src-code)
         ("M-m" . kam-mark-line)
-	    ("M-h" . #'mark-paragraph)
+	    ("M-h" . mark-paragraph)
         ("C-'" . org-edit-src-exit)
-        ("M-<up>" . #'kam-org-metaup)
-        ("M-<down>" . #'kam-org-metadown)
-        ("C-M-<up>" . #'kam-org-control-metaup)
-        ("C-M-<down>" . #'kam-org-control-metadown)
+        ("M-<up>" . kam-org-metaup)
+        ("M-<down>" . kam-org-metadown)
+        ("C-M-<up>" . kam-org-control-metaup)
+        ("C-M-<down>" . kam-org-control-metadown)
         ("C-M-<left>" . kam-org-promote-subtrees)
         ("C-M-<right>" . kam-org-demote-subtrees)
 	    ("C-M-<return>" . org-meta-return)
-	    ("C-M-h" . #'mark-defun)
-	    ("C-M-m" . #'kam-mark-point-to-end-of-line)
-        ("C-M-q" . #'kam-kill-inner-sexp)
-	    ("C-M-v" . #'sp-mark-sexp)
-        ("C-x C-v" . #'org-mark-element)
-        ("C-x C-k" . #'kam-kill-current-buffer)
-        ("C-x k" . #'delete-window)
+	    ("C-M-h" . org-mark-element)
+	    ("C-M-m" . kam-mark-point-to-end-of-line)
+        ("C-M-q" . kam-kill-inner-sexp)
+	    ("C-M-v" . sp-mark-sexp)
+        ("C-x C-v" . org-mark-element)
+        ("C-x C-k" . kam-kill-current-buffer)
+        ("C-x k" . delete-window)
         ("C-x n" . kam-narrow-or-widen-dwim)
         (:map org-src-mode-map
               ("M-'" . org-edit-src-exit)
@@ -1765,7 +1722,7 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
 	    org-M-RET-may-split-line nil
         org-directory "~/Documents/"
         org-tags-column 0
-        org-catch-invisible-edits 'show-and-error
+        org-fold-catch-invisible-edits 'show-and-error
         org-startup-indented t
         org-insert-heading-respect-content t
         org-special-ctrl-a/e t
@@ -1783,12 +1740,15 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
         org-fold-catch-invisible-edits 'show
         org-fontify-todo-headline t)
 
+  (defvar kam-inbox-file "~/Documents/Inbox/20250922T173902--inbox__inbox.org"
+    "The file where everything is stored before being processed.")
+
   (setq org-capture-templates
-        '(("t" "Task" entry (file kam-task-inbox-file)
+        '(("t" "Task" entry (file kam-inbox-file)
            "* TODO %?")
           ("p" "Project" entry )
-          ("w" "Writing" entry (file+headline kam-task-task-file "Writing") "* TODO %?\n")
-          ("d" "Default" entry (file "~/Documents/Inbox/inbox.org"))))
+          ("w" "Writing" entry (file+headline kam-inbox-file "Writing") "* TODO %?\n")
+          ("d" "Default" entry (file kam-inbox-file) "* TODO %?\n")))
 
   (setq org-bookmark-names-plist nil)
 
@@ -1803,6 +1763,8 @@ With optional prefix ARG (\\[universal-argument]), delete the buffer's window as
 
   (setq org-pretty-entities t)
 
+  ;; (add-hook 'org-mode-hook 'visual-line-mode)
+  
   (defun kam-org-refile-to-current-file ()
     "Refile the heading under the point to a heading in the current file only."
     (interactive)
@@ -1974,11 +1936,6 @@ Do nothing if search string is empty to start with."
   (:map vundo-mode-map
 	    ("<escape>" . #'vundo-quit)))
 
-;; (use-package centered-cursor-mode
-;;   :ensure t
-;;   :init
-;;   (global-centered-cursor-mode))
-
 (defvar undo-repeat-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "?") 'undo)
@@ -2042,7 +1999,7 @@ This is the same as using \\[set-mark-command] with the prefix argument."
   (deactivate-mark nil))
 
 (defun kam-mark-line (&optional arg allow-extend)
-  "Put point at beginning of the line, mark at end.
+  "Put mark at beginning of the line, point at end.
 
 With argument ARG, puts mark at end of a following line, so that
 the number of lines marked equals ARG.
@@ -2053,40 +2010,57 @@ at beginning of this or a previous line.
 Interactively (or if ALLOW-EXTEND is non-nil), if this command is
 repeated or (in Transient Mark mode) if the mark is active,
 it marks the next ARG lines after the ones already marked."
-  (interactive "p\np")
-  (unless arg (setq arg 1))
-  (when (zerop arg)
-    (error "Cannot mark zero lines"))
+  (interactive "P\np")
   (cond ((and allow-extend
 	          (or (and (eq last-command this-command) (mark t))
-		          (and transient-mark-mode mark-active)))       
-         (save-excursion
-           (goto-char (mark))
-           (beginning-of-line)
-           (forward-line arg)
-           (end-of-line)
-           (push-mark nil t t)))
+		          (region-active-p)))
+         (setq arg (if arg (prefix-numeric-value arg)
+                     (if (> (mark) (point)) -1 1)))
+         
+         (goto-char (mark))
+         (forward-line arg)
+         (line-end-position))
 	    (t
-	     (goto-char (line-end-position))
-         (push-mark nil t t)
-         (beginning-of-line))))
+         (progn
+           (end-of-line)
+           (set-mark
+            (line-beginning-position))))))
 
 (defun kam-mark-line-with-newline ()
-  "Selects the whole line with the newline of the previous line."
+  "Select the whole line with the newline of the previous line."
   (interactive)
+  (if (eq visual-line-mode t)
+      (kam--mark
+       (cons (beginning-of-visual-line)
+             (save-excursion
+               (forward-line)
+               (beginning-of-visual-line))))
   (kam--mark
    (cons (line-beginning-position)
          (save-excursion
-           (next-line)
-           (line-beginning-position)))))
+           (forward-line)
+           (line-beginning-position))))))
 
 (defun kam-mark-point-to-end-of-line ()
+  "Set the mark at the end of the line, regardless of where the cursor is on the line."
   (interactive)
-  (kam--mark
-   (cons
-    (point)
-    (line-end-position)))
-  (exchange-point-and-mark))
+  (if (eq visual-line-mode t)
+      (kam--mark
+       (cons
+        (point)
+        (point (end-of-visual-line))))
+    (kam--mark
+     (cons
+      (point)
+      (line-end-position)))))
+
+(defun kam-mark-point-to-end-of-buffer ()
+  "Mark from the point to the end of the buffer."
+  (interactive)
+  (set-mark
+   (save-excursion
+     (goto-char (point-max))
+     (point))))
 
 (define-advice pop-global-mark (:around (pgm) use-display-buffer)
   "Make `pop-to-buffer' jump buffers via `display-buffer'."
@@ -2095,7 +2069,7 @@ it marks the next ARG lines after the ones already marked."
     (funcall pgm)))
 
 (defun kam-cut-dwim ()
-  "Kills based on the position of the point in the buffer.
+  "Kill based on the position of the point in the buffer.
 
   If the region is active, kills the region. If the point is on an Org heading, kills the subtree. If the point is at an item in an Org list, kills that item. If none of the previous conditions are true, kills the current line."
   (interactive)
@@ -2137,7 +2111,6 @@ it marks the next ARG lines after the ones already marked."
   (kam-common--duplicate-buffer-substring
    (if (region-active-p)
        (cons (region-beginning) (region-end))
-       (cons (region-beginning) (region-end))
      (cons (line-beginning-position) (line-end-position)))))
 
 (advice-add #'kam-duplicate-line-or-region :after #'kam-naved-indent-region-advice)
@@ -2146,14 +2119,14 @@ it marks the next ARG lines after the ones already marked."
 
 (defun kam-insert-new-line-below (n)
   "Create N empty lines below the current one.
-        When called interactively without a prefix numeric argument, N is 1."
+When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (goto-char (line-end-position))
   (dotimes (_ n) (newline-and-indent)))
 
 (defun kam-insert-new-line-above (n)
   "Create N empty lines above the current one.
-        When called interactively without a prefix numeric argument, N is 1."
+When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (let ((point-min (point-min)))
     (if (or (bobp)
@@ -2168,25 +2141,25 @@ it marks the next ARG lines after the ones already marked."
 
 (defun kam-join-line-dwim ()
   "Joins lines based on the position of the point on the current line.
-  If the point is at the end of the line, join the next line to the current line. If the point is anywhere but the end of the line, joins the current line to the previous line."
+If the point is at the end of the line, join the next line to the current line. If the point is anywhere but the end of the line, joins the current line to the previous line."
   (interactive)
   (if (eolp)
       (progn
-        (next-line)
+        (forward-line)
         (join-line))
     (join-line)))
 
 (defun kam-open-line ()
-  "Opens the line and indents it to the proper place."
+  "Open the line and indent it to the proper place."
   (interactive)
   (save-excursion
     (open-line 1)
-    (next-line)
+    (forward-line)
     (indent-according-to-mode)))
 
 (defun kam-yank-replace-line-or-region ()
   "Replace line or region with the latest kill.
-        This command can be followed by the standard `yank-pop' (default is bound to \\[yank-pop])."
+This command can be followed by the standard `yank-pop' (default is bound to \\[yank-pop])."
   (interactive)
   (if (use-region-p)
       (delete-region (region-beginning) (region-end))
@@ -2195,8 +2168,8 @@ it marks the next ARG lines after the ones already marked."
   (setq this-command 'yank))
 
 (defun kam-kill-whole-line (n)
-  "Kills the whole line, regardless of the cursor position within the line.
-        If called interactively without a prefix numeric argument, N is 1."
+  "Kill the whole line, regardless of the cursor position within the line.
+If called interactively without a prefix numeric argument, N is 1."
   (dotimes (_ n)
     (kam-mark-line-with-newline)
     (kill-region (region-beginning) (region-end))))
@@ -2688,12 +2661,14 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   :ensure t
   :hook ((dired-mode . denote-dired-mode)
          (after-init . denote-rename-buffer-mode))
-  :bind
+  :bind 
   ("C-c n h" . #'kam-ite-visit-home)
   ("C-c n w" . #'kam-ite-visit-workbench)
   ("C-c n d" . #'denote-open-or-create)
   ("C-c n b" . #'denote-backlinks)
-  ("C-c n c" . #'denote-link)
+  ("C-c n c" . #'denote-link-or-create)
+  (:map dired-mode-map
+        ("r" . #'denote-dired-rename-files))
   :config
   (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
 	    ;; denote-infer-keywords t
@@ -2713,17 +2688,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (defun kam-ite-visit-home ()
     "Visits the `kam-ite-home-note'."
     (interactive)
-    (find-file kam-ite-home-note))
-
-  ;; (defun kam-ite-visit-inbox ()
-  ;;   "Visits the `kam-ite-inbox-note'."
-  ;;   (interactive)
-  ;;   (find-file kam-ite-inbox-note))
-
-  (defun kam-ite-visit-workbench ()
-    "Visits the `kam-ite-workbench-note'."
-    (interactive)
-    (find-file kam-ite-workbench-note)))
+    (find-file kam-ite-home-note)))
 
 (use-package consult-denote
   :ensure t
@@ -2753,8 +2718,9 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 (use-package project
   :ensure t
   :bind (:map project-prefix-map
-              ("b" . #'hconsult-project-buffer)
-              ("g" . #'consult-ripgrep))
+              ("b" . consult-project-buffer)
+              ("g" . consult-ripgrep)
+              ("n" . kam-project-new))
   :custom
   (project-switch-use-entire-map nil)
   ;; (project-prompter 'kam-project--read-project-by-name)
@@ -2889,7 +2855,7 @@ as the initial input for completion, and return that directory."
   (:map shell-mode-map
         ("SPC" . #'comint-magic-space)
         ("M-<up>" . #'kam-shell-up-directory)
-        ("C-c C-d" . #'kam-shell-cd)
+        ("<f2>" . #'kam-shell-cd)
         ("C-c C-k" . #'comint-clear-buffer)
         ("C-c C-w" . #'comint-write-buffer)
         ("C-c C-j" . #'kam-comint-input-from-history)
@@ -2916,13 +2882,13 @@ as the initial input for completion, and return that directory."
           ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face))))
 
 (defun kam-shell-mode-setup ()
-  (setq-local comint-process-echoes t
+  (setq-local comint-process-echoes nil
               outline-regexp comint-prompt-regexp))
 
 (defvar kam-shell-cd--directories nil
   "List of accumulated `shell-last-dir'.")
 
-(with-eval-after-load 'save-hist
+(with-eval-after-load 'savehist
   (add-to-list 'savehist-additional-variables 'kam-shell-cd--directories))
 
 (defun kam-shell--track-cd (&rest _)
@@ -2950,7 +2916,7 @@ Push `shell-last-dir' to `kam-shell-cd--directories'."
     (user-error "No directories have been tracked")))
 
 (defun kam-shell-cd ()
-  "Navigate to a previously visited directory in Shell, or to any directory offered by `consult-dir'."
+  "Navigate to a previously visited directory in `shell-mode', or to any directory offered by `consult-dir'."
   (declare (interactive-only t))
   (interactive)
   (let ((shell-dirs (delete-dups
@@ -2978,8 +2944,6 @@ The shell is renamed to match that directory to make multiple shell windows easi
                      (file-name-directory (buffer-file-name))
                    default-directory))
          (name (car (last (split-string parent "/" t)))))
-    (split-window-right)
-    (other-window 1)
     (shell)
     (rename-buffer (concat "*shell: " name "*"))))
 
@@ -3039,18 +3003,20 @@ ARGS is a list of strings."
   "Minibuffer history of `kam-comint--input-history-prompt'.
 Not to be confused with the shell input history, which is stored in the `comint-input-ring' (see `kam-comint--history-to-list').")
 
+(defun kam-comint--presorted-completion-table (completions)
+  "Completion table for `kam-comint--input-history-prompt' that doesn't mess up the sorting."
+  (lambda (string pred action)
+    (if (eq action 'metadata)
+        `(metadata (display-sort-function . ,#'identity))
+      (complete-with-action action completions string pred))))
+
 (defun kam-comint--input-history-prompt ()
   "Prompt for completion against `kam-comint--history-to-list'."
   (let* ((history (kam-comint--history-to-list))
          (default (car history)))
     (completing-read
-     (format-prompt "Insert input from history: " default)
-     history
-     nil
-     nil
-     nil
-     'kam-comint--input-history-prompt
-     default)))
+     (format-prompt "Insert command from history: " default)
+     (kam-comint--presorted-completion-table history))))
 
 (defun kam-comint-input-from-history ()
   "Insert command from the Comint input history."
@@ -3097,9 +3063,7 @@ Numerical argument ARG determines the command being selected from to choose argu
   (("C-c e" . eshell)
    :map eshell-mode-map
    ("<tab>" . completion-at-point)
-   ("C-c d" . eshell/z)
-   ;; ("<escape>" . quit-window)
-   )
+   ("<f2>" . eshell/z))
   :config
   ;; (add-to-list 'eshell-lisp-list 'eshell-smart)
   (defvar kam-eshell-prompt-regexp "\\[[[:punct:][:alnum:]]+ — [[:punct:][:alnum:]]+ \\$ "
@@ -3264,7 +3228,13 @@ The eshell is renamed to match that directory in order to make multiple eshell w
 (use-package vterm
   :ensure nil
   :custom
-  (vterm-shell "/bin/bash"))
+  (vterm-shell (executable-find "zsh"))
+  :config
+  (defun kam-project-vterm ()
+    "Create a Vterm terminal in the project root."
+    (interactive)
+    (let ((default-directory (project-root (project-current t))))
+      (vterm))))
 
 (defun kam-common-empty-buffer-p ()
   "Test whether the buffer is empty."
@@ -3577,11 +3547,14 @@ Use this as advice :after a noisy function."
                                           ))
 
   (defun kam-set-custom-faces (&rest _)
-    "Function which sets faces across the configuration using the `modus-themes-with-colors' macro."
+    "Function which sets faces across the configuration using the `modus-themes-with-colors' macro.
+
+Uses the colors set in `modus-vivendi-palette-overrides'."
     (modus-themes-with-colors
       (custom-set-faces
-       `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
+       ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
        `(region ((,c :extend nil)))
+       `(fringe ((,c :backgruond ,bg-main)))
        `(org-special-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
        `(org-meta-line ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
        `(org-document-title ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
@@ -3591,7 +3564,15 @@ Use this as advice :after a noisy function."
        `(org-property-value ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
        `(org-ellipsis ((,c :height 1.0 :foreground ,fg-dim)))
        `(org-block-end-line ((,c :background ,bg-prose-block-delimiter)))
-       `(denote-faces-keywords ((,c :foreground ,keyword)))
+       `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
+       `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
+       `(denote-faces-year ((,c :foreground ,blue-intense)))
+       `(denote-faces-month ((,c :foreground ,blue-faint)))
+       `(denote-faces-day ((,c :foreground ,blue-faint)))
+       `(denote-faces-time ((,c :foreground ,fg-dim)))
+       ;; `(denote-faces-hour ((,c :foreground ,fg-dim)))
+       ;; `(denote-faces-minute ((,c :foreground ,fg-dim)))
+       ;; `(denote-faces-second ((,c :foreground ,fg-dim)))
        `(olivetti-fringe ((,c :background ,bg-main))))))
 
   (defun kam-modus-themes-org-block-faces (&rest _)
@@ -3637,23 +3618,22 @@ Use this as advice :after a noisy function."
 (setq mode-line-compact nil
       mode-line-right-align-edge 'right-fringe)
 
-(setq-default mode-line-format
-              '("%e"
-                kam-modeline-nix
-                kam-modeline-kbd-macro
-                kam-modeline-narrow
-                kam-modeline-buffer-modified
-                kam-modeline-buffer-status
-                "  "
-                kam-modeline-buffer-identification
-                "  "
-                kam-modeline-major-mode
-		        "  "
-		        ;; kam-modeline-buffer-stats
-                kam-modeline-process
-                " "
-                mode-line-format-right-align
-                kam-modeline-vc-branch))
+;; (setq-default mode-line-format
+;;               '("%e"
+;;                 kam-modeline-nix
+;;                 kam-modeline-kbd-macro
+;;                 kam-modeline-narrow
+;;                 kam-modeline-buffer-modified
+;;                 kam-modeline-buffer-status
+;;                 "  "
+;;                 kam-modeline-buffer-identification
+;;                 "  "
+;;                 kam-modeline-major-mode
+;; 		        "  "
+;;                 kam-modeline-process
+;;                 " "
+;;                 mode-line-format-right-align
+;;                 kam-modeline-vc-branch))
 
 ;; (with-eval-after-load 'spacious-padding
 ;;   (defun kam-modeline--spacious-indicators ()
@@ -3758,11 +3738,10 @@ Use this as advice :after a noisy function."
 
 (use-package visual-fill-column
   :ensure t
-  :hook (org-mode . #'visual-line-fill-column-mode))
+  :hook (visual-line-mode . #'visual-fill-column-for-vline))
 
 ;; (add-hook 'text-mode-hook #'variable-pitch-mode)
 (add-hook 'prog-mode-hook #'display-line-numbers-mode)
-(add-hook 'org-mode-hook #'variable-pitch-mode)
 (add-hook 'prog-mode-hook 'prog-mode-buffer-variable)
 (add-hook 'info-mode-hook #'variable-pitch-mode)
 
@@ -4512,97 +4491,37 @@ With prefix arg C-u, copy region instead of killing it."
     (magit-section-up)
     (magit-section-hide-children (magit-section-at))))
 
-(use-package flycheck
-  :ensure t
-  :custom
-  (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-  (flycheck-indication-mode nil)
-  :init
-  (defun kam-flycheck-set-margins ()
-    "Adjust margin and fringe widths in Flycheck-enabled buffers."
-    (setq left-fringe-width 8
-          right-fringe-width 8
-          left-margin-with 1
-          right-margin-width 0))
-
-  ;; (Defun kam-flycheck-eldoc (callback &rest _ignored)
-  ;;   "Print flycheck messages at point by calling CALLBACK."
-  ;;   (when-let ((flycheck-errors (and flycheck-mode (flycheck-overlay-errors-at (point)))))
-  ;;     (mapc
-  ;;      (lambda (err)
-  ;;        (funcall callback
-  ;;                 (format "%s: %s"
-  ;;                         (let ((level (flycheck-error-level err)))
-  ;;                           (pcase level
-  ;;                             ('info (propertize "I" 'face 'flycheck-error-list-info))
-  ;;                             ('error (propertize "E" 'face 'flycheck-error-list-error))
-  ;;                             ('warning (propertize "W" 'face 'flycheck-error-list-warning))
-  ;;                             (_ level)))
-  ;;                         (flycheck-error-message err))
-  ;;                 :thing (or (flycheck-error-id err)
-  ;;                            (flycheck-error-group err))
-  ;;                 :face 'font-lock-doc-face))
-  ;;      flycheck-errors)))
-
-  ;; (defun kam-flycheck-prefer-eldoc ()
-  ;;   (add-hook 'eldoc-documentation-functions #'kam-flycheck-eldoc nil t)
-  ;;   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-  ;;   (setq flycheck-display-errors-function nil)
-  ;;   (setq flycheck-help-echo-function nil))
-
-  :hook
-  (after-init . #'global-flycheck-mode))
-;; (flycheck-mode . kam-flycheck-prefer-eldoc)
-;; (flycheck-mode . kam-flycheck-set-margins)
-
-(use-package flycheck-eglot
-  :ensure t
-  :after (flycheck eglot)
-  :config
-  (global-flycheck-eglot-mode 1))
-
-(use-package consult-flycheck
-  :ensure t)
-
-;; (use-package flyover
-;;   :ensure t
-;;   ;; :after flycheck
-;;   :custom
-;;   (flyover-checkers '(flycheck))
-;;   (flyover-debounce-interval .1)
-;;   (flyover-text-tint nil)
-;;   (flyover-line-position-offset 1)
-;;   (flyover-show-at-eol t)
-;;   (flyover-virtual-line-type nil)
-;;   (flyover-show-virtual-line nil)
-;;   (flyover-icon-left-padding .9)
-;;   (flyover-icon-right-padding .1)
-;;   :hook
-;;   (flycheck-mode . #'flyover-mode))
+(use-package forge
+  :after magit)
 
 (use-package flymake
   :ensure nil
+  :hook (after-init . flymake-mode)
+  :bind (:map prog-mode-map
+              ("M-g M-p" . flymake-goto-prev-error)
+              ("M-g M-n" . flymake-goto-next-error))
   :config
-  (setq flymake-fringe-indicator-position 'left-fringe
-        flymake-suppress-zero-counters nil
-        flymake-no-changes-timeout nil
-        flymake-start-on-flymake-mode nil
-        flymake-start-on-save-buffer nil
-        flymake-wrap-around t
-        flymake-show-diagnostics-at-end-of-line t))
+  (setq flymake-show-diagnostics-at-end-of-line nil))
 
 (use-package eglot
   :ensure t
   :init
   ;; (defun kam-eglot-eldoc ()
   ;;   (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly))
+  :bind (:map prog-mode-map
+              ("M-g M-c" . eglot-code-actions)
+              ("M-g M-r" . eglot-rename)
+              ("M-g M-f" . eglot-format))
   :hook
-  (
-   ;; (eglot-managed-mode . kam-eglot-eldoc)
-   (c-ts-mode . eglot-ensure)
-   (python-ts-mode . eglot-ensure))
+  ((c-ts-mode . eglot-ensure)
+   (python-ts-mode . eglot-ensure)
+   (rust-ts-mode . eglot-ensure))
   :config
-  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster))
+  (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
+  (add-to-list 'eglot-server-programs
+               '((rust-ts-mode rust-mode) .
+                 ("rust-analyzer" :initializationOptions (:check (:command "clippy")))))
+  (eglot-inlay-hints-mode -1))
 
 (use-package xref
   :ensure t
@@ -4628,12 +4547,10 @@ With prefix arg C-u, copy region instead of killing it."
 
 (use-package direnv
   :ensure t
+  :custom
+  (direnv-always-show-summary nil)
   :config
-  (setq direnv-always-show-summary nil)
   (direnv-mode))
-
-(use-package envrc
-  :hook (after-init . envrc-global-mode))
 
 (use-package compile
   :ensure nil
@@ -4646,11 +4563,10 @@ With prefix arg C-u, copy region instead of killing it."
         compilation-ask-about-save nil
         compilation-scroll-output t
         compilation-max-output-line-length nil
-        compilation-scroll-output 'first-error))
+        compilation-scroll-output 'first-error
+        compile-command ""))
 
-(defadvice compile (before ad-compile-smart activate)
-  "Advises `compile' so it sets the argument COMINT to t."
-  (ad-set-arg 1 t))
+;; (advice-add #'compile :before (ad-set-argument 1 t))
 
 (use-package python
   :ensure t
@@ -4660,12 +4576,9 @@ With prefix arg C-u, copy region instead of killing it."
   (python-indent-guess-indent-offset-verbose nil)
   :hook (python-mode . eglot-ensure))
 
-(use-package go-mode
-  :ensure t)
-
-(use-package go-eldoc
+(use-package rust-mode
   :ensure t
-  :hook (go-mode . #'go-eldoc-setup))
+  :defer t)
 
 (use-package markdown-mode
   :ensure t
@@ -4681,13 +4594,3 @@ With prefix arg C-u, copy region instead of killing it."
 (global-prettify-symbols-mode)
 (put 'narrow-to-region 'disabled nil)
 
-(use-package emms
-  :ensure t
-  :config
-  (require 'emms-setup)
-  (require 'emms-mpris)
-  (emms-all)
-  (emms-default-players)
-  (emms-mpris-enable)
-  :custom
-  (emms-browser-covers #'emms-browser-cache-thumbnail-async))
