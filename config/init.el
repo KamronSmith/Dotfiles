@@ -11,25 +11,14 @@
           ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
           ("nongnu"         . "https://elpa.nongnu.org/nongnu/")
           ("melpa"          . "https://melpa.org/packages/")))
-=======
-;; (elpaca elpaca-use-package
-;;     (elpaca-use-package-mode))
+
+  (setq package-vc-register-as-project nil
+        package-install-upgrade-built-in t))
+  
 (use-package exec-path-from-shell
   :ensure t
   :config
   (exec-path-from-shell-initialize))
-
-(setq use-package-always-ensure t
-      use-package-compute-statistics t)
-
-  (setq package-archive-priorities
-        '(("gnu-elpa" . 3)
-          ("melpa"    . 1)
-          ("nongnu"   . 2)))
-
-  (setq package-vc-register-as-project nil
-        package-install-upgrade-built-in t))
-
 
 (setq font-log nil)
 
