@@ -118,10 +118,10 @@
       source = config.lib.file.mkOutOfStoreSymlink "${config.home.homeDirectory}/.dotfiles/config/early-init.el";
     };
   };
-  
-  home.sessionVariables = {
-    # Doesnt work with nushell
-  };
+
+  home.sessionPath = [
+    "/home/kam/.dotfiles/bin/"
+  ];
 
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
