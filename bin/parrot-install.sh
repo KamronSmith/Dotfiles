@@ -33,3 +33,5 @@ ln -s $HOME/tools/dotfiles/bin/tmux-sessionizer.sh $HOME/tools/tmux-sessionizer.
 # wget https://raw.githubusercontent.com/KamronSmith/Dotfiles/refs/heads/master/bin/tmux-sessionizer.sh -O ~/tools/tmux-sessionizer.sh
 
 echo -e "Setting path..."
+echo "export PATH=~/tools:$PATH" >> ~/.bashrc
+source ~/.bashrc
