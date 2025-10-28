@@ -6,11 +6,23 @@
   (setq use-package-always-ensure t
         use-package-compute-statistics t)
 
+<<<<<<< HEAD
   (setq package-archives
         '(("gnu-elpa"       . "https://elpa.gnu.org/packages/")
           ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
           ("nongnu"         . "https://elpa.nongnu.org/nongnu/")
           ("melpa"          . "https://melpa.org/packages/")))
+=======
+;; (elpaca elpaca-use-package
+;;     (elpaca-use-package-mode))
+(use-package exec-path-from-shell
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize))
+
+(setq use-package-always-ensure t
+      use-package-compute-statistics t)
+>>>>>>> 6982d36c6ab2a045fdae22cd93193216b73f031c
 
   (setq package-archive-priorities
         '(("gnu-elpa" . 3)
@@ -801,6 +813,17 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (add-hook 'after-init-hook #'kam-set-custom-faces)
   (add-hook 'after-init-hook #'kam-set-font-faces))
 
+<<<<<<< HEAD
+=======
+(when (eq system-type 'darwin)
+  (setq mac-option-key-is-meta nil
+        mac-command-key-is-meta t
+        mac-control-modifier 'control
+        mac-command-modifier 'meta
+        mac-option-modifier 'hyper
+        insert-directory-program (executable-find "gls")))
+
+>>>>>>> 6982d36c6ab2a045fdae22cd93193216b73f031c
 (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 (add-to-list 'default-frame-alist '(ns-appearance . dark))
 
