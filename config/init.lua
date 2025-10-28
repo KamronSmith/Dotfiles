@@ -95,7 +95,8 @@ local plugins = {
 		opts = {}
 	},
 	{
-		
+		"ThePrimeagen/Harpoon",
+        dependencies = { "nvim-lua/plenary.lua" }
 	}
 }
 local opts = {}
