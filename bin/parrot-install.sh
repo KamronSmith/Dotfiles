@@ -7,6 +7,7 @@ mkdir tools
 mkdir vpn
 mkdir ~/.config/tmux
 mkdir ~/.config/nvim
+mkdir ~/.config/kitty
 
 echo -e "Installing programs..."
 sudo apt install kitty -y
@@ -27,6 +28,7 @@ echo -e "Creating symlinks..."
 ln -s $HOME/tools/dotfiles/config/init.lua ~/.config/nvim/init.lua
 ln -s $HOME/tools/dotfiles/config/tmux.conf ~/.config/tmux/tmux.conf
 ln -s $HOME/tools/dotfiles/bin/tmux-sessionizer.sh $HOME/tools/tmux-sessionizer.sh
+ln -s $HOME/tools/dotfiles/config/kitty.config ~/.config/kitty.conf
 
 # wget https://raw.githubusercontent.com/KamronSmith/Dotfiles/refs/heads/master/config/tmux.conf -O ~/.config/tmux
 # wget https://raw.githubusercontent.com/KamronSmith/Dotfiles/refs/heads/master/config/init.el -O ~/.config/nvim
