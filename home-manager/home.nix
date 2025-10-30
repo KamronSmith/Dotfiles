@@ -37,8 +37,6 @@
     zip
     unzip
     dnsutils
-    socat
-    nmap
     file
     which
     btop
@@ -56,6 +54,7 @@
     gdb
     # coding
     git
+    python3
     bootdev-cli
     docker
     gcc
@@ -64,17 +63,12 @@
     direnv
     cmake # for Emacs + Vterm
     libtool
-    awscli2
-    xxd
-    gh
     clang-tools
     clang-manpages
     cppcheck
     tmux
     # user apps
     kdePackages.qt6ct
-    # OVMF
-    megacmd
     ghostty
     waybar
     gimp
