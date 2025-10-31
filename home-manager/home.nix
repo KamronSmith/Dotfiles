@@ -82,6 +82,7 @@
     bitwig-studio # music
     obs-studio # recording screen
     calibre
+    syncthing
     libreoffice
     anki
     pamixer

@@ -178,6 +178,33 @@
 
    programs.gamemode.enable = true;
 
+   services.syncthing = {
+     enable = true;
+     openDefaultPorts = true;
+     configDir = "/home/kam/.config/syncthing";
+     user = "kam";
+     settings = {
+       devices = {
+         "nixos" = {
+           id = "KWH3ZIP-AT6SQ3V-RJ4ZDP3-OI54BKL-BWN3O54-5XZEZMB-AOAHTTJ-YZIPSQV";
+         };
+         "MAC Laptop" = {
+           id = "3FVHFKC-2ENQPZD-3CLIN74-ZLU6OWH-DZKYWYM-2GHLEC6-JYTU5XK-QFZ5QA5";
+         };
+       };
+       folders = {
+         "notes" = {
+           path = "/home/kam/Documents/Resources/Notes";
+           devices = [ "MAC Laptop" ];
+         };
+       };
+
+       gui = {
+         user = "kam";
+       };
+     };
+   };
+
   # Allow unfree packages
    nixpkgs.config = {
      allowUnfree = true;
