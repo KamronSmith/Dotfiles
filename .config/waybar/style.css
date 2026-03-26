@@ -1,0 +1,63 @@
+* {
+    font-family: SauceCodePro Mono Nerd Font;
+    font-size: 14px;
+    min-height: 0;
+    padding-right: 2px;
+    padding-left: 2px;
+    padding-bottom: 0px;
+}
+
+       #waybar {
+           background: transparent;
+           color: #c6d0f5;
+           margin: 2px 2px;
+       }
+       
+       #workspaces {
+           border-radius: 5px;
+           margin: 5px;
+           background: #101010;
+           margin-left: 2px;
+       }
+       
+       #workspaces button {
+           color: #babbf1;
+           border-radius: 5px;
+           padding: 0.4rem;
+       }
+       
+       #workspaces button.active {
+           color: #99d1db;
+           border-radius: 5px;
+       }
+       
+       button {
+           background: transparent;
+       }
+       
+       #workspaces button:hover {
+           background: #1e1e1e;
+           border: 0px solid transparent;
+       }
+       
+       #tray,
+       #clock,
+       #pulseaudio,
+       #network,
+       #cpu,
+       #memory,
+       #mpris {
+           background-color: #101010;
+           padding: 0.5rem 1rem;
+           margin: 5px 0;
+       }
+       
+       #clock {
+           color: #8caaee;
+           border-radius: 5px;
+       }
+              
+       #pulseaudio {
+           color: #ea999c;
+           border-radius: 5px 0px 0px 5px;
+       }
