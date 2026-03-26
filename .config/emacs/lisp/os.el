@@ -59,8 +59,8 @@ PACKAGES should be a list of strings."
 (defun kam-os-upgrade-system ()
   "Upgrade all of the packages on the system, and also creates a snapshot of the system before the upgrade."
   (interactive)
-  (let ((default-directory "/sudo::")
-        ((shell-command-buffer-name-async "*Pacman: Upgrade System*")))
+  (let* ((default-directory "/sudo::")
+        (shell-command-buffer-name-async "*Pacman: Upgrade System*"))
     (async-shell-command "pacman -Syu")))
 
 (defun kam-os-package-search (package)
