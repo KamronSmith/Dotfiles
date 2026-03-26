@@ -1,0 +1,31 @@
+[user]
+	name = Kamron Smith
+	email = kamrosmith@gmail.com
+	signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIK87KQlTvH1gcGwsE0gW0wo7Er26Pgy3m7UDP+oTL7yC
+[core]
+	editor = emacsclient -c -a ""
+	whitespace = trailing-space,space-before-tab
+[column]
+	ui = auto
+[init]
+	defaultBranch = main
+[checkout]
+	defaultRemote = origin
+[push]
+	autoSetupRemote = true
+	default = simple
+	followTags = true
+[rebase]
+	autoSquash = true
+	updateRefs = true
+[color]
+	ui = auto
+[commit]
+	gpgsign = true
+[pull]
+	rebase = false
+[gpg]
+	program = gpg2
+	format = ssh
+[gpg "ssh"]
+	program = "/opt/1Password/op-ssh-sign"
