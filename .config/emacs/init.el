@@ -762,13 +762,6 @@ Add this to `dired-mode-hook'."
   (:map dired-mode-map
         ("f" . fd-name-dired)))
 
-(use-package ready-player
-  :mode
-  ("\\.\\(mp3\\|m4a\\|mp4\\mkv\\|webm\\)\\'" . ready-player-major-mode)
-  :custom
-  (ready-player-auto-play nil)
-  (ready-player-repeat nil))
-
 (use-package trashed
   :commands (trashed)
   :bind
