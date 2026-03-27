@@ -2,6 +2,10 @@
 
 (defvar kam-dotfiles-directory "~/.dotfiles/")
 
+(defvar kam-dotfiles-installed-packages-file
+  (concat kam-dotfiles-directory "installed_packages.txt")
+  "A list of all the explicitly installed packages on the system.")
+
 ;;; Arch
 (defun kam-os--available-packages ()
   "Return all available packages to install as a list of strings."
@@ -36,6 +40,7 @@ PACKAGES should be a list of strings."
          (shell-command-buffer-name-async bufname))
     (async-shell-command
      (concat "pacman -S " chosen-packages))
+    (kam-os--write-explicitly-installed-packages-to-file)
     (pop-to-buffer bufname)))
 
 (defun kam-os-package-uninstall ()
@@ -47,14 +52,16 @@ PACKAGES should be a list of strings."
          (bufname (concat "*Pacman: Uninstall " chosen-packages "*"))
          (shell-command-buffer-name-async bufname))
     (async-shell-command
-     "pacman -Rs " chosen-packages)))
+     "pacman -Rs " chosen-packages)
+    (kam-os--write-explicitly-installed-packages-to-file)))
 
 (defun kam-os-uninstall-orphan-packages ()
   "Removes all orphaned packages and their configuration files."
   (interactive)
   (let ((default-directory "/sudo::")
         (shell-command-buffer-name-async "*Pacman: Remove Orphan Packages*"))
-    (async-shell-command "pacman -Qdtq | pacman -Rns -")))
+    (async-shell-command "pacman -Qdtq | pacman -Rns -")
+    (kam-os--write-explicitly-installed-packages-to-file)))
 
 (defun kam-os-upgrade-system ()
   "Upgrade all of the packages on the system, and also creates a snapshot of the system before the upgrade."
@@ -83,6 +90,13 @@ PACKAGES should be a list of strings."
   "Opens up the Pacman log file to check for errors."
   (interactive)
   (find-file "/var/log/pacman.log"))
+
+(defun kam-os--write-explicitly-installed-packages-to-file ()
+  "Write all explicitly installed packages to `kam-dotfiles-installed-packages-file'."
+  (with-current-buffer (find-file-noselect kam-dotfiles-installed-packages-file t t)
+    (erase-buffer)
+    (insert (mapconcat #'identity (kam-os--installed-packages-explicitly) "\n"))
+    (save-buffer)))
 
 (defun kam-arch-wiki-search (topic)
   "Search the Arch wiki for a topic using EWW."
