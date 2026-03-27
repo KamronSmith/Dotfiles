@@ -770,6 +770,10 @@ Add this to `dired-mode-hook'."
   (trashed-action-confirmer 'y-or-n-p)
   (trashed-use-header-line t)
   (trashed-sort-key '("Date deleted" . t)))
+
+(use-package reader
+  :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
+            :make "all"))
 
 (use-package repeat
   :ensure nil
