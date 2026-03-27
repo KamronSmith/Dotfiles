@@ -30,6 +30,7 @@ fd
 firefox
 gdb
 git
+github-cli
 google-chrome
 grim
 handbrake
