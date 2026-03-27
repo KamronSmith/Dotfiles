@@ -6,7 +6,7 @@
   (concat kam-dotfiles-directory "installed_packages.txt")
   "A list of all the explicitly installed packages on the system.")
 
-;;; Arch
+;;; Arch Packages
 (defun kam-os--available-packages ()
   "Return all available packages to install as a list of strings."
   (split-string (shell-command-to-string "pacman -Sl | awk '{print $2}'") "\n"))
@@ -137,3 +137,15 @@ PACKAGES should be a list of strings."
   (let ((default-directory "~/Pictures/Screenshots/")
         (name (read-string "Name of screenshot: ")))
     (async-shell-command (concat "wayshot -s \"$(slurp)\" -f " (shell-quote-argument name) ".jpg"))))
+
+;;; Hard drive space
+(defun kam-os-drive-space ()
+  "List all available drive space."
+  (interactive)
+  (let* ((shell-command-buffer-name-async "*Drive Space*"))
+    (async-shell-command "df -h")))
+
+(defun kam-dired-directory-space ()
+  "List all of the files in the current directory and how much space they take up.
+Filter out small files."
+  (interactive))
