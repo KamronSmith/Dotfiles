@@ -1688,6 +1688,7 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
      help-mode
      Info-mode
      Grep-mode
+     shell-command-mode
      comint-mode))
   (popper-display-control nil)
   :config
@@ -3401,6 +3402,15 @@ The shell is renamed to make opening multiple shells easier."
 
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (window . root)
+                 (inhibit-same-window . t)
+                 (window-height . 0.35)
+                 (window-parameters . ((mode-line-format . none)))))
+
+  (add-to-list 'display-buffer-alist
+               '((major-mode . shell-command-mode)
                  (display-buffer-in-side-window)
                  (side . bottom)
                  (window . root)
