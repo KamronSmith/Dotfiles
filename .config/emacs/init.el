@@ -3966,40 +3966,35 @@ Use this as advice :after a noisy function."
   (advice-add 'isearch-backward :after 'pulsar-recenter-center)
   (pulsar-global-mode))
 
-(use-package all-the-icons
-  :if (display-graphic-p)
-  :init
-  (unless (find-font (font-spec :name "all-the-icons"))
-    (all-the-icons-install-fonts t))
-  :config
-  (setq all-the-icons-scale-factor 1.1))
-
-(use-package all-the-icons-ibuffer
-  :hook (ibuffer-mode . all-the-icons-ibuffer-mode))
-
-(use-package all-the-icons-dired
-  :hook (dired-mode . all-the-icons-dired-mode)
-  :custom
-  (all-the-icons-dired-monochrome nil))
-
-(use-package all-the-icons-completion
-  :after (marginalia)
-  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
-  :config
-  (all-the-icons-completion-mode 1))
-
 (use-package nerd-icons
   :custom
   (nerd-icons-font-family "SauceCodePro Nerd Font"))
+
+(use-package nerd-icons-dired
+  :hook
+  (dired-mode . nerd-icons-dired-mode))
 
 (use-package nerd-icons-corfu
   :after (corfu)
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
+(use-package nerd-icons-completion
+  :config
+  (nerd-icons-completion-mode))
+
+(use-package nerd-icons-ibuffer
+  :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
+
 (use-package nerd-icons-xref
   :init
   (nerd-icons-xref-mode))
+
+(use-package nerd-icons-grep
+  :init
+  (nerd-icons-grep-mode)
+  :custom
+  (grep-use-headings t))
 
 (use-package visual-fill-column
   :hook (
