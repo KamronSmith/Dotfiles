@@ -102,3 +102,5 @@ video/x-ms-wmv=vlc.desktop
 video/x-nsv=vlc.desktop
 video/x-ogm+ogg=vlc.desktop
 video/x-theora+ogg=vlc.desktop
+x-scheme-handler/http=firefox.desktop
+x-scheme-handler/https=firefox.desktop
