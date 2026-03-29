@@ -1972,7 +1972,6 @@ Do nothing if search string is empty to start with."
   (electric-indent-actions '(yank))
   :config
   (electric-pair-mode)
-  (electric-quote-mode -1)
 
   ;; (add-to-list 'electric-pair-pairs
   ;;              '("/*" . "*/"))
@@ -4278,8 +4277,7 @@ When the number of characters in a buffer exceeds this threshold,
 (use-package text-mode
   :ensure nil
   :hook ((text-mode . visual-fill-column-mode)
-         (text-mode . variable-pitch-mode)
-         (text-mode . electric-quote-mode)))
+         (text-mode . variable-pitch-mode)))
 
 (use-package prog-mode
   :ensure nil
