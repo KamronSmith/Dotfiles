@@ -1,4 +1,54 @@
-(defvar kam-notes-nonfiction-book-template
+(use-package denote
+  :hook ((dired-mode . denote-dired-mode)
+         (after-init . denote-rename-buffer-mode))
+  :bind
+  ("C-c n h" . kam-ite-visit-home)
+  ("C-c n w" . kam-ite-visit-workbench)
+  ("C-c n d" . denote-open-or-create)
+  ("C-c n b" . denote-backlinks)
+  ("C-c n c" . denote-link-or-create)
+  (:map dired-mode-map
+        ("r" . denote-dired-rename-files))
+  :config
+  (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
+        ;; denote-infer-keywords t
+        denote-sort-keywords t
+        denote-prompts '(title keywords)
+        denote-rename-confirmations '(rewrite-front-matter modify-file-name)
+        denote-date-prompt-use-org-read-date t)
+
+  (defvar kam-ite-home-note
+    (concat denote-directory "20230928T043448--home__index.org")
+    "The home note for my ITE.")
+
+  (defvar kam-ite-workbench-note
+    (concat denote-directory "20250807T185237--workbench__index.org")
+    "The workbench note for my ITE.")
+
+  (defun kam-ite-visit-home ()
+    "Visits the `kam-ite-home-note'."
+    (interactive)
+    (find-file kam-ite-home-note)))
+
+(use-package denote-sequence)
+
+(use-package consult-denote
+  :custom
+  (consult-denote-find-command #'consult-fd)
+  (consult-denote-grep-command #'consult-ripgrep)
+  :bind
+  ("C-c n g" . consult-denote-grep)
+  ("C-c n f" . consult-denote-find)
+  :config
+  (consult-denote-mode 1))
+
+(use-package denote-org
+  :config
+  (setq denote-org-store-link-to-heading 'id))
+
+(use-package denote-explore)
+
+(defvar kam-notes-nonfiction-template
   "* Questions to ask the book
 ** What is the book about?
 ** What is the book actually saying?
@@ -25,11 +75,19 @@
 * Quotes"
   "Template to insert when creating a literature note for fiction media.")
 
-(defun kam-notes-insert-nonfiction-book-template ()
-  "Insert `kam-notes-nonfiction-book-template'."
+(defun kam-notes-insert-nonfiction-template ()
+  "Insert `kam-notes-nonfiction-template'."
+  (interactive)
   (end-of-buffer)
   (newline)
-  (insert kam-notes-nonfiction-book-template))
+  (insert kam-notes-nonfiction-template))
+
+(defun kam-notes-insert-fiction-template ()
+  "Insert `kam-notes-fiction-template'."
+  (interactive)
+  (end-of-buffer)
+  (newline)
+  (insert kam-notes-fiction-template))
 
 (defun kam-notes-insert-literature-note-templete (template)
   "Insert TEMPLATE for creating a literature note, enhanced with `completing-read'."
