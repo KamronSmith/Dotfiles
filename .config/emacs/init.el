@@ -4833,7 +4833,6 @@ Otherwise, play."
 
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.config/emacs/lisp/mode-line.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/consult-tab.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
