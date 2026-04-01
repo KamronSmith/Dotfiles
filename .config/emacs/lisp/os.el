@@ -93,7 +93,7 @@ PACKAGES should be a list of strings."
 
 (defun kam-os--write-explicitly-installed-packages-to-file ()
   "Write all explicitly installed packages to `kam-dotfiles-installed-packages-file'."
-  (with-current-buffer (find-file-noselect kam-dotfiles-installed-packages-file t t)
+  (with-current-buffer (find-file-noselect kam-dotfiles-installed-packages-file t)
     (erase-buffer)
     (insert (mapconcat #'identity (kam-os--installed-packages-explicitly) "\n"))
     (save-buffer)))
@@ -145,7 +145,10 @@ PACKAGES should be a list of strings."
   (let* ((shell-command-buffer-name-async "*Drive Space*"))
     (async-shell-command "df -h")))
 
-(defun kam-dired-directory-space ()
+(defun kam-os-file-size ()
   "List all of the files in the current directory and how much space they take up.
 Filter out small files."
-  (interactive))
+  (interactive)
+  (let* ((shell-command-buffer-name-async "*Directory Free Space*"))
+    (async-shell-command
+     "du -cha -d 1 . | sort -h")))
