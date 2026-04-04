@@ -19,18 +19,23 @@
         denote-rename-confirmations '(rewrite-front-matter modify-file-name)
         denote-date-prompt-use-org-read-date t)
 
-  (defvar kam-ite-home-note
+  (defvar kam-notes-home-note
     (concat denote-directory "20230928T043448--home__index.org")
     "The home note for my ITE.")
 
-  (defvar kam-ite-workbench-note
+  (defvar kam-notes-workbench-note
     (concat denote-directory "20250807T185237--workbench__index.org")
     "The workbench note for my ITE.")
 
-  (defun kam-ite-visit-home ()
-    "Visits the `kam-ite-home-note'."
+  (defun kam-notes-visit-home-note ()
+    "Visits the `kam-notes-home-note'."
     (interactive)
-    (find-file kam-ite-home-note)))
+    (find-file kam-ite-home-note))
+
+  (defun kam-notes-set-custom-faces ()
+    "Set custom faces for Denote."
+    (standard-themes-with-colors
+      (custom-set-faces))))
 
 (use-package denote-sequence)
 
@@ -51,9 +56,9 @@
 (use-package denote-explore)
 
 (defvar kam-notes-nonfiction-template
-  "* Questions to ask the book
-** What is the book about?
-** What is the book actually saying?
+  "* Questions to ask
+** What is it about?
+** What is it actually saying?
 ** Is it true?
 ** Why do you care?
 * Structure Of Understanding
@@ -64,7 +69,7 @@
   "Template to insert when creating a literature note for fiction media.")
 
 (defvar kam-notes-fiction-template
-  "* Questions to ask the book
+  "* Questions to ask
 ** What is the unity of the plot in the story?
 ** What are the roles that the various characters play, and what key events are they in?
 ** Is it a likely story? Why?
@@ -80,14 +85,14 @@
 (defun kam-notes-insert-nonfiction-template ()
   "Insert `kam-notes-nonfiction-template'."
   (interactive)
-  (end-of-buffer)
+  (goto-char (point-max))
   (newline)
   (insert kam-notes-nonfiction-template))
 
 (defun kam-notes-insert-fiction-template ()
   "Insert `kam-notes-fiction-template'."
   (interactive)
-  (end-of-buffer)
+  (goto-char (point-max))
   (newline)
   (insert kam-notes-fiction-template))
 
