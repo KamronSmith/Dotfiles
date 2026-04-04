@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
          (after-init . denote-rename-buffer-mode))
