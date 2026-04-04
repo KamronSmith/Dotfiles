@@ -4767,7 +4767,8 @@ Otherwise, play."
     ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/os.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/notes.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/applications.el"))
+    ,(concat (getenv "HOME") "/.config/emacs/lisp/applications.el")
+    ,(concat (getenv "HOME") "/.config/emacs/lisp/dotfiles.el"))
   "List of strings detailing custom Lisp to be loaded.
 Each string should be a full path to a Lisp file.")
 
