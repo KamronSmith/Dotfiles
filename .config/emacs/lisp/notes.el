@@ -2,7 +2,8 @@
 
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
-         (after-init . denote-rename-buffer-mode))
+         (after-init . denote-rename-buffer-mode)
+         (after-init . kam-notes-set-custom-faces))
   :bind
   ("C-c n h" . kam-ite-visit-home)
   ("C-c n w" . kam-ite-visit-workbench)
@@ -35,7 +36,16 @@
   (defun kam-notes-set-custom-faces ()
     "Set custom faces for Denote."
     (standard-themes-with-colors
-      (custom-set-faces))))
+      (custom-set-faces
+       `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
+       `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
+       `(denote-faces-year ((,c :foreground ,blue-intense)))
+       `(denote-faces-month ((,c :foreground ,blue-faint)))
+       `(denote-faces-day ((,c :foreground ,blue-faint)))
+       `(denote-faces-time ((,c :foreground ,fg-dim)))
+       `(denote-faces-hour ((,c :foreground ,fg-dim)))
+       `(denote-faces-minute ((,c :foreground ,fg-dim)))
+       `(denote-faces-second ((,c :foreground ,fg-dim)))))))
 
 (use-package denote-sequence)
 
