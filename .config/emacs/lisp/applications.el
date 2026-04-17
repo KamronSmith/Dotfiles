@@ -14,6 +14,9 @@
   (elfeed-search-filter "@2-weeks-ago +unread")
   (elfeed-show-truncate-long-urls t)
   (elfeed-search-date-format '("%F %R" 20 :left))
+
+  (elfeed-show-entry-switch #'pop-to-buffer)
+  (elfeed-show-unique-buffers t)
   :config
   (setq elfeed-feeds
         '(("https://www.artofmanliness.com/feed/" culture manhood)
