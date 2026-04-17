@@ -41,9 +41,12 @@
                                          "SHELL"
                                          "SSH_AUTH_SOCK"
                                          "LANG"
+                                         "DISPLAY"
                                          "WAYLAND_DISPLAY"
                                          "XDG_DATA_HOME"
-                                         "XDG_CONFIG_HOME"))
+                                         "XDG_CONFIG_HOME"
+                                         "ZDOTDIR"
+                                         "HYPRLAND_INSTANCE_SIGNATURE"))
   (exec-path-from-shell-initialize)
   (setenv "GIT_EDITOR" (format "emacs --init-dir=%s" (shell-quote-argument user-emacs-directory)))
   (setenv "EDITOR" (format "emacs --init-dir=%s" (shell-quote-argument user-emacs-directory)))
@@ -250,10 +253,10 @@ To be used attached to `after-init-hook'."
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 
       (defun kam-mac-copy-config-to-config-folder ()
-        "Copy .dotfiles config folder to .config/emacs folder."
+        "Copy the init.el from the .dotfiles folder to the .config/emacs folder."
         (interactive)
         (copy-file
-         "/Users/kamronsmith/.dotfiles/config/init.el"
+         (expand-file-name ".config/emacs/init.el" kam-dotfiles-directory)
          "/Users/kamronsmith/.config/emacs/init.el"
          t)
         (message "Copied config to emacs directory")))))
@@ -695,7 +698,28 @@ Add this to `dired-mode-hook'."
   (defun kam-dired-home-dir ()
     "Opens the home directory."
     (interactive)
-    (dired (getenv "HOME"))))
+    (dired (getenv "HOME")))
+
+  (defun kam-dired-mark-files-not-regexp (regexp)
+    "Mark every file in a Dired buffer that does not match REGEXP."
+    (interactive (list (read-regexp "Mark all files that are not (regexp): ")))
+    (dired-mark-files-regexp regexp)
+    (dired-toggle-marks))
+
+  (defun kam-dired-kill-lines-not-regexp ()
+    "Kill all lines in a Dired buffer not matching a regexp."
+    (interactive)
+    (kam-dired-mark-files-not-regexp)
+    (dired-do-kill-lines))
+
+  (define-minor-mode kam-dired-disable-revert-buffer-mode
+    "Disable reverting the buffer in `dired-mode' when a file changes."
+    :global t
+    (if kam-dired-disable-revert-buffer-mode
+        (setopt dired-do-revert-buffer nil
+                dired-auto-revert-buffer (lambda (x) nil))
+      (setopt dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
+              dired-auto-revert-buffer nil))))
 
 (use-package dired-x
   :ensure nil
@@ -713,7 +737,8 @@ Add this to `dired-mode-hook'."
   (dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir))))
   (dired-create-destination-dirs-on-trailing-dirsep t)
   (dired-compress-file-default-suffix ".zip")
-  (dired-compress-directory-default-suffix ".zip"))
+  (dired-compress-directory-default-suffix ".zip")
+  ())
 
 (use-package dired-open)
 
@@ -1743,7 +1768,7 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
   (tab-bar-show t)
   (tab-bar-close-button-show nil)
   (tab-bar-new-button nil)
-  (tab-bar-tab-hints t)
+  (tab-bar-tab-hints nil)
   (tab-bar-auto-width nil)
   (tab-bar-separator " ")
   (tab-bar-format '(tab-bar-format-tabs-groups
@@ -1766,7 +1791,6 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
     "n" 'tab-next))
 
 (use-package otpp
-
   :after (project)
   :init
   (otpp-mode 1)
@@ -2127,13 +2151,21 @@ If the region is active, kills the region. If the point is on an Org heading, ki
   (cond ((region-active-p)
          (kill-region nil nil t)
          (setq this-command 'kill-region))
-        ((and (derived-mode-p 'org-mode) (org-at-heading-p))
+        ((and (derived-mode-p 'org-mode)
+              (org-at-heading-p))
+         (when (eq last-command 'org-cut-subtree)
+           (append-next-kill))
          (org-cut-subtree)
          (setq this-command 'org-cut-subtree))
-        ((and (derived-mode-p 'org-mode) (org-in-item-p))
+        ((and (derived-mode-p 'org-mode)
+              (org-in-item-p))
+         (when (eq last-command 'kill-region)
+           (append-next-kill))
          (kam-org-kill-item)
          (setq this-command 'kill-region))
         (t
+         (when (eq last-command 'kill-region)
+           (append-next-kill))
          (kam-kill-whole-line 1)
          (setq this-command 'kill-region))))
 
@@ -2491,7 +2523,8 @@ Returns the filtered string."
   :ensure nil
   :hook ((org-mode . variable-pitch-mode)
          (org-mode . visual-line-mode)
-         (org-mode . kam-org-syntax-table-modify))
+         (org-mode . kam-org-syntax-table-modify)
+         (org-mode . kam-org-cape-setup))
   :bind
   (("C-c o l" . kam-consult-org-heading-link)
    ("C-c o p" . org-set-property)
@@ -3079,6 +3112,13 @@ as the initial input for completion, and return that directory."
         (progn
           (setq-local project-current-directory-override dir)
           (call-interactively #'project-find-file))))
+
+  (defun kam-test (dir)
+    (interactive (list (funcall project-prompter)))
+    (project--remember-dir dir)
+    (unwind-protect
+        (progn
+          (setq-local project-current-directory-override dir))))
 
   (defun kam-project-dired ()
     "Dired in the project root directory."
@@ -3798,6 +3838,8 @@ Use this as advice :after a noisy function."
                                                    ;; (preprocessor fg-main)
                                                    ;; (variable fg-main)
                                                    ;; (variable-use fg-main)
+                                                   (fg-heading-1 rainbow-2)
+                                                   (fg-heading-2 rainbow-1)
                                                    (docstring string)))
   (defun kam-set-custom-faces ()
     "Function which sets faces across the configuration using the `standard-themes-with-colors' macro.
@@ -4650,8 +4692,6 @@ When the number of characters in a buffer exceeds this threshold,
   (jinx--select-keys "dnretasipbghloj")
   :config
   (global-jinx-mode))
-
-
 
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.config/emacs/lisp/mode-line.el")
