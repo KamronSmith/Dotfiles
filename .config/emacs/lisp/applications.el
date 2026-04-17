@@ -44,7 +44,6 @@
           ("https://dynomight.net/feed.xml")
           ("https://every.to/superorganizers/feed.xml")
           ("https://feeds.npr.org/1020/rss.xml")
-          ("http://rss.sciam.com/ScientificAmerican-Global" science scientificamerican)
           ("http://rss.sciam.com/sciam/mindmatters" science scientificamerican)
           ("http://rss.sciam.com/sciam/feature-articles" science scientificamerican)
           ("https://joshblais.com/index.xml" emacs philosophy)
