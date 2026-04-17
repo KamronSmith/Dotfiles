@@ -48,7 +48,13 @@
           ("http://rss.sciam.com/sciam/feature-articles" science scientificamerican)
           ("https://joshblais.com/index.xml" emacs philosophy)
           ("https://protesilaos.com/codelog.xml" emacs linux protesilaos)
-          ("https://protesilaos.com/interpretations.xml" art philosophy protesilaos))))
+          ("https://protesilaos.com/interpretations.xml" art philosophy protesilaos)))
+
+  (add-to-list 'display-buffer-alist
+               `("\\*elfeed-search\\*"
+                 (display-buffer-in-tab)
+                 (dedicated . t)
+                 (tab-name . "Elfeed"))))
 
 (use-package eww
   :custom
