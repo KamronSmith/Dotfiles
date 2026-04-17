@@ -100,7 +100,9 @@ webkit2gtk-4.1
 wget
 wireless_tools
 wofi
+xdg-desktop-portal-gtk
 xdg-desktop-portal-hyprland
+xdg-desktop-portal-wlr
 xdg-utils
 xorg-server
 xorg-xinit
