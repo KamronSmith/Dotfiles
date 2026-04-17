@@ -1,15 +1,17 @@
 ;; -*- lexical-binding: t; -*-
+(require 'org)
 
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
          (after-init . denote-rename-buffer-mode)
          (after-init . kam-notes-set-custom-faces))
   :bind
-  ("C-c n h" . kam-ite-visit-home)
-  ("C-c n w" . kam-ite-visit-workbench)
+  ("C-c n h" . kam-notes-visit-home-note)
+  ("C-c n w" . kam-notes-visit-workbench-note)
   ("C-c n d" . denote-open-or-create)
   ("C-c n b" . denote-backlinks)
   ("C-c n c" . denote-link-or-create)
+  ("C-c n p" . kam-notes-set-processed-property)
   (:map dired-mode-map
         ("r" . denote-dired-rename-files))
   :config
@@ -29,9 +31,14 @@
     "The workbench note for my ITE.")
 
   (defun kam-notes-visit-home-note ()
-    "Visits the `kam-notes-home-note'."
+    "Visit the `kam-notes-home-note'."
     (interactive)
-    (find-file kam-ite-home-note))
+    (find-file kam-notes-home-note))
+
+  (defun kam-notes-set-processed-property ()
+    "Set the property PROCESSED to no on an org-mode heading."
+    (interactive)
+    (org-set-property "PROCESSED" "no"))
 
   (defun kam-notes-set-custom-faces ()
     "Set custom faces for Denote."
@@ -45,7 +52,15 @@
        `(denote-faces-time ((,c :foreground ,fg-dim)))
        `(denote-faces-hour ((,c :foreground ,fg-dim)))
        `(denote-faces-minute ((,c :foreground ,fg-dim)))
-       `(denote-faces-second ((,c :foreground ,fg-dim)))))))
+       `(denote-faces-second ((,c :foreground ,fg-dim))))))
+
+  (add-to-list 'display-buffer-alist
+               '((derived-mode . denote-query-mode)
+                 (display-buffer-in-side-window)
+                 (side . bottom)
+                 (window . root)
+                 (window-height . 0.35)
+                 (window-parameters . ((mode-line-format . none))))))
 
 (use-package denote-sequence)
 
@@ -75,6 +90,7 @@
 ** Definitions
 ** Index
 ** Key Ideas
+** Outline
 * Quotes"
   "Template to insert when creating a literature note for fiction media.")
 
@@ -106,6 +122,22 @@
   (newline)
   (insert kam-notes-fiction-template))
 
-(defun kam-notes-insert-literature-note-templete (template)
+(defun kam-notes-insert-index-template ()
+  "Insert a template for the index note."
+  (interactive)
+  (insert "* Indices\n\n* Other\n\n* References"))
+
+(defun kam-notes-insert-literature-note-template (template)
   "Insert TEMPLATE for creating a literature note, enhanced with `completing-read'."
   (interactive))
+
+(defun kam-notes-insert-quote-block (title)
+  "Insert a quote block with an org mode heading superior."
+  (interactive (list (read-string "Enter a title: ")))
+  (org-previous-visible-heading 1)
+  (org-insert-heading)
+  (org-set-property "PROCESSED" "no")
+  (insert title)
+  (org-end-of-subtree)
+  (newline)
+  (tempo-template-org-quote))
