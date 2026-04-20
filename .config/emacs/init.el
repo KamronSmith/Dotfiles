@@ -154,7 +154,7 @@
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
   (user-lisp-directory (locate-user-emacs-file "lisp/"))
-  (line-spacing '(0 . 0))
+  (line-spacing 0)
   (inhibit-splash-screen nil)
   (create-lockfiles nil)
   (confirm-kill-emacs nil)
@@ -294,7 +294,7 @@ To be used attached to `after-init-hook'."
     "Function for settings as the minibuffer starts."
     (setq gc-cons-threshold most-positive-fixnum
           truncate-lines t)
-    (setq-local line-spacing '(1 . 1))
+	  (setq-local line-spacing 1)
     (pulsar-pulse-line))
 
   (defun kam-minibuffer-exit-hook ()
