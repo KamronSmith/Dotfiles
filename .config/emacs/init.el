@@ -2165,7 +2165,10 @@ it marks the next ARG lines after the ones already marked."
 (defun kam-cut-dwim ()
   "Kill based on the position of the point in the buffer.
 
-If the region is active, kills the region. If the point is on an Org heading, kills the subtree. If the point is at an item in an Org list, kills that item. If none of the previous conditions are true, kills the current line."
+If the region is active, kills the region.
+If the point is on an Org heading, kills the subtree.
+If the point is at an item in an Org list, kills that item.
+If none of the previous conditions are true, kills the current line."
   (interactive)
   (cond ((region-active-p)
          (kill-region nil nil t)
@@ -2185,7 +2188,8 @@ If the region is active, kills the region. If the point is on an Org heading, ki
         (t
          (when (eq last-command 'kill-region)
            (append-next-kill))
-         (kam-kill-whole-line 1)
+         (kill-whole-line)
+
          (setq this-command 'kill-region))))
 
 (defun kam-kill-ring-save-dwim ()
