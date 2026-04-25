@@ -364,7 +364,7 @@ To be used attached to `after-init-hook'."
   ("C-l" . recenter)
   ("C-v" . kam-scroll-down)
   ("C-^" . kam-alternate-buffer)
-  ("C-+" . delete-window)
+  ("C-+" . kam-delete-window-dwim)
   ("M-v" . scroll-down)
   ("M-+" . delete-other-windows)
   :custom
@@ -438,6 +438,21 @@ To be used attached to `after-init-hook'."
     "Quit the window and kill it."
     (interactive)
     (quit-window t))
+
+  (defun kam-delete-window-dwim ()
+  "Do What I Mean to delete the current thing.
+When there is one window, THING is a window.
+When there is more than one `tab-bar-mode' tabs, THING is a tab."
+  (declare (interactive-only t))
+  (interactive)
+  (cond
+   ((length> (window-list) 1)
+    (delete-window))
+   ((and (featurep 'tab-bar)
+         (length> (tab-bar-tabs) 1))
+    (tab-close))
+   (t
+    (user-error "Nothing to delete"))))
 
   (defun kam-window-bounds ()
     "Return the start and end points of the current window as a cons cell."
