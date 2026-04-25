@@ -2157,6 +2157,11 @@ it marks the next ARG lines after the ones already marked."
              #'pop-to-buffer))
     (funcall pgm)))
 
+(defun kam-copy-line ()
+  "Copy the current line to the `kill-ring'."
+  (interactive)
+  (copy-region-as-kill (line-beginning-position) (line-end-position)))
+
 (defun kam-cut-dwim ()
   "Kill based on the position of the point in the buffer.
 
