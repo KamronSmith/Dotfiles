@@ -29,6 +29,7 @@ expac
 fd
 firefox
 gdb
+gimp
 git
 github-cli
 google-chrome
@@ -46,6 +47,8 @@ iwd
 java-debug
 jdtls
 kitty
+krita
+libotf
 libreoffice-fresh
 libva-nvidia-driver
 linux
@@ -89,6 +92,7 @@ syncthing
 system-config-printer
 timeshift
 tldr
+tree-sitter
 udiskie
 unzip
 uwsm
