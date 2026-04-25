@@ -752,8 +752,7 @@ Add this to `dired-mode-hook'."
   (dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir))))
   (dired-create-destination-dirs-on-trailing-dirsep t)
   (dired-compress-file-default-suffix ".zip")
-  (dired-compress-directory-default-suffix ".zip")
-  ())
+  (dired-compress-directory-default-suffix ".zip"))
 
 (use-package dired-open)
 
