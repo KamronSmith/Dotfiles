@@ -4347,24 +4347,6 @@ When the number of characters in a buffer exceeds this threshold,
 (use-package forge
   :after (magit))
 
-(use-package dape
-  :custom
-  (dape-buffer-window-arrangement 'right)
-  :config
-  (dape-breakpoint-global-mode 1)
-
-  (add-to-list 'dape-configs
-               '(debug-c
-                 modes (cc-mode c-ts-mode)
-                 command-cwd dape-command-cwd
-                 command "gdb"
-                 command-args '("--interpreter=dap")
-                 defer-launch-attach t
-                 :request "launch"
-                 :program "main.c"
-                 :args []
-                 :stopAtBeginningOfMainSubprogram nil)))
-
 (use-package flycheck
   :hook (after-init . global-flycheck-mode)
   :config
