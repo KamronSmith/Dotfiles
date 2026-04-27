@@ -3027,7 +3027,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
 (use-package org-anki
   :bind
-  ("C-c n s" . org-anki-sync-entry)
+  ;; ("C-c n s" . org-anki-sync-entry)
   :custom
   (org-anki-inherit-tags nil)
   :config
