@@ -152,3 +152,26 @@ Filter out small files."
   (let* ((shell-command-buffer-name-async "*Directory Free Space*"))
     (async-shell-command
      "du -cha -d 1 . | sort -h")))
+
+;;; Hyprland
+(defvar kam-wallpapers-directory "~/Pictures/Wallpapers/"
+  "Default directory for where the wallpapers are located.")
+
+(defvar kam-wallpapers-history nil
+  "Minibuffer history for `kam-os-change-wallpaper'.")
+
+(defun kam-os-change-wallpaper ()
+  "Change the wallpaper."
+  (interactive)
+  (let* ((default-directory kam-wallpapers-directory)
+         (file-name (completing-read
+                     "Wallpaper to change to: "
+                     #'read-file-name-internal
+                     nil
+                     nil
+                     nil
+                     kam-wallpapers-history)))
+    (shell-command
+     (concat
+      "hyprctl hyprpaper wallpaper , "
+      (shell-quote-argument file-name)))))
