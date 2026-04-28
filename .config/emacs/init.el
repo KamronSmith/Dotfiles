@@ -3153,6 +3153,7 @@ as the initial input for completion, and return that directory."
 
 (use-package comint
   :ensure nil
+  :hook (comint-output-filter-functions . comint-osc-process-output)
   :custom
   (comint-completion-auto-list t)
   (comint-prompt-read-only t)
