@@ -8,5 +8,5 @@ frame_exists() {
 if frame_exists; then
     hyprctl dispatch workspace 2
 else
-    emacsclient -a "" -c &
+    emacs &
 fi
