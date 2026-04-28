@@ -3136,13 +3136,6 @@ as the initial input for completion, and return that directory."
           (setq-local project-current-directory-override dir)
           (call-interactively #'project-find-file))))
 
-  (defun kam-test (dir)
-    (interactive (list (funcall project-prompter)))
-    (project--remember-dir dir)
-    (unwind-protect
-        (progn
-          (setq-local project-current-directory-override dir))))
-
   (defun kam-project-dired ()
     "Dired in the project root directory."
     (interactive)
