@@ -1,6 +1,8 @@
-;; -*- coding: utf-8; lexical-binding: t -*-
+;;-*-coding: utf-8;-*-
 (define-abbrev-table 'global-abbrev-table
   '(
+    ("couldnt" "couldn't" nil :count 1)
+    ("didnt" "didn't" nil :count 1)
     ("dont" "don't" nil :count 2)
     ("teh" "the" nil :count 1)
     ("thats" "that's" nil :count 2)
