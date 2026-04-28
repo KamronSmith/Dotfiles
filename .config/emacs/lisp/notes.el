@@ -62,7 +62,14 @@
                  (window-height . 0.35)
                  (window-parameters . ((mode-line-format . none))))))
 
-(use-package denote-sequence)
+(use-package denote-sequence
+  :bind
+  ("C-c n s s" . denote-sequence)
+  ("C-c n s f" . denote-sequence-find)
+  ("C-c n s l" . denote-sequence-link)
+  ("C-c n s d" . denote-sequence-dired)
+  ("C-c n s r" . denote-sequence-reparent)
+  ("C-c n s c" . denote-sequence-convert))
 
 (use-package consult-denote
   :custom
