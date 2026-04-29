@@ -4,6 +4,7 @@
     ("couldnt" "couldn't" nil :count 1)
     ("didnt" "didn't" nil :count 1)
     ("dont" "don't" nil :count 2)
+    ("hte" "the" nil :count 1)
     ("teh" "the" nil :count 1)
     ("thats" "that's" nil :count 2)
    ))
