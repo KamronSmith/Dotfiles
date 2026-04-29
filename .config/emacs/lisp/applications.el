@@ -209,3 +209,6 @@ Otherwise, play."
                  (side . bottom)
                  (window-height . 0.35)
                  (window-parameters . ((mode-line-format . none))))))
+
+;;; LLM Client
+(use-package gptel)
