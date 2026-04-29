@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 (require 'org)
+(require 'denote)
 
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
@@ -148,3 +149,6 @@
   (org-end-of-subtree)
   (newline)
   (tempo-template-org-quote))
+
+(provide kam-notes.el)
+;;; kam-notes.el ends here

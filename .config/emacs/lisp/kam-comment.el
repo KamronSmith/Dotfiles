@@ -1,3 +1,5 @@
+;; -*- lexical-binding: t; -*-
+
 (defvar kam-comment-timestamp "%F"
   "String representing the timestamp in `kam-comment-timestamp-keyword'.")
 
@@ -61,3 +63,6 @@ comment is appended to the line with `comment-indent'."
      (t
       (comment-indent t)
       (insert " " string)))))
+
+(provide 'kam-comment)
+;;; kam-comment.el ends here

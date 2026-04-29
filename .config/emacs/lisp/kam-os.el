@@ -1,5 +1,6 @@
 ;; -*- lexical-binding: t; -*-
 
+
 (defvar kam-dotfiles-directory "~/.dotfiles/")
 
 (defvar kam-dotfiles-installed-packages-file
@@ -175,3 +176,19 @@ Filter out small files."
      (concat
       "hyprctl hyprpaper wallpaper , "
       (shell-quote-argument file-name)))))
+
+(defun kam-ytdlp-download-music-video (url)
+  "Download a music video from YouTube."
+  (interactive
+   (list (read-string "URL from Youtube: ")))
+  (let* ((default-directory "~/Music"))
+    (async-shell-command
+     (concat
+      "yt-dlp "
+      (shell-quote-argument url)
+      " -t mp3 --audio-quality 0 "
+      "--embed-thumbnail "
+      "--no-playlist"))))
+
+(provide 'kam-os)
+;;; kam-os.el ends here

@@ -514,3 +514,6 @@ Minibuffer counts as a recursive edit, so recursion depth has to be greater than
                     'face 'kam-mode-line-indicator-orange-bg)
       ""))
   "Mode line construct for displaying if Emacs is in a recursive edit.")
+
+(provide 'kam-mode-line)
+;;; kam-mode-line.el ends here

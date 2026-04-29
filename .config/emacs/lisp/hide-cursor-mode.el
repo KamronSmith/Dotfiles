@@ -8,8 +8,11 @@
   :lighter "H"
   (if hide-cursor-mode
       (progn
-	(setq-local hide-cursor--original
-		    cursor-type)
-	(setq-local cursor-type nil))
+        (setq-local hide-cursor--original
+                    cursor-type)
+        (setq-local cursor-type nil))
     (setq cursor-type (or hide-cursor--original
-			  t))))
+                          t))))
+
+(provide 'hide-cursor-mode)
+;;; hide-cursor-mode.el ends here

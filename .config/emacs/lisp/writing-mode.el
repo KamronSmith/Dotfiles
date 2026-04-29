@@ -14,3 +14,6 @@
     (tab-bar-mode 1)
     (kam-standard-themes-reload-theme)
     (hl-line-mode 1)))
+
+(provide 'writing-mode)
+;;; writing-mode.el ends here

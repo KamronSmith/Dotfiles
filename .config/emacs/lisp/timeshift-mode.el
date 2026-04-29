@@ -44,3 +44,6 @@ If COMMENT, leave a comment on the snapshot."
 
 (defun kam-timeshift-snapshot-restore ()
   "Restore system to snapshot.")
+
+(provide 'timeshift-mode)
+;;; timeshift-mode.el ends here
