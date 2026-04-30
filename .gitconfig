@@ -27,5 +27,5 @@
 [gpg]
 	program = gpg2
 	format = ssh
-[gpg "ssh"]
-	program = "/opt/1Password/op-ssh-sign"
+# [gpg "ssh"]
+	# program = "/opt/1Password/op-ssh-sign"

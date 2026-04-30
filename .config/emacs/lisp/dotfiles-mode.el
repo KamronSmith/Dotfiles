@@ -10,5 +10,5 @@
   (let ((default-directory kam-dotfiles-directory))
     (shell-command "stow .")))
 
-(provide kam-dotfiles)
-;;; kam-dotfiles.el ends here
+(provide 'dotfiles-mode)
+;;; dotfiles-mode.el ends here

@@ -1,10 +1,18 @@
 ;; -*- lexical-binding: t; -*-
 
-(defvar kam-comment-timestamp "%F"
-  "String representing the timestamp in `kam-comment-timestamp-keyword'.")
+(defgroup kam-comment
+  "Extensions for commenting."
+  :group 'comment)
 
-(defvar kam-comment-keywords '("TODO" "FIXME" "NOTE" "REVIEW")
-  "List of strings that represents various comment keywords.")
+(defcustom kam-comment-timestamp "%F"
+  "String representing the timestamp in `kam-comment-timestamp-keyword'."
+  :type '(repeat string)
+  :group 'kam-comment)
+
+(defcustom kam-comment-keywords '("TODO" "FIXME" "NOTE" "REVIEW")
+  "List of strings that represents various comment keywords."
+  :type 'string
+  :group 'kam-comment)
 
 (defvar kam-comment--keyword-history nil
   "Minibuffer history of `kam-comment--keyword-prompt'.")
@@ -38,6 +46,7 @@ STRING is a combination of a keyword and a timestamp."
   (unless (kam-line-regexp-p 'empty 1)
     (save-excursion (newline))))
 
+;;;###autoload
 (defun kam-comment-timestamp-keyword (keyword)
   "Add timestamped comment with KEYWORD.
 
@@ -63,6 +72,22 @@ comment is appended to the line with `comment-indent'."
      (t
       (comment-indent t)
       (insert " " string)))))
+
+;;;###autoload
+(defun kam-comment-dwim (n)
+  "Comment N lines, defaulting to the current line.
+When the region is active, comment its lines instead."
+  (interactive "p")
+  (if (region-active-p)
+      (comment-or-uncomment-region
+       (region-beginning) (region-end))
+    (comment-line n)))
+
+;;;###autoload
+(defun kam-comment-end-of-line ()
+  "Leave a comment at the end of the line."
+  (let ((beg (line-end-position)))
+    ))
 
 (provide 'kam-comment)
 ;;; kam-comment.el ends here
