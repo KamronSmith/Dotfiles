@@ -4713,3 +4713,5 @@ Each string should be a full path to a Lisp file.")
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
 
 (require 'kam-comment)
+(require 'kam-window)
+;;; init.el ends here
