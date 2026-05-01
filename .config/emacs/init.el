@@ -124,6 +124,7 @@
   ("C-M-<left>" . indent-rigidly-left)
   ("C-M-<right>" . indent-rigidly-right)
   ("C-M-," . nil)
+  ("C-M-;" . kam-comment-timestamp-keyword)
   ("C-M-SPC" . kam-mark-sexp)
   ("C-M-(" . insert-parenthesis)
   ("C-M-=" . indent-region)
@@ -4708,3 +4709,7 @@ Each string should be a full path to a Lisp file.")
         (when (file-exists-p file)
           (load-file file)))
       kam-custom-lisp-files)
+
+(add-to-list 'load-path (locate-user-emacs-file "lisp"))
+
+(require 'kam-comment)
