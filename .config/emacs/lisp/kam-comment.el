@@ -1,4 +1,12 @@
-;; -*- lexical-binding: t; -*-
+;;; kam-comment.el --- Extensions for Emacs commenting commands -*- lexical-binding: t; -*-
+
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
+
+(require 'kam-common)
 
 (defgroup kam-comment ()
   "Extensions for commenting commands."

@@ -1,12 +1,29 @@
-;; -*- lexical-binding: t; -*-
+;;; kam-os.el --- Extensions to fit Emacs to my operating system -*- lexical-binding: t; -*-
 
-(defvar kam-dotfiles-directory "~/.dotfiles/")
+;;; Summary:
 
-(defvar kam-dotfiles-installed-packages-file
+;;; Commentary:
+
+;;; Code:
+(require 'kam-common)
+(require 'kam-dotfiles)
+(require 'kam-timeshift)
+
+(defgroup kam-os ()
+  "Extensions to customize Emacs to fit my operating system.")
+
+(defcustom kam-wallpapers-directory "~/Pictures/Wallpapers/"
+  "A string representing the default directory for location of wallpapers."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-dotfiles-installed-packages-file
   (concat kam-dotfiles-directory "installed_packages.txt")
-  "A list of all the explicitly installed packages on the system.")
+  "A file listing all of the explicitly installed packages on the system."
+  :type 'string
+  :group 'kam-os)
 
-;;; Arch Packages
+;;; Arch
 (defun kam-os--available-packages ()
   "Return all available packages to install as a list of strings."
   (split-string (shell-command-to-string "pacman -Sl | awk '{print $2}'") "\n"))
@@ -30,8 +47,17 @@ PACKAGES should be a list of strings."
                             packages
                             #'kam-crm-exclude-selected-p))
 
+(defun kam-os--write-explicitly-installed-packages-to-file ()
+  "Write all explicitly installed packages to `kam-dotfiles-installed-packages-file'."
+  (with-current-buffer (find-file-noselect kam-dotfiles-installed-packages-file t)
+    (erase-buffer)
+    (insert (mapconcat #'identity (kam-os--installed-packages-explicitly) "\n"))
+    (save-buffer)))
+
+;;;###autoload
 (defun kam-os-package-install ()
-  "Install one or multiple system packages using Pacman, enhanced with `completing-read-multiple'."
+  "Install one or multiple system packages using Pacman.
+Additionally, save the updated list of installed packages in `kam-dotfiles-installed-packages-file'."
   (interactive)
   (let* ((default-directory "/sudo::")
          (chosen-package (kam-os--choose-package (kam-os--available-packages)))
@@ -43,8 +69,10 @@ PACKAGES should be a list of strings."
     (kam-os--write-explicitly-installed-packages-to-file)
     (pop-to-buffer bufname)))
 
+;;;###autoload
 (defun kam-os-package-uninstall ()
-  "Remove one or more system packages and all of their unused dependencies, enhanced with `completing-read-multiple'."
+  "Remove one or more system packages and all of their unused dependencies.
+Additionally, save the updated list of installed packages in `kam-dotfiles-installed-packages-file'."
   (interactive)
   (let* ((default-directory "/sudo::")
          (chosen-package (kam-os--choose-package (kam-os--installed-packages)))
@@ -55,14 +83,16 @@ PACKAGES should be a list of strings."
      "pacman -Rs " chosen-packages)
     (kam-os--write-explicitly-installed-packages-to-file)))
 
+;;;###autoload
 (defun kam-os-uninstall-orphan-packages ()
-  "Removes all orphaned packages and their configuration files."
+  "Remove all orphaned packages and their configuration files."
   (interactive)
   (let ((default-directory "/sudo::")
         (shell-command-buffer-name-async "*Pacman: Remove Orphan Packages*"))
     (async-shell-command "pacman -Qdtq | pacman -Rns -")
     (kam-os--write-explicitly-installed-packages-to-file)))
 
+;;;###autoload
 (defun kam-os-upgrade-system ()
   "Upgrade all of the packages on the system, and also creates a snapshot of the system before the upgrade."
   (interactive)
@@ -70,33 +100,30 @@ PACKAGES should be a list of strings."
         (shell-command-buffer-name-async "*Pacman: Upgrade System*"))
     (async-shell-command "pacman -Syu")))
 
+;;;###autoload
 (defun kam-os-package-search (package)
   "Search for a package in the Pacman database."
   (interactive "sPackage to search for: ")
   (async-shell-command
    (concat "pacman -Ss " package)))
 
+;;;###autoload
 (defun kam-os-list-installed-packages-by-size (packages)
   (async-shell-command
    (concat "expac -S -H M '%k\t%n'"
            (string-join (kam-pacman--installed-packages) " ")
            "| sort")))
 
+;;;###autoload
 (defun kam-os-clear-package-cache ()
   "Clears the old/uninstalled packages in /var/cache/pacman/pkg/."
   (async-shell-command "paccache -r"))
 
+;;;###autoload
 (defun kam-os-view-pacman-log-file ()
   "Opens up the Pacman log file to check for errors."
   (interactive)
   (find-file "/var/log/pacman.log"))
-
-(defun kam-os--write-explicitly-installed-packages-to-file ()
-  "Write all explicitly installed packages to `kam-dotfiles-installed-packages-file'."
-  (with-current-buffer (find-file-noselect kam-dotfiles-installed-packages-file t)
-    (erase-buffer)
-    (insert (mapconcat #'identity (kam-os--installed-packages-explicitly) "\n"))
-    (save-buffer)))
 
 (defun kam-arch-wiki-search (topic)
   "Search the Arch wiki for a topic using EWW."
@@ -154,9 +181,6 @@ Filter out small files."
      "du -cha -d 1 . | sort -h")))
 
 ;;; Hyprland
-(defvar kam-wallpapers-directory "~/Pictures/Wallpapers/"
-  "Default directory for where the wallpapers are located.")
-
 (defvar kam-wallpapers-history nil
   "Minibuffer history for `kam-os-change-wallpaper'.")
 
@@ -175,3 +199,6 @@ Filter out small files."
      (concat
       "hyprctl hyprpaper wallpaper , "
       (shell-quote-argument file-name)))))
+
+(provide 'kam-os)
+;;; kam-os.el ends here

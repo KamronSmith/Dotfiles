@@ -1,7 +1,14 @@
-;; -*- lexical-binding: t; -*-
+;;; kam-mode-line.el --- Functions for a custom mode-line -*- lexical-binding: t; -*-
+
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
+(require 'kam-window)
 
 (defgroup kam-mode-line nil
-  "My custom mode-line."
+  "Extensions for a custom mode-line."
   :group 'mode-line)
 
 (defgroup kam-mode-line-faces nil
@@ -160,7 +167,8 @@
   :group 'kam-mode-line-faces)
 
 (defun kam-mode-line--string-truncate-p (str)
-  "Return non-nil if the string should be truncated."
+  "Return non-nil if STR should be truncated.
+Please see `kam-mode-line-string-truncate-length'."
   (cond
    ((or (not (stringp str))
         (string-empty-p str)
@@ -177,7 +185,7 @@
 
 (defun kam-mode-line-string-cut-end (str)
   "Return truncated STR, if appropriate, else return non-truncated STR.
-Cut off the end of STR by counding from its start up to `kam-mode-line-string-truncate-length'."
+Cut off the end of STR by counting from its start up to `kam-mode-line-string-truncate-length'."
   (if (kam-mode-line--string-truncate-p str)
       (concat (substring str 0 kam-mode-line-string-truncate-length) "...")
     str))
@@ -514,3 +522,5 @@ Minibuffer counts as a recursive edit, so recursion depth has to be greater than
                     'face 'kam-mode-line-indicator-orange-bg)
       ""))
   "Mode line construct for displaying if Emacs is in a recursive edit.")
+
+(provide 'kam-mode-line)

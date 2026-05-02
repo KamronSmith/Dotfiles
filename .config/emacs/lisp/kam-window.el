@@ -1,5 +1,10 @@
-;; -*- lexical-binding: t; -*-
+;;; kam-window.el --- Extensions for the windowing system in Emacs -*- lexical-binding: t; -*-
 
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
 (defgroup kam-window ()
   "Extensions for the windowing system in Emacs."
   :group 'window)
@@ -61,6 +66,7 @@ When there is more than one `tab-bar-mode' tabs, THING is a tab."
   (split-window-right)
   (windmove-right))
 
+;;;###autoload
 (defun kam-split-window-below ()
   "Like the normal `split-window-below', but splits the window at the root if there are two windows.
 Additionally,select the newly formed window."
@@ -69,6 +75,7 @@ Additionally,select the newly formed window."
       (split-root-window-below)
     (split-window-below)))
 
+;;;###autoload
 (defun kam-alternate-buffer (&optional window)
   "Switch back and forth between current and last buffer in the current window."
   (interactive)

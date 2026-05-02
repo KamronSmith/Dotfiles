@@ -1,4 +1,13 @@
-;; -*- lexical-binding: t; -*-
+;;; kam-timeshift.el --- Use Emacs to interact with Timeshift -*- lexical-binding: t; -*-
+
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
+(defgroup kam-timeshift ()
+  "Extensions to interact with Timeshift on my system."
+  :group 'kam-os)
 
 (defun kam-timeshift--snapshot-names ()
   "Return the names of all the snapshots on the system as a list of strings."
@@ -10,6 +19,7 @@
   (completing-read "Choose a snapshot: "
                    (kam-timeshift--snapshot-names)))
 
+;;;###autoload
 (defun kam-timeshift-snapshot-list ()
   "List all snapshots of the system, taken with Timeshift."
   (interactive)
@@ -20,6 +30,7 @@
       (insert (shell-command-to-string "timeshift --list")))
     (pop-to-buffer bufname)))
 
+;;;###autoload
 (defun kam-timeshift-snapshot-create ()
   "Create a snapshot of the system using Timeshift.
 If COMMENT, leave a comment on the snapshot."
@@ -31,6 +42,7 @@ If COMMENT, leave a comment on the snapshot."
       (erase-buffer)
       (insert (shell-command-to-string "timeshift --create")))))
 
+;;;###autoload
 (defun kam-timeshift-snapshot-delete ()
   "Delete a snapshot of the system."
   (interactive)
@@ -42,5 +54,9 @@ If COMMENT, leave a comment on the snapshot."
       (insert (shell-command-to-string
                (concat "timeshift --delete --snapshot " "'" snapshot "'"))))))
 
+;;;###autoload
 (defun kam-timeshift-snapshot-restore ()
   "Restore system to snapshot.")
+
+(provide 'kam-timeshift)
+;;; kam-timeshift.el ends here

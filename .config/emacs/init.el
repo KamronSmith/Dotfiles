@@ -1,4 +1,8 @@
-;; -*- lexical-binding: t -*-
+;;; init.el --- Kam's personal init.el file -*- lexical-binding: t -*-
+
+;; Summary:
+
+;; Code:
 (defvar kam-emacs-cache-directory
   (concat user-emacs-directory "cache/")
   "Directory containing temporary files for Emacs.")
@@ -115,7 +119,7 @@
   ("C-x n" . kam-narrow-or-widen-dwim)
   ("C-x o" . kam-ace-window-prefix)
   ("C-x u" . nil)
-  ("C-x C-c" . kam-os-restart-emacs)
+  ("C-x C-c" . restart-emacs)
   ("C-x C-n" . nil)
   ("C-x C-e" . kam-eval-current-sexp)
   ("C-x C-v" . mark-paragraph)
@@ -240,8 +244,7 @@
 To be used attached to `after-init-hook'."
     (cond
      ((eq system-type 'gnu/linux)
-      (setq x-super-keysym 'meta
-            x-meta-keysym 'alt))
+      (setq x-meta-keysym 'meta))
      ((eq system-type 'darwin)
       (setq mac-option-key-is-meta nil
             mac-command-key-is-meta t
@@ -361,13 +364,12 @@ To be used attached to `after-init-hook'."
 (use-package window
   :ensure nil
   :bind
-  ([kam-i] . kam-split-window-right)
   ("C-l" . recenter)
   ("C-v" . kam-scroll-down)
   ("C-^" . kam-alternate-buffer)
-  ("C-+" . kam-delete-window-dwim)
+  ("C-x 0" . kam-delete-window-dwim)
+  ("C-x 3" . kam-split-window-right)
   ("M-v" . scroll-down)
-  ("M-+" . delete-other-windows)
   :custom
   (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'vertical)
@@ -433,99 +435,7 @@ To be used attached to `after-init-hook'."
       (side . bottom)
       (window . root)
       (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none))))))
-  :config
-  (defun kam-quit-window ()
-    "Quit the window and kill it."
-    (interactive)
-    (quit-window t))
-
-  (defun kam-delete-window-dwim ()
-  "Do What I Mean to delete the current thing.
-When there is one window, THING is a window.
-When there is more than one `tab-bar-mode' tabs, THING is a tab."
-  (declare (interactive-only t))
-  (interactive)
-  (cond
-   ((length> (window-list) 1)
-    (delete-window))
-   ((and (featurep 'tab-bar)
-         (length> (tab-bar-tabs) 1))
-    (tab-close))
-   (t
-    (user-error "Nothing to delete"))))
-
-  (defun kam-window-bounds ()
-    "Return the start and end points of the current window as a cons cell."
-    (cons (window-start) (window-end)))
-
-  (defun kam-three-or-more-windows-p (&optional frame)
-    "Return non-nil if three or more windows occupy FRAME.
-If FRAME is non-nil, inspect the current frame."
-    (>= (length (window-list frame :no-minibuffer)) 3))
-
-  (defun kam-two-windows-p (&optional frame)
-    "Return non-nil if two windows occupy FRAME.
-If FRAME is non-nil, inspect the current frame."
-    (= (length (window-list frame :no-minibuffer)) 2))
-
-  (defun kam-window-narrow-p ()
-    "Return non-nil if the window is narrow.
-Check if the `window-width' is less than `split-width-threshold'."
-    (and (numberp split-width-threshold)
-         (< (window-total-width) split-width-threshold)))
-
-  (defun kam-window-small-p ()
-    "Return non-nil if the window is small.
-Check if the `window-width' or the `window-height' is less than `split-width-threshold' or `split-height-threshold', respectively."
-    (or (and (numberp split-width-threshold)
-             (< (window-total-width) split-width-threshold))
-        (and (numberp split-height-threshold)
-             (> (window-total-height) split-height-threshold))))
-
-  (defun kam-split-window-right ()
-    "Like the normal `split-window-right' but selects the newly formed window."
-    (interactive)
-    (split-window-right)
-    (windmove-right))
-
-  (defun kam-split-window-below ()
-    "Like the normal `split-window-below', but splits the window at the root if there are two windows. Additionally selects the newly formed window."
-    (interactive)
-    (if (kam-two-windows-p)
-        (split-root-window-below)
-      (split-window-below)))
-
-  (defun kam-alternate-buffer (&optional window)
-    "Switch back and forth between current and last buffer in the current window."
-    (interactive)
-    (let ((current-buffer (window-buffer window)))
-      (switch-to-buffer
-       (cl-find-if (lambda (buffer)
-                     (not (eq buffer current-buffer)))
-                   (mapcar #'car (window-prev-buffers window)))
-       nil t)))
-
-  (defun kam-window-delete-popup-frame (&rest _)
-    "Kill selected frame if it has the parameter `kam-window-popup-frame'.
-Use this function via a hook."
-    (when (frame-parameter nil 'kam-window-popup-frame)
-      (delete-frame)))
-
-  (defmacro kam-window-define-with-popup-frame (command)
-    "Define interactive function which calls COMMAND in a new fraeme.
-Make the new frame have the `kam-window-popup-frame-paramter."
-    `(defun ,(intern (format "kam-window-popup-%s" command)) ()
-       ,(format "Run `%s' in a popup frame with `kam-window-popup-frame' parameter.
-Also see `kam-window-delete-popup-frame'." command)
-       (interactive)
-       (let ((frame (make-frame '((kam-window-popup-frame . t)))))
-         (select-frame frame)
-         (switch-to-buffer " kam-window-hidden-buffer-for-popup-frame")
-         (condition-case nil
-             (call-interactively ',command)
-           ((quit error user-error)
-            (delete-frame frame)))))))
+      (window-parameters . ((mode-line-format . none)))))))
 
 (use-package ultra-scroll
   :custom
@@ -1317,7 +1227,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ("M-p" . kam-consult-line-symbol-at-point)
          :map goto-map
          ("M-e" . consult-compile-error)
-         ("M-o" . kam-menu)
+         ("M-o" . consult-outline)
          ("M-i" . consult-imenu)
          ("M-m" . consult-mark)
          :map isearch-mode-map
@@ -1437,6 +1347,9 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :bind
   ([remap describe-bindings] . embark-bindings)
   ("C-." . embark-act)
+  (:map minibuffer-local-map
+        ("C-c C-c" . embark-collect)
+        ("C-c C-e" . embark-export))
   :custom
   (prefix-help-command #'embark-prefix-help-command)
   (embark-prompter #'embark-keymap-prompter)
@@ -1454,10 +1367,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
                  (window-width . 0.5)
                  (mode apropos-mode)
                  (window-parameters . ((mode-line-format . none))))))
-
-(use-package embark-consult
-  :after (embark consult)
-  :hook (embark-collect-mode . consult-preview-at-point-mode))
 
 (use-package orderless
   :config
@@ -1951,9 +1860,9 @@ Do nothing if search string is empty to start with."
   :bind
   (("M-s g" . grep)
    :map grep-mode-map
-   ("w" . grep-change-to-grep-edit-mode)
-   :map grep-edit-mode-map
-   ("C-c C-c" . grep-edit-save-changes))
+   ("w" . grep-change-to-grep-edit-mode))
+   ;; :map grep-edit-mode-map
+   ;; ("C-c C-c" . grep-edit-save-changes))
   :custom
   (grep-program "ripgrep")
   (grep-command "rg -nS --no-heading --color=always ")
@@ -2190,11 +2099,13 @@ If none of the previous conditions are true, kills the current line."
          (when (eq last-command 'kill-region)
            (append-next-kill))
          (kill-whole-line)
-
          (setq this-command 'kill-region))))
 
 (defun kam-kill-ring-save-dwim ()
-  "If the region is active, copy the region. If the region is inactive, copy the line. If point is at an Org heading, copy the subtree. If the point is at an Org item, copy the item. Else, copy the line."
+  "If the region is active, copy the region. If the region is inactive, copy the line.
+
+ If point is at an Org heading, copy the subtree. If the
+point is at an Org item, copy the item. Else, copy the line."
   (interactive)
   (cond ((region-active-p)
          (copy-region-as-kill nil nil t)
@@ -2206,7 +2117,7 @@ If none of the previous conditions are true, kills the current line."
          (copy-region-as-kill (car (kam-org-item-bounds)) (cdr (kam-org-item-bounds)))
          (setq this-command 'copy-region-as-kill))
         (t
-         (kam-mark-line-with-newline)
+         (kam-mark-line)
          (kill-ring-save nil nil t)
          (setq this-command 'kill-ring-save))))
 
@@ -2223,17 +2134,12 @@ If none of the previous conditions are true, kills the current line."
 (advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
 
 (defun kam-yank-dwim ()
-  "Complicated yank function that tries to determine how you want to yank based on a few factors."
+  "Indent after you yank"
   (interactive)
-  (cond
-   ((kam-line-regexp-p 'empty)
-    (let ((yank-transform-functions #'kam-yank--string-remove-newline-prefix))
-      (yank)))
-   ((string-match-p "\n" (current-kill 0))
-      (let ((yank-transform-functions #'kam-yank--string-add-newline-prefix))
-        (move-end-of-line 1)
-        (yank)))
-    (t (yank))))
+  (let* ((beg (point)))
+    (yank)
+    (indent-region beg (point))
+    (setq this-command 'yank)))
 
 (defun kam-yank--string-remove-newline-prefix (string)
   "Remove the newline character at the beginning of STRING.
@@ -2325,15 +2231,6 @@ If called interactively without a prefix numeric argument, N is 1."
   (while (or (not (kam-line-only-spaces-or-symbols-p))
              (bolp))
     (delete-char -1)))
-
-(defun kam-comment-dwim (n)
-  "Comment N lines, defaulting to the current line.
-When the region is active, comment its lines instead."
-  (interactive "p")
-  (if (region-active-p)
-      (comment-or-uncomment-region
-       (region-beginning) (region-end))
-    (comment-line n)))
 
 (defun kam-control-backspace ()
   "Kill the word behind point. If the line is empty, join it with the previous line."
@@ -2500,25 +2397,17 @@ This command does the inverse of `fill-paragraph'."
       (indent-region (line-beginning-position) (line-end-position)))
     (setq deactivate-mark deactivate)))
 
-;; (defun kam-yank ()
-;;   (interactive)
-;;   (let ((yank-transform-functions
-;;          '(kam-yank--string-transform)))
-;;     (cond
-;;      ((derived-mode-p 'org-mode)
-;;       (org-yank))
-;;      (t
-;;       (yank)))))
-
-(defun kam-yank-undo (arg)
-  "Undo the yank you just did. Reverses the direction you are going in the kill ring."
+(defun kam-yank-undo (&optional arg)
+  "Undo the yank you just did.
+Reverses the direction you are going in the kill ring."
   (interactive "p")
   (yank-pop (- arg)))
 
 (defun kam-scroll-down (&optional arg)
-  "Recenter the point and scroll down."
+  "Recenter the point and scroll down.
+With optional ARG"
   (interactive)
-  (scroll-up-command)
+  (scroll-up-command arg)
   (recenter))
 
 (defun kam-scroll-up (&optional arg)
@@ -3628,109 +3517,9 @@ The Eshell buffer is renamed to match that directory in order to make multiple E
 ;;     (let ((default-directory (project-root (project-current t))))
 ;;       (vterm))))
 
-(defun kam-read-feature ()
-  "Read a feature from the minibuffer."
-  (interactive)
-  (read-feature "Feature: "))
 
-(defun kam-empty-buffer-p ()
-  "Test whether the buffer is empty."
-  (or (= (point-min) (point-max))
-      (save-excursion
-        (goto-char (point-min))
-        (while (and (looking-at "^\\([a-zA-Z]+: ?\\)?$")
-                    (zerop (forward-line 1))))
-        (eobp))))
-
-(defun kam-page-p ()
-  "Return non-nil if there is a `page-delimiter' in the buffer."
-  (or (save-excursion (re-search-forward page-delimiter nil t))
-      (save-excursion (re-search-backward page-delimiter nil t))))
-
-(defun kam-read-data (file)
-  "Read Elisp data from FILE."
-  (with-temp-buffer
-    (insert-file-contents file)
-    (read (current-buffer))))
-
-(defun kam-shell-command-with-exit-code-and-output (command &rest args)
-  "Runs COMMAND with ARGS.
-Return the exit code and output in a list."
-  (with-temp-buffer
-    (list (apply 'call-process command nil (current-buffer) nil args)
-          (buffer-string))))
-
-(defun kam-async-shell-command-with-exit-code-and-output (command output-buffer error-buffer &rest args)
-  "Runs COMMAND with ARGS asynchronously with standard output going to OUTPUT-BUFFER, and standard error going to ERROR-BUFFER.
-Return the exit code and output in a list."
-  (with-temp-buffer
-    (list (async-shell-command (concat command " " args) output-buffer error-buffer)
-          (buffer-string))))
-
-(defun kam-sudo-shell-command (command &rest args)
-  "Runs COMMAND with ARGS as root."
-  (async-shell-command (concat "echo " (read-passwd "Password: ") " | sudo -S " command)))
 
 (advice-add 'kam-sudo-shell-command :after 'kam-clear-echo-area)
-
-(defun kam-execute-command-on-file-buffer (cmd)
-  (interactive "sCommand to excute: ")
-  (let* ((file-name (buffer-file-name))
-         (full-cmd (concat cmd " " file-name)))
-    (async-shell-command full-cmd)))
-
-(defun kam-sudo ()
-  "Find the current file or directory using SUDO."
-  (interactive)
-  (let ((destination (or buffer-file-name default-directory)))
-    (if (string= (file-remote-p destination 'method) "sudo")
-        (user-error "Already using `sudo'")
-      (find-file (format "/sudo::/%s" destination)))))
-
-(defun kam--duplicate-buffer-substring (boundaries)
-  "Duplicate buffer substring between BOUNDARIES.
-BOUNDARIES is a cons cell representing buffer positions."
-  (unless (consp boundaries)
-    (error "`%s' is not a cons cell" boundaries))
-  (let ((beg (car boundaries))
-        (end
-         (cdr boundaries)))
-    (goto-char end)
-    (newline)
-    (insert (buffer-substring-no-properties beg end))))
-
-(defvar kam--line-regexp-alist
-  '((empty . "[\s\t]*$")
-    (indent . "^[[:blank:]]+")
-    (non-empty . "^.+$")
-    (list . "^\\([\s\t#*+]+\\|[0-9]+[^\s]?[).]+\\)")
-    (heading . "^[=-\\*]+\\|[*]+"))
-  "Alist of regexp types used by `kam-line-regexp-p'.")
-
-(defun kam-line-regexp-p (type &optional n)
-  "Test for TYPE on line.
-TYPE is the car of a cons cell in `kam--line-regexp-alist'. It matches a regular expression.
-
-With optional N, search in the Nth line from point."
-  (save-excursion
-    (goto-char (line-beginning-position))
-    (and (not (bobp))
-         (or (beginning-of-line n) t)
-         (save-match-data
-           (looking-at
-            (alist-get type kam--line-regexp-alist))))))
-
-(defun kam-line-empty-before-point-p ()
-  "Return non-nil if there are only spaces or tabs before the point on the current line."
-  (if (looking-back (alist-get 'indent kam--line-regexp-alist))
-      t
-    nil))
-
-(defun kam-line-only-spaces-or-symbols-p ()
-  "Return non-nil if there are only spaces or symbols before the point on the current line."
-  (if (looking-back "^\([[:blank:]]\\|[[:punct:]])*")
-      t
-    nil))
 
 (defun kam-completing-read (prompt collection &optional predicate require-match initial-input hist def inherit-input-method)
   "Call `completing-read' but return the value from COLLECTION with PROMPT.
@@ -3767,62 +3556,7 @@ Where kam-test is an alist of choices mapped to values."
   (interactive)
   (revert-buffer t t t))
 
-(defun kam-parse-file-as-list (file)
-  "Return the contents of FILE as a list of strings.
-Strings are split at the newline characters then trimmed for negative space."
-  (split-string
-   (with-temp-buffer
-     (insert-file-contents file)
-     (buffer-substring-no-properties (point-min) (point-max)))
-   "\n" :omit-nulls "[\s\f\t\n\r\v]+"))
 
-(defun kam-ignore (&rest _)
-  "Use this as a wrapper on a function to make it do nothing."
-  nil)
-
-(defun kam-call-function-quietly (orig-fun &rest _)
-  "Don't print log messages while calling ORIG-FUN."
-  (let ((inhibit-message t))
-    (funcall orig-fun)))
-
-(defun kam-crm-exclude-selected-p (input)
-  "Filter out INPUT from `completing-read-multiple'.
-Hide non-destructively the selected entries from completion table, avoiding the risk of entering the same match twice.
-
-Use as the PREDICATE of `completing-read-multiple'."
-  (if-let* ((pos (string-match-p crm-separator input))
-            (rev-input (reverse input))
-            (element (reverse
-                      (substring rev-input 0
-                                 (string-match-p crm-separator rev-input))))
-            (flag t))
-      (progn
-        (while pos
-          (if (string= (substring input 0 pos) element)
-              (setq pos nil)
-            (setq input (substring input (1+ pos))
-                  pos (string-match-p crm-separator input)
-                  flag (when pos t))))
-        (not flag))
-    t))
-
-(defun kam-active-minor-modes ()
-  "Return a list of active minor modes for the current buffer."
-  (let ((active-modes))
-    (mapc (lambda (m)
-            (when (and (boundp m) (symbol-value m))
-              (push m active-modes)))
-          minor-mode-list)
-    active-modes))
-
-(defun kam-clear-echo-area (&rest _nil)
-  "Clear the echo area.
-Use this as advice :after a noisy function."
-  (message ""))
-
-(defun kam-first-char (str)
-  "Return the first character from STR."
-  (substring str 0 1))
 
 (use-package standard-themes
   :hook (standard-themes-after-load-theme . kam-set-custom-faces)
@@ -3845,7 +3579,7 @@ Use this as advice :after a noisy function."
                                                    (bg-prompt unspecified)
                                                    (bg-prose-block-delimiter "#312f34")
                                                    (bg-prose-block-contents "#29272c")
-                                                   (cursor "#f9d82b")
+                                                   ;; (cursor "#f9d82b")
                                                    ;; (fg-completion-match-0 fg-main)
                                                    ;; (fg-completion-match-1 fg-main)
                                                    ;; (builtin fg-dim)
@@ -3902,13 +3636,15 @@ Use this as advice :after a noisy function."
                             :scroll-bar-width 8
                             :fringe-width 16))
 
-  (spacious-padding-subtle-mode-line t)
+  (spacious-padding-subtle-mode-line nil)
   :config
-  (setq spacious-padding-subtle-frame-lines
-        '(:mode-line-active spacious-padding-line-active
-                            :mode-line-inactive spacious-padding-line-inactive
-                            :header-line-active spacious-padding-line-active
-                            :header-line-inactive spacious-padding-line-inactive))
+  ;; (setq spacious-padding-subtle-frame-lines
+  ;;       '(:mode-line-active spacious-padding-line-active
+  ;;                           :mode-line-inactive spacious-padding-line-inactive
+  ;;                           :header-line-active spacious-padding-line-active
+  ;;                           :header-line-inactive spacious-padding-line-inactive))
+
+  (setq spacious-padding-subtle-frame-lines nil)
 
   (spacious-padding-mode))
 
@@ -3934,11 +3670,12 @@ Use this as advice :after a noisy function."
   (hl-line-sticky-flag nil)
   (global-hl-line-sticky-flag 'window)
   :config
-  (with-eval-after-load 'standard-themes
-    (standard-themes-with-colors
-      (custom-set-faces
-       `(hl-line ((,c :background ,bg-dim)))
-       `(hl-line-nonselected ((,c :background ,bg-main)))))))
+  ;; (with-eval-after-load 'standard-themes
+  ;;   (standard-themes-with-colors
+  ;;     (custom-set-faces
+  ;;      `(hl-line ((,c :background ,bg-dim)))
+  ;;      `(hl-line-nonselected ((,c :background ,bg-main))))))
+  )
 
 (use-package lin
   :custom
@@ -4051,218 +3788,6 @@ Use this as advice :after a noisy function."
                      kam-mode-line-vc-branch))
   (put construct 'risky-local-variable t))
 
-(defun kam-consult-imenu--select (prompt)
-  "Returns a selection from `consult-imenu'. using PROMPT."
-  (let ((items (consult-imenu--items)))
-    (consult-imenu--deduplicate items)
-    (consult--read
-     (or items (user-error "Imenu is empty"))
-     :state
-     (let* ((preview (consult--jump-preview)))
-       `(lambda (action cand)
-          (funcall ',preview action (and (markerp (cdr cand)) (cdr cand)))))
-     :narrow
-     (when-let* (narrow (consult-imenu--narrow))
-       (list :predicate
-             (lambda (cand)
-               (eq (get-text-property 0 'consult-type (car cand))
-                   consult--narrow))
-             :keys narrow))
-     :group (consult-imenu--group)
-     :prompt prompt
-     :require-match t
-     :category 'imenu
-     :history 'consult-imenu--history
-     :add-history 'consult-imenu--history
-     :lookup #'consult--lookup-cons
-     :sort nil)))
-
-(defmacro kam-consult-imenu--action (prompt &rest body)
-  "Execute forms in BODY at the location of an `consult-imenu' selection."
-  `(let ((item (kam-consult-imenu--select ',prompt)))
-     (pcase item
-       (`(,name ,pos ,fn . ,args)
-        (push-mark nil t)
-        (apply fn name pos args))
-       (`(,_ . ,pos)
-        (save-excursion
-          (consult--jump pos)
-          ,@body))
-       (_ (error "Unknown Imenu item: %S" item)))))
-
-(defmacro kam-consult-org-heading--action (&rest body)
-  "Execute forms in BODY at the location of an `consult-org-heading' selection."
-  `(let* ((headings (consult-org-heading)))
-     ,@body))
-
-(defun kam-consult-org-heading-link ()
-  "Insert a link at point to the location of an Org heading using minibuffer completion."
-  (interactive)
-  (save-excursion
-    (kam-consult-org-heading--action (org-store-link nil t)))
-  (kam-org-insert-last-stored-link-with-prompt))
-
-(defvar kam-consult--previous-point nil
-  "Location of point before entering minibuffer.
-Used to preselect nearest headings and Imenu items.")
-
-(defun kam-consult--set-previous-point ()
-  "Save location of point. Used before entering the minibuffer."
-  (setq kam-consult--previous-point (point)))
-
-(advice-add #'consult-org-heading :before #'kam-consult--set-previous-point)
-(advice-add #'consult-outline :before #'kam-consult--set-previous-point)
-
-;; (advice-add #'vertico--update :after #'kam-consult-vertico--update-choose)
-
-(defun kam-consult-vertico--update-choose (&rest _)
-  "Pick the nearest candidate rather than the first after updating candidates."
-  (when (and kam-consult--previous-point
-             (memq current-minibuffer-command
-                   '(consult-org-heading consult-outline)))
-    (setq vertico--index
-          (max 0
-               (1- (or (seq-position
-                        vertico--candidates
-                        kam-consult--previous-point
-                        (lambda (cand point-pos)
-                          (> (cl-case current-minibuffer-command
-                               (consult-outline
-                                (car (consult--get-location cand)))
-                               (consult-org-heading
-                                (get-text-property 0 'consult--candidate cand)))
-                             point-pos)))
-                       (length vertico--candidates))))))
-  (setq kam-consult--previous-point nil))
-
-(defcustom kam-consult-ripgrep-or-line-limit 300000
-  "Buffer size threshold for `kam-consult-ripgrep-or-line'.
-When the number of characters in a buffer exceeds this threshold,
-`consult-ripgrep' will be used instead of `consult-line'."
-  :type 'integer)
-
-(defun kam-consult-ripgrep-or-line ()
-  "Call `consult-line' for small buffers and `consult-ripgrep' for large files."
-  (interactive)
-  (if (or (not buffer-file-name)
-          (buffer-narrowed-p)
-          (ignore-errors
-            (file-remote-p buffer-file-name))
-          (jka-compr-get-compression-info buffer-file-name)
-          (>= (buffer-size)
-              (/ kam-consult-ripgrep-or-line-limit
-                 (if (eq major-mode 'org-mode) 4 1))))
-      (progn
-        (let ((consult)))
-        (consult-line)
-        (setq this-command 'consult-line))
-    (when (file-writable-p buffer-file-name)
-      (save-buffer))
-    (let ((consult-ripgrep-args
-           (concat consult-ripgrep-args
-                   " -g "
-                   (shell-quote-argument (file-name-nondirectory buffer-file-name))
-                   " ")))
-      (consult-ripgrep))))
-
-(defun kam-consult-line-symbol-at-point ()
-  "Start a `consult-line' search with the symbol at point."
-  (interactive)
-  (consult-line (thing-at-point 'symbol)))
-
-(defun kam-consult-isearch ()
-  "Start a `consult-line' search within an Isearch session."
-  (interactive)
-  (consult-line isearch-string))
-
-(defun kam-consult-ripgrep-symbol-at-point ()
-  "Start a `consult-ripgrep' search with the symbol at point."
-  (interactive)
-  (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
-    (consult-ripgrep nil (thing-at-point 'symbol))))
-
-(defun kam-consult-search-emacs-info-pages ()
-  "Search through the Emacs info pages."
-  (interactive)
-  (consult-info "emacs" "efaq"))
-
-(defun kam-consult-search-elisp-info-pages ()
-  "Search through the Emacs Lisp pages."
-  (interactive)
-  (consult-info "elisp" "eintr"))
-
-(defun kam-consult-search-org-info-pages ()
-  "Search through the Org info pages."
-  (interactive)
-  (consult-info "org"))
-
-(defun kam-consult-search-manual (manual)
-  "Search through MANUAL, which is prompted for by `completing-read'."
-  (interactive
-   (list
-    (progn
-      (info-initialize)
-      (completing-read "Manual name: "
-                       (info--filter-manual-names
-                        (info--manual-names current-prefix-arg))
-                       nil t))))
-  (consult-info manual))
-
-;; (defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
-;;   (interactive)
-;;   (let ((default-directory (or dir default-directory))
-;;         (minibuffer-completing-file-name t))
-;;     (consult--read #'read-file-name-internal
-;;                    :state (consult--file-preview)
-;;                    :prompt prompt
-;;                    :initial initial
-;;                    :require-match mustmatch
-;;                    :predicate pred)))
-
-;; (setq read-file-name-function #'kam-consult-find-file-with-preview)
-
-;; (setq project-read-file-name-function #'kam-consult-project-find-file-with-preview)
-
-;; (defun kam-consult-project-find-file-with-preview (prompt all-files &optional pred hist _mb)
-;;   (let ((prompt (if (and all-files
-;;                          (file-name-absolute-p (car all-files)))
-;;                     prompt
-;;                   (concat prompt
-;;                           (format " in %s"
-;;                                   (consult--fast-abbreviate-file-name default-directory)))))
-;;         (minibuffer-completing-file-name t))
-;;     (consult--read (mapcar
-;;                     (lambda (file)
-;;                       (file-relative-name file))
-;;                     all-files)
-;;                    :state (consult--file-preview)
-;;                    :prompt (concat prompt ": ")
-;;                    :require-match t
-;;                    :history hist
-;;                    :category 'file
-;;                    :predicate pred)))
-
-(defun kam-menu ()
-  "If the current buffer's major mode is Org mode, opens `consult-org-heading'. Otherwise opens `consult-imenu'."
-  (interactive)
-  (cond
-   ((derived-mode-p 'org-mode)
-    (progn
-      (consult-org-heading)
-      (setq this-command 'consult-org-heading)))
-   ((derived-mode-p 'prog-mode)
-    (progn
-      (consult-imenu)
-      (setq this-command 'consult-imenu)))
-   ((derived-mode-p 'text-mode)
-    (progn
-      (consult-outline)
-      (setq this-command 'consult-outline)))
-   (t
-    (progn
-      (consult-imenu)
-      (setq this-command 'consult-imenu)))))
-
 (use-package text-mode
   :ensure nil
   :hook ((text-mode . visual-fill-column-mode)
@@ -4280,6 +3805,8 @@ When the number of characters in a buffer exceeds this threshold,
     "Set up `prog-mode'."
     (setq-local buffer-face-mode-face 'fixed-pitch)
     (buffer-face-mode)
+    (outline-minor-mode)
+    (hl-line-mode)
     (display-line-numbers-mode)
     (indent-tabs-mode -1)))
 
@@ -4578,7 +4105,8 @@ When the number of characters in a buffer exceeds this threshold,
   (epa-gpg-program (executable-find "gpg2"))
   (epa-keys-select-method 'minibuffer)
   :config
-  (setenv "GPG_AGENT_INFO" nil))
+  (setenv "GPG_AGENT_INFO" nil)
+  (setenv "GNUGPGHOME" "~/.gnupg"))
 
 (use-package epg
   :ensure nil
@@ -4676,6 +4204,9 @@ When the number of characters in a buffer exceeds this threshold,
 
 (use-package diff-hl
   :hook (magit-post-refresh . diff-hl-magit-post-refresh)
+  :custom
+  (diff-hl-draw-borders nil)
+  (diff-hl-update-async t)
   :config
   (global-diff-hl-mode))
 
@@ -4693,9 +4224,37 @@ When the number of characters in a buffer exceeds this threshold,
   :config
   (global-jinx-mode))
 
+(use-package shr
+  :ensure nil
+  :config
+  (setq shr-use-colors nil
+        shr-use-fonts nil))
+
+(defun kam-add-lexical-binding-prop-line ()
+  "Add the prop line `lexical-binding' to the top of the file.
+Set it to t."
+  (interactive)
+  (add-file-local-variable-prop-line lexical-binding t nil)
+  (end-of-line))
+
+(defvar kam-favorite-themes '(standard-dark
+                              standard-light
+                              standard-light-tinted
+                              ef-day)
+  "A list of themes that I like.")
+
+(defun kam-load-theme ()
+  "Load a theme that I like.
+See `kam-favorite-themes'."
+  (interactive)
+  (load-theme (intern (completing-read
+                       "Theme to load: "
+                       kam-favorite-themes))
+              t
+              nil))
+
 (defvar kam-custom-lisp-files
-  `(,(concat (getenv "HOME") "/.config/emacs/lisp/mode-line.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
+  `(,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/os.el")
@@ -4713,5 +4272,9 @@ Each string should be a full path to a Lisp file.")
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
 
 (require 'kam-comment)
+(require 'kam-common)
+(require 'kam-mode-line)
 (require 'kam-window)
+(require 'kam-os)
+(require 'kam-consult)
 ;;; init.el ends here
