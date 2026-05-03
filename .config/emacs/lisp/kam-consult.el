@@ -19,6 +19,24 @@ When the number of characters in a buffer exceeds this threshold,
 `consult-ripgrep' will be used instead of `consult-line'."
   :type 'integer)
 
+(defvar kam-consult-source-neighbor-file
+  `(:name     "File in current directory"
+              :narrow   ?.
+              :category file
+              :face     consult-file
+              :history  file-name-history
+              :state    ,#'consult--file-state
+              :new      ,#'consult--file-action
+              :items
+              ,(lambda ()
+                 (let ((ht (consult--buffer-file-hash)) items)
+                   (dolist (file (completion-pcm--filename-try-filter
+                                  (directory-files "." 'full "\\`[^.]" nil 100))
+                                 (nreverse items))
+                     (unless (or (gethash file ht) (not (file-regular-p file)))
+                       (push (file-name-nondirectory file) items))))))
+  "Neighboring file source for `consult-buffer'.")
+
 (defun kam-consult-imenu--select (prompt)
   "Return a selection from `consult-imenu'. using PROMPT."
   (let ((items (consult-imenu--items)))
