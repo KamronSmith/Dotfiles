@@ -107,5 +107,51 @@ Also see `kam-window-delete-popup-frame'." command)
          ((quit error user-error)
           (delete-frame frame))))))
 
+(defun kam-next-buffer (&optional arg)
+  "Swith to the next ARGth buffer.
+With a universal prefix arg, run in the next window."
+  (interactive "P")
+  (if-let* (((equal arg '(4)))
+            (win (other-window-for-scrolling)))
+      (with-selected-window win
+        (next-buffer)
+        (setq prefix-arg current-prefix-arg))
+    (next-buffer arg)))
+
+(defun kam-prev-buffer (&optional arg)
+  "Switch to the previous ARGth buffer.
+With a universal prefix ARG, run in the next window."
+  (interactive "P")
+  (if-let* (((equal arg '(4)))
+            (win (other-window-for-scrolling)))
+      (with-selected-window win
+        (previous-buffer)
+        (setq prefix-arg current-prefix-arg))
+    (previous-buffer arg)))
+
+(defun kam-get-alternate-buffer (&optional window)
+  "Return the last buffer WINDOW has displayed other than the current one."
+  (let* ((prev-buffers (window-prev-buffers))
+         (head (car prev-buffers)))
+    (if (eq (car head) (window-buffer window))
+        (cadr prev-buffers)
+      head)))
+
+;;;###autoload
+(defun kam-switch-to-alternate-buffer ()
+  "Switch to the last window used."
+  (interactive)
+  (let* ((alt-buffer (kam-get-alternate-buffer)))
+    (switch-to-buffer alt-buffer)))
+
+;;;###autoload
+(defun kam-clone-buffer-and-narrow ()
+  (interactive)
+  (clone-indirect-buffer-other-window nil 'pop-to-buffer)
+  (cond ((region-active-p)
+         (narrow-to-region (region-beginning) (region-end)))
+        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
+        (t (narrow-to-defun))))
+
 (provide 'kam-window)
 ;;; kam-window.el ends here
