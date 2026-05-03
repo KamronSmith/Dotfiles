@@ -1,8 +1,10 @@
 ;;; init.el --- Kam's personal init.el file -*- lexical-binding: t -*-
 
-;; Summary:
+;;; Summary:
 
-;; Code:
+;;; Commentary:
+
+;;; Code:
 (defvar kam-emacs-cache-directory
   (concat user-emacs-directory "cache/")
   "Directory containing temporary files for Emacs.")
