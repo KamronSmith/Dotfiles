@@ -1627,7 +1627,9 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
             (derived-mode-p popper--reference-modes)))))
 
   (with-eval-after-load 'consult
-    (add-to-list 'consult-preview-excluded-buffers 'kam-popper-buffer-p))
+    (setq consult-preview-excluded-buffers
+          (lambda (buf)
+            (kam-popper-buffer-p buf))))
 
   (with-eval-after-load 'org
     (keymap-set org-mode-map "C-#" #'popper-toggle)
