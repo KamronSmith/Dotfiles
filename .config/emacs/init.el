@@ -82,7 +82,6 @@
   ("C-SPC" . set-mark-command)
   ("C-<return>" . kam-insert-new-line-below)
   ("C-<backspace>" . kam-control-backspace)
-  ("C-&" . kam-push-mark-no-activate)
   ("C-@" . nil)
   ("C-_" . nil)
   ("C-:" . pp-eval-expression)
@@ -1963,7 +1962,7 @@ Do nothing if search string is empty to start with."
   :hook
   (text-mode . kam-expreg-text-mode-setup)
   :bind
-  (("C-=" . expreg-expand)
+  (("C-&" . expreg-expand)
    ("C--" . expreg-contract))
   :config
   (defun kam-expreg-text-mode-setup ()
