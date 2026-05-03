@@ -2087,19 +2087,6 @@ point is at an Org item, copy the item. Else, copy the line."
     (indent-region beg (point))
     (setq this-command 'yank)))
 
-(defun kam-yank--string-remove-newline-prefix (string)
-  "Remove the newline character at the beginning of STRING.
-Intended to be used in `kam-yank-dwim'."
-  (let ((new-string (string-remove-prefix "\n" string)))
-    new-string))
-
-(defun kam-yank--string-add-newline-prefix (string)
-  "Add a newline character to the beginning of STRING. Remove the newline character at the end of STRING.
-Intended to be used in `kam-yank-dwim'."
-  (let* ((newline-string (string-remove-suffix "\n" string))
-         (beginning-whitespace-string (concat "\n" newline-string)))
-    beginning-whitespace-string))
-
 (defun kam-delete-pair-dwim ()
   "Delete pair before or preceding point."
   (interactive)
