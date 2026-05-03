@@ -95,6 +95,7 @@
   ("C-<" . nil)
   ("C->" . nil)
   ("M-c" . capitalize-dwim)
+  ("M-i" . comment-indent-new-line)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
   ("M-n" . kam-forward-paragraph)
@@ -1255,18 +1256,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (add-to-list 'consult-buffer-filter
                "^\\*Backtrace\\*$" t)
 
-  (defun kam-consult-directory-files-recursively (dir)
-    "Find file recursively"
-    (interactive)
-    (find-file
-     (consult--read
-      (directory-files-recursively dir "" nil (lambda (x) (not (string-match-p "/\\." x))))
-      :state (consult--file-preview)
-      :prompt "Find File: "
-      :require-match t
-      :category 'file)))
-
-
   (add-to-list 'consult-buffer-sources 'kam-consult-source-neighbor-file 'append)
 
   (with-eval-after-load 'popper
@@ -1279,7 +1268,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 (use-package consult-dir
   :bind
   (("C-x C-d" . consult-dir)
-   :map minibuffer-local-completion-map
+   :map minibuffer-local-map
    ("C-x C-d" . consult-dir)
    ("C-x C-j" . consult-dir-jump-file))
   :custom
