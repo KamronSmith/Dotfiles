@@ -1637,7 +1637,7 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
     (keymap-set org-mode-map "C-M-#" #'popper-toggle-cycle)))
 
 ;; (defun kam-tab-new-tab-one-command ()
-;;   "Create a rnew tab and and run a command in the newly created tab."
+;;   "Create a new tab and and run a command in the newly created tab."
 ;;   (interactive)
 ;;   (tab-new)
 ;;   (let* ((command (key-binding
@@ -1711,7 +1711,7 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
     (keyboard-escape-quit))))
 
 (defun kam-keyboard-escape-quit-advice (fun)
-  "Around advice for `keyboard-escape-quit', calls FUN.
+  "Around advice for `keyboard-escape-quit', call FUN.
 Preserve window configuration when pressing \\[keyboard-escape-quit]."
   (let ((buffer-quit-function (or buffer-quit-function #'ignore)))
     (funcall fun)))
@@ -1719,7 +1719,7 @@ Preserve window configuration when pressing \\[keyboard-escape-quit]."
 (advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit-advice)
 
 (defun kam-kill-current-buffer (&optional arg)
-  "Kill the current buffer, no prompts.
+  "Kill the current buffer, without prompting the user.
 With optional prefix ARG (\\[universal-argument]), delete the buffer's window as well."
   (interactive "P")
   (let ((kill-buffer-query-functions nil))
@@ -1799,7 +1799,22 @@ Do nothing if search string is empty to start with."
   (grep-command "rg -nS --no-heading --color=always ")
   (grep-use-null-device nil)
   (grep-find-ignored-directories
-   '("SCCS" "RCS" "CVS" "MCVS" ".src" ".svn" ".jj" ".git" ".hg" ".bzr" "_MTN" "_darcs" "{arch}" "node_modules" "build" "dist"))
+   '("SCCS"
+     "RCS"
+     "CVS"
+     "MCVS"
+     ".src"
+     ".svn"
+     ".jj"
+     ".git"
+     ".hg"
+     ".bzr"
+     "_MTN"
+     "_darcs"
+     "{arch}"
+     "node_modules"
+     "build"
+     "dist"))
   :config
   (add-to-list 'display-buffer-alist
                '("\\*[Gg]rep\\*"
@@ -2033,7 +2048,7 @@ If none of the previous conditions are true, kills the current line."
          (setq this-command 'kill-region))))
 
 (defun kam-kill-ring-save-dwim ()
-  "If the region is active, copy the region. If the region is inactive, copy the line.
+  "A DWIM command for copying.
 
  If point is at an Org heading, copy the subtree. If the
 point is at an Org item, copy the item. Else, copy the line."
@@ -2048,8 +2063,7 @@ point is at an Org item, copy the item. Else, copy the line."
          (copy-region-as-kill (car (kam-org-item-bounds)) (cdr (kam-org-item-bounds)))
          (setq this-command 'copy-region-as-kill))
         (t
-         (kam-mark-line)
-         (kill-ring-save nil nil t)
+         (kam-copy-line)
          (setq this-command 'kill-ring-save))))
 
 (defun kam-duplicate-line-or-region ()
@@ -2065,7 +2079,7 @@ point is at an Org item, copy the item. Else, copy the line."
 (advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
 
 (defun kam-yank-dwim ()
-  "Indent after you yank"
+  "Indent after you yank."
   (interactive)
   (let* ((beg (point)))
     (yank)
