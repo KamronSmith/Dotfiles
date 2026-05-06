@@ -248,11 +248,11 @@ To be used attached to `after-init-hook'."
      ((eq system-type 'gnu/linux)
       (setq x-meta-keysym 'meta))
      ((eq system-type 'darwin)
-      (setq mac-option-key-is-meta nil
+      (setq mac-option-key-is-meta t
             mac-command-key-is-meta t
             mac-control-modifier 'control
             mac-command-modifier 'meta
-            mac-option-modifier 'hyper
+            mac-option-modifier 'meta
             insert-directory-program (executable-find "gls"))
       (menu-bar-mode)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
