@@ -1,10 +1,11 @@
 * {
-    font-family: SauceCodePro Mono Nerd Font;
-    font-size: 14px;
+    font-family: SauceCodePro Nerd Font;
+    font-size: 18px;
     min-height: 0;
-    padding-right: 2px;
+    padding-right: 4px;
     padding-left: 2px;
     padding-bottom: 0px;
+    padding-top: 0px;
 }
 
        #waybar {
@@ -14,7 +15,7 @@
        }
        
        #workspaces {
-           border-radius: 5px;
+           /* border-radius: 5px; */
            margin: 5px;
            background: #101010;
            margin-left: 2px;
@@ -53,11 +54,13 @@
        }
        
        #clock {
-           color: #8caaee;
-           border-radius: 5px;
+           color: #babbf1;
+           /* border-radius: 5px; */
        }
               
        #pulseaudio {
            color: #ea999c;
-           border-radius: 5px 0px 0px 5px;
+           /* border-radius: 5px 0px 0px 5px; */
        }
+
+
