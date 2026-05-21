@@ -288,7 +288,8 @@ To be used attached to `after-init-hook'."
   (setq-default comment-column 0)
 
   (defun kam-whitespace-handling ()
-    (add-to-list 'write-file-functions 'delete-trailing-whitespace)))
+    (add-to-list 'write-file-functions 'delete-trailing-whitespace)
+    (kill-ring-deindent-mode)))
 
 (use-package minibuffer
   :ensure nil
