@@ -1535,7 +1535,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :bind ("M-j" . flash-jump)
   :custom
   (flash-labels "strdneaiy.mvlcpbfouqzkjgh")
-  (flash-autojump t))
+  (flash-autojump nil))
 
 (use-package ace-window
   :bind
