@@ -1593,9 +1593,13 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
             (call-interactively command)))))))
 
 (use-package popper
+  :hook (popper-open-popup . kam-popper-select-popup)
   :bind (("C-," . popper-toggle)
          ("C-M-," . popper-cycle)
-         ("C-M-#" . popper-toggle-type))
+         ("C-M-#" . popper-toggle-type)
+         ;; (:map org-mode-map
+         ;;       ("C-," . popper-toggle))
+         )
   :custom
   (popper-reference-buffers
    '(("\\*Messages\\*")
@@ -1615,6 +1619,7 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
      ("\\*Playlist\\*")
      ("^\\*Pacman:")
      ("^\\*Timeshift:")
+     ("\\*ChatGPT\\*")
      emms-browser-mode
      Man-mode
      help-mode
@@ -1635,6 +1640,16 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
                    popper--reference-names)
           (with-current-buffer buf
             (derived-mode-p popper--reference-modes)))))
+
+  (defun kam-popper-select-popup ()
+    "Select the popup when it is opened.
+Used in `popper-open-popup-hook'."
+    (select-window (get-buffer-window (current-buffer))))
+
+  (defun kam-popper-popup-open-p ()
+    "Return t if a Popper popup is currently displayed."
+    (when popper-open-popup-alist
+      t))
 
   (with-eval-after-load 'consult
     (setq consult-preview-excluded-buffers
