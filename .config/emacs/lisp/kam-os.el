@@ -40,12 +40,19 @@
   "Return the dependencies of PACKAGES as a list of strings."
   (shell-command-to-string (concat "expac -S '%D'" packages)))
 
+(defvar kam-package-history nil
+  "Minibuffer history for various package related commands.")
+
 (defun kam-os--choose-package (packages)
   "Use `completing-read-multiple' to choose packages out of PACKAGES.
 PACKAGES should be a list of strings."
-  (completing-read-multiple "Choose package(s): "
-                            packages
-                            #'kam-crm-exclude-selected-p))
+  (let ((default (car kam-package-history)))
+    (completing-read-multiple "Choose package(s): "
+                              packages
+                              #'kam-crm-exclude-selected-p
+                              nil nil
+                              'kam-package-history
+                              default)))
 
 (defun kam-os--write-explicitly-installed-packages-to-file ()
   "Write all explicitly installed packages to `kam-dotfiles-installed-packages-file'."
@@ -102,7 +109,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 
 ;;;###autoload
 (defun kam-os-package-search (package)
-  "Search for a package in the Pacman database."
+  "Search for PACKAGE in the Pacman database."
   (interactive "sPackage to search for: ")
   (async-shell-command
    (concat "pacman -Ss " package)))
@@ -157,6 +164,61 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
    ((eq system-type 'darwin)
     (restart-emacs))))
 
+(defun kam-os--get-services ()
+  "Return all of the running system services as a list of strings."
+  (mapcar (lambda (str)
+            (string-trim-right str ".service$"))
+   (split-string (shell-command-to-string "systemctl | awk '{print $1}' | grep .service$"))))
+
+(defun kam-os--get-user-services ()
+  "Return all of the running user services as a list of strings."
+  (mapcar (lambda (str)
+            (string-trim-right str ".service$"))
+   (split-string (shell-command-to-string "systemctl --user | awk '{print $1}' | grep .service$"))))
+
+(defvar kam-os-service-history nil
+  "Minibuffer history for various service related commands.
+See `kam-os-service--prompt'.")
+
+(defun kam-os-service--prompt ()
+  "Minibuffer prompt for various service related commands.
+See `kam-os-restart-service' and `kam-os-stop-service'."
+  (let ((default (car kam-os-service-history)))
+    (completing-read
+     (format "Choose service [%s]: " default)
+     (append (kam-os--get-services)
+             (kam-os--get-user-services))
+     nil nil nil
+     'kam-os-service-history
+     default)))
+
+(defun kam-os-restart-service (service)
+  "Restart running service SERVICE.
+SERVICE should be a string that corresponds to a service."
+  (interactive (list (kam-os-service--prompt)))
+  ;; Check whether the service given is a system or user service
+  (if (member service (kam-os--get-services))
+      (let ((default-directory "/sudo::"))
+        (shell-command (concat "systemctl restart " service)))
+    (shell-command (concat "systemctl --user restart " service)))
+  (message "Restarted service %s " service))
+
+(defun kam-os-stop-service (service)
+  "Stop running service SERVICE.
+SERVICE should be a string that corresponds to a service."
+  (interactive (list (kam-os-service--prompt)))
+  (if (member service (kam-os--get-services))
+      (let ((default-directory "/sudo::"))
+        (shell-command
+         (concat
+          "systemctl stop "
+          service))
+        (shell-command
+         (concat
+          "systemctl --user stop "
+          service))))
+  (message "Stopped service %s " service))
+
 ;;; Utilities
 (defun kam-os-screenshot ()
   "Take a screenshot."
@@ -184,21 +246,35 @@ Filter out small files."
 (defvar kam-wallpapers-history nil
   "Minibuffer history for `kam-os-change-wallpaper'.")
 
-(defun kam-os-change-wallpaper ()
-  "Change the wallpaper."
-  (interactive)
-  (let* ((default-directory kam-wallpapers-directory)
-         (file-name (completing-read
-                     "Wallpaper to change to: "
-                     #'read-file-name-internal
-                     nil
-                     nil
-                     nil
-                     kam-wallpapers-history)))
-    (shell-command
-     (concat
-      "hyprctl hyprpaper wallpaper , "
-      (shell-quote-argument file-name)))))
+(defun kam-os-wallpaper--prompt ()
+  "Minibuffer prompt for `kam-os-change-wallpaper.'"
+  (let ((default-directory kam-wallpapers-directory)
+        (default (nth 1 kam-wallpapers-history)))
+    (completing-read
+     (format "Wallpaper to change to [%s]: " default)
+     #'read-file-name-internal
+     nil
+     nil
+     nil
+     'kam-wallpapers-history
+     default)))
+
+(defun kam-os-change-wallpaper (wallpaper)
+  "Change the default wallpaper to WALLPAPER.
+WALLPAPER should be a fully qualified path to an image file."
+  (interactive (list
+                (expand-file-name (kam-os-wallpaper--prompt) kam-wallpapers-directory)))
+  (let* ((file-path (expand-file-name ".config/hypr/hyprpaper.conf" kam-dotfiles-directory))
+         (buf (or (get-file-buffer file-path)
+                  (find-file-noselect file-path))))
+    (with-current-buffer buf
+      (goto-char (point-min))
+      (search-forward "path = ")
+      (kill-line)
+      (insert wallpaper)
+      (save-buffer)
+      (kill-buffer buf))
+    (kam-os-restart-service "hyprpaper")))
 
 (provide 'kam-os)
 ;;; kam-os.el ends here
