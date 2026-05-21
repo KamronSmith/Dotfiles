@@ -117,6 +117,8 @@
   ("M-DEL" . kam-control-backspace)
   ("C-h c" . describe-char)
   ("C-h s" . kam-consult-search-emacs-info-pages)
+  ("C-x <left>" . kam-prev-buffer)
+  ("C-x <right>" . kam-next-buffer)
   ("C-x k" . kam-kill-current-buffer)
   ("C-x n" . kam-narrow-or-widen-dwim)
   ("C-x o" . kam-ace-window-prefix)
@@ -274,6 +276,12 @@ To be used attached to `after-init-hook'."
   (keymap-global-set "M-\"" 'kam-insert-quote)
   (keymap-global-set "C-M-m" 'kam-mark-point-to-end-of-line)
 
+  (defvar-keymap kam-repeat-map
+    :doc "Repeat map"
+    :repeat t
+    "<left>" 'kam-prev-buffer
+    "<right>" 'kam-next-buffer)
+  
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
