@@ -168,7 +168,7 @@
   (create-lockfiles nil)
   (confirm-kill-emacs nil)
   (confirm-kill-processes nil)
-  (initial-major-mode 'emacs-lisp-mode)
+  (initial-major-mode 'lisp-interaction-mode)
   (auto-save-file-name-transforms
    `((".*" ,(expand-file-name "auto-saves/\\1" kam-emacs-cache-directory) t)))
   (auto-save-interval 20)
