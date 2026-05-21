@@ -1,5 +1,12 @@
-;; -*- lexical-binding: t; -*-
+;;; notes.el ---  -*- lexical-binding: t; -*-
+
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
 (require 'org)
+(require 'standard-themes)
 
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
@@ -148,3 +155,5 @@
   (org-end-of-subtree)
   (newline)
   (tempo-template-org-quote))
+
+(provide 'notes)
