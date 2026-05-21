@@ -1,4 +1,5 @@
 ;;; kam-common.el --- Common functions for my configuration -*- lexical-binding: t; -*-
+
 ;;; Summary:
 
 ;;; Commentary:
@@ -17,7 +18,7 @@
   "Alist of regexp types used by `kam-line-regexp-p'.")
 
 (defun kam-line-regexp-p (type &optional n)
-  "Test for TYPE on line.
+  "Test for TYPE on the current line.
 
 TYPE is the car of a cons cell in `kam--line-regexp-alist'. It matches a
 regular expression. With optional N, search in the Nth line from point."
@@ -111,6 +112,13 @@ Use this as advice :after a noisy function."
 (defun kam-first-char (str)
   "Return the first character from STR."
   (substring str 0 1))
+
+(defun kam-reload-mode (mode)
+  "Reload active minor MODE.
+MODE is a symbol that represents an active minor mode. See
+`kam-active-minor-modes' for reference."
+  (call-interactively mode)
+  (call-interactively mode))
 
 (provide 'kam-common)
 ;;; kam-common.el ends here
