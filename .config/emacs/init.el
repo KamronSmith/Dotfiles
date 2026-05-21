@@ -3718,11 +3718,12 @@ Where kam-test is an alist of choices mapped to values."
                 kam-mode-line-buffer-remote-file
                 "  "
                 kam-mode-line-buffer-identification
-                "  "
+                " "
                 kam-mode-line-major-mode
                 kam-mode-line-compile
+                kam-mode-line-text-scale
                 "   "
-                ;; kam-mode-line-buffer-stats-var
+                kam-mode-line-buffer-stats-var
                 "  "
                 kam-mode-line-process
                 " "
@@ -3737,7 +3738,8 @@ Where kam-test is an alist of choices mapped to values."
                      kam-mode-line-buffer-status
                      kam-mode-line-buffer-identification
                      kam-mode-line-major-mode
-                     ;; kam-mode-line-buffer-stats-var
+                     kam-mode-line-text-scale
+                     kam-mode-line-buffer-stats-var
                      kam-mode-line-process
                      kam-mode-line-nix
                      kam-mode-line-logo
