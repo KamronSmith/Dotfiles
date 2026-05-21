@@ -1228,7 +1228,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ([remap goto-line] . consult-goto-line)
          ([remap yank-pop] . consult-yank-pop)
          ([remap bookmark-jump] . consult-bookmark)
-         ([remap switch-to-buffer] . consult-buffer)
+         ([remap switch-to-buffer] . kam-consult-buffer)
          ("C-M-x" . consult-mode-command)
          ("C-x r s" . consult-register-store)
          ("C-x r l" . consult-register-load)
