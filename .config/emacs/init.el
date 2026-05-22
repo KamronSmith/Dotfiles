@@ -3474,8 +3474,13 @@ Where kam-test is an alist of choices mapped to values."
 
 (use-package elisp-mode
   :ensure nil
+  :bind
+  (:map lisp-interaction-mode-map
+        ("C-j" . kam-join-line-dwim))
   :custom
-  (elisp-fontify-semantically t))
+  (elisp-fontify-semantically t)
+  :config
+  (set-default-toplevel-value 'lexical-binding t))
 
 ;; (use-package sh-mode
 ;;   :ensure nil
