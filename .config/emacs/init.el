@@ -793,6 +793,7 @@ Add this to `dired-mode-hook'."
   :bind
   ([remap imenu] . consult-imenu)
   :custom
+  (imenu-auto-rescan t)
   (org-imenu-depth 4))
 
 (use-package help
