@@ -2391,8 +2391,7 @@ Returns the filtered string."
   :ensure nil
   :hook ((org-mode . variable-pitch-mode)
          (org-mode . visual-line-mode)
-         (org-mode . kam-org-syntax-table-modify)
-         (org-mode . kam-org-cape-setup))
+         (org-mode . kam-org-syntax-table-modify))
   :bind
   (("C-c o l" . kam-consult-org-heading-link)
    ("C-c o p" . org-set-property)
