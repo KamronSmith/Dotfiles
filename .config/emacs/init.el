@@ -3879,13 +3879,6 @@ Where kam-test is an alist of choices mapped to values."
   (setq shr-use-colors nil
         shr-use-fonts nil))
 
-(defun kam-add-lexical-binding-prop-line ()
-  "Add the prop line `lexical-binding' to the top of the file.
-Set it to t."
-  (interactive)
-  (add-file-local-variable-prop-line lexical-binding t nil)
-  (end-of-line))
-
 (defvar kam-favorite-themes '(standard-dark
                               standard-light
                               standard-light-tinted
