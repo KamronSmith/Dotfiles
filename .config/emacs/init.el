@@ -2928,7 +2928,8 @@ Numerical argument ARG determines the command being selected from to choose argu
         ("C-c C-k" . comint-clear-buffer)
         ("C-c C-w" . comint-write-buffer)
         ("C-g" . comint-interrupt-subjob)
-        ("C-w" . unix-word-rubout))
+        ("C-w" . unix-word-rubout)
+        ("M-r" . consult-history))
   :custom
   (shell-file-name (executable-find "zsh"))
   (shell-command-prompt-show-cwd t)
@@ -3067,13 +3068,19 @@ The shell is renamed to make opening multiple shells easier."
   :ensure nil
   :hook ((eshell-mode . completion-preview-mode)
          (eshell-mode . kam-eshell-mode-setup))
-  ;; :bind
-  ;; (:map eshell-mode-map
-  ;;       ("<tab>" . completion-at-point)
-  ;;       ("M-r" . consult-history)
-  ;;       ("C-g" . eshell-interrupt-process)
-  ;;       ("C-M-f" . eshell-forward-argument)
-  ;;       ("C-M-b" . eshell-backward-argument))
+  :bind
+  (("C-x s" . eshell)
+   (:map eshell-mode-map
+         ("<tab>" . completion-at-point)
+         ("C-g" . eshell-interrupt-process)
+         ("C-M-f" . eshell-forward-argument)
+         ("C-M-b" . eshell-backward-argument)
+         ("C-c C-p" . kam-eshell-previous-prompt)
+         ("C-c C-n" . kam-eshell-next-prompt)
+         ("C-x C-d" . eshell/z))
+   (:map eshell-hist-mode-map
+         ("M-r" . consult-history)
+         ("C-c C-l" . eshell/clear)))
   :custom
   (eshell-history-file-name (expand-file-name "eshell/history" kam-emacs-cache-directory))
   (eshell-last-dir-ring-file-name (expand-file-name "eshell/lastdir" kam-emacs-cache-directory))
