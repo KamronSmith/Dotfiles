@@ -3907,20 +3907,22 @@ See `kam-favorite-themes'."
                  (window-parameters . ((mode-line-format . none))))))
 
 (defvar kam-custom-lisp-files
-  `(,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/os.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/notes.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/applications.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/dotfiles.el"))
+  `(
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/os.el")
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/notes.el")
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/applications.el")
+    ;; ,(concat (getenv "HOME") "/.config/emacs/lisp/dotfiles.el")
+    )
   "List of strings detailing custom Lisp to be loaded.
 Each string should be a full path to a Lisp file.")
 
-(mapc (lambda (file)
-        (when (file-exists-p file)
-          (load-file file)))
-      kam-custom-lisp-files)
+;; (mapc (lambda (file)
+;;         (when (file-exists-p file)
+;;           (load-file file)))
+;;       kam-custom-lisp-files)
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
 
