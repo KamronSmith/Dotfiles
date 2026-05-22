@@ -3030,19 +3030,19 @@ The shell is renamed to make opening multiple shells easier."
 
   (add-to-list 'display-buffer-alist
                '("-shell\\*$" ;; matches title for `project-shell'
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 (window-height . 0.35)
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . right)
+                 (window-width . 0.5)
+                 (mode shell-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 (inhibit-same-window . t)
-                 (window-height . 0.35)
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . right)
+                 ;; (inhibit-same-window . t)
+                 (window-height . 0.5)
+                 (mode shell-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
   (add-to-list 'display-buffer-alist
@@ -3176,20 +3176,18 @@ Used for setting Eshell's `outline-regexp'.")
 
   (add-to-list 'display-buffer-alist
                '("\\*eshell[\\*\\:]" ; matches title for reg eshell and `kam-eshell-here'
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . right)
                  (inhibit-same-window . t)
-                 (window-height . 0.35)
+                 (window-width . 0.5)
                  (mode . eshell-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (window-parameters . ((mode-line-format . none))))
 
   (add-to-list 'display-buffer-alist
                '("-eshell\\*$" ;; matches title for `project-eshell'
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 (window-height . 0.35)
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . right)
+                 (window-width . 0.50)
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package em-smart
