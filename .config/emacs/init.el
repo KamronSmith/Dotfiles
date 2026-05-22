@@ -3081,10 +3081,6 @@ The shell is renamed to make opening multiple shells easier."
   (eshell-highlight-prompt nil)
   (eshell-input-filter #'kam-eshell-input-filter)
   :config
-  (defvar kam-eshell-prompt-regexp "\\[[[:punct:][:alnum:]]+ — [[:punct:][:alnum:]]+ \\$ "
-    "Regular expression that matches the prompt used for Eshell buffers.
-Used for setting Eshell's `outline-regexp'.")
-
   (defun kam-eshell-mode-setup ()
     (setenv "TERM" "xterm-256-color")
     (setq-local completion-styles '(basic partial-completion)
@@ -3092,63 +3088,9 @@ Used for setting Eshell's `outline-regexp'.")
                 eshell-prompt-regexp kam-eshell-prompt-regexp)
     (eshell-prompt-mode))
 
-  (defun kam-eshell-input-filter (input)
-    "Do not save the following:
-- Empty lines
-- Commands that start with a space, `cd', `ls', etc."
-    (and
-     (eshell-input-filter-default input)
-     (eshell-input-filter-initial-space input)
-     (not (string-prefix-p "cd " input))
-     (not (string-prefix-p "cd" input))
-     (not (string-prefix-p "ls " input))
-     (not (string-prefix-p "ls" input))))
-
-  (defun kam-eshell-redirect-to-buffer (buffer)
-    "Auto create command for redirecting to buffer."
-    (interactive (list (read-buffer "Redirect to buffer: ")))
-    (insert (format " >>> #<%s>" buffer)))
-
-  (defun kam-eshell--pwd-replace-home (pwd)
-    "Replace $HOME in PWD with a tilde (~) character."
-    (let* ((home (expand-file-name (getenv "HOME")))
-           (home-len (length home)))
-      (if (and
-           (>= (length pwd) home-len)
-           (equal home (substring pwd 0 home-len)))
-          (concat "~" (substring pwd home-len))
-        pwd)))
-
-  (defun kam-eshell--pwd-shorten-dirs (pwd)
-    "Shorten all directory names in PWD except the last two."
-    (let ((p-lst (split-string pwd "/")))
-      (if (> (length p-lst) 2)
-          (concat
-           (mapconcat
-            (lambda (elm)
-              (if (zerop (length elm)) ""
-                (substring elm 0 1)))
-            (butlast p-lst 2)
-            "/")
-           (mapconcat (lambda (elm) elm)
-                      (last p-lst 2)
-                      "/"))
-        pwd)))
-
-  (defun kam-eshell--split-directory-prompt (directory)
-    (if (string-match-p ".*/.*" directory)
-        (list (file-name-directory directory) (file-name-base directory))
-      (list "" directory)))
-
   (setq eshell-prompt-function
         (lambda ()
-          (let* ((pwd (eshell/pwd))
-                 (directory (kam-eshell--split-directory-prompt
-                             (kam-eshell--pwd-shorten-dirs
-                              (kam-eshell--pwd-replace-home pwd))))
-                 (parent (car directory))
-                 (dir (cadr directory)))
-            (standard-themes-with-colors
+          (standard-themes-with-colors
               (concat
                (propertize "[" 'face `(:foreground ,fg-main :background ,bg-main))
                (propertize (user-login-name) 'face `(:foreground ,fg-main :background ,bg-main))
@@ -3156,23 +3098,9 @@ Used for setting Eshell's `outline-regexp'.")
                (propertize (system-name) 'face `(:foreground ,pink :background ,bg-main))
                (propertize "]" 'face `(:foreground ,fg-main :background ,bg-main))
                (propertize " — " 'face `(:foreground ,fg-main :background ,bg-main))
-               ;; (propertize parent 'face `(:foreground ,pink :weight bold))
-               ;; (propertize dir 'face `(:foreground ,pink :weight bold))
-               (propertize " $ " 'face `(:weight bold :background ,bg-main main)))))))
-
-  (defun kam-eshell-next-prompt (n)
-    "Move to the end of the Nth next prompt in the buffer. See `eshell-prompt-regexp'."
-    (interactive "p")
-    (re-search-forward eshell-prompt-regexp nil t n)
-    (when eshell-highlight-prompt
-      (while (not (get-text-property (line-beginning-position) 'read-only))
-        (re-search-forward eshell-prompt-regexp nil t n)))
-    (eshell-skip-prompt))
-
-  (defun kam-shell-previous-prompt (n)
-    "Move to the end of the Nth previous prompt in the buffer. See `eshell-prompt-regexp'."
-    (interactive "p")
-    (re-search-backward eshell-prompt-regexp))
+               (propertize (car (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
+               ;; (propertize (cadr (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
+               (propertize " $ " 'face `(:weight bold :background ,bg-main main))))))
 
   (add-to-list 'display-buffer-alist
                '("\\*eshell[\\*\\:]" ; matches title for reg eshell and `kam-eshell-here'
@@ -3200,69 +3128,6 @@ Used for setting Eshell's `outline-regexp'.")
 (use-package eshell-syntax-highlighting
   :after (eshell)
   :hook (eshell-mode . eshell-syntax-highlighting-mode))
-
-(defun kam-eshell--history-to-list ()
-  "Returns the current Eshell buffer's history as a list of strings."
-  (when (and (ring-p eshell-history-ring)
-             (not (ring-empty-p eshell-history-ring)))
-    (let (history)
-      (dotimes (index (ring-length eshell-history-ring))
-        (push (ring-ref eshell-history-ring index) history))
-      (delete-dups history)
-      (setq history (nreverse history))
-      history)))
-
-(defun kam-eshell--input-history-prompt ()
-  "Prompt for completion against `kam-eshell-history-to-list'."
-  (let* ((history (kam-eshell--history-to-list))
-         (default (car history)))
-    (completing-read
-     (format-prompt "Insert input from history: " default)
-     history
-     nil
-     nil
-     nil
-     nil
-     default)))
-
-(defun eshell/clear ()
-  "Clear the Eshell buffer."
-  (let ((inhibit-read-only t))
-    (erase-buffer)))
-
-(defun eshell/z (&optional regexp)
-  "Navigate to a previously visited directory in Eshell, or to any directory offered by `consult-dir'.
-Optionally, use REGEXP to search for previous directories."
-  (interactive)
-  (let ((eshell-dirs (delete-dups
-                      (mapcar 'abbreviate-file-name
-                              (ring-elements eshell-last-dir-ring)))))
-    (cond
-     ((and (not regexp) (featurep 'consult-dir)
-           (let* ((consult-dir--source-eshell `(:name "Eshell"
-                                                      :narrow ?e
-                                                      :category file
-                                                      :face consult-file
-                                                      :items ,eshell-dirs))
-                  (consult-dir-sources (cons consult-dir--source-eshell
-                                             consult-dir-sources)))
-             (eshell/cd (substring-no-properties
-                         (consult-dir--pick "Switch directory: ")))))
-      (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
-                      (completing-read "cd: " eshell-dirs))))))))
-
-(defun kam-eshell-here ()
-  "Opens up a new shell in the directory associated with the current buffers file.
-The Eshell buffer is renamed to match that directory in order to make multiple Eshell windows easier."
-  (interactive)
-  (let* ((parent (if (buffer-file-name)
-                     (file-name-directory (buffer-file-name))
-                   default-directory))
-         (name (car (last (split-string parent "/" t)))))
-    (eshell "new")
-    (rename-buffer (concat "*eshell: " name "*"))
-    (insert (concat "ls"))
-    (eshell-send-input)))
 
 ;; (use-package vterm
 ;;   :ensure nil
@@ -4039,4 +3904,5 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-os)
 (require 'kam-consult)
 (require 'kam-org)
+(require 'kam-eshell)
 ;;; init.el ends here
