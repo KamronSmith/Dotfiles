@@ -2727,9 +2727,6 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
   (defvar kam-project-name-history nil)
 
-  (defvar kam-projects-directory "~/Documents/Projects/"
-    "The default directory where projects are stored.")
-
   ;; (setq project-prompter #'kam-project--read-project-by-name)
 
   (defun kam-project--return-formatted-project-name ()
@@ -3248,6 +3245,9 @@ Where kam-test is an alist of choices mapped to values."
     (standard-themes-load-theme (modus-themes-get-current-theme)))
 
   (standard-themes-load-theme 'standard-light-tinted))
+
+
+(use-package ef-themes)
 
 (use-package olivetti
   :hook (olivetti-mode . kam-olivetti-update-fringe-color)
