@@ -391,7 +391,7 @@ To be used attached to `after-init-hook'."
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t)
   (switch-to-buffer-preserve-window-point t)
-  (switch-to-buffer-skip 'visible)
+  (switch-to-prev-buffer-skip 'visible)
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows t)
