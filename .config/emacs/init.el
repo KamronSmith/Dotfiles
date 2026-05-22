@@ -3247,7 +3247,7 @@ Where kam-test is an alist of choices mapped to values."
     (interactive)
     (standard-themes-load-theme (modus-themes-get-current-theme)))
 
-  (standard-themes-load-theme 'standard-dark))
+  (standard-themes-load-theme 'standard-light-tinted))
 
 (use-package olivetti
   :hook (olivetti-mode . kam-olivetti-update-fringe-color)
