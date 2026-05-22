@@ -3278,11 +3278,11 @@ Where kam-test is an alist of choices mapped to values."
 
   (spacious-padding-subtle-mode-line nil)
   :config
-  ;; (setq spacious-padding-subtle-frame-lines
-  ;;       '(:mode-line-active spacious-padding-line-active
-  ;;                           :mode-line-inactive spacious-padding-line-inactive
-  ;;                           :header-line-active spacious-padding-line-active
-  ;;                           :header-line-inactive spacious-padding-line-inactive))
+  (setq spacious-padding-subtle-frame-lines
+        '(:mode-line-active spacious-padding-line-active
+                            :mode-line-inactive spacious-padding-line-inactive
+                            :header-line-active spacious-padding-line-active
+                            :header-line-inactive spacious-padding-line-inactive))
 
   (setq spacious-padding-subtle-frame-lines nil)
 
