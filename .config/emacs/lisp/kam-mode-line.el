@@ -416,9 +416,9 @@ Or if its a string, keep it as it is."
       (if (string= text-scale-mode-lighter "+0")
           ""
         (concat
+         " "
          (propertize text-scale-mode-lighter
-                     'face 'kam-mode-line-indicator-green)
-         " ")))
+                     'face 'kam-mode-line-indicator-green))))
   "Mode line construct displaying the current text scale.")
          
 
