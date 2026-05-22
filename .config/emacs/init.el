@@ -3915,6 +3915,7 @@ Each string should be a full path to a Lisp file.")
 
 (require 'kam-comment)
 (require 'kam-common)
+(require 'kam-theme)
 (require 'kam-mode-line)
 (require 'kam-window)
 (require 'kam-os)
