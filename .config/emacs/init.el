@@ -3897,6 +3897,17 @@ See `kam-favorite-themes'."
               t
               nil))
 
+(use-package gptel
+  :custom
+  (gptel-default-mode 'org-mode)
+  :config
+  (add-to-list 'display-buffer-alist
+               '("\\*ChatGPT\\*"
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . right)
+                 (window-width . 0.5)
+                 (window-parameters . ((mode-line-format . none))))))
+
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
