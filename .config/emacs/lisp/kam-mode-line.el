@@ -369,13 +369,13 @@ See `kam-mode-line-string-cut-middle'."
    "["
    (format-mode-line "%l")
    ","
-   (number-to-string (current-column))
+   (format-mode-line "%C")
    "] "
    (propertize "󱨄 " 'face 'shadow)
    ;; (kam-mode-line--number-to-string-maybe (kam-mode-line--buffer-percentage))
    " "
    (propertize " " 'face 'shadow)
-   (kam-mode-line--buffer-size)))
+   (upcase (format-mode-line "%I"))))
 
 (defun kam-mode-line--buffer-percentage ()
   "Return the percentage of how far through the current buffer the point is."
