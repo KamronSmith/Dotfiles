@@ -3264,6 +3264,7 @@ Where kam-test is an alist of choices mapped to values."
         (custom-set-faces
          `(olivetti-fringe ((,c :background ,bg-main)))))))
 
+
 (use-package spacious-padding
   :after (standard-themes)
   :custom
@@ -3440,7 +3441,7 @@ Where kam-test is an alist of choices mapped to values."
   :hook (prog-mode . kam-prog-mode-setup)
   :bind
   (:map prog-mode-map
-        ("M-q" . upcase-dwim)
+        ;; ("M-q" . upcase-dwim)
         ("RET" . newline))
   :config
   (defun kam-prog-mode-setup ()
@@ -3537,6 +3538,7 @@ Where kam-test is an alist of choices mapped to values."
   :custom
   (flyover-line-position-offset 0)
   (flyover-show-virtual-line nil)
+  (flyover-show-at-eol t)
   (flyover-display-mode 'hide-on-same-line))
 
 ;; (use-package flymake
@@ -3739,7 +3741,7 @@ Where kam-test is an alist of choices mapped to values."
   (x-select-enable-clipboard t)
   (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
   (x-underline-at-descent-line nil)
-  (x-stretch-cursor t))
+  (x-stretch-cursor nil))
 
 (use-package epa
   :ensure nil
@@ -3763,7 +3765,7 @@ Where kam-test is an alist of choices mapped to values."
 (use-package elisp-mode
   :ensure nil
   :config
-  (set-default-toplevel-value 'lexical-binding t))
+  )
 
 (use-package c-ts-mode
   :ensure nil
