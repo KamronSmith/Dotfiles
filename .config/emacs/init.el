@@ -3121,7 +3121,7 @@ The shell is renamed to make opening multiple shells easier."
                  (inhibit-same-window . t)
                  (window-width . 0.5)
                  (mode . eshell-mode)
-                 (window-parameters . ((mode-line-format . none))))
+                 (window-parameters . ((mode-line-format . none)))))
 
   (add-to-list 'display-buffer-alist
                '("-eshell\\*$" ;; matches title for `project-eshell'
