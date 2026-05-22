@@ -1389,6 +1389,10 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :custom
   ;; (corfu-separator ?\s)
   ;; (corfu-min-width corfu-max-width)
+  (corfu-auto nil)
+  (corfu-auto-delay 0.2)
+  (corfu-preselect 'prompt)
+  (corfu-exact-match 'insert)
   (corfu-preview-current t)
   (corfu-cycle t)
   (corfu-preselect 'valid)
