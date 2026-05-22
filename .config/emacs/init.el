@@ -2490,7 +2490,11 @@ This stops the mismatch parenthesis bug in Org source blocks."
   ("C-c c" . org-capture)
   :custom
   (org-capture-templates
-   '(("t" "TODO" entry (file+headline kam-todo-file "Inbox")
+   '(("t" "Todo" entry (file+headline kam-todo-todo-file "Inbox")
+      "* TODO %?\n")
+     ("p" "Project" entry (file+headline kam-todo-todo-file "Inbox")
+      "* %?\n")
+     ("w" "Writing" entry (file+headline kam-todo-todo-file "Notes")
       "* TODO %?\n")))
   :config
   (add-to-list 'display-buffer-alist
@@ -2518,8 +2522,12 @@ This stops the mismatch parenthesis bug in Org source blocks."
   :custom
   (org-agenda-hide-tags-regexp ".")
   (org-agenda-custom-commands
-   '(("i" "Inbox"
-      todo)))
+   '(("i" "Inbox" alltodo ""
+      ((org-agenda-overriding-header "Unfiled items in the inbox:")
+       (org-agenda-skip-function '(kam-org-agenda-skip-entry-if-not-headline "Inbox"))))
+     ("w" "Writing Inbox" alltodo ""
+      ((org-agenda-overriding-header "Things to write about:")
+       (org-agenda-skip-function '(kam-org-agenda-skip-entry-if-not-headline "Notes"))))))
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Org Agenda\\*"
