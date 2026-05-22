@@ -1,4 +1,4 @@
-;;; notes.el ---  -*- lexical-binding: t; -*-
+;;; kam-notes.el --- Extensions to manage the notes that I take  -*- lexical-binding: t; -*-
 
 ;;; Summary:
 
@@ -156,4 +156,5 @@
   (newline)
   (tempo-template-org-quote))
 
-(provide 'notes)
+(provide 'kam-notes)
+;;; kam-notes.el ends here
