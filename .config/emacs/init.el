@@ -3921,5 +3921,6 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-os)
 (require 'kam-consult)
 (require 'kam-org)
+(require 'kam-writing)
 (require 'kam-eshell)
 ;;; init.el ends here
