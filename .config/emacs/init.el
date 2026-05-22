@@ -739,23 +739,16 @@ Add this to `dired-mode-hook'."
 
 (use-package repeat
   :ensure nil
-  :hook (after-init . repeat-mode)
   :custom
   (repeat-on-final-keystroke t)
   (repeat-exit-timeout 5)
-  (repeat-exit-key "<escape>")
+  (repeat-exit-key "C-g")
   (repeat-keep-prefix nil)
   (repeat-check-key t)
   (repeat-echo-function 'ignore)
   (set-mark-command-repeat-pop t)
-
-  (defun kam-make-repeat-map (keymap)
-    "Add `repeat-mode' support to KEYMAP."
-    (map-keymap
-     (lambda (_key cmd)
-       (when (symbolp cmd)
-         (put cmd 'repeat-map keymap)))
-     (symbol-value keymap))))
+  :config
+  (repeat-mode))
 
 (use-package bookmark
   :ensure nil
