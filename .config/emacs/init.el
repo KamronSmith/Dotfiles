@@ -3931,9 +3931,9 @@ Each string should be a full path to a Lisp file.")
 
 (add-to-list 'load-path (locate-user-emacs-file "lisp"))
 
-(require 'kam-comment)
 (require 'kam-common)
 (require 'kam-theme)
+(require 'kam-comment)
 (require 'kam-mode-line)
 (require 'kam-window)
 (require 'kam-os)
