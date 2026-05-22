@@ -1284,7 +1284,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (defvar kam-consult-dir--directories
     '("~/Documents"
-      "~/Documents/Projects/"
+      "~/Projects/"
       "~/Documents/Areas/"
       "~/Documents/Resources/"))
 
@@ -2800,13 +2800,13 @@ as the initial input for completion, and return that directory."
 
   (defun kam-project-remember-advice ()
     "Advice intended to be run after project creation commands to properly remember the projects."
-    (project-remember-projects-under kam-projects-directory t)
+    (project-remember-projects-under kam-tasks-projects-directory t)
     (kam-clear-echo-area))
 
   (defun kam-project-update-list ()
     "Update the project list when deleting/adding projects."
     (interactive)
-    (project-remember-projects-under "~/Documents/Projects/")))
+    (project-remember-projects-under kam-tasks-projects-directory)))
 
 (use-package comint
   :ensure nil
@@ -3935,6 +3935,6 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-consult)
 (require 'kam-org)
 (require 'kam-writing)
-(require 'kam-todo)
+(require 'kam-tasks)
 (require 'kam-eshell)
 ;;; init.el ends here
