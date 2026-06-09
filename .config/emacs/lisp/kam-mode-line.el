@@ -234,7 +234,7 @@ Also see `kam-mode-line-string-abbreviate-but-last'."
   '(:eval
     (cond
      ((eq system-type 'gnu/linux)
-      (propertize "󰣇 " 'face 'shadow))
+      (propertize " " 'face 'shadow))
      ((eq system-type 'darwin)
       (propertize " " 'face 'shadow))))
   "Mode line construct to display the logo of the current system.")
@@ -303,7 +303,7 @@ See `kam-mode-line-string-cut-middle'."
 (defun kam-mode-line-buffer-modified ()
   "Return a buffer modified icon if the buffer has been modified."
   (if (buffer-modified-p)
-      "󰉉"
+      ""
     ""))
 
 (defvar-local kam-mode-line-buffer-modified
@@ -420,7 +420,7 @@ Or if its a string, keep it as it is."
          (propertize text-scale-mode-lighter
                      'face 'kam-mode-line-indicator-green))))
   "Mode line construct displaying the current text scale.")
-         
+
 
 (declare-function vc-git--symbolic-ref "vc-git" (file))
 
@@ -515,12 +515,12 @@ The string is truncated if the width of the window is smaller than `split-width-
 
 (defun kam-mode-line--compilation-in-progress-p ()
   "Return t if Emacs is compiling something."
-  (not (null compilation-in-progress)))
+  (when compilation-in-progress))
 
 (defun kam-mode-line--recursive-edit-in-progress-p ()
   "Return t if Emacs is in a recursive edit.
 Minibuffer counts as a recursive edit, so recursion depth has to be greater than 1."
-  (when (> (recursion-depth) 1)
+  (when (> (recursion-depth) 2)
     t))
 
 (defvar-local kam-mode-line-compile
@@ -541,3 +541,4 @@ Minibuffer counts as a recursive edit, so recursion depth has to be greater than
   "Mode line construct for displaying if Emacs is in a recursive edit.")
 
 (provide 'kam-mode-line)
+;;; kam-mode-line.el ends here
