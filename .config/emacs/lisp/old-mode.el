@@ -1,3 +1,10 @@
+;;; old-mode.el --- -*- lexical-binding: t; -*-
+
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
 (define-minor-mode kam-old-mode
   "Turn Emacs into an old application."
   :global t
@@ -12,3 +19,6 @@
   (custom-set-faces
    `(menu ((,c :foreground "#505050" :background "#505050")))
    `(tool-bar ((,c :foreground "#505050" :background "#505050")))))
+
+(provide 'old-mode)
+;;; old-mode.el ends here

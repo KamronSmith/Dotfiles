@@ -328,14 +328,18 @@ See `kam-mode-line-string-cut-middle'."
                     ((derived-mode-p 'text-mode) "§ ")
                     ((derived-mode-p 'prog-mode) "󰘧 ")
                     ((derived-mode-p 'comint-mode) "󰆍 ")
-                    (t " "))))
+                    (t ""))))
     (propertize indicator 'face 'shadow)))
 
 (defun kam-mode-line-major-mode-name ()
   "Return capitalized `major-mode' without the -mode suffix."
   (concat
-   (nerd-icons-icon-for-mode major-mode)
-   "  "
+   (cond
+    ((derived-mode-p 'dired-mode)
+     (nerd-icons-sucicon "nf-custom-folder_oct"))
+    (t
+     (nerd-icons-icon-for-mode major-mode)))
+   " "
    (capitalize
     (string-replace "-mode" "" (symbol-name major-mode)))))
 
@@ -361,15 +365,17 @@ See `kam-mode-line-string-cut-middle'."
 (defun kam-mode-line-buffer-line-stats ()
   "Return the propertized mode line indicators for the line stats in the current buffer."
   (concat
-   (propertize " " 'face 'shadow)
+   (propertize " " 'face 'shadow)
+   "["
+   (format-mode-line "%l")
+   ","
+   (format-mode-line "%C")
+   "] "
+   (propertize "󱨄 " 'face 'shadow)
+   ;; (kam-mode-line--number-to-string-maybe (kam-mode-line--buffer-percentage))
    " "
-   (number-to-string (line-number-at-pos))
-   (propertize " 󱨄" 'face 'shadow)
-   " "
-   (kam-mode-line--number-to-string-maybe (kam-mode-line--buffer-percentage))
-   (propertize " " 'face 'shadow)
-   " "
-   (kam-mode-line--buffer-size)))
+   (propertize " " 'face 'shadow)
+   (upcase (format-mode-line "%I"))))
 
 (defun kam-mode-line--buffer-percentage ()
   "Return the percentage of how far through the current buffer the point is."
@@ -380,7 +386,7 @@ See `kam-mode-line-string-cut-middle'."
     (cond
      ((= percent 0)
       "Top")
-     ((= percent 100)
+     ((>= percent 100)
       "Bot")
      (t percent))))
 
@@ -404,6 +410,17 @@ Or if its a string, keep it as it is."
   '(:eval
     (list '("" mode-line-process))
     "Mode line construct for the running process indicator."))
+
+(defvar-local kam-mode-line-text-scale
+    '(:eval
+      (if (string= text-scale-mode-lighter "+0")
+          ""
+        (concat
+         " "
+         (propertize text-scale-mode-lighter
+                     'face 'kam-mode-line-indicator-green))))
+  "Mode line construct displaying the current text scale.")
+         
 
 (declare-function vc-git--symbolic-ref "vc-git" (file))
 

@@ -5,6 +5,8 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'ace-window)
+
 (defgroup kam-window ()
   "Extensions for the windowing system in Emacs."
   :group 'window)
@@ -93,8 +95,8 @@ Use this function via a hook."
     (delete-frame)))
 
 (defmacro kam-window-define-with-popup-frame (command)
-  "Define interactive function which calls COMMAND in a new fraeme.
-Make the new frame have the `kam-window-popup-frame-paramter."
+  "Define interactive function which calls COMMAND in a new frame.
+Make the new frame have the `kam-window-popup-frame-parameter'."
   `(defun ,(intern (format "kam-window-popup-%s" command)) ()
      ,(format "Run `%s' in a popup frame with `kam-window-popup-frame' parameter.
 Also see `kam-window-delete-popup-frame'." command)
@@ -109,7 +111,7 @@ Also see `kam-window-delete-popup-frame'." command)
 
 (defun kam-next-buffer (&optional arg)
   "Swith to the next ARGth buffer.
-With a universal prefix arg, run in the next window."
+With universal prefix ARG, run in the next window."
   (interactive "P")
   (if-let* (((equal arg '(4)))
             (win (other-window-for-scrolling)))
@@ -120,7 +122,7 @@ With a universal prefix arg, run in the next window."
 
 (defun kam-prev-buffer (&optional arg)
   "Switch to the previous ARGth buffer.
-With a universal prefix ARG, run in the next window."
+With universal prefix ARG, run in the next window."
   (interactive "P")
   (if-let* (((equal arg '(4)))
             (win (other-window-for-scrolling)))
@@ -129,6 +131,18 @@ With a universal prefix ARG, run in the next window."
         (setq prefix-arg current-prefix-arg))
     (previous-buffer arg)))
 
+(defun kam-consult-buffer (&optional arg)
+  "Perform `consult-buffer', but disable `vertico-sort-function'.
+If optional ARG is provided, perform the buffer switch in the other window."
+  (interactive "P")
+  (if-let* (((equal arg '(4)))
+            (win (other-window-for-scrolling)))
+      (with-selected-window win
+        (let ((vertico-sort-function 'identity))
+          (consult-buffer)))
+    (let ((vertico-sort-function 'identity))
+      (consult-buffer))))
+
 (defun kam-get-alternate-buffer (&optional window)
   "Return the last buffer WINDOW has displayed other than the current one."
   (let* ((prev-buffers (window-prev-buffers))
@@ -136,6 +150,14 @@ With a universal prefix ARG, run in the next window."
     (if (eq (car head) (window-buffer window))
         (cadr prev-buffers)
       head)))
+
+(defun kam-ace-window (&optional arg)
+  "Perform the normal `ace-window' command, but with optional extras.
+When optional ARG is provided, if there is only one window in the frame,
+create a new window and switch to it."
+  (interactive "P")
+  ;; TODO 2026-05-21: Implement `kam-ace-window' command
+  )
 
 ;;;###autoload
 (defun kam-switch-to-alternate-buffer ()

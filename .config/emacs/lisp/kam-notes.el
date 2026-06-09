@@ -1,5 +1,12 @@
-;; -*- lexical-binding: t; -*-
+;;; kam-notes.el --- Extensions to manage the notes that I take  -*- lexical-binding: t; -*-
+
+;;; Summary:
+
+;;; Commentary:
+
+;;; Code:
 (require 'org)
+(require 'standard-themes)
 
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
@@ -148,3 +155,6 @@
   (org-end-of-subtree)
   (newline)
   (tempo-template-org-quote))
+
+(provide 'kam-notes)
+;;; kam-notes.el ends here
