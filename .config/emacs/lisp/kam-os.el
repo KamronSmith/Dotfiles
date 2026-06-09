@@ -231,8 +231,20 @@ SERVICE should be a string that corresponds to a service."
 (defun kam-os-drive-space ()
   "List all available drive space."
   (interactive)
-  (let* ((shell-command-buffer-name-async "*Drive Space*"))
-    (async-shell-command "df -h")))
+  (let* ((buf "*Drive Space*")
+         (shell-command-buffer-name-async buf))
+    (async-shell-command "df -h")
+    (with-current-buffer buf
+      (view-mode))))
+
+(defun kam-os-list-fonts ()
+  "List all of the currently installed fonts on the system."
+  (interactive)
+  (let* ((buf "*List Fonts*")
+         (shell-command-buffer-name buf))
+    (shell-command "fc-list")
+    (with-current-buffer buf
+      (view-mode))))
 
 (defun kam-os-file-size ()
   "List all of the files in the current directory and how much space they take up.
