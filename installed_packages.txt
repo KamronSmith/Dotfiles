@@ -7,12 +7,14 @@ aspell-en
 base
 base-devel
 bash-language-server
+bear
 blueman
 bluez
 bluez-utils
 btop
 btrfs-progs
 calibre
+ccls
 clang
 cronie
 cups
@@ -48,6 +50,7 @@ java-debug
 jdtls
 kitty
 krita
+krita-plugin-gmic
 libotf
 libreoffice-fresh
 libva-nvidia-driver
@@ -67,6 +70,8 @@ neovim
 noto-fonts-cjk
 nvidia-open-dkms
 openssh
+otf-apple-sf-mono
+otf-monaspace-nerd
 pacman-contrib
 paru
 paru-debug
@@ -80,12 +85,14 @@ pwvucontrol
 qbittorrent
 qt5-wayland
 qt6-wayland
+raylib
 rofi
 sddm
 selectdefaultapplication-git
 shellcheck
 slurp
 smartmontools
+steam
 stow
 sudo
 syncthing
@@ -93,6 +100,8 @@ system-config-printer
 timeshift
 tldr
 tree-sitter
+ttf-firacode-nerd
+ttf-times-new-roman
 udiskie
 unzip
 uwsm

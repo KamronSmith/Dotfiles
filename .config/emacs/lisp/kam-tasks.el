@@ -14,7 +14,7 @@
 (defvar kam-tasks-projects-directory "/home/kam/Projects/"
   "Directory where the projects are stored.")
 
-(defvar kam-tasks-tasks-file (expand-file-name "tasks.org" kam-tasks-inbox-directory)
+(defvar kam-tasks-tasks-file (expand-file-name "todo.org" kam-tasks-inbox-directory)
   "File where the tasks information is stored.")
 
 (setq org-agenda-files kam-tasks-tasks-file)
