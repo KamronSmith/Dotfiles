@@ -100,6 +100,8 @@
   ("M-i" . comment-indent-new-line)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
+  ("M-g M-n" . kam-next-error)
+  ("M-g M-p" . kam-prev-error)
   ("M-n" . kam-forward-paragraph)
   ("M-p" . kam-backward-paragraph)
   ("M-q" . fill-paragraph)
