@@ -3344,8 +3344,8 @@ Where kam-test is an alist of choices mapped to values."
   (pulsar-global-mode))
 
 (use-package nerd-icons
-  :custom
-  (nerd-icons-font-family "SauceCodePro Nerd Font"))
+  :config
+  (set-fontset-font "fontset-default" nil "Symbols Nerd Font Mono" nil 'append))
 
 (use-package nerd-icons-dired
   :hook

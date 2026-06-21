@@ -242,7 +242,7 @@ Also see `kam-mode-line-string-abbreviate-but-last'."
 (defvar-local kam-mode-line-kbd-macro
   '(:eval
     (if (and (mode-line-window-selected-p) defining-kbd-macro)
-        (propertize " 󰻃 " 'face 'kam-mode-line-indicator-orange-bg)
+        (propertize " " 'face 'kam-mode-line-indicator-orange-bg)
       ""))
   "Mode line construct displaying `mode-line-defining-kbd-macro'.
 Specific to the current window's mode-line.")
@@ -250,7 +250,7 @@ Specific to the current window's mode-line.")
 (defvar-local kam-mode-line-rectangle-mark
   '(:eval
     (if (bound-and-true-p rectangle-mark-mode)
-        (propertize " 󰹟 " 'face 'kam-mode-line-indicator-orange-bg)
+        (propertize "󰹟 " 'face 'kam-mode-line-indicator-orange-bg)
       ""))
   "Mode line construct displaying `rectangle-mark-mode'.")
 
@@ -337,8 +337,10 @@ See `kam-mode-line-string-cut-middle'."
    (cond
     ((derived-mode-p 'dired-mode)
      (nerd-icons-sucicon "nf-custom-folder_oct"))
-    (t
-     (nerd-icons-icon-for-mode major-mode)))
+    ((derived-mode-p 'reader-mode)
+     (nerd-icons-faicon "nf-fa-file_pdf"))
+     (t
+      (nerd-icons-icon-for-mode major-mode)))
    " "
    (capitalize
     (string-replace "-mode" "" (symbol-name major-mode)))))
