@@ -83,11 +83,11 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
   (interactive)
   (let* ((default-directory "/sudo::")
          (chosen-package (kam-os--choose-package (kam-os--installed-packages)))
-         (chosen-packages (string-join chosen-packages " "))
+         (chosen-packages (string-join chosen-package " "))
          (bufname (concat "*Pacman: Uninstall " chosen-packages "*"))
          (shell-command-buffer-name-async bufname))
     (async-shell-command
-     "pacman -Rs " chosen-packages)
+     (concat "pacman -Rs " chosen-packages))
     (kam-os--write-explicitly-installed-packages-to-file)))
 
 ;;;###autoload
