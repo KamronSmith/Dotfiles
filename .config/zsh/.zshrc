@@ -1,6 +1,13 @@
 HISTFILE="$HOME/.config/zsh/zhistory"
 HISTSIZE=100000
 SAVEHIST=200000
+export PATH="$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
+export EDITOR="emacsclient -c -a ''"
+export VISUAL="$EDITOR"
+export PROMPT="[%n@%m:%~]$ "
+export BROWSER="firefox"
+export SSH_AUTH_SOCK="$HOME/.1password/agent.sock"
+export GNUPGHOME="$XDG_CONFIG_HOME/.gnupg/"
 setopt AUTOCD
 setopt EXTENDEDGLOB
 setopt NOMATCH 
