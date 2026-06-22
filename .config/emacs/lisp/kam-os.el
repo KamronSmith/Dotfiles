@@ -153,14 +153,18 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 (defun kam-os-stop-emacs ()
   "Stop the Emacsclient server using Systemd."
   (interactive)
-  (async-shell-command "systemctl --user stop emacs"))
+  (kam-os-stop-service "emacs"))
 
 (defun kam-os-restart-emacs ()
-  "Restart the Emacsclient server using Systemd."
+  "Restart Emacs under a variety of operating system conditions."
   (interactive)
+  (run-hooks 'kill-emacs-hook)
   (cond
-   ((eq system-type 'gnu/linux)
-    (async-shell-command "systemctl --user restart emacs"))
+   ((and (eq system-type 'gnu/linux)
+         (daemonp))
+    (kam-os-restart-service "emacs"))
+   ((eq system-type 'gnu-linux)
+    (restart-emacs))
    ((eq system-type 'darwin)
     (restart-emacs))))
 
