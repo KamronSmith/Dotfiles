@@ -80,14 +80,16 @@ comment is appended to the line with `comment-indent'."
       (comment-indent t)
       (insert " " string)))))
 
-(defun kam-comment-dwim (n)
+(defun kam-comment-dwim (&optional n)
   "Comment N lines, defaulting to the current line.
 When the region is active, comment its lines instead."
   (interactive "p")
   (if (region-active-p)
       (comment-or-uncomment-region
        (region-beginning) (region-end))
-    (comment-line n)))
+    (save-excursion
+      (comment-line n)
+      (forward-line (- n)))))
 
 (provide 'kam-comment)
 ;;; kam-comment.el ends here

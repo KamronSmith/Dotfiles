@@ -136,17 +136,18 @@ If ARG is not provided, ARG is 1."
       (flymake-goto-next-error)
       (setq this-command 'flymake-goto-next-error))
      ((derived-mode-p 'compilation-mode)
-      (next-error)
-      (setq this-command 'next-error))
+      (compilation-next-error arg)
+      (setq this-command 'compilation-next-error))
      ((and (derived-mode-p 'text-mode) (bound-and-true-p jinx-mode))
       (jinx-next))
      (t
-      (user-error "Unsupported mode")))))
+      (next-error arg)
+      (setq this-command 'next-error)))))
 
 (defun kam-prev-error (&optional arg)
   "Go to the previous error ARG number of times.
 If ARG is not provided, ARG is 1."
-  (interactive "p")
+  (interactive "P")
   (unless arg
     (setq arg 1))
   (push-mark (point) t nil)
@@ -159,10 +160,13 @@ If ARG is not provided, ARG is 1."
       (flymake-goto-prev-error)
       (setq this-command 'flymake-goto-prev-error))
      ((derived-mode-p 'compilation-mode)
-      (previous-error)
-      (setq this-command 'previous-error))
+      (compilation-previous-error arg)
+      (setq this-command 'compilation-previous-error))
+     ((and (derived-mode-p 'text-mode) (bound-and-true-p jinx-mode))
+      (jinx-previous))
      (t
-      (user-error "Unsupported mode")))))
+      (previous-error arg)
+      (setq this-command 'previous-error)))))
 
 (provide 'kam-common)
 ;;; kam-common.el ends here

@@ -244,10 +244,10 @@ SERVICE should be a string that corresponds to a service."
 (defun kam-os-list-fonts ()
   "List all of the currently installed fonts on the system."
   (interactive)
-  (let* ((buf "*List Fonts*")
-         (shell-command-buffer-name buf))
-    (shell-command "fc-list")
-    (with-current-buffer buf
+  (let* ((buf-name "*List Fonts*")
+         (shell-command-buffer-name buf-name))
+    (shell-command "fc-list" buf-name buf-name)
+    (with-current-buffer buf-name
       (view-mode))))
 
 (defun kam-os-file-size ()
@@ -263,7 +263,7 @@ Filter out small files."
   "Minibuffer history for `kam-os-change-wallpaper'.")
 
 (defun kam-os-wallpaper--prompt ()
-  "Minibuffer prompt for `kam-os-change-wallpaper.'"
+  "Minibuffer prompt for `kam-os-change-wallpaper'."
   (let ((default-directory kam-wallpapers-directory)
         (default (nth 1 kam-wallpapers-history)))
     (completing-read

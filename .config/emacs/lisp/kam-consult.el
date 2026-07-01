@@ -138,7 +138,8 @@ PROMPT is the prompt of `consult-imenu'."
 (defun kam-consult-line-symbol-at-point ()
   "Start a `consult-line' search with the symbol at point."
   (interactive)
-  (consult-line (thing-at-point 'symbol)))
+  (consult-line
+   (or (thing-at-point 'symbol))))
 
 (defun kam-consult-isearch ()
   "Start a `consult-line' search within an Isearch session."

@@ -374,19 +374,21 @@ See `kam-mode-line-string-cut-middle'."
    (format-mode-line "%C")
    "] "
    (propertize "󱨄 " 'face 'shadow)
-   ;; (kam-mode-line--number-to-string-maybe (kam-mode-line--buffer-percentage))
+   (kam-mode-line--number-to-string-maybe (kam-mode-line--buffer-percentage))
    " "
    (propertize " " 'face 'shadow)
    (upcase (format-mode-line "%I"))))
 
 (defun kam-mode-line--buffer-percentage ()
   "Return the percentage of how far through the current buffer the point is."
-  (let ((percent (round (* (/
-                            (float (line-number-at-pos))
+  (let* ((line-number (line-number-at-pos))
+        (percent (round (* (/
+                            (float line-number)
                             (float (kam-mode-line-buffer-lines)))
                            100))))
     (cond
-     ((= percent 0)
+     ((or (= line-number 1)
+          (= percent 0))
       "Top")
      ((>= percent 100)
       "Bot")
@@ -522,8 +524,7 @@ The string is truncated if the width of the window is smaller than `split-width-
 (defun kam-mode-line--recursive-edit-in-progress-p ()
   "Return t if Emacs is in a recursive edit.
 Minibuffer counts as a recursive edit, so recursion depth has to be greater than 1."
-  (when (> (recursion-depth) 2)
-    t))
+  (> (recursion-depth) 1))
 
 (defvar-local kam-mode-line-compile
   '(:eval
@@ -541,6 +542,14 @@ Minibuffer counts as a recursive edit, so recursion depth has to be greater than
                     'face 'kam-mode-line-indicator-orange-bg)
       ""))
   "Mode line construct for displaying if Emacs is in a recursive edit.")
+
+(defvar-local kam-mode-line-eglot
+    '(:eval
+      (if (eglot-managed-p)
+          (propertize " Eglot"
+                      'face 'kam-mode-line-indicator-gray)
+        ""))
+  "Mode line construct for displaying if the current buffer is managed by Eglot.")
 
 (provide 'kam-mode-line)
 ;;; kam-mode-line.el ends here
