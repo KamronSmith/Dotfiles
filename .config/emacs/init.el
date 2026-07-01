@@ -346,6 +346,29 @@ To be used attached to `after-init-hook'."
   (read-buffer-completion-ignore-case t)
   (read-extended-command-predicate #'command-completion-default-include-p))
 
+(use-package completion-preview
+  :ensure nil
+  :hook (after-init . global-completion-preview-mode)
+  :bind
+  (:map completion-preview-active-mode-map
+    ("M-n" . completion-preview-next-candidate)
+    ("M-p" . completion-preview-prev-candidate))
+  :custom
+  (completion-preview-minimum-symbol-length 2)
+  (completion-preview-exact-match-only t)
+  (completion-preview-idle-delay 0.3)
+  :config
+  (global-completion-preview-mode)
+
+  (with-eval-after-load 'org
+    (push 'org-self-insert-command completion-preview-commands))
+
+  (defun kam-detect-org-table ()
+    "Return true if point in Org table."
+    (and (derived-mode-p 'org-mode) (org-at-table-p)))
+  (add-hook 'completion-preview-inhibit-functions
+            #'kam-detect-org-table))
+
 (use-package ibuffer
   :ensure nil
   :bind
