@@ -8,7 +8,7 @@ local browser = "firefox"
 local clipboard = "cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"
 local bin_dir = "/home/kam/.local/bin/"
 
-local mainMod = "CONTROL + SUPER + SHIFT + ALT + "
+local mainMod = "SUPER + "
 
 hl.bind(mainMod .. "b", hl.dsp.focus({ direction = "left"}))
 hl.bind(mainMod .. "c", hl.dsp.window.move({ workspace = 1 }))
