@@ -1,4 +1,4 @@
-local rules = require("rules")
+local rules = require("window-rules")
 local binds = require("binds")
 
 hl.on("hyprland.start", function ()

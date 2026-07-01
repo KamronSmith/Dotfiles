@@ -1,4 +1,4 @@
-local rules = {}
+local window_rules = {}
 
 hl.window_rule({
     name = "Fix Xwayland Drags",
@@ -131,4 +131,4 @@ hl.window_rule({
     float = true,
 })
 
-return rules
+return window_rules
