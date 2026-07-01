@@ -35,6 +35,7 @@
   (native-comp-prune-cache t)
   :config
   (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Async-native-compile-log\\*" t)
+  (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Native-compile-Log\\*" t)
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "\\*Async-native-compile-log\\*" t)
@@ -868,12 +869,20 @@ Add this to `dired-mode-hook'."
     (add-to-list 'consult-buffer-filter
                  "^\\*Help\\*" t)
     (add-to-list 'consult-buffer-filter
-                 "^\\*Error\\*" t))
+                 "^\\*Error\\*" t)
+    (add-to-list 'consult-buffer-filter
+                 "\\*Shell Command Output\\*" t)
+    (add-to-list 'consult-buffer-filter
+             "\\*Messages\\*" t))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "\\*Help\\*")
+               "\\*Shell Command Output\\*" t)
   (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "\\*Error\\*"))
+               "\\*Messages\\*" t)
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
+               "\\*Help\\*" t)
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
+               "\\*Error\\*" t))
 
 (use-package apropos
   :ensure nil
@@ -921,12 +930,12 @@ Add this to `dired-mode-hook'."
                  (mode Info-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
+               "^\\*Info\\*" t)
+
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter
-                 "^\\*Info\\*" t))
-
-  (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "^\\*Info\\*"))
+                 "^\\*Info\\*" t)))
 
 (use-package man
   :ensure nil
@@ -946,12 +955,12 @@ Add this to `dired-mode-hook'."
                  (mode . Man-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
+               "^\\*Man " t)
+
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter
-                 "^\\*Man " t))
-
-  (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "^\\*Man "))
+                 "^\\*Man " t)))
 
 (defun kam-get-buffers-matching-mode (mode)
   "Returns a list of the buffers where their major-mode is equal to MODE."
@@ -3565,6 +3574,9 @@ Where kam-test is an alist of choices mapped to values."
 (use-package flycheck
   :hook (after-init . global-flycheck-mode)
   :config
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
+               "\\*Flycheck error messages\\*" t)
+
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "\\*Flycheck error messages\\*" t)))
 
