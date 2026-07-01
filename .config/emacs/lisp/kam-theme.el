@@ -23,5 +23,37 @@
     (setq spacious-padding-subtle-frame-lines nil)
     (kam-reload-mode 'spacious-padding-mode)))
 
+(defvar kam-favorite-themes
+  '(standard-dark
+    standard-light
+    standard-light-tinted
+    ef-day)
+  "A list of themes that I like.")
+
+(defun kam-load-theme ()
+  "Load a theme that I like.
+See `kam-favorite-themes'."
+  (interactive)
+  (standard-themes-load-theme
+   (intern (completing-read
+            "Theme to load: "
+            kam-favorite-themes))))
+
+(defvar kam-theme-face-change-functions
+  '(kam-notes-set-custom-faces
+    kam-set-custom-faces
+    kam-org-set-custom-faces
+    kam-olivetti-update-fringe-color
+    kam-hl-line-set-custom-faces)
+  "List of functions that update faces across the configuration.
+See `kam-theme-update-custom-faces'.")
+
+(defun kam-theme-update-custom-faces ()
+  "Function to update faces on theme change."
+  (dolist (func kam-theme-face-change-functions)
+    (funcall func))
+  (when kam-decolorify-mode
+    (kam-decolorify--turn-off-colors)))
+
 (provide 'kam-theme)
 ;;; kam-theme.el ends here
