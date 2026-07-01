@@ -30,6 +30,8 @@ hl.bind(mainMod .. "d", function ()
 hl.bind(mainMod .. "e", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. "f", hl.dsp.focus({ direction = "right"}))
 hl.bind(mainMod .. "g", hl.dsp.window.fullscreen())
+hl.bind(mainMod .. "j", hl.dsp.window.float({ action = toggle }))
+
 hl.bind(mainMod .. "l", hl.dsp.window.move({ workspace = 2 }))
 hl.bind(mainMod .. "m", hl.dsp.window.move({ workspace = 3 }))
 
@@ -57,6 +59,12 @@ hl.bind(mainMod .. "x", hl.dsp.exec_cmd(menu))
 hl.bind(mainMod .. "y", hl.dsp.exec_cmd(clipboard))
 hl.bind(mainMod .. "z", hl.dsp.exec_cmd(terminal))
 hl.bind(mainMod .. "Tab", hl.dsp.exec_cmd("rofi -show window"))
+
+hl.bind(mainMod .. "mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(mainMod .. "mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+
+hl.bind(mainMod .. "mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(mainMod .. "mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
