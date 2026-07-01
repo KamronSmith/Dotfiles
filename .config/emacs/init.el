@@ -165,8 +165,10 @@
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
   (user-lisp-directory (locate-user-emacs-file "lisp/"))
-  (line-spacing 0)
+  (line-spacing '(1 . 1))
   (inhibit-splash-screen nil)
+  (delete-pair-push-mark t)
+  (view-lossage-auto-refresh t)
   (create-lockfiles nil)
   (confirm-kill-emacs nil)
   (confirm-kill-processes nil)
@@ -305,13 +307,14 @@ To be used attached to `after-init-hook'."
   (resize-mini-frames t)
   (enable-recursive-minibuffers t)
   (read-answer-short t)
+  (minibuffer-visible-completions 'up-down)
   (crm-prompt (format "%s %%p" (propertize "[%d]" 'face 'shadow)))
   :config
   (defun kam-minibuffer-setup-hook ()
     "Function for settings as the minibuffer starts."
     (setq gc-cons-threshold most-positive-fixnum
           truncate-lines t)
-    (setq-local line-spacing 1)
+    (setq-local line-spacing '(1 . 1))
     (pulsar-pulse-line))
 
   (defun kam-minibuffer-exit-hook ()
@@ -320,16 +323,23 @@ To be used attached to `after-init-hook'."
 
 (use-package completion
   :ensure nil
+  :bind
+  (:map minibuffer-visible-completions-up-down-map
+        ("C-n" . minibuffer-next-completion)
+        ("C-p" . minibuffer-previous-completion))
   :custom
+  (completions-detailed t)
   (completion-cycle-threshold 1)
   (completion-eager-update t)
   (completion-eager-display t)
   (tab-always-indent 'complete)
-  (completion-auto-help 'lazy)
+  (completion-auto-help t)
+  (completion-show-help nil)
   (completions-max-height 20)
   (completions-format 'one-column)
   (completions-group t)
-  (completion-auto-select 'second-tab)
+  (completion-auto-select t)
+  (completions-sort 'historical)
   (completion-ignore-case t)
   (completions-sort 'historical)
   (read-file-name-completion-ignore-case t)
@@ -1816,9 +1826,11 @@ Do nothing if search string is empty to start with."
   :bind
   (("M-s g" . grep)
    :map grep-mode-map
-   ("w" . grep-change-to-grep-edit-mode))
-   ;; :map grep-edit-mode-map
-   ;; ("C-c C-c" . grep-edit-save-changes))
+   ("w" . grep-change-to-grep-edit-mode)
+   ("n" . next-error)
+   ("p" . previous-error)
+   :map grep-edit-mode-map
+   ("C-c C-c" . grep-edit-save-changes))
   :custom
   (grep-program "ripgrep")
   (grep-command "rg -nS --no-heading --color=always ")
@@ -3574,9 +3586,14 @@ Where kam-test is an alist of choices mapped to values."
   (eglot-events-buffer-size 0)
   (eglot-events-buffer-config '(:size 0 :format full))
   (eglot-code-action-indications nil)
+  (eglot-documentation-renderer 'markdown-ts-view-mode)
   :config
+  (defun kam-eglot-setup ()
+    "Function for loading Eglot settings."
+    (eglot-semantic-tokens-mode -1)
+    (eglot-inlay-hints-mode -1))
+
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
-  (eglot-inlay-hints-mode -1)
 
   (add-to-list 'consult-buffer-filter
                "^\\*EGLOT " t))
@@ -3665,6 +3682,8 @@ Where kam-test is an alist of choices mapped to values."
   (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   (eldoc-idle-delay 0)
   (eldoc-echo-area-use-multiline-p nil)
+  (eldoc-help-at-pt nil)
+  (eldoc-echo-area-prefer-doc-buffer t)
   :config
   (add-to-list 'display-buffer-alist
                '("^\\*eldoc for"
@@ -3842,6 +3861,7 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :defer t
   :mode "\\.ya?ml\\'"
+  :hook (yaml-ts-mode . treesit-fold-mode)
   :config
   (add-to-list 'treesit-language-source-alist '(yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "master" "src")))
 
@@ -3880,22 +3900,6 @@ Where kam-test is an alist of choices mapped to values."
   (setq shr-use-colors nil
         shr-use-fonts nil))
 
-(defvar kam-favorite-themes '(standard-dark
-                              standard-light
-                              standard-light-tinted
-                              ef-day)
-  "A list of themes that I like.")
-
-(defun kam-load-theme ()
-  "Load a theme that I like.
-See `kam-favorite-themes'."
-  (interactive)
-  (load-theme (intern (completing-read
-                       "Theme to load: "
-                       kam-favorite-themes))
-              t
-              nil))
-
 (use-package gptel
   :custom
   (gptel-default-mode 'org-mode)
@@ -3907,12 +3911,92 @@ See `kam-favorite-themes'."
                  (window-width . 0.5)
                  (window-parameters . ((mode-line-format . none))))))
 
+(use-package ghostel
+  :bind
+  (:map project-prefix-map
+        ("t" . ghostel-project))
+  :custom
+  (ghostel-compile-finished-major-mode 'compilation-mode)
+  :config
+  (ghostel-compile-global-mode)
+  (ghostel-comint-global-mode)
+  (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
+
+  (add-to-list 'display-buffer-alist
+               '("\\*Ghostel\\*"
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . bottom)
+                 (window . root)
+                 ;; (inhibit-same-window . t)
+                 (window-height . 0.35)
+                 (mode ghostel-mode)
+                 (window-parameters . ((mode-line-format . none)))))
+
+  (add-to-list 'display-buffer-alist
+               '("-Ghostel\\*$"         ; Matches `ghostel-project' buffer regex
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . bottom)
+                 (window . root)
+                 ;; (inhibit-same-window . t)
+                 (window-height . 0.35)
+                 (mode ghostel-mode)
+                 (window-parameters . ((mode-line-format . none))))))
+
+(use-package kirigami
+  :commands (kirigami-open-fold
+             kirigami-open-fold-rec
+             kirigami-close-fold
+             kirigami-toggle-fold
+             kirigami-open-folds
+             kirigami-close-folds-except-current
+             kirigami-close-folds)
+
+  :bind
+  ;; Vanilla Emacs keybindings
+  (("C-c z o" . kirigami-open-fold)          ; Open fold at point
+   ("C-c z O" . kirigami-open-fold-rec)      ; Open fold recursively
+   ("C-c z r" . kirigami-open-folds)         ; Open all folds
+   ("C-c z c" . kirigami-close-fold)         ; Close fold at point
+   ("C-c z m" . kirigami-close-folds)        ; Close all folds
+   ("C-<tab>" . kirigami-toggle-fold)))      ; Toggle fold at point
+
+(use-package outline-indent
+  :commands outline-indent-minor-mode
+  :hook ((yaml-ts-mode . outline-indent-minor-mode)
+         (python-ts-mode . outline-indent-minor-mode))
+  :custom
+  (outline-indent-ellipsis " ⌄"))
+
+
+(use-package treesit-fold
+  :commands (treesit-fold-close
+             treesit-fold-close-all
+             treesit-fold-open
+             treesit-fold-toggle
+             treesit-fold-open-all
+             treesit-fold-mode
+             global-treesit-fold-mode
+             treesit-fold-open-recursively
+             treesit-fold-line-comment-mode)
+  :bind
+  (:map treesit-fold-mode-map
+        ("C-<tab>" . treesit-fold-toggle))
+  :custom
+  (treesit-fold-line-count-show t)
+  (treesit-fold-line-count-format " ⌄")
+
+  :config
+  (set-face-attribute 'treesit-fold-replacement-face nil
+                      :foreground "#808080"
+                      :box nil
+                      :weight 'bold))
+
 (defvar kam-custom-lisp-files
-  `(
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
+  `(,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/applications.el")
+    ,(concat (getenv "HOME") "/.config/emacs/lisp/kam-decolorify-mode.el")
     )
   "List of strings detailing custom Lisp to be loaded.
 Each string should be a full path to a Lisp file.")
