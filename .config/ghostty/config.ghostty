@@ -1,0 +1,12 @@
+theme = Standard Themes
+background = 000000
+foreground = ffffff
+
+font-family = Iosevka Nerd Font Mono
+font-family-bold = Aporetic Sans Mono Bold
+font-family-italic = Aporetic Sans Mono Italic
+font-family-bold-italic = Aporetic Sans Mono Bold Italic
+font-size = 16
+
+shell-integration = zsh
+shell-integration-features = true
