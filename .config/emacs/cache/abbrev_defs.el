@@ -7,6 +7,7 @@
     ("dont" "don't" nil :count 2)
     ("hte" "the" nil :count 1)
     ("ive" "I've" nil :count 2)
+    ("sholud" "should" nil :count 3)
     ("teh" "the" nil :count 1)
     ("thats" "that's" nil :count 2)
    ))
