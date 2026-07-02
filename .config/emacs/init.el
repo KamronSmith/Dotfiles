@@ -47,6 +47,7 @@
         exec-path-from-shell-variables '("PATH"
                                          "SHELL"
                                          "SSH_AUTH_SOCK"
+                                         "GNUPGHOME"
                                          "LANG"
                                          "DISPLAY"
                                          "WAYLAND_DISPLAY"
@@ -55,15 +56,13 @@
                                          "ZDOTDIR"
                                          "HYPRLAND_INSTANCE_SIGNATURE"))
   (exec-path-from-shell-initialize)
-  (setenv "GIT_EDITOR" (format "emacs --init-dir=%s" (shell-quote-argument user-emacs-directory)))
-  (setenv "EDITOR" (format "emacs --init-dir=%s" (shell-quote-argument user-emacs-directory)))
   (setenv "PAGER" "cat"))
 
 (use-package emacs
   :ensure nil
   :hook ((after-init . kam-initial-setup)
          (after-init . blink-cursor-mode)
-         (after-init . kam-whitespace-handling))
+         (after-init . kam-whitespace-handling-setup))
   :bind
   ("<escape>" . kam-keyboard-quit-dwim)
   ("<home>" . nil)
@@ -72,24 +71,21 @@
   ("<down>" . nil)
   ("<left>" . nil)
   ("<right>" . nil)
-  ([remap keyboard-quit] . kam-keyboard-quit-dwim)
-  ([remap yank] . kam-yank-dwim)
   ("C-d" . delete-forward-char)
+  ("C-g" . kam-keyboard-quit-dwim)
   ("C-j" . kam-join-line-dwim)
   ([kam-m] . back-to-indentation)
   ("C-o" . kam-open-line-dwim)
   ("C-w" . kam-cut-dwim)
   ("C-t" . kam-transpose-char)
   ("C-q" . quoted-insert)
-  ("C-z" . zap-up-to-char)
+  ("C-z" . repeat)
   ("C-SPC" . set-mark-command)
   ("C-<return>" . kam-insert-new-line-below)
   ("C-<backspace>" . kam-control-backspace)
-  ("C-@" . nil)
   ("C-_" . nil)
   ("C-:" . pp-eval-expression)
   ("C-;" . kam-comment-dwim)
-  ("C-!" . shell-command)
   ("C-|" . nil)
   ("C-`" . nil)
   ("C-(" . insert-parentheses)
@@ -101,19 +97,18 @@
   ("M-i" . comment-indent-new-line)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
-  ("M-g M-n" . kam-next-error)
-  ("M-g M-p" . kam-prev-error)
+  ("M-g M-n" . next-error)
+  ("M-g M-p" . previous-error)
   ("M-n" . kam-forward-paragraph)
   ("M-p" . kam-backward-paragraph)
   ("M-q" . fill-paragraph)
   ("M-t" . kam-transpose-words)
   ("M-u" . upcase-dwim)
   ("M-w" . kam-kill-ring-save-dwim)
-  ("M-z" . kill-paragraph)
+  ("M-z" . zap-up-to-char)
   ("M-!" . async-shell-command)
   ("M-;" . comment-dwim)
   ("M-:" . pp-eval-expression)
-  ("M-@" . mark-word)
   ("M-&" . kam-jump-to-mark)
   ("M-<return>" . kam-insert-new-line-above)
   ("M-SPC" . mark-word)
@@ -126,12 +121,14 @@
   ("C-x n" . kam-narrow-or-widen-dwim)
   ("C-x o" . kam-ace-window-prefix)
   ("C-x u" . undo)
+  ("C-x z" . undo-redo)
   ("C-x C-c" . kam-os-restart-emacs)
   ("C-x C-n" . nil)
   ("C-x C-e" . kam-eval-current-sexp)
   ("C-x C-v" . mark-paragraph)
   ("C-x C-u" . nil)
   ("C-x C-z" . nil)
+  ("C-c q" . insert-char)
   ("C-M-<left>" . indent-rigidly-left)
   ("C-M-<right>" . indent-rigidly-right)
   ("C-M-," . nil)
@@ -274,6 +271,9 @@ To be used attached to `after-init-hook'."
          t)
         (message "Copied config to emacs directory")))))
 
+  (setq yank-transform-functions
+        '(string-chop-newline string-trim-whitespace))
+
   (put 'narrow-to-region 'disabled nil)
 
   (keymap-global-set "C-M-(" 'insert-parentheses)
@@ -287,20 +287,22 @@ To be used attached to `after-init-hook'."
     "<left>" 'kam-prev-buffer
     "<right>" 'kam-next-buffer)
   
+
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
   (setq-default comment-column 0)
 
-  (defun kam-whitespace-handling ()
+  (defun kam-whitespace-handling-setup ()
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)
     (kill-ring-deindent-mode)))
 
 (use-package minibuffer
   :ensure nil
   :hook ((minibuffer-setup . cursor-intangible-mode)
-         (minibuffer-setup . kam-minibuffer-setup-hook)
-         (minibuffer-exit . kam-minibuffer-exit-hook))
+         (minibuffer-setup . kam-minibuffer-setup)
+         (minibuffer-setup . minibuffer-nonselected-mode)
+         (minibuffer-exit . kam-minibuffer-exit))
   :custom
   (minibuffer-prompt-properties
    '(read-only t cursor-intangible t face minibuffer-prompt))
@@ -311,14 +313,15 @@ To be used attached to `after-init-hook'."
   (minibuffer-visible-completions 'up-down)
   (crm-prompt (format "%s %%p" (propertize "[%d]" 'face 'shadow)))
   :config
-  (defun kam-minibuffer-setup-hook ()
+  (defun kam-minibuffer-setup ()
     "Function for settings as the minibuffer starts."
     (setq gc-cons-threshold most-positive-fixnum
           truncate-lines t)
     (setq-local line-spacing '(1 . 1))
+    (face-remap-add-relative 'default :height 1.1)
     (pulsar-pulse-line))
 
-  (defun kam-minibuffer-exit-hook ()
+  (defun kam-minibuffer-exit ()
     "Function for settings as the minibuffer exits."
     (setq gc-cons-threshold (* 1000 1000 8))))
 
@@ -416,7 +419,7 @@ To be used attached to `after-init-hook'."
   ("C-^" . kam-alternate-buffer)
   ("C-x 0" . kam-delete-window-dwim)
   ("C-x 3" . kam-split-window-right)
-  ("M-v" . scroll-down)
+  ("M-v" . kam-scroll-up)
   :custom
   (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'vertical)
@@ -483,7 +486,20 @@ To be used attached to `after-init-hook'."
       (side . bottom)
       (window . root)
       (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none)))))))
+      (window-parameters . ((mode-line-format . none))))))
+
+  :config
+  (defun kam-scroll-down (&optional arg)
+    "Scroll down.
+With optional ARG, scroll down that many times."
+    (interactive)
+    (scroll-up arg))
+
+  (defun kam-scroll-up (&optional arg)
+    "Scroll up.
+With optional ARG, scroll up that many times."
+    (interactive)
+    (scroll-down arg)))
 
 (use-package ultra-scroll
   :custom
@@ -660,19 +676,6 @@ Add this to `dired-mode-hook'."
          'kam-dired--imenu-prev-index-position)
     (set (make-local-variable 'imenu-extract-index-name-function)
          'kam-dired--imenu-extract-index-name))
-
-  (defun kam-dired-shell-command-on-file-at-point ()
-    "Runs a shell command on the file at point."
-    (interactive)
-    (concat
-     (read-shell-command "Shell command: ")
-     " "
-     (dired-file-name-at-point)))
-
-  (defun kam-dired-home-dir ()
-    "Opens the home directory."
-    (interactive)
-    (dired (getenv "HOME")))
 
   (defun kam-dired-mark-files-not-regexp (regexp)
     "Mark every file in a Dired buffer that does not match REGEXP."
@@ -910,17 +913,17 @@ Add this to `dired-mode-hook'."
   ("C-h r" . info-display-manual)
   ("C-h R" . info-emacs-manual)
   (:map Info-mode-map
-              ("M-[" . Info-history-back)
-              ("<mouse-9>" . Info-history-back)
-              ("M-]" . Info-history-forward)
-              ("p" . kam-docview-backward-paragraph)
-              ("P" . Info-prev)
-              ("n" . kam-docview-forward-paragraph)
-              ("N" . Info-next)
-              ("j" . Info-next-reference)
-              ("k" . Info-prev-reference)
-              ("<next>" . scroll-down-line)
-              ("<prior>" . scroll-up-line))
+        ("M-[" . Info-history-back)
+        ("<mouse-9>" . Info-history-back)
+        ("M-]" . Info-history-forward)
+        ("p" . kam-docview-backward-paragraph)
+        ("P" . Info-prev)
+        ("n" . kam-docview-forward-paragraph)
+        ("N" . Info-next)
+        ("j" . Info-next-reference)
+        ("k" . Info-prev-reference)
+        ("<next>" . scroll-down-line)
+        ("<prior>" . scroll-up-line))
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Info\\*"
@@ -939,11 +942,12 @@ Add this to `dired-mode-hook'."
 
 (use-package man
   :ensure nil
-  :hook ((Man-mode . lin-mode)
-         )
-  :bind (:map Man-mode-map
-              ("p" . kam-docview-backward-paragraph)
-              ("n" . kam-docview-forward-paragraph))
+  :hook ((Man-mode . lin-mode))
+  :bind
+  ("M-s M-m" . man)
+  (:map Man-mode-map
+        ("p" . kam-docview-backward-paragraph)
+        ("n" . kam-docview-forward-paragraph))
   :custom
   (Man-notify-method 'pushy)
   :config
@@ -1154,22 +1158,19 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :config
   (defun kam-set-font-faces ()
-    (set-face-attribute 'default nil :font "SauceCodePro Nerd Font" :height 140 :weight 'regular :width 'regular)
+    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 140 :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
-    (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
-    (set-face-attribute 'mode-line nil :font "SauceCodePro Nerd Font Mono" :height 1.0 :weight 'regular)
-    (set-face-attribute 'mode-line-active nil :font "SauceCodePro Nerd Font Mono" :height 1.0  :weight 'regular)
-    (set-face-attribute 'mode-line-inactive nil :family "SauceCodePro Nerd Font Mono" :height 1.0 :weight 'regular))
+    (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular))
 
   (if (daemonp)
       (add-hook 'after-make-frame-functions
                 (lambda (frame)
                   (with-selected-frame frame
                     (kam-set-font-faces)
-                    (run-hooks 'modus-themes-after-load-theme-hook))))
+                    (run-hooks 'standard-themes-after-load-theme-hook))))
     (kam-set-font-faces)
     (load-theme 'standard-dark :no-confirm)
-    (run-hooks 'modus-themes-after-load-theme-hook)))
+    (run-hooks 'standard-themes-after-load-theme-hook)))
 
 (use-package vertico
   :hook (after-init . vertico-mode)
@@ -1183,12 +1184,13 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         ("<up>" . nil)
         ("<down>" . nil)
         ("C-<return>" . minibuffer-force-complete-and-exit)
-        ("C-g" . nil))
+        ("C-g" . kam-keyboard-quit-dwim))
   :custom
   (vertico-resize t)
   (vertico-cycle t)
   (vertico-scroll-margin 0)
-  (vertico-preselect 'prompt))
+  (vertico-preselect 'prompt)
+  (vertico-count 15))
 
 (use-package vertico-quick
   :after (vertico)
@@ -1214,7 +1216,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :hook (after-init . vertico-multiform-mode)
   :config
   (defvar kam-vertico-multiform-maximal
-    '((vertico-count . 10)
+    '((vertico-count . 15)
       (vertico-resize . t))
     "List of configurations for maximal Vertico multiform.")
 
@@ -1225,8 +1227,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
                                :prompt ""
                                :separator ""
                                :ellipsis ""
-                               :no-match ""))
-      (vertico-preselect . prompt)))
+                               :no-match ""))))
 
   (setq vertico-multiform-categories
         `((embark-keybinding grid)
@@ -1292,12 +1293,34 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (xref-show-definitions-function #'consult-xref)
   (consult-narrow-key ">")
   (consult-async-min-input 2)
+  (consult-ripgrep-args
+   "rg --null --follow --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip --hidden --glob=!.git ")
+  (consult-fd-args "fd --follow --hidden --full-path --color=never ")
   :config
   (advice-add #'register-preview :override #'consult-register-window)
   (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
   (add-to-list 'consult-preview-allowed-hooks 'olivetti-mode)
   (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
   (add-to-list 'consult-preview-allowed-hooks 'buffer-face-mode)
+
+  (defvar kam-consult-search-ignored-dirs
+    '("SCCS"
+      "RCS"
+      "CVS"
+      "MCVS"
+      ".src"
+      ".svn"
+      ".jj"
+      ".git"
+      ".hg"
+      ".bzr"
+      "_MTN"
+      "_darcs"
+      "{arch}"
+      "node_modules"
+      "build"
+      "dist")
+    "A list of directories to ignore when performing searches using Consult.")
 
   (add-to-list 'consult-buffer-filter
                "-shell\\*$")
@@ -1306,14 +1329,53 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (add-to-list 'consult-buffer-filter
                "^\\*Backtrace\\*$" t)
 
-  (add-to-list 'consult-buffer-sources 'kam-consult-source-neighbor-file 'append)
+  ;; (advice-add 'consult-yank-pop :after 'kam-indent-region-advice)
+
+  (setq consult-buffer-sources
+        '(consult-source-project-buffer
+          consult-source-project-recent-file
+          consult-source-buffer
+          consult-source-hidden-buffer
+          ;; kam-consult-source-neighbor-file
+          consult-source-bookmark
+          kam-consult-source-recent-file
+          kam-consult-source-dired-history))
+
+  (defvar kam-consult-source-recent-file
+    `( :name     "Recent Files"
+       :narrow   ?r
+       :category file
+       :face     consult-file
+       :history  file-name-history
+       :state    ,#'consult--file-state
+       :new      ,#'consult--file-action
+       :enabled  ,(lambda () recentf-mode)
+       :items
+       ,(lambda ()
+          (let ((ht (consult--buffer-file-hash))
+                items)
+            (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 50))
+              (unless (eq (aref file 0) ?/)
+                (let (file-name-handler-alist) ;; No Tramp slowdown please.
+                  (setq file (expand-file-name file))))
+              (unless (gethash file ht)
+                (push (consult--fast-abbreviate-file-name file) items))))))
+    "Recent file source for `consult-buffer'.
+Copied from the Consult code but made some changes.")
+
+  (defvar kam-consult-source-dired-history
+    `(:name "Dired History"
+            :narrow ?d
+            :category file
+            :face consult-file
+            :history kam-dired-directory-history
+            :state ,#'consult--file-state
+            :items (lambda () (mapcar #'identity kam-dired-directory-history))))
+
 
   (with-eval-after-load 'popper
     (add-to-list 'popper-reference-buffers
                  (list "consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)"))))
-;; (dolist (src consult-buffer-sources)
-;;   (unless (eq src 'consult--source-buffer)
-;;     (set src (plist-put (symbol-value src) :hidden tr))))
 
 (use-package consult-dir
   :bind
@@ -1350,7 +1412,14 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
             :history file-name-history
             :items kam-consult-dir-jumps--get-dirs))
 
-  (add-to-list 'consult-dir-sources 'kam-consult-dir--source-jumps t))
+  (setq consult-dir-sources
+        '(consult-dir--source-bookmark
+          kam-consult-source-dired-history
+          consult-dir--source-default
+          consult-dir--source-project
+          consult-dir--source-recentf
+          consult-dir--source-tramp-local
+          kam-consult-dir--source-jumps)))
 
 (use-package consult-flycheck
   :bind
@@ -1436,11 +1505,10 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   ;; (corfu-min-width corfu-max-width)
   (corfu-auto nil)
   (corfu-auto-delay 0.2)
-  (corfu-preselect 'prompt)
+  (corfu-preselect 'first)
   (corfu-exact-match 'insert)
-  (corfu-preview-current t)
+  (corfu-preview-current 'insert)
   (corfu-cycle t)
-  (corfu-preselect 'valid)
   :config
   (defun kam-corfu-combined-sort (candidates)
     "Sort CANDIDATES using both display-sort-function and corfu-sort-function."
@@ -1458,7 +1526,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :after (corfu)
   :bind
   (:map corfu-map
-        ("M-j" . corfu-quick-complete))
+        ("M-j" . corfu-quick-insert))
   :custom
   (corfu-quick1 "dnreta")
   (corfu-quick2 "dnreta"))
@@ -1482,16 +1550,27 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :bind
   ("C-c h h" . cape-history)
   ("C-c h f" . cape-file)
-  :hook (text-mode . kam-cape-dictionary-setup)
+  :hook ((prog-mode . kam-cape-prog-mode-setup)
+         (text-mode . kam-cape-text-mode-setup))
   :config
   (add-hook 'completion-at-point-functions #'cape-dabbrev)
   (add-hook 'completion-at-point-functions #'cape-file)
+  (add-hook 'completion-at-point-functions #'cape-elisp-block)
   (add-hook 'completion-at-point-functions #'cape-line)
   (add-hook 'completion-at-point-functions #'cape-keyword)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block)
 
-  (defun kam-cape-dictionary-setup ()
-    (add-hook 'completion-at-point-functions 'cape-dict)))
+  (defun kam-cape-text-mode-setup ()
+    (setq-local completion-at-point-functions
+                '(cape-dict
+                  cape-dabbrev)))
+
+  (defun kam-cape-prog-mode-setup ()
+    (setq-local completion-at-point-functions
+                '(cape-keyword
+                  cape-file
+                  cape-line
+                  cape-dabbrev
+                  t))))
 
 (use-package avy
   :bind
@@ -1639,12 +1718,12 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
   :bind (("C-," . popper-toggle)
          ("C-M-," . popper-cycle)
          ("C-M-#" . popper-toggle-type)
-         ;; (:map org-mode-map
-         ;;       ("C-," . popper-toggle))
-         )
+         (:map org-mode-map
+               ("C-," . popper-toggle)))
   :custom
   (popper-reference-buffers
    '(("\\*Messages\\*")
+     ("\\*compilation\\*")
      ("Output\\*$")
      ("\\*Apropos\\*")
      ("\\*Async Shell Command\\*")
@@ -1668,7 +1747,8 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
      Info-mode
      Grep-mode
      shell-command-mode
-     comint-mode))
+     comint-mode
+     ghostel-mode))
   (popper-display-control nil)
   :config
   (popper-mode)
@@ -1717,12 +1797,12 @@ Used in `popper-open-popup-hook'."
   :ensure nil
   :defer t
   :bind (:map tab-bar-mode-map
-              ("C-<tab>" . tab-next)
-              ("C-S-<tab>" . tab-previous))
-  ;; ("C-x t n" . tab-next)
-  ;; ("C-x t p" . tab-previous)
-  ("C-x t +" . tab-close)
-  ("C-x t t" . kam-consult-tab)
+              ("C-x t n" . tab-next)
+              ("C-x t p" . tab-previous)
+              ("C-x t +" . tab-close)
+              ("C-x t t" . kam-consult-tab)
+              ("C-<tab>" . nil)
+              ("C-S-<tab>" . nil))
   :init
   (defun tab-bar-tab-group-format-default (tab _i &optional current-p)
     (propertize
@@ -1827,27 +1907,6 @@ Do nothing if search string is empty to start with."
     (setq isearch-success nil)
     (isearch-cancel)))
 
-(use-package harpoon
-  :custom
-  (harpoon-project-package 'project)
-  (harpoon-cache-file (expand-file-name "harpoon/" kam-emacs-cache-directory))
-  :bind
-  ("C-c h f" . harpoon-toggle-file)
-  ("C-c h SPC" . harpoon-add-file)
-  ("C-c h c" . harpoon-clear)
-  ("A-n" . harpoon-go-to-1)
-  ("A-e" . harpoon-go-to-2)
-  ("A-a" . harpoon-go-to-3)
-  ("A-i" . harpoon-go-to-4)
-  :config
-  (add-to-list 'display-buffer-alist
-               '((derived-mode . harpoon-mode)
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (mode . harpoon-mode)
-                 (window-height . 0.35)
-                 (window-parameters . ((mode-line-format . none))))))
-
 (use-package drag-stuff
   :bind
   (("M-<up>" . drag-stuff-up)
@@ -1865,7 +1924,7 @@ Do nothing if search string is empty to start with."
    ("C-c C-c" . grep-edit-save-changes))
   :custom
   (grep-program "ripgrep")
-  (grep-command "rg -nS --no-heading --color=always ")
+  (grep-command "rg -nS --follow --no-heading --color=always ")
   (grep-use-null-device nil)
   (grep-find-ignored-directories
    '("SCCS"
@@ -1891,7 +1950,11 @@ Do nothing if search string is empty to start with."
                  (side . bottom)
                  (window . root)
                  (window-height . 0.35)
-                 (window-parameters . ((mode-line-format . none))))))
+                 (window-parameters . ((mode-line-format . none)))))
+
+  (with-eval-after-load 'consult
+    (add-to-list 'consult-buffer-filter
+                 "\\*[Gg]rep\\*" t)))
 
 (use-package link-hint
   :bind
@@ -1933,6 +1996,7 @@ Do nothing if search string is empty to start with."
          (text-mode . electric-quote-local-mode))
   :custom
   (electric-indent-actions '(yank))
+
   :config
   (electric-pair-mode)
 
@@ -1978,8 +2042,7 @@ Do nothing if search string is empty to start with."
   :hook
   (text-mode . kam-expreg-text-mode-setup)
   :bind
-  (("C-&" . expreg-expand)
-   ("C--" . expreg-contract))
+  ("C-&" . expreg-expand)
   :config
   (defun kam-expreg-text-mode-setup ()
     "Set up text mode for expreg."
@@ -2004,12 +2067,6 @@ Repeat to extend the region forward to the next symbolic expression."
                         ((thing-at-point 'string) 'string)
                         ((thing-at-point 'word) 'word))))
       (kam--mark (bounds-of-thing-at-point thing)))))
-
-(defun kam-jump-to-mark ()
-  "Jumps to the local mark, respecting the `mark-ring' order.
-This is the same as using \\[set-mark-command] with the prefix argument."
-  (interactive)
-  (set-mark-command 1))
 
 (defun kam-mark-line (&optional arg allow-extend)
   "Put mark at beginning of the line, point at end.
@@ -2053,7 +2110,7 @@ it marks the next ARG lines after the ones already marked."
            (save-excursion
              (forward-line 1)
              (save-excursion
-             (line-beginning-position)))))))
+               (line-beginning-position)))))))
 
 (defun kam-mark-point-to-end-of-line ()
   "Set the mark at the end of the line, regardless of where the cursor is on the line."
@@ -2082,46 +2139,64 @@ it marks the next ARG lines after the ones already marked."
              #'pop-to-buffer))
     (funcall pgm)))
 
-(defun kam-copy-line ()
-  "Copy the current line to the `kill-ring'."
-  (interactive)
-  (copy-region-as-kill (line-beginning-position) (line-end-position)))
+(defun kam-kill-ring-trim ()
+  "Trim the first element on the killring of whitespace."
+  (setcar kill-ring (string-trim-whitespace (car kill-ring))))
 
-(defun kam-cut-dwim ()
+(defun kam-copy-line ()
+  "Copy N lines to the `kill-ring'."
+  (save-excursion
+    (kill-ring-save
+     (progn
+       (back-to-indentation)
+       (point))
+     (progn
+       (forward-line 1)
+       (line-beginning-position))))
+  (pulsar-pulse-line))
+
+(defun kam-cut-dwim (n)
   "Kill based on the position of the point in the buffer.
 
-If the region is active, kills the region.
-If the point is on an Org heading, kills the subtree.
-If the point is at an item in an Org list, kills that item.
-If none of the previous conditions are true, kills the current line."
-  (interactive)
-  (cond ((region-active-p)
-         (kill-region nil nil t)
-         (setq this-command 'kill-region))
-        ((and (derived-mode-p 'org-mode)
-              (org-at-heading-p))
-         (when (eq last-command 'org-cut-subtree)
-           (append-next-kill))
-         (org-cut-subtree)
-         (setq this-command 'org-cut-subtree))
-        ((and (derived-mode-p 'org-mode)
-              (org-in-item-p))
-         (when (eq last-command 'kill-region)
-           (append-next-kill))
-         (kam-org-kill-item)
-         (setq this-command 'kill-region))
-        (t
-         (when (eq last-command 'kill-region)
-           (append-next-kill))
-         (kill-whole-line)
-         (setq this-command 'kill-region))))
+If the region is active, kill the region.
+If the point is on an Org heading, kill the subtree.
+If the point is at an item in an Org list, kill that item.
+If none of the previous conditions are true, kill the current line.
 
-(defun kam-kill-ring-save-dwim ()
+When called interactively without a prefix numeric argument, N is 1,
+which controls how many lines will be cut."
+  (interactive "p")
+  (when (> n 1)
+    (setq n (+ n 1)))
+  (dotimes (_ n)
+    (cond ((region-active-p)
+           (kill-region nil nil t)
+           (setq this-command 'kill-region))
+          ((and (derived-mode-p 'org-mode)
+                (org-at-heading-p))
+           (when (eq last-command 'org-cut-subtree)
+             (append-next-kill))
+           (org-cut-subtree)
+           (setq this-command 'org-cut-subtree))
+          ((and (derived-mode-p 'org-mode)
+                (org-in-item-p))
+           (when (eq last-command 'kill-region)
+             (append-next-kill))
+           (kam-org-kill-item)
+           (setq this-command 'kill-region))
+          (t
+           (when (eq last-command 'kam-kill-whole-line)
+             (append-next-kill))
+           (kam-kill-whole-line)
+           (setq this-command 'kam-kill-whole-line)))))
+
+(defun kam-kill-ring-save-dwim (n)
   "A DWIM command for copying.
 
  If point is at an Org heading, copy the subtree. If the
-point is at an Org item, copy the item. Else, copy the line."
-  (interactive)
+point is at an Org item, copy the item. Else, copy the line.
+When called interactively without a prefix numeric argument, N is 1."
+(interactive "p")
   (cond ((region-active-p)
          (copy-region-as-kill nil nil t)
          (setq this-command 'copy-region-as-kill))
@@ -2133,7 +2208,7 @@ point is at an Org item, copy the item. Else, copy the line."
          (setq this-command 'copy-region-as-kill))
         (t
          (kam-copy-line)
-         (setq this-command 'kill-ring-save))))
+         (setq this-command 'copy-region-as-kill))))
 
 (defun kam-duplicate-line-or-region ()
   "Duplicate the current line or active region."
@@ -2150,10 +2225,8 @@ point is at an Org item, copy the item. Else, copy the line."
 (defun kam-yank-dwim ()
   "Indent after you yank."
   (interactive)
-  (let* ((beg (point)))
-    (yank)
-    (indent-region beg (point))
-    (setq this-command 'yank)))
+  (let* ((yank-transform-functions '(string-chop-newline string-trim-whitespace)))
+    (yank)))
 
 (defun kam-delete-pair-dwim ()
   "Delete pair before or preceding point."
@@ -2184,25 +2257,40 @@ When called interactively without a prefix numeric argument, N is 1."
       (forward-line (- n))
       (kam-insert-new-line-below n))))
 
-(defun kam-join-line-dwim ()
-  "Join lines based on the position of the point on the current line.
-If the point is at the end of the line, join the next line to the current line. If the point is anywhere but the end of the line, joins the current line to the previous line."
-  (interactive)
-  (if (eolp)
-      (progn
-        (forward-line)
-        (join-line)
-        (indent-according-to-mode))
-    (join-line)
+(defun kam-join-line-dwim (n)
+  "Join lines.
+When called interactively without a prefix numeric argument, N is 1."
+  (interactive "P")
+  (let ((numeric-arg (prefix-numeric-value n)))
+    (save-excursion
+      (set-mark (point))
+      (forward-line numeric-arg)
+      (join-line nil (region-beginning) (region-end)))
     (indent-according-to-mode)))
 
-(defun kam-open-line-dwim ()
-  "Open the line and indent it to the proper place."
-  (interactive)
-  (save-excursion
-      (open-line 1)
-      (forward-line)
-      (indent-according-to-mode)))
+;; old `kam-join-line-dwim'
+;; (if (eolp)
+;;     (save-excursion
+;;       (set-mark (point))
+;;       (forward-line numeric-arg)
+;;       (join-line nil (region-beginning) (region-end))
+;;       (indent-according-to-mode))
+;;   (save-excursion
+;;     (set-mark (point))
+;;     (forward-line numeric-arg)
+;;     (join-line t (region-beginning) (region-end))
+;;     (indent-according-to-mode)))
+
+(defun kam-open-line-dwim (n)
+  "Open the line and indent it to the proper place.
+When called interactively without a prefix numeric argument, N is 1."
+  (interactive "P")
+  (let ((arg (prefix-numeric-value n)))
+    (save-excursion
+      (open-line arg)
+      (forward-line arg)
+      (indent-according-to-mode))
+    (indent-according-to-mode)))
 
 (defun kam-yank-replace-line-or-region ()
   "Replace line or region with the latest kill.
@@ -2214,12 +2302,16 @@ This command can be followed by the standard `yank-pop' (default is bound to \\[
   (yank)
   (setq this-command 'yank))
 
-(defun kam-kill-whole-line (n)
+(defun kam-kill-whole-line ()
   "Kill the whole line, regardless of the cursor position within the line.
 If called interactively without a prefix numeric argument, N is 1."
-  (dotimes (_ n)
-    (kam-mark-line-with-newline)
-    (kill-region (region-beginning) (region-end))))
+  (kill-region (progn
+                 (back-to-indentation)
+                 (point))
+               (progn
+                 (forward-line 1)
+                 (back-to-indentation)
+                 (point))))
 
 (defun kam-kill-from-point-to-beginning-of-line ()
   "Kill from the point to the beginning of the line."
@@ -2404,24 +2496,7 @@ Reverses the direction you are going in the kill ring."
   (interactive "p")
   (yank-pop (- arg)))
 
-(defun kam-scroll-down (&optional arg)
-  "Recenter the point and scroll down.
-With optional ARG"
-  (interactive)
-  (scroll-up-command arg)
-  (recenter))
 
-(defun kam-scroll-up (&optional arg)
-  "Recenter the point and scroll up."
-  (interactive)
-  (scroll-down-command)
-  (unless (= (window-start) (point-min))
-    (recenter))
-  (when (= (window-start) (point-min))
-    (let ((midpoint (/ (window-height) 2)))
-      (goto-char (window-start))
-      (forward-line midpoint)
-      (recenter midpoint))))
 
 (defun kam-filter-lines-in-string (input-string regexp &optional keep-matching)
   "Filter lines in INPUT-STRING that match REGEXP.
@@ -2437,7 +2512,8 @@ Returns the filtered string."
   :ensure nil
   :hook ((org-mode . variable-pitch-mode)
          (org-mode . visual-line-mode)
-         (org-mode . kam-org-syntax-table-modify))
+         (org-mode . kam-org-syntax-table-modify)
+         (org-mode . kam-org-set-custom-faces))
   :bind
   (("C-c o l" . kam-consult-org-heading-link)
    ("C-c o p" . org-set-property)
@@ -2458,7 +2534,6 @@ Returns the filtered string."
    ("C-'" . org-edit-src-code)
    ("M-m" . kam-mark-line)
    ("M-h" . mark-paragraph)
-   ("C-y" . kam-yank-dwim)
    ("M-<up>" . kam-org-metaup)
    ("M-<down>" . kam-org-metadown)
    ("C-M-<up>" . kam-org-control-metaup)
@@ -2514,7 +2589,8 @@ This stops the mismatch parenthesis bug in Org source blocks."
       (add-hook hook #'pulsar-recenter-center)
       (add-hook hook #'pulsar-reveal-entry)))
 
-  (with-eval-after-load 'standard-theme
+  (defun kam-org-set-custom-faces ()
+    "Set Org colors using `standard-themes'."
     (standard-themes-with-colors
       (custom-set-faces
        `(org-special-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
@@ -2535,11 +2611,11 @@ This stops the mismatch parenthesis bug in Org source blocks."
   ("C-c c" . org-capture)
   :custom
   (org-capture-templates
-   '(("t" "Todo" entry (file+headline kam-todo-todo-file "Inbox")
+   '(("t" "Todo" entry (file+headline kam-tasks-tasks-file "Inbox")
       "* TODO %?\n")
-     ("p" "Project" entry (file+headline kam-todo-todo-file "Inbox")
+     ("p" "Project" entry (file+headline kam-tasks-tasks-file "Projects")
       "* %?\n")
-     ("w" "Writing" entry (file+headline kam-todo-todo-file "Notes")
+     ("w" "Writing" entry (file+headline kam-tasks-tasks-file "Notes")
       "* TODO %?\n")))
   :config
   (add-to-list 'display-buffer-alist
@@ -2596,9 +2672,10 @@ This stops the mismatch parenthesis bug in Org source blocks."
   ("C-c o w" . kam-org-refile-to-current-file)
   :custom
   (org-refile-use-outline-path t)
-  (org-outline-path-complete-in-steps nil))
+  (org-outline-path-complete-in-steps nil)
+  (org-refile-targets '((org-agenda-files :maxlevel . 9))))
 
-(use-package ol   ;; org links
+(use-package ol   ;; org-links
   :ensure nil
   :bind
   ("C-c l" . org-store-link)
@@ -2746,71 +2823,38 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 (use-package project
   :ensure nil
   :bind
-  ("<f3>" . project-recompile)
-  ("<f4>" . project-compile)
+  ("C-@" . project-recompile)
+  ("M-@" . project-compile)
   (:map project-prefix-map
-              ("b" . consult-project-buffer)
-              ("d" . kam-project-dired)
-              ("g" . consult-ripgrep)
-              ("n" . kam-project-new))
+        ("b" . consult-project-buffer)
+        ("d" . kam-project-dired)
+        ("g" . consult-ripgrep)
+        ("n" . kam-project-new))
   :custom
   (project-switch-use-entire-map nil)
   (project-list-file (expand-file-name "projects" kam-emacs-cache-directory))
-  (project-vc-extra-root-markers '("Cargo.toml" "package.json" "go.mod"))
+  (project-vc-extra-root-markers '(".project" "Cargo.toml" "package.json" "go.mod" "build.zig"))
+  (project-vc-ignores '("nix/store/"
+                        "node_modules/"
+                        "go/pkg/"
+                        ".direnv"))
+
   ;; (project-prompter 'kam-project--read-project-by-name)
   :config
-  (setq project-vc-ignores '("nix/store/"
-                             "node_modules/"
-                             "go/pkg/"
-                             ".direnv/")
-        project-vc-extra-root-markers '(".project"))
+  (setq project-switch-commands
+        (seq-remove (lambda (x) (memq x (or '(project-vc-dir "VC-Dir")
+                                       '(project-find-regexp "Find regexp")
+                                       '(project-find-dir "Find directory"))))
+                    project-switch-commands))
 
-  (add-to-list 'project-switch-commands '(consult-ripgrep "Grep" "g"))
-  (add-to-list 'project-switch-commands '(magit-project-status "Magit" "m"))
-
-  (remove '(project-vc-dir "VC-Dir") project-switch-commands)
+  (add-to-list 'project-switch-commands '(project-find-dir "Dired" "d"))
 
   (defvar kam-project-name-history nil)
-
-  ;; (setq project-prompter #'kam-project--read-project-by-name)
-
-  (defun kam-project--return-formatted-project-name ()
-    (when-let* ((proj (project-current))
-                (name (file-name-nondirectory
-                       (directory-file-name (project-root proj)))))
-      (format "[%s]" name)))
-
-  (defun kam-project--read-project-by-name ()
-    "Read a project name and return its root directory.
-
-if no known project matches the selected name, prompt for a
-sub-directory of `kam-projects-directory' using the selected name
-as the initial input for completion, and return that directory."
-    (let* ((name-dir-alist
-            (mapcar (lambda (dir)
-                      (cons (project-name (project-current nil dir))
-                            dir))
-                    (project-known-project-roots)))
-           (current (project-current))
-           (default (and current (project-name current)))
-           (name (consult--read name-dir-alist
-                                :prompt "Project: "
-                                :history 'kam-project-name-history
-                                :annotate #'marginalia-annotate-file
-                                :state (consult--file-state)
-                                :category 'file)))
-      (or (alist-get name name-dir-alist nil nil #'string=)
-          (let* ((dir (read-directory-name "Project root directory: "
-                                           kam-projects-directory
-                                           nil t name))
-                 (project (project-current nil dir)))
-            (when project (project-remember-project project))
-            dir))))
 
   (defun kam-project-new ()
     "Create a project in the `kam-projects-directory'."
     (interactive)
-    (let* ((default-directory kam-projects-directory)
+    (let* ((default-directory kam-tasks-projects-directory)
            (project-name (read-directory-name "Project: "))
            (response (y-or-n-p "Do you want to initialize the project with a Git repository?")))
       (make-directory project-name)
@@ -2829,15 +2873,6 @@ as the initial input for completion, and return that directory."
       (project-forget-project proj)
       (delete-directory proj t t)))
 
-  (defun kam-project-switch-project (dir)
-    "Switch to another project."
-    (interactive (list (funcall project-prompter)))
-    (project--remember-dir dir)
-    (unwind-protect
-        (progn
-          (setq-local project-current-directory-override dir)
-          (call-interactively #'project-find-file))))
-
   (defun kam-project-dired ()
     "Dired in the project root directory."
     (interactive)
@@ -2851,7 +2886,8 @@ as the initial input for completion, and return that directory."
   (defun kam-project-update-list ()
     "Update the project list when deleting/adding projects."
     (interactive)
-    (project-remember-projects-under kam-tasks-projects-directory)))
+    (project-forget-zombie-projects)
+    (project-remember-projects-under kam-tasks-projects-directory t)))
 
 (use-package comint
   :ensure nil
@@ -2964,6 +3000,7 @@ Numerical argument ARG determines the command being selected from to choose argu
   :hook (shell-mode . kam-shell-mode-setup)
   :bind
   ("C-x s" . shell)
+  ("C-!" . shell-command)
   (:map shell-mode-map
         ("C-^" . kam-shell-up-directory)
         ("C-x C-d" . kam-shell-cd)
@@ -2998,11 +3035,12 @@ Numerical argument ARG determines the command being selected from to choose argu
                 comint-input-ring-seperator "\n: \\([0-9]+\\):\\([0-9]+\\);" ; Because of ZSH extended_history option
                 outline-regexp comint-prompt-regexp
                 completion-styles '(partial-completion basic)
-                completion-at-point-functions '(cape-file comint-completion-at-point)
+                completion-at-point-functions '(cape-file comint-completion-at-point t)
                 corfu-auto nil
                 corfu-quit-no-match t)
     (hl-line-mode -1)
-    (comint-read-input-ring t))
+    (comint-read-input-ring t)
+    (shell-dirtrack-mode 1))
 
   (defvar kam-shell-cd--directories nil
     "List of accumulated `shell-last-dir'.")
@@ -3078,22 +3116,22 @@ The shell is renamed to make opening multiple shells easier."
     (let ((default-directory (getenv "HOME")))
       (shell)))
 
-  (shell-dirtrack-mode 1)
-
   (add-to-list 'display-buffer-alist
                '("-shell\\*$" ;; matches title for `project-shell'
                  (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
+                 (side . bottom)
+                 (window . root)
+                 (window-height . 0.35)
                  (mode shell-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
                  (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
+                 (side . bottom)
+                 (window . root)
                  ;; (inhibit-same-window . t)
-                 (window-height . 0.5)
+                 (window-height . 0.35)
                  (mode shell-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
@@ -3103,7 +3141,7 @@ The shell is renamed to make opening multiple shells easier."
                  (side . bottom)
                  (window . root)
                  (inhibit-same-window . t)
-                 (window-height . 0.35)
+                 (window-height . 0.4)
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package eshell
@@ -3111,18 +3149,17 @@ The shell is renamed to make opening multiple shells easier."
   :hook ((eshell-mode . completion-preview-mode)
          (eshell-mode . kam-eshell-mode-setup))
   :bind
-  (("C-x s" . eshell)
-   (:map eshell-mode-map
-         ("<tab>" . completion-at-point)
-         ("C-g" . eshell-interrupt-process)
-         ("C-M-f" . eshell-forward-argument)
-         ("C-M-b" . eshell-backward-argument)
-         ("C-c C-p" . kam-eshell-previous-prompt)
-         ("C-c C-n" . kam-eshell-next-prompt)
-         ("C-x C-d" . eshell/z))
-   (:map eshell-hist-mode-map
-         ("M-r" . consult-history)
-         ("C-c C-l" . eshell/clear)))
+  (:map eshell-mode-map
+        ("<tab>" . completion-at-point)
+        ("C-g" . eshell-interrupt-process)
+        ("C-M-f" . eshell-forward-argument)
+        ("C-M-b" . eshell-backward-argument)
+        ("C-c C-p" . kam-eshell-previous-prompt)
+        ("C-c C-n" . kam-eshell-next-prompt)
+        ("C-x C-d" . eshell/z))
+  (:map eshell-hist-mode-map
+        ("M-r" . consult-history)
+        ("C-c C-l" . eshell-clear))
   :custom
   (eshell-history-file-name (expand-file-name "eshell/history" kam-emacs-cache-directory))
   (eshell-last-dir-ring-file-name (expand-file-name "eshell/lastdir" kam-emacs-cache-directory))
@@ -3149,16 +3186,16 @@ The shell is renamed to make opening multiple shells easier."
   (setq eshell-prompt-function
         (lambda ()
           (standard-themes-with-colors
-              (concat
-               (propertize "[" 'face `(:foreground ,fg-main :background ,bg-main))
-               (propertize (user-login-name) 'face `(:foreground ,fg-main :background ,bg-main))
-               (propertize "@" 'face `(:foreground ,fg-main :background ,bg-main))
-               (propertize (system-name) 'face `(:foreground ,pink :background ,bg-main))
-               (propertize "]" 'face `(:foreground ,fg-main :background ,bg-main))
-               (propertize " — " 'face `(:foreground ,fg-main :background ,bg-main))
-               (propertize (car (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
-               ;; (propertize (cadr (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
-               (propertize " $ " 'face `(:weight bold :background ,bg-main main))))))
+            (concat
+             (propertize "[" 'face `(:foreground ,fg-main :background ,bg-main))
+             (propertize (user-login-name) 'face `(:foreground ,fg-main :background ,bg-main))
+             (propertize "@" 'face `(:foreground ,fg-main :background ,bg-main))
+             (propertize (system-name) 'face `(:foreground ,pink :background ,bg-main))
+             (propertize "]" 'face `(:foreground ,fg-main :background ,bg-main))
+             (propertize " — " 'face `(:foreground ,fg-main :background ,bg-main))
+             (propertize (car (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
+             ;; (propertize (cadr (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
+             (propertize " $ " 'face `(:weight bold :background ,bg-main main))))))
 
   (add-to-list 'display-buffer-alist
                '("\\*eshell[\\*\\:]" ; matches title for reg eshell and `kam-eshell-here'
@@ -3238,10 +3275,9 @@ Where kam-test is an alist of choices mapped to values."
   (interactive)
   (revert-buffer t t t))
 
-
 
 (use-package standard-themes
-  :hook (standard-themes-after-load-theme . kam-set-custom-faces)
+  :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
   :init
   (standard-themes-take-over-modus-themes-mode 1)
   :config
@@ -3254,14 +3290,14 @@ Where kam-test is an alist of choices mapped to values."
   (setq standard-themes-prompts '(heavy))
   (setq standard-themes-completions '((selection . (bold))))
   (setq standard-themes-headings '((1 . (variable-pitch 1.3))
-                                  (2 . (variable-pitch 1.2))
-                                  (3 . (variable-pitch 1.1))
-                                  (t . (variable-pitch 1))))
+                                   (2 . (variable-pitch 1.2))
+                                   (3 . (variable-pitch 1.1))
+                                   (t . (variable-pitch 1))))
   (setq standard-themes-common-palette-overrides '((fg-prompt cyan)
                                                    (bg-prompt unspecified)
                                                    (bg-prose-block-delimiter "#312f34")
                                                    (bg-prose-block-contents "#29272c")
-                                                   ;; (cursor "#f9d82b")
+                                                   (cursor "#f9d82b")
                                                    ;; (fg-completion-match-0 fg-main)
                                                    ;; (fg-completion-match-1 fg-main)
                                                    ;; (builtin fg-dim)
@@ -3282,14 +3318,20 @@ Where kam-test is an alist of choices mapped to values."
       (custom-set-faces
        ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
        `(region ((,c :extend nil)))
-       `(fringe ((,c :background ,bg-main))))))
+       `(fringe ((,c :background ,bg-main)))
+       `(cursor ((,c :foreground ,fg-main :background ,cursor)))
+       `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
+       `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
+       `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
+       `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular))))))
 
   (defun kam-standard-themes-reload-theme ()
     "Reload the current Standard theme."
     (interactive)
     (standard-themes-load-theme (modus-themes-get-current-theme)))
 
-  (standard-themes-load-theme 'standard-light-tinted))
+  (standard-themes-load-theme 'standard-light-tinted)
+  (kam-set-custom-faces))
 
 
 (use-package ef-themes)
@@ -3306,8 +3348,8 @@ Where kam-test is an alist of choices mapped to values."
   (defun kam-olivetti-update-fringe-color ()
     "Update Olivetti mode's fringe color to the main background color."
     (standard-themes-with-colors
-        (custom-set-faces
-         `(olivetti-fringe ((,c :background ,bg-main)))))))
+      (custom-set-faces
+       `(olivetti-fringe ((,c :background ,bg-main)))))))
 
 
 (use-package spacious-padding
@@ -3356,12 +3398,13 @@ Where kam-test is an alist of choices mapped to values."
   (hl-line-sticky-flag nil)
   (global-hl-line-sticky-flag 'window)
   :config
-  ;; (with-eval-after-load 'standard-themes
-  ;;   (standard-themes-with-colors
-  ;;     (custom-set-faces
-  ;;      `(hl-line ((,c :background ,bg-dim)))
-  ;;      `(hl-line-nonselected ((,c :background ,bg-main))))))
-  )
+  (defun kam-hl-line-set-custom-faces ()
+    "Update `hl-line-mode' color depending on the currently loaded theme."
+    (with-eval-after-load 'standard-themes
+      (standard-themes-with-colors
+        (custom-set-faces
+         `(hl-line ((,c :background ,bg-dim)))
+         `(hl-line-nonselected ((,c :background ,bg-main))))))))
 
 (use-package lin
   :custom
@@ -3455,6 +3498,7 @@ Where kam-test is an alist of choices mapped to values."
                 kam-mode-line-buffer-stats-var
                 "  "
                 kam-mode-line-process
+                kam-mode-line-eglot
                 " "
                 mode-line-format-right-align
                 kam-mode-line-vc-branch))
@@ -3473,7 +3517,8 @@ Where kam-test is an alist of choices mapped to values."
                      kam-mode-line-nix
                      kam-mode-line-logo
                      kam-mode-line-compile
-                     kam-mode-line-vc-branch))
+                     kam-mode-line-vc-branch
+                     kam-mode-line-eglot))
   (put construct 'risky-local-variable t))
 
 (use-package text-mode
@@ -3507,7 +3552,8 @@ Where kam-test is an alist of choices mapped to values."
     "Set up `conf-mode'."
     (display-line-numbers-mode)
     (kam-conf-mode-set-font)
-    (indent-tabs-mode -1))
+    (indent-tabs-mode -1)
+    (outline-minor-mode))
 
   (defun kam-conf-mode-set-font ()
     "Intended to set the font in `conf-mode'."
@@ -3519,13 +3565,26 @@ Where kam-test is an alist of choices mapped to values."
 
 (use-package elisp-mode
   :ensure nil
+  :hook ((lisp-interaction-mode . outline-minor-mode)
+         (emacs-lisp-mode . outline-minor-mode)
+         (emacs-lisp-mode . kam-elisp-mode-setup))
   :bind
   (:map lisp-interaction-mode-map
         ("C-j" . kam-join-line-dwim))
   :custom
   (elisp-fontify-semantically t)
   :config
-  (set-default-toplevel-value 'lexical-binding t))
+  (set-default-toplevel-value 'lexical-binding t)
+
+  (defun kam-elisp-mode-setup ()
+    "Setup `emacs-lisp-mode'."
+    (setq-local completion-at-point-functions
+                '(cape-elisp-block
+                  cape-elisp-symbol
+                  elisp-completion-at-point
+                  cape-file
+                  cape-dabbrev
+                  t))))
 
 ;; (use-package sh-mode
 ;;   :ensure nil
@@ -3566,7 +3625,16 @@ Where kam-test is an alist of choices mapped to values."
                "magit-")
 
   (add-to-list 'same-window-regexps "^magit: .*$")
-  (add-to-list 'same-window-regexps "^magit-status: .*$"))
+  (add-to-list 'same-window-regexps "^magit-status: .*$")
+
+  (add-to-list 'project-switch-commands '(magit-project-status "Git" "g"))
+
+  (defun kam-git-clone ()
+    "Run git clone using `magit' in `kam-tasks-projects-directory'."
+    (interactive)
+    (let ((default-directory kam-tasks-projects-directory))
+      (call-interactively 'magit-clone))
+    (kam-project-update-list)))
 
 (use-package forge
   :after (magit))
@@ -3587,7 +3655,7 @@ Where kam-test is an alist of choices mapped to values."
 
 (use-package flyover
   :after (flycheck)
-  :hook (flycheck-mode . flyover-mode)
+  ;; :hook (flycheck-mode . flyover-mode)
   :custom
   (flyover-line-position-offset 0)
   (flyover-show-virtual-line nil)
@@ -3608,14 +3676,13 @@ Where kam-test is an alist of choices mapped to values."
 ;;      (note "»" compilation-info))))
 
 (use-package eglot
-  :bind (:map prog-mode-map
-              ("M-g M-c" . eglot-code-actions)
-              ("M-g M-r" . eglot-rename)
-              ("M-g M-f" . eglot-format))
+  :bind
+  (:map prog-mode-map
+        ("M-g M-c" . eglot-code-actions)
+        ("M-g M-r" . eglot-rename)
+        ("M-g M-f" . eglot-format))
   :hook
-  ((c-ts-mode . eglot-ensure)
-   (python-ts-mode . eglot-ensure)
-   (rust-ts-mode . eglot-ensure))
+  (eglot-managed-mode . kam-eglot-setup)
   :custom
   (eglot-autoshutdown t)
   (eglot-events-buffer-size 0)
@@ -3631,47 +3698,54 @@ Where kam-test is an alist of choices mapped to values."
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
   (add-to-list 'consult-buffer-filter
+               "^\\*EGLOT " t)
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*EGLOT " t))
+
+(use-package gdb-mi
+  :ensure nil
+  :custom
+  (gdb-show-main t)
+  (gdb-many-windows t)
+  (gdb-restore-window-configuration-after-quit t)
+  (gdb-debuginfod-enable-setting t)
+  :config
+  (defun kam-gdb-quit ()
+    "Quit out of GDB instance."
+    (interactive)
+    (unless (and (eq (current-buffer) gud-comint-buffer)
+                 (eq gud-minor-mode 'gdbmi))
+      (error "Not in a GDB-MI buffer"))
+    (let ((proc (get-buffer-process gud-comint-buffer)))
+      (if (and (eobp)
+               (process-live-p proc)
+               (not gud-running)
+               (= (point) (marker-position (process-mark proc))))
+          ;; Exit a recursive reading loop or quit.
+          (if (> gdb-control-level 0)
+              (process-send-eof proc)
+            ;; Sending an EOF does not work with GDB-MI; submit an
+            ;; explicit quit command.
+            (insert "quit")
+            (comint-send-input t t))))))
 
 (use-package xref
   :bind
   (("M-." . xref-find-definitions)
    :map xref--xref-buffer-mode-map
-   ("w" . kam-xref-to-grep-compilation))
+   ("w" . xref-change-to-xref-edit-mode))
   :custom
   (xref-search-program 'ripgrep)
   :config
   (add-to-list 'xref-prompt-for-identifier 'xref-find-references t)
   (add-to-list 'display-buffer-alist '((category . xref-jump)
-                                       (display-buffer-reuse-window
-                                        display-buffer-use-some-window)
-                                       (some-window . mru)))
-  (defun kam-xref-to-grep-compilation ()
-    "Export the current Xref results to a `grep-mode'-like buffer."
-    (unless (derived-mode-p 'xref--xref-buffer-mode)
-      (user-error "Not in an Xref buffer"))
-    (let* ((items (and (boundp 'xref--fetcher)
-                       (funcall xref--fetcher)))
-           (buf-name "*xref: export to grep*")
-           (grep-buf (get-buffer-create buf-name)))
-      (unless items
-        (user-error "No xref items found"))
-      (with-current-buffer grep-buf
-        (let ((inhibit-read-only t))
-          (erase-buffer)
-          (insert (format "-*- mode: grep; default-directory: %S -*-\n\n"
-                          default-directory))
-          (dolist (item items)
-            (let* ((loc (xref-item-location item))
-                   (file (xref-file-location-file loc))
-                   (line (xref-file-location-line loc))
-                   (summary (xref-item-summary item)))
-              (insert (format "%s:%d:%s\n" file line summary)))))
-        (grep-mode))
-      (pop-to-buffer grep-buf))))
+                                       (display-buffer-reuse-window display-buffer-same-window))))
 
 (use-package diff-mode
   :ensure nil
+  :bind
+  (:map diff-mode-map
+        ("M-o" . ace-window))
   :defer t
   :custom
   (diff-default-read-only t)
@@ -3683,7 +3757,7 @@ Where kam-test is an alist of choices mapped to values."
 (use-package display-line-numbers
   :ensure nil
   :custom
-  (display-line-numbers-type 'relative)
+  (display-line-numbers-type 'visual)
   (display-line-numbers-widen t)
   (display-line-numbers-width 4))
 
@@ -3761,19 +3835,25 @@ Where kam-test is an alist of choices mapped to values."
 (use-package compile
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter)
-  :bind (:map compilation-mode-map
-              ("<f4>" . #'recompile)
-              ("<escape>" . #'quit-window))
+  :bind
+  (:map compilation-mode-map
+        ("n" . next-error-no-select)
+        ("p" . previous-error-no-select)
+        ("M-@" . #'project-compile)
+        ("C-g" . #'quit-window))
   :custom
   (compilation-always-kill t)
   (compilation-ask-about-save nil)
-  (compilation-scroll-output t)
+  (compilation-scroll-output 'first-error)
   (compilation-max-output-line-length nil)
   (compile-command "")
+  (compilation-skip-threshold 2)
   :config
-  (defadvice compile (before ad-compile-smart activate)
-    "Advises `compile' so it sets the argument COMINT to t."
-    (ad-set-arg 1 t))
+  (defun kam-compile-make-interactive ()
+    "Advise `compile' so that it becomes interactive."
+    (defadvice compile (before ad-compile-smart activate)
+      "Advises `compile' so it sets the argument COMINT to t."
+      (ad-set-arg 1 t)))
 
   (add-to-list 'display-buffer-alist
                '("\\*compilation\\*"
@@ -3785,14 +3865,19 @@ Where kam-test is an alist of choices mapped to values."
 
   (add-to-list
    'switch-to-prev-buffer-skip-regexp
-   "\\*compilation\\*"))
+   "\\*compilation\\*")
+
+  (with-eval-after-load 'consult
+    (add-to-list 'consult-buffer-filter
+                 "\\*compilation\\*" t)))
 ;; (advice-add #'compile :before (ad-set-argument 1 t))
 
 (use-package whitespace
   :ensure nil
   :custom
   (whitespace-style
-   '(face tabs spaces trailing space-before-tab newline indentation empty space-after-tab space-mark tab-mark page-delimiters)))
+   '(face tabs spaces trailing space-before-tab newline indentation
+          empty space-after-tab tab-mark page-delimiters)))
 
 (use-package x
   :ensure nil
@@ -3808,6 +3893,7 @@ Where kam-test is an alist of choices mapped to values."
   :custom
   (epa-gpg-program (executable-find "gpg2"))
   (epa-keys-select-method 'minibuffer)
+  (epa-pinentry-mode 'loopback)
   :config
   (setenv "GPG_AGENT_INFO" nil)
   (setenv "GNUGPGHOME" "~/.gnupg"))
@@ -3822,32 +3908,32 @@ Where kam-test is an alist of choices mapped to values."
   :custom
   (auth-sources '("~/.authinfo.gpg")))
 
-(use-package elisp-mode
-  :ensure nil
-  :config
-  )
-
 (use-package c-ts-mode
   :ensure nil
-  :hook (c-ts-mode . kam-c-ts-mode-setup)
+  :hook ((c-ts-mode . kam-c-ts-mode-setup)
+         (c-ts-mode . eglot-ensure))
   :config
   (defun kam-c-ts-mode-setup ()
     "Setup function for `c-ts-mode'."
-    (c-toggle-comment-style -1)
+    (hs-minor-mode)
+    (treesit-fold-mode)
+    (c-ts-mode-toggle-comment-style -1)
     (setq c-ts-mode-indent-offset 4
           c-default-style '((java-mode . "java")
                             (awk-mode . "awk")
-                            (other . "linux")))
-    (text-scale-set 1))) ; Make the text a little bigger
+                            (other . "linux")))))
 
 (use-package python
   :defer t
+  :hook (python-mode . eglot-ensure)
   :custom
   (python-indent-guess-indent-offset-verbose nil))
 
 (use-package rust-ts-mode
   :mode "\\.rs\\'"
   :defer t
+  :hook ((rust-ts-mode . treesit-fold-mode)
+         (rust-ts-mode . eglot-ensure))
   :custom
   (rust-mode-treesitter-derive t)
   (rust-indent-level 2)
@@ -3856,10 +3942,22 @@ Where kam-test is an alist of choices mapped to values."
                '((rust-ts-mode rust-mode) .
                  ("rust-analyzer" :initializationOptions (:check (:command "clippy"))))))
 
+(use-package zig-mode
+  :hook (zig-mode . eglot-ensure)
+  :config
+  (add-to-list 'eglot-server-programs
+               '(zig-mode . ("zls")) t))
+
 (use-package java-ts-mode
   :ensure nil
-  :hook (java-ts-mode . eglot-ensure)
+  :hook ((java-ts-mode . treesit-fold-mode)
+         (java-ts-mode . eglot-ensure))
+  :bind
+  (:map java-mode-map
+        ("<TAB>" . indent-for-tab-command))
   :defer t
+  :custom
+  (java-ts-mode-enable-doxygen t)
   :config
   (add-to-list 'eglot-server-programs
                '((java-mode java-ts-mode) .
@@ -3871,13 +3969,15 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :defer t
   :mode "\\.json\\'"
-  :hook (json-ts-mode . (lambda ()
-                          (setq indent-tabs-mode nil))))
+  :hook ((json-ts-mode . treesit-fold-mode)
+         (json-ts-mode . (lambda ()
+                           (setq indent-tabs-mode nil)))))
 
 (use-package toml-ts-mode
   :ensure nil
   :defer t
   :mode "\\.toml\\'"
+  :hook (toml-ts-mode . treesit-fold-mode)
   :config
   (add-to-list 'treesit-language-source-alist '(toml "https://github.com/ikatyang/tree-sitter-toml" "master" "src")))
 
@@ -3885,6 +3985,7 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :defer t
   :mode "\\.md\\'"
+  :hook (markdown-ts-mode . outline-minor-mode)
   :custom
   (markdown-fontify-code-blocks-natively t)
   (markdown-fontify-whole-heading-line t)
