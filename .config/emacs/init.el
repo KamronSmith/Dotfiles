@@ -286,7 +286,7 @@ To be used attached to `after-init-hook'."
     :repeat t
     "<left>" 'kam-prev-buffer
     "<right>" 'kam-next-buffer)
-  
+
 
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
@@ -361,7 +361,6 @@ To be used attached to `after-init-hook'."
   (completion-preview-exact-match-only t)
   (completion-preview-idle-delay 0.3)
   :config
-  (global-completion-preview-mode)
 
   (with-eval-after-load 'org
     (push 'org-self-insert-command completion-preview-commands))
