@@ -394,9 +394,40 @@ See `kam-mode-line-string-cut-middle'."
       "Bot")
      (t percent))))
 
+(defun kam-mode-line--reader-mode-stats ()
+  "Return statistics about the current `reader-mode' buffer."
+  (concat
+   (propertize " " 'face 'shadow)
+   " ["
+   (kam-mode-line--number-to-string-maybe (reader-current-pagenumber))
+   "/"
+   (kam-mode-line--number-to-string-maybe reader-current-doc-pagecount)
+   "]"
+   (propertize " 󱨄 " 'face 'shadow)
+   (kam-mode-line--number-to-string-maybe (kam-mode-line--reader-mode-doc-percentage))
+   " "
+   (propertize "  " 'face 'shadow)
+   (upcase (format-mode-line "%I"))))
+
+(defun kam-mode-line--reader-mode-doc-percentage ()
+  "Return the percentage of how far through the current document the point is."
+  (let* ((pg-num (reader-current-pagenumber))
+         (total-pg reader-current-doc-pagecount)
+         (percent (round (* (/
+                             (float pg-num)
+                             (float total-pg))
+                            100))))
+    (cond
+     ((or (= pg-num 1)
+          (= percent 0))
+      "Top")
+     ((>= percent 100)
+      "Bot")
+     (t percent))))
+
 (defun kam-mode-line--number-to-string-maybe (input)
   "If INPUT is a number, turn it into a string.
-Or if its a string, keep it as it is."
+Or if it is a string, keep it as it is."
   (if (natnump input)
       (number-to-string input)
     input))
@@ -407,7 +438,10 @@ Or if its a string, keep it as it is."
 
 (defvar-local kam-mode-line-buffer-stats-var
   '(:eval
-    (kam-mode-line-buffer-line-stats))
+    (cond
+     ((derived-mode-p 'reader-mode)
+      (kam-mode-line--reader-mode-stats))
+     (t (kam-mode-line-buffer-line-stats))))
   "Mode-line construct for the buffer stats indicator.")
 
 (defvar-local kam-mode-line-process
@@ -549,7 +583,7 @@ Minibuffer counts as a recursive edit, so recursion depth has to be greater than
           (propertize " Eglot"
                       'face 'kam-mode-line-indicator-gray)
         ""))
-  "Mode line construct for displaying if the current buffer is managed by Eglot.")
+    "Mode line construct for displaying if the current buffer is managed by Eglot.")
 
 (provide 'kam-mode-line)
 ;;; kam-mode-line.el ends here
