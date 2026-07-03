@@ -23,7 +23,7 @@ Please see `kam-decolorify-mode'."
      `(font-lock-variable-name-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-property-use-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-property-name-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-preprocessor-face ((,c :foreground ,fg-main)))
+     `(font-lock-preprocessor-face ((,c :foreground ,fg-dim)))
      `(font-lock-type-face ((,c :foreground ,fg-dim))))))
 
 (defun kam-decolorify--turn-on-colors ()
