@@ -10,3 +10,4 @@ font-size = 16
 
 shell-integration = zsh
 shell-integration-features = true
+confirm-close-surface = false
