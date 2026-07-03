@@ -68,6 +68,7 @@ linux
 linux-firmware
 linux-headers
 lldb
+lua-language-server
 lvm2
 m17n-lib
 man-db
