@@ -782,12 +782,11 @@ Add this to `dired-mode-hook'."
   :ensure nil
   :custom
   (repeat-on-final-keystroke t)
-  (repeat-exit-timeout 5)
+  (repeat-exit-timeout 2)
   (repeat-exit-key "C-g")
-  (repeat-keep-prefix nil)
+  (repeat-keep-prefix t)
   (repeat-check-key t)
   (repeat-echo-function 'ignore)
-  (set-mark-command-repeat-pop t)
   :config
   (repeat-mode))
 
