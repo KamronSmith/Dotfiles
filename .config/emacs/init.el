@@ -1159,8 +1159,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :config
   (defun kam-set-font-faces ()
-    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 140 :weight 'regular :width 'regular)
-    (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
+    (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'regular :width 'regular)
+    (set-face-attribute 'fixed-pitch nil :font "Iosevka" :height 1.0 :weight 'regular :width 'regular)
     (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular))
 
   (if (daemonp)
