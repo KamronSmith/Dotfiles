@@ -1340,7 +1340,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           ;; kam-consult-source-neighbor-file
           consult-source-bookmark
           kam-consult-source-recent-file
-          kam-consult-source-dired-history))
+          ;; kam-consult-source-dired-history
+          ))
 
   (defvar kam-consult-source-recent-file
     `( :name     "Recent Files"
@@ -1364,14 +1365,14 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
     "Recent file source for `consult-buffer'.
 Copied from the Consult code but made some changes.")
 
-  (defvar kam-consult-source-dired-history
-    `(:name "Dired History"
-            :narrow ?d
-            :category file
-            :face consult-file
-            :history kam-dired-directory-history
-            :state ,#'consult--file-state
-            :items (lambda () (mapcar #'identity kam-dired-directory-history))))
+  ;; (defvar kam-consult-source-dired-history
+  ;;   `(:name "Dired History"
+  ;;           :narrow ?d
+  ;;           :category file
+  ;;           :face consult-file
+  ;;           :history kam-dired-directory-history
+  ;;           :state ,#'consult--file-state
+  ;;           :items (lambda () (mapcar #'identity kam-dired-directory-history))))
 
 
   (with-eval-after-load 'popper
@@ -1415,7 +1416,7 @@ Copied from the Consult code but made some changes.")
 
   (setq consult-dir-sources
         '(consult-dir--source-bookmark
-          kam-consult-source-dired-history
+          ;; kam-consult-source-dired-history
           consult-dir--source-default
           consult-dir--source-project
           consult-dir--source-recentf
