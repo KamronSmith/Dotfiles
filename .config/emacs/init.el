@@ -773,7 +773,11 @@ Add this to `dired-mode-hook'."
 
 (use-package reader
   :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
-            :make "all"))
+            :make "all")
+  :bind
+  (:map reader-mode-map
+        ("SPC" . reader-next-page)
+        ("<backspace>" . reader-previous-page)))
 
 (use-package repeat
   :ensure nil
