@@ -352,7 +352,6 @@ To be used attached to `after-init-hook'."
 
 (use-package completion-preview
   :ensure nil
-  :hook (after-init . global-completion-preview-mode)
   :bind
   (:map completion-preview-active-mode-map
     ("M-n" . completion-preview-next-candidate)
