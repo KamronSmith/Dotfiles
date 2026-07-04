@@ -45,6 +45,7 @@
   :init
   (setq exec-path-from-shell-shell-name (executable-find "zsh")
         exec-path-from-shell-variables '("PATH"
+                                         "MANPATH"
                                          "SHELL"
                                          "SSH_AUTH_SOCK"
                                          "GNUPGHOME"
@@ -53,10 +54,8 @@
                                          "WAYLAND_DISPLAY"
                                          "XDG_DATA_HOME"
                                          "XDG_CONFIG_HOME"
-                                         "ZDOTDIR"
                                          "HYPRLAND_INSTANCE_SIGNATURE"))
-  (exec-path-from-shell-initialize)
-  (setenv "PAGER" "cat"))
+  (exec-path-from-shell-initialize))
 
 (use-package emacs
   :ensure nil
@@ -1356,7 +1355,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
        ,(lambda ()
           (let ((ht (consult--buffer-file-hash))
                 items)
-            (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 50))
+            (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 25))
               (unless (eq (aref file 0) ?/)
                 (let (file-name-handler-alist) ;; No Tramp slowdown please.
                   (setq file (expand-file-name file))))

@@ -83,6 +83,7 @@ notcurses
 noto-fonts-cjk
 nvidia-open-dkms
 obs-studio
+openbsd-netcat
 openssh
 otf-apple-sf-mono
 otf-monaspace-nerd
@@ -118,6 +119,7 @@ timeshift
 tldr
 tmux
 tree-sitter
+ttc-iosevka
 ttf-firacode-nerd
 ttf-times-new-roman
 udiskie
