@@ -58,6 +58,7 @@ intellij-idea-community-edition
 iwd
 java-debug
 jdtls
+jq
 krita
 krita-plugin-gmic
 libgccjit
