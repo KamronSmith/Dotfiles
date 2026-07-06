@@ -8,6 +8,8 @@ font-family-italic = Aporetic Sans Mono Italic
 font-family-bold-italic = Aporetic Sans Mono Bold Italic
 font-size = 16
 
+keybind=performable:ctrl+y=paste_from_clipboard
+
 shell-integration = zsh
 shell-integration-features = true
 confirm-close-surface = false
