@@ -37,6 +37,7 @@ enchant
 expac
 fd
 firefox
+flatpak
 gdb
 ghostty
 gimp
