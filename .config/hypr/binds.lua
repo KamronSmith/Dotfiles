@@ -30,6 +30,7 @@ hl.bind(mainMod .. "d", function ()
 hl.bind(mainMod .. "e", hl.dsp.exec_cmd(fileManager))
 hl.bind(mainMod .. "f", hl.dsp.focus({ direction = "right"}))
 hl.bind(mainMod .. "g", hl.dsp.window.fullscreen())
+hl.bind(mainMod .. "i", hl.dsp.layout("swapwithmaster master"))
 hl.bind(mainMod .. "j", hl.dsp.window.float({ action = toggle }))
 
 hl.bind(mainMod .. "l", hl.dsp.window.move({ workspace = 2 }))
