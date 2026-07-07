@@ -26,6 +26,7 @@ export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME/nv"
 export PYTHON_HISTORY="$XDG_STATE_HOME/python_history"
 export _JAVA_OPTIONS=-Djava.util.prefs.userRoot="$XDG_CONFIG_HOME/java"
+export XDG_MENU_PREFIX=arch- kbuildsycoca6 # Fix Dolphin from not showing recommended apps
 
 export PATH="$PATH:$HOME/.local/bin"
 export PATH="$PATH:$CARGO_HOME"
