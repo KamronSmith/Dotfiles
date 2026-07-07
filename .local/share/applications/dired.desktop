@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Dired
+Comment=The Emacs file manager
+Exec=/usr/local/bin/emacsclient --eval '(dired ".")'
+Icon=emacs
+Terminal=false
+Categories=Utility;Development
+Mimetype=inode
