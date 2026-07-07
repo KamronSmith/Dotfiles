@@ -121,6 +121,7 @@ timeshift
 tldr
 tmux
 tree-sitter
+tree-sitter-cli
 ttc-iosevka
 ttf-firacode-nerd
 ttf-times-new-roman
