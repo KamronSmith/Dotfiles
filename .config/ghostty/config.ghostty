@@ -9,6 +9,11 @@ font-family-bold-italic = Aporetic Sans Mono Bold Italic
 font-size = 16
 
 keybind=performable:ctrl+y=paste_from_clipboard
+keybind=performable:alt+w=copy_to_clipboard
+# keybind=performable:ctrl+v=scroll_page_up
+keybind=performable:alt+v=scroll_page_down
+# keybind=performable:ctrl+s=start_search
+# keybind=performable:ctrl+r=navigate_search
 
 shell-integration = zsh
 shell-integration-features = true
