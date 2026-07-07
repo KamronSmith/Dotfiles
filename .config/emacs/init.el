@@ -3502,7 +3502,9 @@ Where kam-test is an alist of choices mapped to values."
                 kam-mode-line-eglot
                 " "
                 mode-line-format-right-align
-                kam-mode-line-vc-branch))
+                ;; kam-mode-line-vc-branch      ;; disabled because causing excessive tramp load times
+                ))                              ;; not sure why
+
 
 (dolist (construct '(kam-mode-line-kbd-macro
                      kam-mode-line-rectangle-mark
