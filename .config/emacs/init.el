@@ -1829,7 +1829,7 @@ Used in `popper-open-popup-hook'."
     (when-let* ((proj (project-current))
                 (name (file-name-nondirectory
                        (directory-file-name (project-root proj)))))
-      (tab-group (format "[P] %s" name))))
+      (tab-group (format "%s" name))))
 
   (defvar-keymap kam-tab-repeat-map
     :repeat t
