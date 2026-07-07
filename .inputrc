@@ -1,0 +1,13 @@
+set bell-style none
+set keyseq-timeout 1200
+
+set completion-ignore-case on
+set completion-map-case on
+
+set show-all-if-ambiguous on
+set echo-control-characters off
+set colored-stats on
+set colored-completion-prefix on
+
+"\C-H": backward-kill-word
+"\C-W": kill-whole-line

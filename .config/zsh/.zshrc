@@ -14,7 +14,6 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_FIND_NO_DUPS
 setopt HIST_SAVE_NO_DUPS
 unsetopt beep
-bindkey -e
 
 alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
 alias vim="nvim"
@@ -25,3 +24,7 @@ zstyle :compinstall filename '/home/kam/.config/zsh/.zshrc'
 
 autoload -Uz compinit
 compinit
+
+bindkey -e
+bindkey -e '^w' kill-whole-line
+bindkey -e '^\b' backward-kill-word
