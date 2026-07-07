@@ -2,8 +2,16 @@
 Type=Application
 Name=Dired
 Comment=The Emacs file manager
-Exec=/usr/local/bin/emacsclient --eval '(dired ".")'
+Exec=/usr/local/bin/emacsclient --create-frame --alternate-editor= --eval='(dired %%)'
 Icon=emacs
 Terminal=false
-Categories=Utility;Development
-Mimetype=inode
+Categories=System;Utility;FileManager
+StartupNotify=true
+StartupWMClass=Emacs
+Keywords=dired;
+# Actions=new-window;
+Mimetype=inode/directory;
+
+# [Desktop Action new-window]
+# Name = New Window
+# Exec = /usr/local/bin/emacsclient --alternate-editor= --create-frame %F
