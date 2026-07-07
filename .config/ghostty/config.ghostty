@@ -1,6 +1,7 @@
 theme = Standard Themes
 background = 000000
 foreground = ffffff
+cursor-color = "#f9d82b"
 
 font-family = Iosevka NFM
 # font-family-bold = Iosevka NFM Bold
