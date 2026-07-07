@@ -3617,6 +3617,7 @@ Where kam-test is an alist of choices mapped to values."
   (magit-format-file-function #'magit-format-file-nerd-icons)
   :config
   (magit-auto-revert-mode)
+  (magit-wip-mode)
 
   (when (eq system-type 'darwin)
     (setq magit-git-executable "/opt/homebrew/bin/git"))
