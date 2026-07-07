@@ -2,11 +2,11 @@ theme = Standard Themes
 background = 000000
 foreground = ffffff
 
-font-family = Iosevka Nerd Font Mono
-font-family-bold = Aporetic Sans Mono Bold
-font-family-italic = Aporetic Sans Mono Italic
-font-family-bold-italic = Aporetic Sans Mono Bold Italic
-font-size = 16
+font-family = Iosevka NFM
+# font-family-bold = Iosevka NFM Bold
+# font-family-italic = Iosevka NFM Italic
+# font-family-bold-italic = Iosevka NFM Bold Italic
+font-size = 20
 
 keybind=performable:ctrl+y=paste_from_clipboard
 keybind=performable:alt+w=copy_to_clipboard
