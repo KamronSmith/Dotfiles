@@ -2,11 +2,11 @@ local binds = {}
 
 local terminal = "ghostty"
 local fileManager = "emacsclient -c -a \"\""
-local menu = "rofi -show drun"
+local menu = "rofi -show combi -modes combi -combi-modes \"window,drun\" -config ~/.dotfiles/.config/rofi/config.rasi -theme ~/.dotfiles/.config/rofi/theme.rasi"
+local window_switcher = "rofi -show window -config ~/.dotfiles/.config/rofi/config.rasi -theme ~/.dotfiles/.config/rofi/theme.rasi"
 local editor = "emacsclient -c -a \"\""
 local browser = "firefox"
-local clipboard = "cliphist list | rofi -dmenu -display-columns 2 | cliphist decode | wl-copy"
-local bin_dir = "/home/kam/.local/bin/"
+local clipboard = "cliphist list | rofi -dmenu -display-columns 2 -config ~/.dotfiles/.config/rofi/dmenu.rasi -theme ~/.dotfiles/.config/rofi/theme.rasi -p \"Paste: \" | cliphist decode | wl-copy"
 
 local mainMod = "SUPER + "
 
