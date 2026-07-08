@@ -8,11 +8,12 @@ local editor = "emacsclient -c -a \"\""
 local browser = "firefox"
 local clipboard = "cliphist list | rofi -dmenu -display-columns 2 -config ~/.dotfiles/.config/rofi/dmenu.rasi -theme ~/.dotfiles/.config/rofi/theme.rasi -p \"Paste: \" | cliphist decode | wl-copy"
 
-local mainMod = "SUPER + "
 
-hl.bind(mainMod .. "b", hl.dsp.focus({ direction = "left"}))
-hl.bind(mainMod .. "c", hl.dsp.window.move({ workspace = 1 }))
-hl.bind(mainMod .. "d", function ()
+local main_mod = "SUPER + "
+
+hl.bind(main_mod .. "b", hl.dsp.focus({ direction = "left"}))
+hl.bind(main_mod .. "c", hl.dsp.window.move({ workspace = 1 }))
+hl.bind(main_mod .. "d", function ()
                             local exists = false
                             for _, w in ipairs(hl.get_windows()) do
                                 if w.class == browser then
@@ -27,17 +28,17 @@ hl.bind(mainMod .. "d", function ()
                             end
                         end)
 
-hl.bind(mainMod .. "e", hl.dsp.exec_cmd(fileManager))
-hl.bind(mainMod .. "f", hl.dsp.focus({ direction = "right"}))
-hl.bind(mainMod .. "g", hl.dsp.window.fullscreen())
-hl.bind(mainMod .. "i", hl.dsp.layout("swapwithmaster master"))
-hl.bind(mainMod .. "j", hl.dsp.window.float({ action = toggle }))
+hl.bind(main_mod .. "e", hl.dsp.exec_cmd(fileManager))
+hl.bind(main_mod .. "f", hl.dsp.focus({ direction = "right"}))
+hl.bind(main_mod .. "g", hl.dsp.window.fullscreen())
+hl.bind(main_mod .. "i", hl.dsp.layout("swapwithmaster master"))
+hl.bind(main_mod .. "j", hl.dsp.window.float({ action = toggle }))
 
-hl.bind(mainMod .. "l", hl.dsp.window.move({ workspace = 2 }))
-hl.bind(mainMod .. "m", hl.dsp.window.move({ workspace = 3 }))
+hl.bind(main_mod .. "l", hl.dsp.window.move({ workspace = 2 }))
+hl.bind(main_mod .. "m", hl.dsp.window.move({ workspace = 3 }))
 
-hl.bind(mainMod .. "q", hl.dsp.window.close(hl.get_active_window()))
-hl.bind(mainMod .. "r", function ()
+hl.bind(main_mod .. "q", hl.dsp.window.close(hl.get_active_window()))
+hl.bind(main_mod .. "r", function ()
                             local exists = false
                             for _, w in ipairs(hl.get_windows()) do
                                 if w.class == "emacs" then
@@ -52,20 +53,20 @@ hl.bind(mainMod .. "r", function ()
                             end
                         end)
 
-hl.bind(mainMod .. "s", hl.dsp.focus({ workspace = 4 }))
-hl.bind(mainMod .. "t", hl.dsp.focus({ workspace = 3 }))
+hl.bind(main_mod .. "s", hl.dsp.focus({ workspace = 4 }))
+hl.bind(main_mod .. "t", hl.dsp.focus({ workspace = 3 }))
 -- hl.bind(mainMod .. "v", hl.dsp.window.float({ action = "toggle"}))
-hl.bind(mainMod .. "v", hl.dsp.window.move({ workspace = 4 }))
-hl.bind(mainMod .. "x", hl.dsp.exec_cmd(menu))
-hl.bind(mainMod .. "y", hl.dsp.exec_cmd(clipboard))
-hl.bind(mainMod .. "z", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. "Tab", hl.dsp.exec_cmd("rofi -show window"))
+hl.bind(main_mod .. "v", hl.dsp.window.move({ workspace = 4 }))
+hl.bind(main_mod .. "x", hl.dsp.exec_cmd(menu))
+hl.bind(main_mod .. "y", hl.dsp.exec_cmd(clipboard))
+hl.bind(main_mod .. "z", hl.dsp.exec_cmd(terminal))
+hl.bind(main_mod .. "Tab", hl.dsp.exec_cmd(window_switcher))
 
-hl.bind(mainMod .. "mouse_down", hl.dsp.focus({ workspace = "e+1" }))
-hl.bind(mainMod .. "mouse_up", hl.dsp.focus({ workspace = "e-1" }))
+hl.bind(main_mod .. "mouse_down", hl.dsp.focus({ workspace = "e+1" }))
+hl.bind(main_mod .. "mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 
-hl.bind(mainMod .. "mouse:272", hl.dsp.window.drag(),   { mouse = true })
-hl.bind(mainMod .. "mouse:273", hl.dsp.window.resize(), { mouse = true })
+hl.bind(main_mod .. "mouse:272", hl.dsp.window.drag(),   { mouse = true })
+hl.bind(main_mod .. "mouse:273", hl.dsp.window.resize(), { mouse = true })
 
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
 hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
