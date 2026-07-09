@@ -2665,9 +2665,23 @@ This stops the mismatch parenthesis bug in Org source blocks."
   :custom
   (org-agenda-hide-tags-regexp ".")
   (org-agenda-custom-commands
-   '(("i" "Inbox" alltodo ""
+   '(("d" "Daily Agenda"
+      ((agenda "" ((org-agenda-span 'day)
+                   (org-deadline-warning-days 7)))
+       (tags-todo "+PRIORITY=\"A\""
+                  ((org-agenda-overriding-header "High Priority Tasks")))))
+     ("i" "Inbox" alltodo ""
       ((org-agenda-overriding-header "Unfiled items in the inbox:")
        (org-agenda-skip-function '(kam-org-agenda-skip-entry-if-not-headline "Inbox"))))
+     ("r" "Weekly Review"
+      ((agenda ""
+               ((org-agenda-overriding-header "Completed Tasks")
+                (org-agenda-skip-function '(org-agenda-skip-entry-if 'nottodo 'done))
+                (org-agenda-span 'week)))
+       (agenda ""
+               ((org-agenda-overriding-header "Unfinished Scheduled Tasks")
+                (org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+                (org-agenda-span 'week)))))
      ("w" "Writing Inbox" alltodo ""
       ((org-agenda-overriding-header "Things to write about:")
        (org-agenda-skip-function '(kam-org-agenda-skip-entry-if-not-headline "Notes"))))))
