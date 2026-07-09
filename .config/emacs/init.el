@@ -204,6 +204,7 @@
   (save-interprogram-paste-before-kill t)
   (mouse-drag-and-drop-region-cross-program t)
   (mouse-drag-and-drop-region-scroll-margin t)
+  (fill-region-as-paragraph-function 'fill-region-as-paragraph-semlf)
   (font-log nil)
   (eval-expression-print-length nil)
   (echo-keystokes-help nil)
@@ -1311,7 +1312,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (xref-show-xrefs-function #'consult-xref)
   (xref-show-definitions-function #'consult-xref)
   (consult-narrow-key ">")
-  (consult-async-min-input 2)
+  (consult-async-min-input 3)
   (consult-ripgrep-args
    "rg --null --follow --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip --hidden --glob=!.git ")
   (consult-fd-args "fd --follow --hidden --full-path --color=never ")
@@ -1351,13 +1352,13 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   ;; (advice-add 'consult-yank-pop :after 'kam-indent-region-advice)
 
   (setq consult-buffer-sources
-        '(consult-source-project-buffer
-          consult-source-project-recent-file
-          consult-source-buffer
-          consult-source-hidden-buffer
+        '(consult-source-buffer
+          consult-source-project-buffer
+          ;; consult-source-project-recent-file
+          ;; consult-source-hidden-buffer
           ;; kam-consult-source-neighbor-file
           consult-source-bookmark
-          kam-consult-source-recent-file
+          ;; kam-consult-source-recent-file
           ;; kam-consult-source-dired-history
           ))
 
@@ -1586,8 +1587,8 @@ Copied from the Consult code but made some changes.")
 
   (defun kam-cape-prog-mode-setup ()
     (setq-local completion-at-point-functions
-                '(cape-keyword
-                  cape-file
+                '(cape-file
+                  cape-keyword
                   cape-line
                   cape-dabbrev
                   t))))
@@ -1831,7 +1832,7 @@ Used in `popper-open-popup-hook'."
 
   (tab-bar-mode 1)
   :custom
-  (tab-bar-show t)
+  (tab-bar-show nil)
   (tab-bar-close-button-show nil)
   (tab-bar-new-button nil)
   (tab-bar-tab-hints nil)
@@ -2852,6 +2853,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
         ("n" . kam-project-new))
   :custom
   (project-switch-use-entire-map nil)
+  (project-prune-zombie-projects '((prompt . list-first-read)))
   (project-list-file (expand-file-name "projects" kam-emacs-cache-directory))
   (project-vc-extra-root-markers '(".project" "Cargo.toml" "package.json" "go.mod" "build.zig"))
   (project-vc-ignores '("nix/store/"
@@ -3614,7 +3616,7 @@ Where kam-test is an alist of choices mapped to values."
   (:map lisp-interaction-mode-map
         ("C-j" . kam-join-line-dwim))
   :custom
-  (elisp-fontify-semantically t)
+  (elisp-fontify-semantically nil)
   :config
   (set-default-toplevel-value 'lexical-binding t)
 
@@ -3782,7 +3784,8 @@ Where kam-test is an alist of choices mapped to values."
   :config
   (add-to-list 'xref-prompt-for-identifier 'xref-find-references t)
   (add-to-list 'display-buffer-alist '((category . xref-jump)
-                                       (display-buffer-reuse-window display-buffer-same-window))))
+                                       (display-buffer-reuse-window display-buffer-some-window)
+                                       (some-window . mru))))
 
 (use-package diff-mode
   :ensure nil
@@ -3834,7 +3837,7 @@ Where kam-test is an alist of choices mapped to values."
   (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   (eldoc-idle-delay 0)
   (eldoc-echo-area-use-multiline-p nil)
-  (eldoc-help-at-pt nil)
+  (eldoc-help-at-pt t)
   (eldoc-echo-area-prefer-doc-buffer t)
   :config
   (add-to-list 'display-buffer-alist
@@ -3850,7 +3853,7 @@ Where kam-test is an alist of choices mapped to values."
 (use-package treesit
   :ensure nil
   :custom
-  (treesit-font-lock-level 4)
+  (treesit-font-lock-level 2)
   (treesit-enabled-modes t)
   (treesit-auto-install-grammar t))
 
@@ -4077,7 +4080,8 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :config
   (setq shr-use-colors nil
-        shr-use-fonts nil))
+        shr-use-fonts nil
+        shr-fill-text nil))
 
 (use-package gptel
   :custom
