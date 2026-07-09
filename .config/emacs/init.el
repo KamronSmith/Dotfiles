@@ -3062,6 +3062,26 @@ Numerical argument ARG determines the command being selected from to choose argu
     (comint-read-input-ring t)
     (shell-dirtrack-mode 1))
 
+  (defun kam-shell-command--prompt ()
+    (read-shell-command
+     (format-prompt "Shell command in '%s'" nil (abbreviate-file-name default-directory))
+     nil
+     nil
+     (let ((filename
+            (cond
+             (buffer-file-name)
+             ((eq major-mode 'dired-mode)
+              (dired-get-filename nil t)))))
+       (and filename (file-relative-name filename)))))
+
+  (defun kam-shell-command (cmd)
+    (interactive (list (kam-shell-command--prompt)))
+    (let* ((buf (get-buffer-create shell-command-buffer-name)))
+      (shell-command cmd buf buf)
+      (with-current-buffer buf
+        (view-mode)
+        (pop-to-buffer buf))))
+
   (defvar kam-shell-cd--directories nil
     "List of accumulated `shell-last-dir'.")
 
