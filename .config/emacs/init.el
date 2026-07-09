@@ -3846,7 +3846,7 @@ Where kam-test is an alist of choices mapped to values."
                  (display-buffer-in-side-window)
                  (side . bottom)
                  (window . root)
-                 (window-height . 0.35)
+                 (window-height . 4)
                  (window-parameters . ((mode-line-format . none)))))
 
   (global-eldoc-mode))
