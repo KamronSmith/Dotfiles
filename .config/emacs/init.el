@@ -840,6 +840,20 @@ Add this to `dired-mode-hook'."
   (imenu-auto-rescan t)
   (org-imenu-depth 4))
 
+(use-package font-lock
+  :ensure nil
+  :custom
+  (font-lock-maximum-decoration 2))
+
+(use-package jit-lock
+  :ensure nil
+  :custom
+  (jit-lock-defer-time 0.05)
+  (jit-lock-stealth-time 1.0)
+  (jit-lock-stealth-nice 0.2)
+  (jit-lock-stealth-chunk 512)
+  (jit-lock-context-time 0.5))
+
 (use-package help
   :ensure nil
   :hook ((help-mode . lin-mode)
