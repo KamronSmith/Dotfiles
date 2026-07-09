@@ -3799,8 +3799,7 @@ Where kam-test is an alist of choices mapped to values."
   :config
   (add-to-list 'xref-prompt-for-identifier 'xref-find-references t)
   (add-to-list 'display-buffer-alist '((category . xref-jump)
-                                       (display-buffer-reuse-window display-buffer-some-window)
-                                       (some-window . mru))))
+                                       (display-buffer-reuse-window display-buffer-same-window))))
 
 (use-package diff-mode
   :ensure nil
