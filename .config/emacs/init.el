@@ -500,6 +500,7 @@ With optional ARG, scroll up that many times."
     (scroll-down arg)))
 
 (use-package centered-cursor-mode
+  :hook (prog-mode . centered-cursor-mode)
   :config
   (add-to-list 'ccm-ignored-commands
                'ultra-scroll))
