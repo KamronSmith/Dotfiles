@@ -3083,7 +3083,7 @@ Numerical argument ARG determines the command being selected from to choose argu
       (shell-command cmd buf buf)
       (with-current-buffer buf
         (view-mode)
-        (pop-to-buffer buf))))
+        (display-buffer buf))))
 
   (defvar kam-shell-cd--directories nil
     "List of accumulated `shell-last-dir'.")
