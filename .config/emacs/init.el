@@ -498,6 +498,11 @@ With optional ARG, scroll up that many times."
     (interactive)
     (scroll-down arg)))
 
+(use-package centered-cursor-mode
+  :config
+  (add-to-list 'ccm-ignored-commands
+               'ultra-scroll))
+
 (use-package ultra-scroll
   :custom
   (scroll-margin 0)
