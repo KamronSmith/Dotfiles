@@ -17,7 +17,7 @@
 (defvar kam-tasks-tasks-file (expand-file-name "todo.org" kam-tasks-inbox-directory)
   "File where the tasks information is stored.")
 
-(setq org-agenda-files kam-tasks-tasks-file)
+(setq org-agenda-files `(,kam-tasks-tasks-file))
 
 (provide 'kam-tasks)
 ;;; kam-tasks.el ends here
