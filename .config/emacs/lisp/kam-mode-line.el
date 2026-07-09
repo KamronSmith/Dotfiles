@@ -585,5 +585,19 @@ Minibuffer counts as a recursive edit, so recursion depth has to be greater than
         ""))
     "Mode line construct for displaying if the current buffer is managed by Eglot.")
 
+(defvar-local kam-mode-line-trashed
+  '(:eval
+    (if (derived-mode-p 'trashed-mode)
+        (propertize
+         (concat
+          "  "
+          (kam-mode-line--number-to-string-maybe (kam-mode-line--trashed-stats)))
+         'face 'kam-mode-line-indicator-gray))
+    ""))
+
+(defun kam-mode-line--trashed-stats ()
+  "Return stats about the state of the trash-can, using `trashed-mode'."
+  (file-size-human-readable trashed-trash-can-size))
+
 (provide 'kam-mode-line)
 ;;; kam-mode-line.el ends here
