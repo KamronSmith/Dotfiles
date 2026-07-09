@@ -3994,6 +3994,10 @@ Where kam-test is an alist of choices mapped to values."
   (add-to-list 'eglot-server-programs
                '(zig-mode . ("zls")) t))
 
+(use-package lua-ts-mode
+  :ensure nil
+  :hook (lua-ts-mode . eglot-ensure))
+
 (use-package java-ts-mode
   :ensure nil
   :hook ((java-ts-mode . treesit-fold-mode)
