@@ -41,9 +41,9 @@ Check if the `window-width' or the `window-height' is less than
            (> (window-total-height) split-height-threshold))))
 
 (defun kam-quit-window ()
-  "Quit the window and kill it."
+  "Quit the window."
   (interactive)
-  (quit-window t))
+  (quit-window))
 
 ;;;###autoload
 (defun kam-delete-window-dwim ()
