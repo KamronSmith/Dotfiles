@@ -229,7 +229,7 @@ SERVICE should be a string that corresponds to a service."
   (interactive)
   (let ((default-directory "~/Pictures/Screenshots/")
         (name (read-string "Name of screenshot: ")))
-    (async-shell-command (concat "wayshot -s \"$(slurp)\" -f " (shell-quote-argument name) ".jpg"))))
+    (async-shell-command (concat "grim -g \"$(slurp)\" " (shell-quote-argument name) ".jpg"))))
 
 ;;; Hard drive space
 (defun kam-os-drive-space ()
