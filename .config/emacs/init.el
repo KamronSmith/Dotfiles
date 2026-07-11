@@ -431,10 +431,10 @@ To be used attached to `after-init-hook'."
   (switch-to-prev-buffer-skip 'visible)
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
-  (kill-buffer-quit-windows t)
+  (kill-buffer-quit-windows nil)
   (split-width-threshold 170)
   (split-height-threshold nil)
-  (display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
+  (display-buffer-base-action '((display-buffer-same-window)
                                 (reusable-frames . t)))
   (display-buffer-alist
    `(("\\*Async Shell Command\\*"
