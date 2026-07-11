@@ -1,10 +1,19 @@
 ;; -*- lexical-binding: t; -*-
 
+(require 'elfeed)
+
 (use-package elfeed
   :bind
   ("C-c r" . elfeed)
+  (:map elfeed-show-mode-map
+        ("n" . kam-elfeed-show-next)
+        ("p" . kam-elfeed-show-prev)
+        ("SPC" . kam-scroll-down)
+        ("<backspace>" . kam-scroll-up))
   (:map elfeed-search-mode-map
-        ("g" . 'elfeed-update))
+        ("g" . elfeed-update))
+  :hook ((elfeed-search-mode . hide-cursor-mode)
+         (elfeed-search-mode . lin-mode))
   :custom
   (elfeed-db-directory (expand-file-name "elfeed" kam-emacs-cache-directory))
   (elfeed-enclosure-default-dir (expand-file-name "elfeed" kam-emacs-cache-directory))
@@ -53,13 +62,35 @@
           ("https://protesilaos.com/codelog.xml" emacs linux protesilaos)
           ("https://protesilaos.com/interpretations.xml" art philosophy protesilaos)))
 
+  (defun kam-elfeed-show-next ()
+    "Show the next entry in the same window. Do not split."
+    (interactive)
+    (let ((display-buffer-overriding-action '(display-buffer-use-some-window)))
+      ;; (split-height-threshold nil)
+      ;; (split-width-threshold nil))
+      (elfeed-show-next)))
+
+  (defun kam-elfeed-show-prev ()
+    "Show the previous entry in the same window. Do not split."
+    (interactive)
+    (let ((display-buffer-overriding-action '(display-buffer-use-some-window)))
+      ;; (split-height-threshold nil)
+      ;; (split-width-threshold nil))
+      (elfeed-show-prev)))
+
   (add-to-list 'display-buffer-alist
-               `("\\*elfeed-search\\*"
+               '("\\*elfeed-search\\*"
                  (display-buffer-in-tab)
                  (dedicated . t)
-                 (tab-name . "Elfeed"))))
+                 (tab-name . " elfeed")
+                 (window-parameters . ((no-delete-other-windows . t))))))
 
-(use-package eww
+  (use-package eww
+  :bind
+  (:map eww-mode-map
+        ("SPC" . kam-scroll-down)
+        ("<backspace>" . kam-scroll-up))
+  :hook ((eww-mode . centered-cursor-mode))
   :custom
   (browse-url-browser-function 'eww-browse-url)
   (eww-auto-rename-buffer 'title)
