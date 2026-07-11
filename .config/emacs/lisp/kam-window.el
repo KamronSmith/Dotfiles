@@ -110,7 +110,7 @@ Also see `kam-window-delete-popup-frame'." command)
           (delete-frame frame))))))
 
 (defun kam-next-buffer (&optional arg)
-  "Swith to the next ARGth buffer.
+  "Switch to the next ARGth buffer.
 With universal prefix ARG, run in the next window."
   (interactive "P")
   (if-let* (((equal arg '(4)))
