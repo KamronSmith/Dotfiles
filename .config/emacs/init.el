@@ -894,7 +894,8 @@ Add this to `dired-mode-hook'."
                  (side . right)
                  (window-width . 0.5)
                  (mode help-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t)))))
 
   (add-to-list 'display-buffer-alist
                '("\\*Error\\*"
@@ -902,7 +903,8 @@ Add this to `dired-mode-hook'."
                  (side . bottom)
                  (window-width . 0.35)
                  (mode help-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t)))))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter
@@ -939,7 +941,8 @@ Add this to `dired-mode-hook'."
                  (side . right)
                  (window-width . 0.5)
                  (mode apropos-mode)
-                 (window-parameters . ((mode-line-format . none))))))
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t))))))
 
 (use-package info
   :ensure nil
@@ -967,7 +970,8 @@ Add this to `dired-mode-hook'."
                  (side . right)
                  (window-width . 0.5)
                  (mode Info-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t)))))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Info\\*" t)
@@ -993,7 +997,8 @@ Add this to `dired-mode-hook'."
                  (side . right)
                  (window-width . 0.5)
                  (mode . Man-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t)))))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Man " t)
@@ -1982,16 +1987,18 @@ Do nothing if search string is empty to start with."
      "dist"))
   :config
   (add-to-list 'display-buffer-alist
-               '("\\*[Gg]rep\\*"
+               '("\\*grep\\*"
                  (display-buffer-reuse-window display-buffer-in-side-window)
                  (side . bottom)
                  (window . root)
                  (window-height . 0.35)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (body-function . select-window)
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t)))))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter
-                 "\\*[Gg]rep\\*" t)))
+                 "\\*grep\\*" t)))
 
 (use-package link-hint
   :bind
@@ -3936,7 +3943,9 @@ Where kam-test is an alist of choices mapped to values."
                  (side . bottom)
                  (window . root)
                  (window-height . 0.35)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (body-function . select-window)
+                 (window-parameters . ((mode-line-format . none)
+                                       (no-delete-other-windows . t)))))
 
   (add-to-list
    'switch-to-prev-buffer-skip-regexp
