@@ -1956,12 +1956,16 @@ Do nothing if search string is empty to start with."
 
 (use-package grep
   :ensure nil
+  :hook ((grep-mode . kam-grep-setup)
+         (grep-edit-mode . kam-grep-edit-setup))
   :bind
   (("M-s g" . grep)
    :map grep-mode-map
    ("w" . grep-change-to-grep-edit-mode)
-   ("n" . next-error)
-   ("p" . previous-error)
+   ("n" . next-error-no-select)
+   ("p" . previous-error-no-select)
+   ("M-n" . compilation-next-file)
+   ("M-p" . compilation-previous-file)
    :map grep-edit-mode-map
    ("C-c C-c" . grep-edit-save-changes))
   :custom
@@ -1995,6 +1999,15 @@ Do nothing if search string is empty to start with."
                  (body-function . select-window)
                  (window-parameters . ((mode-line-format . none)
                                        (no-delete-other-windows . t)))))
+
+  (defun kam-grep-setup ()
+    "Setup function for `grep-mode'."
+    (hide-cursor-mode)
+    (hl-line-mode))
+
+  (defun kam-grep-edit-setup ()
+    "Setup function for `grep-edit-mode'."
+    (hide-cursor-mode -1))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter
@@ -3919,8 +3932,10 @@ Where kam-test is an alist of choices mapped to values."
   :hook (compilation-filter . ansi-color-compilation-filter)
   :bind
   (:map compilation-mode-map
-        ("n" . next-error-no-select)
-        ("p" . previous-error-no-select)
+        ("n" . kam-next-error-same-window-no-select)
+        ("p" . kam-previous-error-same-window-no-select)
+        ;; ("M-n" . next-error-no-select)
+        ;; ("M-p" . previous-error-no-select)
         ("M-@" . #'project-compile)
         ("C-g" . #'quit-window))
   :custom
@@ -3931,6 +3946,19 @@ Where kam-test is an alist of choices mapped to values."
   (compile-command "")
   (compilation-skip-threshold 2)
   :config
+
+  (defun kam-next-error-same-window-no-select ()
+    "Jump to the next error but force the buffer to open in the same window."
+    (interactive)
+    (let ((display-buffer-overriding-action '(display-buffer-use-some-window)))
+      (next-error-this-buffer-no-select)))
+
+  (defun kam-previous-error-same-window-no-select ()
+    "Jum1p to the previous error but force the buffer to open in the same window."
+    (interactive)
+    (let ((display-buffer-overriding-action '(display-buffer-use-some-window)))
+      (previous-error-this-buffer-no-select)))
+
   (defun kam-compile-make-interactive ()
     "Advise `compile' so that it becomes interactive."
     (defadvice compile (before ad-compile-smart activate)
