@@ -119,6 +119,12 @@
         calibredb-library-alist '(("~/Documents/Resources/Books"))
         calibredb-sort-by 'title)
 
+  (add-to-list 'display-buffer-alist
+               '("\\*calibredb-search\\*"
+                 (display-buffer-in-tab)
+                 (dedicated . t)
+                 (tab-name . " books")))
+
   (defun kam-calibredb-open-file-with-emacs (&optional candidate)
     "Open file with Emacs. Optional argument CANDIDATE is the selected item."
     (interactive "P")
