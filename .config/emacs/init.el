@@ -504,7 +504,6 @@ With optional ARG, scroll up that many times."
       (scroll-down arg))))
 
 (use-package centered-cursor-mode
-  :hook (prog-mode . centered-cursor-mode)
   :bind
   (:map ccm-map
         ("C-v" . kam-scroll-down)
@@ -512,6 +511,7 @@ With optional ARG, scroll up that many times."
   :custom
   (ccm-recenter-at-end-of-file t)
   :config
+  (global-centered-cursor-mode)
   (add-to-list 'ccm-ignored-commands
                'ultra-scroll))
 
