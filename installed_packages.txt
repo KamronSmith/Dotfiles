@@ -4,6 +4,7 @@ alsa-tools
 alsa-utils
 amd-ucode
 anki
+archlinux-xdg-menu
 aspell
 aspell-en
 audacity
@@ -133,6 +134,7 @@ vim
 vlc
 vlc-plugin-ffmpeg
 waybar
+wayshot
 webkit2gtk-4.1
 wget
 wireless_tools
