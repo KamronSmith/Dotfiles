@@ -4189,11 +4189,8 @@ Where kam-test is an alist of choices mapped to values."
 
   (add-to-list 'display-buffer-alist
                '("\\*Ghostel\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 ;; (inhibit-same-window . t)
-                 (window-height . 0.35)
+                 (display-buffer-in-tab)
+                 (tab-name . " terminal")
                  (mode ghostel-mode)
                  (window-parameters . ((mode-line-format . none)))))
 
