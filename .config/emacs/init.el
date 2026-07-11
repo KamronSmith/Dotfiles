@@ -3734,6 +3734,11 @@ Where kam-test is an alist of choices mapped to values."
 (use-package forge
   :after (magit))
 
+(use-package vc
+  :ensure nil
+  :custom
+  (vc-follow-symlinks t))
+
 (use-package flycheck
   :hook (after-init . global-flycheck-mode)
   :config
