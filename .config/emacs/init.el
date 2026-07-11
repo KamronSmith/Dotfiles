@@ -3789,6 +3789,7 @@ Where kam-test is an alist of choices mapped to values."
   (eglot-events-buffer-config '(:size 0 :format full))
   (eglot-code-action-indications nil)
   (eglot-documentation-renderer 'markdown-ts-view-mode)
+  (eglot-extend-to-xref t)
   :config
   (defun kam-eglot-setup ()
     "Function for loading Eglot settings."
@@ -3830,6 +3831,7 @@ Where kam-test is an alist of choices mapped to values."
             (comint-send-input t t))))))
 
 (use-package xref
+  :ensure nil
   :bind
   (("M-." . xref-find-definitions)
    :map xref--xref-buffer-mode-map
@@ -3839,7 +3841,12 @@ Where kam-test is an alist of choices mapped to values."
   :config
   (add-to-list 'xref-prompt-for-identifier 'xref-find-references t)
   (add-to-list 'display-buffer-alist '((category . xref-jump)
-                                       (display-buffer-reuse-window display-buffer-same-window))))
+                                       (display-buffer-same-window display-buffer-reuse-window))))
+
+(use-package etags
+  :ensure nil
+  :config
+  (etags-regen-mode))
 
 (use-package diff-mode
   :ensure nil
