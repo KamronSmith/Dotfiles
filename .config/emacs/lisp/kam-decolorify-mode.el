@@ -16,14 +16,15 @@ Please see `kam-decolorify-mode'."
   (standard-themes-with-colors
     (custom-set-faces
      `(font-lock-builtin-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-constant-face ((,c :foreground ,fg-main :weight regular)))
+     `(font-lock-constant-face ((,c :foreground ,fg-dim :weight regular)))
      `(font-lock-function-call-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
+     `(font-lock-function-name-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-variable-use-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-variable-name-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-property-use-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-property-name-face ((,c :foreground ,fg-main :weight regular)))
      `(font-lock-preprocessor-face ((,c :foreground ,fg-dim)))
+     ;; `(font-lock-keyword-face ((,c :foreground ,cursor)))
      `(font-lock-type-face ((,c :foreground ,fg-dim))))))
 
 (defun kam-decolorify--turn-on-colors ()
