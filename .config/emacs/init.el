@@ -491,16 +491,26 @@ To be used attached to `after-init-hook'."
     "Scroll down.
 With optional ARG, scroll down that many times."
     (interactive)
-    (scroll-up arg))
+    (if (bound-and-true-p centered-cursor-mode)
+        (ccm-scroll-up arg)
+      (scroll-up arg)))
 
   (defun kam-scroll-up (&optional arg)
     "Scroll up.
 With optional ARG, scroll up that many times."
     (interactive)
-    (scroll-down arg)))
+    (if (bound-and-true-p centered-cursor-mode)
+        (ccm-scroll-down arg)
+      (scroll-down arg))))
 
 (use-package centered-cursor-mode
   :hook (prog-mode . centered-cursor-mode)
+  :bind
+  (:map ccm-map
+        ("C-v" . kam-scroll-down)
+        ("M-v" . kam-scroll-up))
+  :custom
+  (ccm-recenter-at-end-of-file t)
   :config
   (add-to-list 'ccm-ignored-commands
                'ultra-scroll))
@@ -782,7 +792,10 @@ Add this to `dired-mode-hook'."
   :bind
   (:map reader-mode-map
         ("SPC" . reader-next-page)
-        ("<backspace>" . reader-previous-page)))
+        ("<backspace>" . reader-previous-page))
+  (:map reader-outline-mode-map
+        ("SPC" . kam-scroll-down)
+        ("<backspace>" . kam-scroll-up)))
 
 (use-package repeat
   :ensure nil
@@ -866,6 +879,8 @@ Add this to `dired-mode-hook'."
               ("n" . kam-docview-forward-paragraph)
               ("j" . forward-button)
               ("k" . backward-button)
+              ("SPC" . kam-scroll-down)
+              ("<backspace>" . kam-scroll-up)
               ("<mouse-9>" . help-go-back)
               ("<next>" . scroll-down-line)
               ("<prior>" . scroll-up-line))
