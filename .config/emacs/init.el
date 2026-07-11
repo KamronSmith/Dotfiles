@@ -140,7 +140,7 @@
   ("C-M-d" . sp-down-sexp)
   ("C-M-e" . sp-end-of-sexp)
   ("C-M-f" . sp-forward-sexp)
-  ("C-M-k" . sp-kill-sexp)
+  ("C-M-k" . kill-sexp)
   ("C-M-n" . sp-next-sexp)
   ("C-M-o" . sp-up-sexp)
   ("C-M-p" . sp-previous-sexp)
@@ -1375,11 +1375,11 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (setq consult-buffer-sources
         '(consult-source-buffer
           consult-source-project-buffer
-          ;; consult-source-project-recent-file
+          consult-source-project-recent-file
           ;; consult-source-hidden-buffer
-          ;; kam-consult-source-neighbor-file
+          kam-consult-source-neighbor-file
           consult-source-bookmark
-          ;; kam-consult-source-recent-file
+          kam-consult-source-recent-file
           ;; kam-consult-source-dired-history
           ))
 
@@ -1853,7 +1853,7 @@ Used in `popper-open-popup-hook'."
 
   (tab-bar-mode 1)
   :custom
-  (tab-bar-show nil)
+  (tab-bar-show t)
   (tab-bar-close-button-show nil)
   (tab-bar-new-button nil)
   (tab-bar-tab-hints nil)
@@ -1872,7 +1872,7 @@ Used in `popper-open-popup-hook'."
                        (directory-file-name (project-root proj)))))
       (tab-group (format "%s" name))))
 
-  (defvar-keymap kam-tab-repeat-map
+  (defvar-keymap kam-tab-bar-repeat-map
     :repeat t
     :doc "Repeat map for tabs"
     "p" 'tab-previous
@@ -1912,10 +1912,10 @@ Preserve window configuration when pressing \\[keyboard-escape-quit]."
 With optional prefix ARG (\\[universal-argument]), delete the buffer's window as well."
   (interactive "P")
   (let ((kill-buffer-query-functions nil))
-    (if (or (null (window-prev-buffers))
-            (and (not (one-window-p))))
-        (kill-buffer-and-window)
-      (kill-buffer))))
+    ;; (if (or (null (window-prev-buffers))
+            ;; (and (not (one-window-p))))
+        ;; (kill-buffer-and-window)
+      (kill-buffer)))
 
 ;;; Isearch
 (use-package isearch
