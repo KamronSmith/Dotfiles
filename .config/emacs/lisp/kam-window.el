@@ -40,10 +40,28 @@ Check if the `window-width' or the `window-height' is less than
       (and (numberp split-height-threshold)
            (> (window-total-height) split-height-threshold))))
 
-(defun kam-quit-window ()
-  "Quit the window."
+(defun kam-quit-window (&optional arg)
+  "Quit the window.
+With optional ARG, kill the buffer."
   (interactive)
-  (quit-window))
+  (quit-window arg))
+
+(defun kam-scroll-down (&optional arg)
+  "Scroll down a half screen.
+With optional ARG, scroll down that many times.
+Please see "
+  (interactive)
+  (if (bound-and-true-p centered-cursor-mode)
+      (ccm-scroll-up arg)
+    (scroll-up arg)))
+
+(defun kam-scroll-up (&optional arg)
+  "Scroll up.
+With optional ARG, scroll up that many times."
+  (interactive)
+  (if (bound-and-true-p centered-cursor-mode)
+      (ccm-scroll-down arg)
+    (scroll-down arg)))
 
 ;;;###autoload
 (defun kam-delete-window-dwim ()
