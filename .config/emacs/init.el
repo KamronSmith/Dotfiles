@@ -4220,6 +4220,12 @@ Where kam-test is an alist of choices mapped to values."
                  (mode ghostel-mode)
                  (window-parameters . ((mode-line-format . none))))))
 
+(use-package pcre2el
+  :config
+  (defmacro prx (&rest expressions)
+    "Convert native `rx' EXPRESSIONS to PCRE style syntax."
+    `(rxt-elisp-to-pcre (rx ,@expressions))))
+
 (use-package kirigami
   :commands (kirigami-open-fold
              kirigami-open-fold-rec
