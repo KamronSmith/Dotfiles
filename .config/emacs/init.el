@@ -142,7 +142,7 @@
   ("C-M-d" . down-list)
   ;; ("C-M-e" . sp-end-of-sexp)
   ("C-M-e" . end-of-defun)
-  ("C-M-f" . kam-forward-sexp)
+  ("C-M-f" . forward-sexp)
   ("C-M-k" . kill-sexp)
   ("C-M-n" . forward-list)
   ("C-M-o" . sp-up-sexp)
