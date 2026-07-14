@@ -84,6 +84,7 @@ mupdf
 nano
 neovim
 notcurses
+noto-fonts
 noto-fonts-cjk
 noto-fonts-emoji
 nvidia-open-dkms
@@ -127,6 +128,7 @@ tree-sitter
 tree-sitter-cli
 ttc-iosevka
 ttf-firacode-nerd
+ttf-symbola
 ttf-times-new-roman
 udiskie
 unzip
