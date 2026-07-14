@@ -1027,11 +1027,15 @@ Add this to `dired-mode-hook'."
   :ensure nil
   :bind
   (:map reb-mode-map
-        ("RET" . kam-re-builder-replace-regexp)
-        ("<escape>" . reb-quit)
+        ("RET" . newline)
+        ("C-c RET" . kam-re-builder-replace-regexp)
+        ("C-g" . reb-quit)
         :map reb-lisp-mode-map
-        ("RET" . kam-re-builder-replace-regexp)
-        ("<esc>" . reb-quit))
+        ("RET" . newline)
+        ("C-c RET" . kam-re-builder-replace-regexp)
+        ("C-g" . reb-quit))
+  :custom
+  (reb-re-syntax 'string)
   :config
   (defvar kam-re-builder-positions nil
     "Store point and region bounds before calling re-builder")
