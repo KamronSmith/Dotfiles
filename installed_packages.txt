@@ -84,6 +84,7 @@ nano
 neovim
 notcurses
 noto-fonts-cjk
+noto-fonts-emoji
 nvidia-open-dkms
 obs-studio
 openbsd-netcat

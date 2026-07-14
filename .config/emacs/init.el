@@ -1212,6 +1212,10 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
     (kam-set-font-faces)
     (load-theme 'standard-dark :no-confirm)
     (run-hooks 'standard-themes-after-load-theme-hook)))
+
+(use-package unicode-fonts
+  :config
+  (unicode-fonts-setup))
 
 (use-package vertico
   :hook (after-init . vertico-mode)
