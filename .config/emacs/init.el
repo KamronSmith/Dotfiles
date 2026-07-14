@@ -1006,6 +1006,11 @@ Add this to `dired-mode-hook'."
     (add-to-list 'consult-buffer-filter
                  "^\\*Man " t)))
 
+(use-package emacs-news-mode
+  :ensure nil
+  :hook (emacs-news-mode . (lambda () (when visual-fill-column-mode
+                                   (visual-fill-column-mode -1)))))
+
 (defun kam-get-buffers-matching-mode (mode)
   "Returns a list of the buffers where their major-mode is equal to MODE."
   (let ((buffer-mode-matches '()))
