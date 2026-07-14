@@ -4276,7 +4276,7 @@ Where kam-test is an alist of choices mapped to values."
                       :weight 'bold))
 
 (defvar kam-custom-lisp-files
-  `(,(concat (getenv "HOME") "/.config/emacs/lisp/ytdlp.el")
+  `(,(concat (getenv "HOME") "/.config/emacs/lisp/yt-dlp.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
     ,(concat (getenv "HOME") "/.config/emacs/lisp/applications.el")
