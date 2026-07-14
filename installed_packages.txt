@@ -24,6 +24,7 @@ clion
 cliphist
 cmake
 cronie
+ctags
 cups
 cups-pk-helper
 davinci-resolve
