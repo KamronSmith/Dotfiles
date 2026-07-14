@@ -1213,6 +1213,15 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
     (load-theme 'standard-dark :no-confirm)
     (run-hooks 'standard-themes-after-load-theme-hook)))
 
+(use-package ligature
+  :config
+  ;; default configuration for Iosevka font
+  (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
+                                       "<==" "<===" "<=" "=>" "=>>" "==>" "===>" ">=" "<=>" "<==>" "<===>" "<====>" "<!---"
+                                       "<~~" "<~" "~>" "~~>" "::" ":::" "==" "!=" "===" "!=="
+                                       ":=" ":-" ":+" "<*" "<*>" "*>" "<|" "<|>" "|>" "+:" "-:" "=:" "<******>" "++" "+++"))
+  (global-ligature-mode t))
+
 (use-package unicode-fonts
   :config
   (unicode-fonts-setup))
