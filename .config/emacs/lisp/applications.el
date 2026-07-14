@@ -3,6 +3,7 @@
 (require 'elfeed)
 
 (use-package elfeed
+  :hook (elfeed-show-mode . kam-writing-mode)
   :bind
   ("C-c r" . elfeed)
   (:map elfeed-show-mode-map
