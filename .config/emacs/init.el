@@ -2497,11 +2497,6 @@ Unlike `eval-last-sexp', the point doesn't need to be at the end of the expressi
   (interactive)
   (eval-expression (kam-current-elisp-sexp)))
 
-(defun kam-kill-inner-sexp ()
-  "Intended to kill everything inside the closest pair of paired delimiters."
-  (interactive)
-  (sp-kill-sexp 0))
-
 (defun kam-kill-around-sexp ()
   "Kills the everything inside the list at point including the delimiters."
   (interactive)
