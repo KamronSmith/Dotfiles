@@ -63,6 +63,7 @@
          (after-init . blink-cursor-mode)
          (after-init . kam-whitespace-handling-setup))
   :bind
+  ([remap revert-buffer] . kam-revert-buffer)
   ("<escape>" . kam-keyboard-quit-dwim)
   ("<home>" . nil)
   ("<end>" . nil)
