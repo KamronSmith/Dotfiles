@@ -168,6 +168,7 @@
   (line-spacing '(1 . 1))
   (inhibit-splash-screen nil)
   (delete-pair-push-mark t)
+  (delete-pair-blink-delay 0)
   (view-lossage-auto-refresh t)
   (create-lockfiles nil)
   (confirm-kill-emacs nil)
@@ -2301,9 +2302,9 @@ When called interactively without a prefix numeric argument, N is 1."
     (yank)))
 
 (defun kam-delete-pair-dwim ()
-  "Delete pair before or preceding point."
+  "Delete pair following or preceding point."
   (interactive)
-  (if (eq (point) (bounds-of-thing-at-point 'sexp))
+  (if (eq (point) (cdr (bounds-of-thing-at-point 'sexp)))
       (delete-pair -1)
     (delete-pair 1)))
 
