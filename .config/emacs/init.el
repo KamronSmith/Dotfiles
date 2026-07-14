@@ -775,11 +775,6 @@ Add this to `dired-mode-hook'."
   (image-dired-thumb-relief 0)
   (image-dired-thumbs-per-row 4))
 
-(use-package fd-dired
-  :bind
-  (:map dired-mode-map
-        ("f" . fd-name-dired)))
-
 (use-package trashed
   :commands (trashed)
   :bind
