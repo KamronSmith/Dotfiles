@@ -1876,6 +1876,13 @@ Used in `popper-open-popup-hook'."
                        (directory-file-name (project-root proj)))))
       (tab-group (format "%s" name))))
 
+  (defun kam-tab-bar-show ()
+    "Toggle the visibility of the tab bar."
+    (interactive)
+    (if tab-bar-show
+        (setopt tab-bar-show nil)
+      (setopt tab-bar-show t)))
+
   (defvar-keymap kam-tab-bar-repeat-map
     :repeat t
     :doc "Repeat map for tabs"
@@ -2551,8 +2558,6 @@ This command does the inverse of `fill-paragraph'."
 Reverses the direction you are going in the kill ring."
   (interactive "p")
   (yank-pop (- arg)))
-
-
 
 (defun kam-filter-lines-in-string (input-string regexp &optional keep-matching)
   "Filter lines in INPUT-STRING that match REGEXP.
@@ -3965,7 +3970,7 @@ Where kam-test is an alist of choices mapped to values."
       (next-error-this-buffer-no-select)))
 
   (defun kam-previous-error-same-window-no-select ()
-    "Jum1p to the previous error but force the buffer to open in the same window."
+    "Jump to the previous error but force the buffer to open in the same window."
     (interactive)
     (let ((display-buffer-overriding-action '(display-buffer-use-some-window)))
       (previous-error-this-buffer-no-select)))
