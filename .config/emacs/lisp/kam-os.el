@@ -12,14 +12,38 @@
 (defgroup kam-os ()
   "Extensions to customize Emacs to fit my operating system.")
 
-(defcustom kam-wallpapers-directory "~/Pictures/Wallpapers/"
-  "A string representing the default directory for location of wallpapers."
+(defcustom kam-documents-directory (expand-file-name "~/Documents/")
+  "Base directory where the PARA organization system starts."
   :type 'string
   :group 'kam-os)
 
-(defcustom kam-dotfiles-installed-packages-file
-  (concat kam-dotfiles-directory "installed_packages.txt")
-  "A file listing all of the explicitly installed packages on the system."
+(defcustom kam-resources-directory (expand-file-name "Resources/" kam-documents-directory)
+  "Directory where all of my resources live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-pictures-directory (expand-file-name "Pictures/" kam-resources-directory)
+  "Directory where all of my pictures live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-music-directory (expand-file-name "Music/" kam-resources-directory)
+  "Directory where all of my music lives."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-wallpapers-directory (expand-file-name "Wallpapers/" kam-pictures-directory)
+  "Directory where all of my wallpapers live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-screenshots-directory (expand-file-name "Screenshots/" kam-pictures-directory)
+  "Directory where all of my screenshots live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-videos-directory (expand-file-name "Videos/" kam-resources-directory)
+  "Directory where all of my videos live."
   :type 'string
   :group 'kam-os)
 
@@ -227,7 +251,7 @@ SERVICE should be a string that corresponds to a service."
 (defun kam-os-screenshot ()
   "Take a screenshot."
   (interactive)
-  (let ((default-directory "~/Pictures/Screenshots/")
+  (let ((default-directory kam-screenshots-directory)
         (name (read-string "Name of screenshot: ")))
     (async-shell-command (concat "grim -g \"$(slurp)\" " (shell-quote-argument name) ".jpg"))))
 

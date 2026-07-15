@@ -1,4 +1,5 @@
 ;; -*- lexical-binding: t; -*-
+(require 'kam-os)
 
 (defvar kam-ytdlp-download-music-history nil
   "Minibuffer history of `kam-ytdlp-download-music'.")
@@ -30,8 +31,9 @@ music or video."
 (defun kam-ytdlp-download-video (url)
   "Download a video from the internet."
   (interactive (list (kam-ytdlp--download-prompt kam-ytdlp-download-video-history)))
-  (let ((default-directory "~/Videos/"))
+  (let ((default-directory kam-videos-directory))
     (async-shell-command
      (concat
       "yt-dlp "
+      "-t mp4 "
       (shell-quote-argument url)))))

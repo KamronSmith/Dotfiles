@@ -1,6 +1,7 @@
 ;; -*- lexical-binding: t; -*-
 
 (require 'elfeed)
+(require 'kam-os)
 
 (use-package elfeed
   :hook (elfeed-show-mode . kam-writing-mode)
@@ -114,10 +115,13 @@
         ("n" . next-line)
         ("p" . previous-line))
   :config
+  (defvar kam-books-directory (expand-file-name "Books/" kam-resources-directory)
+    "Directory where all of my books live.")
+
   (setq calibredb-format-nerd-icons t
-        calibredb-root-dir "~/Documents/Resources/Books"
+        calibredb-root-dir kam-books-directory
         calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-        calibredb-library-alist '(("~/Documents/Resources/Books"))
+        calibredb-library-alist `((,kam-books-directory))
         calibredb-sort-by 'title)
 
   (add-to-list 'display-buffer-alist
@@ -147,12 +151,10 @@
   ("C-c m p" . emms-previous)
   ("C-c m e" . emms)
   :custom
-  (emms-source-file-default-directory "~/Music/")
+  (emms-source-file-default-directory kam-music-directory)
   (emms-playlist-buffer-name "*Playlist*")
   :config
   (emms-all)
-  (defvar kam-music-library-directory "~/Music/"
-    "Default location where music is stored.")
 
   (setq emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
   (setq emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
@@ -222,7 +224,7 @@ Otherwise, play."
   (emms-browser-buffer-name "*Music*")
   :config
   (emms-browser-make-filter "All" 'ignore)
-  (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-library-directory))
+  (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory))
   ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters))
 
   (add-to-list 'display-buffer-alist

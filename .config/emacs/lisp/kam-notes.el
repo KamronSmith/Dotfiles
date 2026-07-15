@@ -7,6 +7,7 @@
 ;;; Code:
 (require 'org)
 (require 'standard-themes)
+(require 'kam-os)
 
 (use-package denote
   :hook ((dired-mode . denote-dired-mode)
@@ -22,7 +23,11 @@
   (:map dired-mode-map
         ("r" . denote-dired-rename-files))
   :config
-  (setq denote-directory (expand-file-name "~/Documents/Resources/Notes/")
+  (defvar kam-notes-directory
+    (expand-file-name kam-resources-directory "Notes/")
+    "Directory where all of my notes live.")
+
+  (setq denote-directory kam-notes-directory
         ;; denote-infer-keywords t
         denote-sort-keywords t
         denote-prompts '(title keywords)
@@ -30,11 +35,11 @@
         denote-date-prompt-use-org-read-date t)
 
   (defvar kam-notes-home-note
-    (concat denote-directory "20230928T043448--home__index.org")
+    (expand-file-name "20230928T043448--home__index.org" denote-directory)
     "The home note for my ITE.")
 
   (defvar kam-notes-workbench-note
-    (concat denote-directory "20250807T185237--workbench__index.org")
+    (expand-file-name "20250807T185237--workbench__index.org" denote-directory)
     "The workbench note for my ITE.")
 
   (defun kam-notes-visit-home-note ()

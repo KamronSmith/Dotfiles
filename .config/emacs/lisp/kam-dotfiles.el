@@ -5,17 +5,21 @@
 ;;; Commentary:
 
 ;;; Code:
-
 (defgroup kam-dotfiles ()
   "Extensions for Emacs to manage my dotfiles."
   :group 'kam-os)
 
 (defcustom kam-dotfiles-directory
-  (concat (getenv "HOME")
-          "/.dotfiles/")
+  (expand-file-name ".dotfiles/" (getenv "HOME"))
   "A string representing where the dotfiles are to be stored."
   :type 'string
   :group 'kam-dotfiles)
+
+(defcustom kam-dotfiles-installed-packages-file
+  (expand-file-name "installed_packages.txt" kam-dotfiles-directory)
+  "A file listing all of the explicitly installed packages on the system."
+  :type 'string
+  :group 'kam-os)
 
 (defun kam-dotfiles-stow ()
   "Run stow in the dotfiles directory."
