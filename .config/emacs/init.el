@@ -3427,14 +3427,8 @@ Where kam-test is an alist of choices mapped to values."
        `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
        `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular))))))
 
-  (defun kam-standard-themes-reload-theme ()
-    "Reload the current Standard theme."
-    (interactive)
-    (standard-themes-load-theme (modus-themes-get-current-theme)))
-
   (standard-themes-load-theme 'standard-dark)
   (kam-set-custom-faces))
-
 
 (use-package ef-themes)
 

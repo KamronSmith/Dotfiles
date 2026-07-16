@@ -5,10 +5,12 @@
 ;;; Commentary:
 
 ;;; Code:
+
 (require 'kam-common)
 (require 'spacious-padding)
-;;; Spacious-padding extensions
+(require 'standard-themes)
 
+;;; Spacious-padding extensions
 (define-minor-mode kam-spacious-padding-subtle-mode-line-mode
   "Toggle the `spacious-padding-subtle-frame-lines' variable."
   :global t
@@ -23,12 +25,19 @@
     (setq spacious-padding-subtle-frame-lines nil)
     (kam-reload-mode 'spacious-padding-mode)))
 
+;;; Standard Themes
+
 (defvar kam-favorite-themes
   '(standard-dark
     standard-light
     standard-light-tinted
     ef-day)
   "A list of themes that I like.")
+
+(defun kam-standard-themes-reload-theme ()
+  "Reload the current Standard theme."
+  (interactive)
+  (standard-themes-load-theme (modus-themes-get-current-theme)))
 
 (defun kam-load-theme ()
   "Load a theme that I like.
