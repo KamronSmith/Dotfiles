@@ -1533,7 +1533,7 @@ Copied from the Consult code but made some changes."))
                                         (command (styles kam-orderless-with-initialism))
                                         (variable (styles kam-orderless-with-initialism))
                                         (symbol (styles kam-orderless-with-initialism)))
-        orderless-component-separator #'orderless-escapable-split-on-space
+        orderless-component-separator #'orderless-escapable-split
         orderless-style-dispatchers (list #'kam-orderless-consult-dispatch
                                           #'orderless-affix-dispatch)))
 
