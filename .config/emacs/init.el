@@ -1384,7 +1384,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           consult-source-project-buffer
           consult-source-project-recent-file
           ;; consult-source-hidden-buffer
-          kam-consult-source-neighbor-file
+          ;; TODO 2026-07-15: figure out where neighbor file went
+          ;; kam-consult-source-neighbor-file
           consult-source-bookmark
           kam-consult-source-recent-file
           ;; kam-consult-source-dired-history
@@ -1410,7 +1411,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
               (unless (gethash file ht)
                 (push (consult--fast-abbreviate-file-name file) items))))))
     "Recent file source for `consult-buffer'.
-Copied from the Consult code but made some changes.")
+Copied from the Consult code but made some changes."))
 
   ;; (defvar kam-consult-source-dired-history
   ;;   `(:name "Dired History"
