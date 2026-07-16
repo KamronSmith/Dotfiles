@@ -64,15 +64,19 @@ With optional ARG, scroll up that many times."
     (scroll-down arg)))
 
 ;;;###autoload
-(defun kam-delete-window-dwim ()
+(defun kam-delete-window-dwim (&optional arg)
   "Do What I Mean to delete the current thing.
 When there is one window, THING is a window.
+When optional ARG is provided, kill the buffer that window holds.
 When there is more than one `tab-bar-mode' tabs, THING is a tab."
   (declare (interactive-only t))
-  (interactive)
+  (interactive "P")
   (cond
    ((length> (window-list) 1)
     (delete-window))
+   ((and (length> (window-list) 1)
+         arg)
+    (kill-buffer-and-window))
    ((and (featurep 'tab-bar)
          (length> (tab-bar-tabs) 1))
     (tab-close))

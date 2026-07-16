@@ -1922,13 +1922,14 @@ Preserve window configuration when pressing \\[keyboard-escape-quit]."
 
 (defun kam-kill-current-buffer (&optional arg)
   "Kill the current buffer, without prompting the user.
-With optional prefix ARG (\\[universal-argument]), delete the buffer's window as well."
+With optional prefix ARG (\\[universal-argument]), delete the buffer's window as well.
+
+This command works similarly to `kam-delete-window-dwim', just in the reverse."
   (interactive "P")
   (let ((kill-buffer-query-functions nil))
-    ;; (if (or (null (window-prev-buffers))
-            ;; (and (not (one-window-p))))
-        ;; (kill-buffer-and-window)
-      (kill-buffer)))
+    (if arg
+        (kill-buffer-and-window)
+      (kill-buffer))))
 
 ;;; Isearch
 (use-package isearch
