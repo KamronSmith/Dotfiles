@@ -1,6 +1,5 @@
 ;; -*- lexical-binding: t; -*-
 
-(require 'elfeed)
 (require 'kam-os)
 
 (use-package elfeed
