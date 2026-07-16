@@ -1419,11 +1419,6 @@ Copied from the Consult code but made some changes.")
   ;;           :state ,#'consult--file-state
   ;;           :items (lambda () (mapcar #'identity kam-dired-directory-history))))
 
-
-  (with-eval-after-load 'popper
-    (add-to-list 'popper-reference-buffers
-                 (list "consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)"))))
-
 (use-package consult-dir
   :bind
   (("C-x C-d" . consult-dir)
@@ -1761,12 +1756,14 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
             (call-interactively command)))))))
 
 (use-package popper
+  :after (org consult)
   :hook (popper-open-popup . kam-popper-select-popup)
-  :bind (("C-," . popper-toggle)
-         ("C-M-," . popper-cycle)
-         ("C-M-#" . popper-toggle-type)
-         (:map org-mode-map
-               ("C-," . popper-toggle)))
+  :bind
+  (("C-," . popper-toggle)
+   ("C-M-," . popper-cycle)
+   ("C-M-#" . popper-toggle-type))
+  (:map org-mode-map
+        ("C-," . popper-toggle))
   :custom
   (popper-reference-buffers
    '(("\\*Messages\\*")
@@ -1820,15 +1817,12 @@ Used in `popper-open-popup-hook'."
     (when popper-open-popup-alist
       t))
 
-  (with-eval-after-load 'consult
-    (setq consult-preview-excluded-buffers
-          (lambda (buf)
-            (kam-popper-buffer-p buf))))
+  (setq consult-preview-excluded-buffers
+        (lambda (buf)
+          (kam-popper-buffer-p buf)))
 
-  (with-eval-after-load 'org
-    (keymap-set org-mode-map "C-#" #'popper-toggle)
-    (keymap-set org-mode-map "M-#" #'popper-cycle)
-    (keymap-set org-mode-map "C-M-#" #'popper-toggle-cycle)))
+  (add-to-list 'popper-reference-buffers
+               (list "consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)")))
 
 ;; (defun kam-tab-new-tab-one-command ()
 ;;   "Create a new tab and and run a command in the newly created tab."
