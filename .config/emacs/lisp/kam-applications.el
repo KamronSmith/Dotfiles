@@ -252,3 +252,5 @@ Otherwise, play."
 
 ;;; LLM Client
 (use-package gptel)
+
+(provide 'kam-applications)
