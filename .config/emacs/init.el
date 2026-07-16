@@ -3750,6 +3750,8 @@ Where kam-test is an alist of choices mapped to values."
 
 (use-package flycheck
   :hook (after-init . global-flycheck-mode)
+  :custom
+  (flycheck-emacs-lisp-load-path 'inherit)
   :config
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "\\*Flycheck error messages\\*" t)
