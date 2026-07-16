@@ -40,12 +40,14 @@ Check if the `window-width' or the `window-height' is less than
       (and (numberp split-height-threshold)
            (> (window-total-height) split-height-threshold))))
 
+;;;###autoload
 (defun kam-quit-window (&optional arg)
   "Quit the window.
 With optional ARG, kill the buffer."
   (interactive)
   (quit-window arg))
 
+;;;###autoload
 (defun kam-scroll-down (&optional arg)
   "Scroll down a half screen.
 With optional ARG, scroll down that many times.
@@ -55,6 +57,7 @@ Please see "
       (ccm-scroll-up arg)
     (scroll-up arg)))
 
+;;;###autoload
 (defun kam-scroll-up (&optional arg)
   "Scroll up.
 With optional ARG, scroll up that many times."
@@ -131,6 +134,7 @@ Also see `kam-window-delete-popup-frame'." command)
          ((quit error user-error)
           (delete-frame frame))))))
 
+;;;###autoload
 (defun kam-next-buffer (&optional arg)
   "Switch to the next ARGth buffer.
 With universal prefix ARG, run in the next window."
@@ -142,6 +146,7 @@ With universal prefix ARG, run in the next window."
         (setq prefix-arg current-prefix-arg))
     (next-buffer arg)))
 
+;;;###autoload
 (defun kam-prev-buffer (&optional arg)
   "Switch to the previous ARGth buffer.
 With universal prefix ARG, run in the next window."
@@ -153,6 +158,7 @@ With universal prefix ARG, run in the next window."
         (setq prefix-arg current-prefix-arg))
     (previous-buffer arg)))
 
+;;;###autoload
 (defun kam-consult-buffer (&optional arg)
   "Perform `consult-buffer', but disable `vertico-sort-function'.
 If optional ARG is provided, perform the buffer switch in the other window."
