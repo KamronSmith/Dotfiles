@@ -4277,10 +4277,7 @@ Where kam-test is an alist of choices mapped to values."
 
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.config/emacs/lisp/yt-dlp.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/writing-mode.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el")
-    ,(concat (getenv "HOME") "/.config/emacs/lisp/kam-decolorify-mode.el")
-    )
+    ,(concat (getenv "HOME") "/.config/emacs/lisp/hide-cursor-mode.el"))
   "List of strings detailing custom Lisp to be loaded.
 Each string should be a full path to a Lisp file.")
 
