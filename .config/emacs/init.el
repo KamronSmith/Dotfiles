@@ -777,6 +777,7 @@ Add this to `dired-mode-hook'."
   (:map reader-mode-map
         ("SPC" . reader-next-page)
         ("<backspace>" . reader-previous-page))
+  ;; TODO 2026-07-15: figure out why reader-outline-mode-map is void when trying to set keybindings
   ;; (:map reader-outline-mode-map
   ;;       ("SPC" . kam-scroll-down)
   ;;       ("<backspace>" . kam-scroll-up))
@@ -3244,6 +3245,9 @@ The shell is renamed to make opening multiple shells easier."
   :ensure nil
   :hook ((eshell-mode . completion-preview-mode)
          (eshell-mode . kam-eshell-mode-setup))
+  ;; TODO 2026-07-15: figure out how to enable these binds
+  ;; emacs says that there eshell-mode-map is void
+
   ;; :bind
   ;; (:map eshell-mode-map
   ;;       ("<tab>" . completion-at-point)
