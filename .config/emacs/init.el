@@ -4279,7 +4279,7 @@ Each string should be a full path to a Lisp file.")
           (load-file file)))
       kam-custom-lisp-files)
 
-(add-to-list 'load-path (locate-user-emacs-file "lisp/"))
+;; (add-to-list 'load-path (locate-user-emacs-file "lisp/"))
 
 (require 'kam-common)
 (require 'kam-applications)
