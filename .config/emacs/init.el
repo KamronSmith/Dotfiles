@@ -278,7 +278,7 @@ To be used attached to `after-init-hook'."
         (message "Copied config to emacs directory")))))
 
   (setq yank-transform-functions
-        '(string-chop-newline string-trim-whitespace))
+        '(string-chop-newline string-trim))
 
   (put 'narrow-to-region 'disabled nil)
 
@@ -2209,7 +2209,7 @@ it marks the next ARG lines after the ones already marked."
 
 (defun kam-kill-ring-trim ()
   "Trim the first element on the killring of whitespace."
-  (setcar kill-ring (string-trim-whitespace (car kill-ring))))
+  (setcar kill-ring (string-trim (car kill-ring) t t)))
 
 (defun kam-copy-line ()
   "Copy N lines to the `kill-ring'."
@@ -2293,7 +2293,7 @@ When called interactively without a prefix numeric argument, N is 1."
 (defun kam-yank-dwim ()
   "Indent after you yank."
   (interactive)
-  (let* ((yank-transform-functions '(string-chop-newline string-trim-whitespace)))
+  (let* ((yank-transform-functions '(string-chop-newline string-trim)))
     (yank)))
 
 (defun kam-delete-pair-dwim ()
