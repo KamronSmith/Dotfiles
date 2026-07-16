@@ -1503,6 +1503,8 @@ Copied from the Consult code but made some changes."))
                  (mode apropos-mode)
                  (window-parameters . ((mode-line-format . none))))))
 
+(use-package embark-consult)
+
 (use-package orderless
   :config
   (defun kam-orderless--consult-suffix ()
