@@ -36,10 +36,12 @@
   :config
   (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Async-native-compile-log\\*" t)
   (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Native-compile-Log\\*" t)
+  (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Compile-Log\\*" t)
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "\\*Async-native-compile-log\\*" t)
-    (add-to-list 'consult-buffer-filter "\\*Native-compile-Log\\*" t)))
+    (add-to-list 'consult-buffer-filter "\\*Native-compile-Log\\*" t)
+    (add-to-list 'consult-buffer-filter "\\*Compile-Log\\*" t)))
 
 (use-package exec-path-from-shell
   :init
