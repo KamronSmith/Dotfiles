@@ -12,6 +12,8 @@
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up))
   (:map elfeed-search-mode-map
+        ([remap scroll-down-command] . kam-scroll-down)
+        ([remap scroll-up-command] . kam-scroll-up)
         ("g" . elfeed-update))
   :hook ((elfeed-search-mode . hide-cursor-mode)
          (elfeed-search-mode . lin-mode))
