@@ -775,9 +775,10 @@ Add this to `dired-mode-hook'."
   (:map reader-mode-map
         ("SPC" . reader-next-page)
         ("<backspace>" . reader-previous-page))
-  (:map reader-outline-mode-map
-        ("SPC" . kam-scroll-down)
-        ("<backspace>" . kam-scroll-up)))
+  ;; (:map reader-outline-mode-map
+  ;;       ("SPC" . kam-scroll-down)
+  ;;       ("<backspace>" . kam-scroll-up))
+  )
 
 (use-package repeat
   :ensure nil
@@ -3244,18 +3245,18 @@ The shell is renamed to make opening multiple shells easier."
   :ensure nil
   :hook ((eshell-mode . completion-preview-mode)
          (eshell-mode . kam-eshell-mode-setup))
-  :bind
-  (:map eshell-mode-map
-        ("<tab>" . completion-at-point)
-        ("C-g" . eshell-interrupt-process)
-        ("C-M-f" . eshell-forward-argument)
-        ("C-M-b" . eshell-backward-argument)
-        ("C-c C-p" . kam-eshell-previous-prompt)
-        ("C-c C-n" . kam-eshell-next-prompt)
-        ("C-x C-d" . eshell/z))
-  (:map eshell-hist-mode-map
-        ("M-r" . consult-history)
-        ("C-c C-l" . eshell-clear))
+  ;; :bind
+  ;; (:map eshell-mode-map
+  ;;       ("<tab>" . completion-at-point)
+  ;;       ("C-g" . eshell-interrupt-process)
+  ;;       ("C-M-f" . eshell-forward-argument)
+  ;;       ("C-M-b" . eshell-backward-argument)
+  ;;       ("C-c C-p" . kam-eshell-previous-prompt)
+  ;;       ("C-c C-n" . kam-eshell-next-prompt)
+  ;;       ("C-x C-d" . eshell/z))
+  ;; (:map eshell-hist-mode-map
+  ;;       ("M-r" . consult-history)
+  ;;       ("C-c C-l" . eshell-clear))
   :custom
   (eshell-history-file-name (expand-file-name "eshell/history" kam-emacs-cache-directory))
   (eshell-last-dir-ring-file-name (expand-file-name "eshell/lastdir" kam-emacs-cache-directory))
