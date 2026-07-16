@@ -5,7 +5,7 @@
 ;;; Commentary:
 
 ;;; Code:
-(require 'org)
+;; (require 'org)
 (require 'standard-themes)
 (require 'kam-os)
 
@@ -91,7 +91,7 @@
   ("C-c n g" . consult-denote-grep)
   ("C-c n f" . consult-denote-find)
   :config
-  (consult-denote-mode 1))
+  (consult-denote-mode))
 
 (use-package denote-org
   :config
