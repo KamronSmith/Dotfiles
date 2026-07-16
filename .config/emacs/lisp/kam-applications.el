@@ -86,7 +86,19 @@
                  (tab-name . " elfeed")
                  (window-parameters . ((no-delete-other-windows . t))))))
 
-  (use-package eww
+(use-package elfeed-tube
+  :after (elfeed)
+  :bind
+  (:map elfeed-show-mode-map
+        ("F" . elfeed-tube-fetch)
+        ([remap save-buffer] . elfeed-tube-save)
+        :map elfeed-search-mode-map
+        ("F" . elfeed-tube-fetch)
+        ([remap save-buffer] . elfeed-tube-save))
+  :config
+  (elfeed-tube-setup))
+
+(use-package eww
   :bind
   (:map eww-mode-map
         ("SPC" . kam-scroll-down)
