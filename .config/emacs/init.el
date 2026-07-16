@@ -4002,14 +4002,14 @@ Where kam-test is an alist of choices mapped to values."
    '(face tabs spaces trailing space-before-tab newline indentation
           empty space-after-tab tab-mark page-delimiters)))
 
-(use-package x
-  :ensure nil
-  :custom
-  (x-gtk-use-system-tooltips nil)
-  (x-select-enable-clipboard t)
-  (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-  (x-underline-at-descent-line nil)
-  (x-stretch-cursor nil))
+;; (use-package x
+;;   :ensure nil
+;;   :custom
+;;   (x-gtk-use-system-tooltips nil)
+;;   (x-select-enable-clipboard t)
+;;   (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;;   (x-underline-at-descent-line nil)
+;;   (x-stretch-cursor nil))
 
 (use-package epa
   :ensure nil
