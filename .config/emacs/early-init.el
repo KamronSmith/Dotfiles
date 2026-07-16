@@ -22,7 +22,8 @@
       inhibit-x-resources t
       vc-handled-backends '(Git)
       warning-minimum-level :error
-      warning-suppress-types '((lexical-binding)))
+      warning-suppress-types '((lexical-binding))
+      user-lisp-directory "~/.config/emacs/lisp")
 
 (setq use-package-enable-imenu-support t
       use-package-always-demand t
