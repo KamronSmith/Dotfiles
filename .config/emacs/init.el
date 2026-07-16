@@ -3313,6 +3313,7 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package eshell-syntax-highlighting
   :after (eshell)
+  :ensure t
   :hook (eshell-mode . eshell-syntax-highlighting-mode))
 
 ;; (use-package vterm
@@ -3775,6 +3776,7 @@ Where kam-test is an alist of choices mapped to values."
 ;;      (note "»" compilation-info))))
 
 (use-package eglot
+  :ensure nil
   :bind
   (:map prog-mode-map
         ("M-g M-c" . eglot-code-actions)
