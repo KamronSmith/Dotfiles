@@ -426,7 +426,10 @@ To be used attached to `after-init-hook'."
   ("M-v" . kam-scroll-up)
   :custom
   (window-sides-slots '(0 0 1 1))
-  (split-window-preferred-direction 'vertical)
+  (split-window-preferred-direction 'horizontal)
+  (split-window-preferred-function 'split-window-sensibly)
+  (split-height-threshold nil)
+  (split-width-threshold 0)
   (even-window-sizes nil)
   (cursor-in-non-selected-windows nil)
   (next-error-recenter '(4))
@@ -438,8 +441,6 @@ To be used attached to `after-init-hook'."
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows nil)
-  (split-width-threshold 170)
-  (split-height-threshold nil)
   (display-buffer-base-action '((display-buffer-same-window)
                                 (reusable-frames . t)))
   (display-buffer-alist
