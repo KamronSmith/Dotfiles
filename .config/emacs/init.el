@@ -4194,6 +4194,7 @@ Where kam-test is an alist of choices mapped to values."
         ("t" . ghostel-project))
   :custom
   (ghostel-compile-finished-major-mode 'compilation-mode)
+  (ghostel-module-auto-install 'download)
   :config
   (ghostel-compile-global-mode)
   (ghostel-comint-global-mode)
