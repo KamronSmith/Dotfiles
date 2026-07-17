@@ -857,8 +857,7 @@ Add this to `dired-mode-hook'."
 
 (use-package help
   :ensure nil
-  :hook ((help-mode . lin-mode)
-         (help-mode . variable-pitch-mode))
+  :hook (help-mode . lin-mode)
   :bind (:map help-mode-map
               ("q" . kam-quit-window)
               ("p" . kam-docview-backward-paragraph)
@@ -913,8 +912,7 @@ Add this to `dired-mode-hook'."
 
 (use-package apropos
   :ensure nil
-  :hook ((apropos-mode . lin-mode)
-         (apropos-mode . variable-pitch-mode))
+  :hook (apropos-mode . lin-mode)
   :bind
   ("C-h F" . apropos-function)
   ("C-h V" . apropos-variable)
@@ -932,8 +930,7 @@ Add this to `dired-mode-hook'."
 
 (use-package info
   :ensure nil
-  :hook ((Info-mode . lin-mode)
-         (Info-mode . variable-pitch-mode))
+  :hook (Info-mode . lin-mode)
   :bind
   ("C-h r" . info-display-manual)
   ("C-h R" . info-emacs-manual)
@@ -968,7 +965,7 @@ Add this to `dired-mode-hook'."
 
 (use-package man
   :ensure nil
-  :hook ((Man-mode . lin-mode))
+  :hook (Man-mode . lin-mode)
   :bind
   ("M-s M-m" . man)
   (:map Man-mode-map
