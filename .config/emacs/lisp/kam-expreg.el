@@ -23,9 +23,12 @@ Does not include the delimiters."
              (end (cdr (cdr dim))))
         (cons beg end))))))
 
+;;;###autoload
 (defun kam-kill-inner-sexp ()
   "Kill the inside of a pair of delimiters at point.
 Respects comments and strings. Powered by `kam-expreg--sexp'."
   (interactive)
   (kam--mark (kam-expreg--sexp))
   (kill-region nil nil t))
+
+(provide 'kam-expreg)

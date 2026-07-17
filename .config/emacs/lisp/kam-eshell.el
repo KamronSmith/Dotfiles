@@ -94,6 +94,7 @@ See `eshell-prompt-regexp'."
     (erase-buffer)
     (eshell-emit-prompt)))
 
+;;;###autoload
 (defun eshell/z (&optional regexp)
   "Navigate to a previously visited directory in Eshell, or to any directory offered by `consult-dir'.
 Optionally, use REGEXP to search for previous directories."

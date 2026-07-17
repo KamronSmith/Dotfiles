@@ -109,8 +109,7 @@ PROMPT is the prompt of `consult-imenu'."
                              point-pos)))
                        (length vertico--candidates)))))))
 
-
-
+;;;###autoload
 (defun kam-consult-ripgrep-or-line ()
   "Call `consult-line' for small buffers and `consult-ripgrep' for large files."
   (interactive)

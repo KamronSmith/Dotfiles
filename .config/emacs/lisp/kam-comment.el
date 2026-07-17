@@ -54,6 +54,7 @@ STRING is a combination of a keyword and a timestamp."
   (unless (kam-line-regexp-p 'empty 1)
     (save-excursion (newline))))
 
+;;;###autoload
 (defun kam-comment-timestamp-keyword (keyword)
   "Add timestamped comment with KEYWORD.
 
@@ -80,6 +81,7 @@ comment is appended to the line with `comment-indent'."
       (comment-indent t)
       (insert " " string)))))
 
+;;;###autoload
 (defun kam-comment-dwim (&optional n)
   "Comment N lines, defaulting to the current line.
 When the region is active, comment its lines instead."

@@ -4,11 +4,11 @@
 (defvar kam-ytdlp-download-music-history nil
   "Minibuffer history of `kam-ytdlp-download-music'.")
 
+;;;###autoload
 (defun kam-ytdlp-download-music (url)
   "Download a music video from YouTube, given URL."
-  (interactive
-   (list (read-string "URL from Youtube: " nil kam-ytdlp-download-music-history (car kam-ytdlp-download-music-history))))
-  (let* ((default-directory "~/Music"))
+  (interactive (list (kam-ytdlp--download-prompt kam-ytdlp-download-music-history)))
+  (let* ((default-directory kam-music-directory))
     (async-shell-command
      (concat
       "yt-dlp "
@@ -28,6 +28,7 @@ music or video."
     (read-string (format-prompt "URL" default)
                  nil hist default)))
 
+;;;###autoload
 (defun kam-ytdlp-download-video (url)
   "Download a video from the internet."
   (interactive (list (kam-ytdlp--download-prompt kam-ytdlp-download-video-history)))

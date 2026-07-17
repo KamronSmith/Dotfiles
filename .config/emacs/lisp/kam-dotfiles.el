@@ -21,6 +21,7 @@
   :type 'string
   :group 'kam-os)
 
+;;;###autoload
 (defun kam-dotfiles-stow ()
   "Run stow in the dotfiles directory."
   (interactive)
