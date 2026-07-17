@@ -12,8 +12,8 @@
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up))
   (:map elfeed-search-mode-map
-        ([remap scroll-down-command] . kam-scroll-down)
-        ([remap scroll-up-command] . kam-scroll-up)
+        ;; ([remap scroll-down-command] . kam-scroll-up)
+        ;; ([remap scroll-up-command] . kam-scroll-down)
         ("g" . elfeed-update))
   :hook ((elfeed-search-mode . hide-cursor-mode)
          (elfeed-search-mode . lin-mode))
@@ -26,44 +26,42 @@
   (elfeed-search-filter "@2-weeks-ago +unread")
   (elfeed-show-truncate-long-urls t)
   (elfeed-search-date-format '("%F %R" 20 :left))
-
   (elfeed-show-entry-switch #'pop-to-buffer)
-  (elfeed-show-unique-buffers t)
+  (elfeed-show-unique-buffers nil)
+  (elfeed-use-libxml t)
   :config
   (setq elfeed-feeds
-        '(("https://www.artofmanliness.com/feed/" culture manhood)
+        '(("https://www.artofmanliness.com/feed/" :title "The Art Of Manliness" culture manhood)
           ("https://xkcd.com/rss.xml" science comics)
-          ("https://www.brainpickings.org/feed/" culture art)
+          ("https://www.brainpickings.org/feed/" :title "The Marginalian" culture art)
           ("https://donaldrobertson.name/feed/" philosophy)
-          ("https://startingstrength.com/rss.rss" health strengthtraining)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwY9iS8oMyWDYIe6_RmoA" programming technology noboilerplate)
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmdlnVFzmf7Zhqm_QE-UlJw")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC68TLK0mAEzUyHx5x5k-S1Q")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCIh_TPYPqjJuS_-nOfAIlfg")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsvn_Po0SmunchJYOWpOxMg")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPdaxSov0mgwh77JvjQO2jQ")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCussGOBf--SiEXrqCh-3rfA")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2_krAagEXVPftDXZCDiVZA")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQjBsscIa_mgEnSvWpm_9vw")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPIyEJzvW7SsbiIrooixjNA")
-          ("http://fetchrss.com/rss/6487d899dbb9ac6a9330dfb26487da4f4d89b76b7c38ece2.xml")
+          ("https://startingstrength.com/rss.rss" :title "Starting Strength" health strengthtraining)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwY9iS8oMyWDYIe6_RmoA" :title "NoBoilerplate" programming technology youtube)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg" :title "DistroTube" linux youtube)
+          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmdlnVFzmf7Zhqm_QE-UlJw") Alex Leonidas
+          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC68TLK0mAEzUyHx5x5k-S1Q") Jeff Nippard
+          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCIh_TPYPqjJuS_-nOfAIlfg") The Bioneer
+          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsvn_Po0SmunchJYOWpOxMg") VideoGameDunkey
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPdaxSov0mgwh77JvjQO2jQ" :title "Man Carrying Thing" books culture youtube) ; Man carrying thing
+          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCussGOBf--SiEXrqCh-3rfA") Expatriarch
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2_krAagEXVPftDXZCDiVZA" :title "Kaname Naito" japanese youtube) ; Kaname Naito
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQjBsscIa_mgEnSvWpm_9vw" :title "Odysseas" books philosophy youtube)
+          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPIyEJzvW7SsbiIrooixjNA" :title "Doug's Dharma" buddhism youtube)
           ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6biysICWOJ-C3P4Tyeggzg")
           ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2ME6cK8jWnRSWyUdV0yWJw")
           ;; ("https://www.theatlantic.com/feed/all/")
-          ("https://www.theatlantic.com/politics/" politics news theatlantic)
-          ("https://www.theatlantic.com/science/" science theatlantic)
-          ("https://www.theatlantic.com/technology/" technology theatlantic)
-          ("https://www.newyorker.com/feed/news" news newyorker)
-          ("https://www.newyorker.com/feed/culture" culture newyorker)
-          ("https://dynomight.net/feed.xml")
-          ("https://every.to/superorganizers/feed.xml")
-          ("https://feeds.npr.org/1020/rss.xml")
-          ("http://rss.sciam.com/sciam/mindmatters" science scientificamerican)
-          ("http://rss.sciam.com/sciam/feature-articles" science scientificamerican)
+          ("https://www.theatlantic.com/politics/" :title "The Atlantic" politics news)
+          ("https://www.theatlantic.com/science/" :title "The Atlantic" science)
+          ("https://www.theatlantic.com/technology/" :title "The Atlantic" technology culture)
+          ("https://www.newyorker.com/feed/news" :title "The New Yorker" news)
+          ("https://www.newyorker.com/feed/culture" :title "The New Yorker" culture)
+          ("https://dynomight.net/feed.xml" :title "DynoMight")
+          ("https://feeds.npr.org/1020/rss.xml" :title "NPR" news)
+          ("http://rss.sciam.com/sciam/mindmatters" :title "Scientific American" science)
+          ("http://rss.sciam.com/sciam/feature-articles" :title "Scientific American" science)
           ("https://joshblais.com/index.xml" emacs philosophy)
-          ("https://protesilaos.com/codelog.xml" emacs linux protesilaos)
-          ("https://protesilaos.com/interpretations.xml" art philosophy protesilaos)))
+          ("https://protesilaos.com/codelog.xml" :title "Protesilaos" emacs linux)
+          ("https://protesilaos.com/interpretations.xml" :title "Protesilaos" art philosophy)))
 
   (defun kam-elfeed-show-next ()
     "Show the next entry in the same window. Do not split."
@@ -99,6 +97,13 @@
         ([remap save-buffer] . elfeed-tube-save))
   :config
   (elfeed-tube-setup))
+
+(use-package elfeed-tube-mpv
+  :after (elfeed)
+  :bind
+  (:map elfeed-show-mode-map
+        ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+        ("C-c C-w" . elfeed-tube-mpv-where)))
 
 (use-package eww
   :bind
