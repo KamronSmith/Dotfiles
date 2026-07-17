@@ -120,53 +120,5 @@ MODE is a symbol that represents an active minor mode. See
   (call-interactively mode)
   (call-interactively mode))
 
-(defun kam-next-error (&optional arg)
-  "Go to the next error ARG number of times.
-If ARG is not provided, ARG is 1."
-  (interactive "P")
-  (unless arg
-    (setq arg 1))
-  (push-mark (point) t nil)
-  (dotimes (_ arg)
-    (cond
-     ((and (bound-and-true-p flycheck-mode) (derived-mode-p 'prog-mode))
-      (flycheck-next-error)
-      (setq this-command 'flycheck-next-error))
-     ((and (bound-and-true-p flymake-mode) (derived-mode-p 'prog-mode))
-      (flymake-goto-next-error)
-      (setq this-command 'flymake-goto-next-error))
-     ((derived-mode-p 'compilation-mode)
-      (compilation-next-error arg)
-      (setq this-command 'compilation-next-error))
-     ((and (derived-mode-p 'text-mode) (bound-and-true-p jinx-mode))
-      (jinx-next))
-     (t
-      (next-error arg)
-      (setq this-command 'next-error)))))
-
-(defun kam-prev-error (&optional arg)
-  "Go to the previous error ARG number of times.
-If ARG is not provided, ARG is 1."
-  (interactive "P")
-  (unless arg
-    (setq arg 1))
-  (push-mark (point) t nil)
-  (dotimes (_ arg)
-    (cond
-     ((and (bound-and-true-p flycheck-mode) (derived-mode-p 'prog-mode))
-      (flycheck-previous-error)
-      (setq this-command 'flycheck-previous-error))
-     ((and (bound-and-true-p flymake-mode) (derived-mode-p 'prog-mode))
-      (flymake-goto-prev-error)
-      (setq this-command 'flymake-goto-prev-error))
-     ((derived-mode-p 'compilation-mode)
-      (compilation-previous-error arg)
-      (setq this-command 'compilation-previous-error))
-     ((and (derived-mode-p 'text-mode) (bound-and-true-p jinx-mode))
-      (jinx-previous))
-     (t
-      (previous-error arg)
-      (setq this-command 'previous-error)))))
-
 (provide 'kam-common)
 ;;; kam-common.el ends here
