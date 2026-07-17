@@ -12,22 +12,22 @@
 (defgroup kam-os ()
   "Extensions to customize Emacs to fit my operating system.")
 
+(defcustom kam-home-directory (expand-file-name "~/")
+  "My home directory."
+  :type 'string
+  :group 'kam-os)
+
 (defcustom kam-documents-directory (expand-file-name "~/Documents/")
   "Base directory where the PARA organization system starts."
   :type 'string
   :group 'kam-os)
 
-(defcustom kam-resources-directory (expand-file-name "Resources/" kam-documents-directory)
-  "Directory where all of my resources live."
-  :type 'string
-  :group 'kam-os)
-
-(defcustom kam-pictures-directory (expand-file-name "Pictures/" kam-resources-directory)
+(defcustom kam-pictures-directory (expand-file-name "Pictures/" kam-home-directory)
   "Directory where all of my pictures live."
   :type 'string
   :group 'kam-os)
 
-(defcustom kam-music-directory (expand-file-name "Music/" kam-resources-directory)
+(defcustom kam-music-directory (expand-file-name "Music/" kam-home-directory)
   "Directory where all of my music lives."
   :type 'string
   :group 'kam-os)
@@ -42,8 +42,28 @@
   :type 'string
   :group 'kam-os)
 
-(defcustom kam-videos-directory (expand-file-name "Videos/" kam-resources-directory)
+(defcustom kam-videos-directory (expand-file-name "Videos/" kam-home-directory)
   "Directory where all of my videos live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-projects-directory (expand-file-name "Projects/" kam-home-directory)
+  "Directory where all of my projects live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-archive-directory (expand-file-name "Archive/" kam-home-directory)
+  "Directory where all of my archived projects live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-software-directory (expand-file-name "Software/" kam-home-directory)
+  "Directory where all of my downloaded sofware projects live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-share-directory (expand-file-name "Share/" kam-home-directory)
+  "Directory where I put all of the files meant to be shared with other machines."
   :type 'string
   :group 'kam-os)
 

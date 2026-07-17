@@ -128,7 +128,7 @@
         ("n" . next-line)
         ("p" . previous-line))
   :config
-  (defvar kam-books-directory (expand-file-name "Books/" kam-resources-directory)
+  (defvar kam-books-directory (expand-file-name "Books/" kam-documents-directory)
     "Directory where all of my books live.")
 
   (setq calibredb-format-nerd-icons t

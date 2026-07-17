@@ -6,18 +6,16 @@
 
 ;;; Code:
 
+(require 'kam-os)
 (require 'org)
 
-(defvar kam-tasks-inbox-directory "/home/kam/Documents/Inbox/"
+(defvar kam-inbox-directory (expand-file-name "Inbox/" kam-home-directory)
   "Directory where the inbox is stored.")
 
-(defvar kam-tasks-projects-directory "/home/kam/Projects/"
-  "Directory where the projects are stored.")
+(defvar kam-todo-file (expand-file-name "todo.org" kam-inbox-directory)
+  "File where all of the todo  information is stored.")
 
-(defvar kam-tasks-tasks-file (expand-file-name "todo.org" kam-tasks-inbox-directory)
-  "File where the tasks information is stored.")
-
-(setq org-agenda-files `(,kam-tasks-tasks-file))
+(setq org-agenda-files `(,kam-todo-file))
 
 (defvar kam-todo-regex
   `(seq

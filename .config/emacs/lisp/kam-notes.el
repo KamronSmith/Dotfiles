@@ -24,7 +24,7 @@
         ("r" . denote-dired-rename-files))
   :config
   (defvar kam-notes-directory
-    (expand-file-name kam-resources-directory "Notes/")
+    (expand-file-name kam-documents-directory "Notes/")
     "Directory where all of my notes live.")
 
   (setq denote-directory kam-notes-directory
