@@ -169,18 +169,24 @@
   ("C-c m p" . emms-previous)
   ("C-c m e" . emms)
   :custom
+  (emms-info-functions '(emms-info-native
+                         emms-info-metaflac
+                         emms-info-ogginfo))
+  (emms-player-list '(emms-player-mpv))
+  (emms-player-mpv-player (executable-find "mpv"))
   (emms-source-file-default-directory kam-music-directory)
-  (emms-playlist-buffer-name "*Playlist*")
+  (emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
+  (emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
+  (emms-score-file (expand-file-name "emms/scores" kam-emacs-cache-directory))
   :config
+  (require 'emms-setup)
+  (require 'emms-mpris)
   (emms-all)
+  (emms-mpris-enable)
 
-  (setq emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
-  (setq emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
-  (setq emms-score-file (expand-file-name "emms/scores" kam-emacs-cache-directory))
-
-  (setq emms-player-vlc-player (executable-find "vlc")
-        emms-info-functions '(emms-info-native))
-  (add-to-list 'emms-player-list 'emms-player-vlc)
+  ;; (setq emms-player-vlc-player (executable-find "vlc")
+  ;;       emms-info-functions '(emms-info-native))
+  ;; (add-to-list 'emms-player-list 'emms-player-vlc)
 
   (defun kam-emms-add-track-to-playlist (buffer)
     (interactive
@@ -239,15 +245,15 @@ Otherwise, play."
   :hook ((emms-browser-mode . hide-cursor-mode)
          (emms-browser-mode . lin-mode))
   :custom
-  (emms-browser-buffer-name "*Music*")
+  ;; (emms-browser-buffer-name "*Music*")
   :config
   (emms-browser-make-filter "All" 'ignore)
   (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory))
   ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters))
 
   (add-to-list 'display-buffer-alist
-               `((derived-mode . emms-browser-mode)
-                 (display-buffer-in-side-window)
+               `("\\*Music\\*"
+                 (display-buffer-in-side-window display-buffer-reuse-window)
                  (mode emms-browser-mode)
                  (side . right)
                  (window-width . 0.3)
@@ -259,13 +265,14 @@ Otherwise, play."
   :hook ((emms-playlist-mode . hide-cursor-mode)
          (emms-playlist-mode . lin-mode))
   :custom
+  ;; (emms-playlist-buffer-name "*Playlist*")
   (emms-playlist-mode-open-playlists t)
   :config
   (add-to-list 'display-buffer-alist
-               '("\\*Playlist\\*"
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (window-height . 0.35)
+               '((derived-mode-p emms-playlist-mode)
+                 (display-buffer-in-side-window display-buffer-reuse-window)
+                 (side . right)
+                 (window-width . 0.30)
                  (window-parameters . ((mode-line-format . none))))))
 
 ;;; LLM Client
