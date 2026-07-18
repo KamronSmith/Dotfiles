@@ -1849,7 +1849,7 @@ Used in `popper-open-popup-hook'."
               ("C-x t n" . tab-next)
               ("C-x t p" . tab-previous)
               ("C-x t +" . tab-close)
-              ("C-x t t" . kam-consult-tab)
+              ("C-\\" . kam-consult-tab)
               ("C-<tab>" . nil)
               ("C-S-<tab>" . nil))
   :init
@@ -1863,12 +1863,13 @@ Used in `popper-open-popup-hook'."
   (tab-bar-show t)
   (tab-bar-close-button-show nil)
   (tab-bar-new-button nil)
-  (tab-bar-tab-hints nil)
+  (tab-bar-tab-hints t)
   (tab-bar-auto-width nil)
   (tab-bar-separator " ")
-  (tab-bar-format '(tab-bar-format-tabs-groups
+  ;; (tab-bar-format '(tab-bar-format-tabs-groups
                     ;; tab-bar-format-tabs
-                    tab-bar-separator))
+  ;; tab-bar-separator)
+  (tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
 
   :config
   (defun kam-tab-bar-group-from-project ()
@@ -2902,11 +2903,11 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 (use-package project
   :ensure nil
   :bind
-  ("C-@" . project-recompile)
   ("M-@" . project-compile)
   (:map project-prefix-map
         ("b" . consult-project-buffer)
         ("d" . kam-project-dired)
+        ("p" . nil)
         ("g" . consult-ripgrep)
         ("n" . kam-project-new))
   :custom
@@ -2926,6 +2927,25 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
                                        '(project-find-regexp "Find regexp")
                                        '(project-find-dir "Find directory"))))
                     project-switch-commands))
+
+  (defun kam-project-switch-project (dir)
+    "\"Switch\" to another project by running an Emacs command.
+The available commands are presented as a dispatch menu
+made from `project-switch-commands'.
+
+When called in a program, it will use the project corresponding
+to directory DIR."
+    (interactive (list (funcall project-prompter)))
+    (let ((command (if (symbolp project-switch-commands)
+                       project-switch-commands
+                     (project--switch-project-command dir)))
+          (buffer (current-buffer)))
+      (unwind-protect
+          (progn
+            (setq-local project-current-directory-override dir)
+            (call-interactively command))
+        (with-current-buffer buffer
+          (kill-local-variable 'project-current-directory-override)))))
 
   (add-to-list 'project-switch-commands '(project-find-dir "Dired" "d"))
 
@@ -4294,6 +4314,7 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-window)
 (require 'kam-os)
 (require 'kam-consult)
+(require 'kam-consult-tab)
 (require 'kam-org)
 (require 'kam-writing)
 (require 'kam-tasks)
