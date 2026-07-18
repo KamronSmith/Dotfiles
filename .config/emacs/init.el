@@ -292,11 +292,11 @@ To be used attached to `after-init-hook'."
     "<left>" 'kam-prev-buffer
     "<right>" 'kam-next-buffer)
 
-
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
-  (setq-default comment-column 0)
+  (setq-default comment-column 0
+                fill-column 80)
 
   (defun kam-whitespace-handling-setup ()
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)
