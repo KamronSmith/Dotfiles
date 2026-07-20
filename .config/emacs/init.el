@@ -3989,6 +3989,7 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter)
   :bind
+  ("C-@" . compile)
   (:map compilation-mode-map
         ("n" . kam-next-error-same-window-no-select)
         ("p" . kam-previous-error-same-window-no-select)
