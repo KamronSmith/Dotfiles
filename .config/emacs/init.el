@@ -3969,18 +3969,17 @@ Where kam-test is an alist of choices mapped to values."
 (use-package direnv
   :custom
   (direnv-always-show-summary nil)
+  :demand t
   :config
   (direnv-mode)
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "\\*direnv\\*")
-
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "\\*envrc\\*")
 
   (add-to-list 'consult-buffer-filter
                "^\\*direnv\\*" t)
-
   (add-to-list 'consult-buffer-filter
                "^\\*envrc\\*" t))
 
