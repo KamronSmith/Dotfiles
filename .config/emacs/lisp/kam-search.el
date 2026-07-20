@@ -46,5 +46,24 @@ Occur search to include."
          (bufname (format "*keywords in <%s>*" (buffer-name))))
     (occur-1 kam-search-todo-keywords num (list (current-buffer)) bufname)))
 
+(defun kam-project-grep (command-args)
+  "Perform a `grep' search for COMMAND-ARGS starting from the project root directory."
+  (interactive (progn
+                 (grep-compute-defaults)
+                 (let ((default (grep-default-command)))
+                   (list (read-shell-command
+                          "Run grep (like this): "
+                          (if current-prefix-arg
+                              default
+                            (if grep-command-position
+                                (cons grep-command grep-command-position)
+                              grep-command))
+                          'grep-history
+                          (if current-prefix-arg nil default))))))
+  (let* ((proj (project-current t))
+         (proj-root (project-root proj))
+         (default-directory proj-root))
+    (grep command-args)))
+
 (provide 'kam-search)
 ;;; kam-search.el ends here
