@@ -254,38 +254,57 @@ Otherwise, play."
 (use-package emms-browser
   :ensure nil
   :after (emms)
+  :init
+  (add-to-list 'display-buffer-alist
+               `((derived-mode . emms-browser-mode)
+                 (display-buffer-in-tab)
+                 (dedicated . t)
+                 (tab-name . " music")
+                 (window-parameters . ((no-delete-other-windows . t)))))
   :hook ((emms-browser-mode . hide-cursor-mode)
          (emms-browser-mode . lin-mode))
-  :custom
   ;; (emms-browser-buffer-name "*Music*")
   :config
   (emms-browser-make-filter "All" 'ignore)
-  (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory))
-  ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters))
-
-  (add-to-list 'display-buffer-alist
-               `("\\*Music\\*"
-                 (display-buffer-in-side-window display-buffer-reuse-window)
-                 (mode emms-browser-mode)
-                 (side . right)
-                 (window-width . 0.3)
-                 (window-parameters . ((mode-line-format . none))))))
+  (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory)))
+  ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters)))
 
 (use-package emms-playlist-mode
   :ensure nil
   :after (emms)
-  :hook ((emms-playlist-mode . hide-cursor-mode)
-         (emms-playlist-mode . lin-mode))
+  :hook (emms-playlist-mode . hide-cursor-mode)
+  :bind
+  (:map emms-playlist-mode-map
+        ("p" . kam-emms-previous)
+        ("n" . kam-emms-next))
   :custom
   ;; (emms-playlist-buffer-name "*Playlist*")
   (emms-playlist-mode-open-playlists t)
   :config
   (add-to-list 'display-buffer-alist
-               '((derived-mode-p emms-playlist-mode)
+               '((derived-mode . emms-playlist-mode)
                  (display-buffer-in-side-window display-buffer-reuse-window)
                  (side . right)
                  (window-width . 0.30)
-                 (window-parameters . ((mode-line-format . none))))))
+                 (window-parameters . ((mode-line-format . none)))))
+
+  (defun kam-emms-next ()
+    "Start playing the next track in the EMMS playlist and move the cursor as well.
+With optional ARG, go to the next song that many times."
+    (interactive)
+    (emms-next)
+    (forward-line))
+
+  (defun kam-emms-previous ()
+    "Start playing the previous track in the EMMS playlist and move the cursor as well.
+With optional ARG, go to the previous song that many times."
+    (interactive)
+    (emms-previous)
+    (forward-line -1))
+
+  (with-eval-after-load 'popper
+    (add-to-list 'popper-reference-buffers
+                 'emms-playlist-mode t)))
 
 ;;; LLM Client
 (use-package gptel)
