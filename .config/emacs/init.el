@@ -495,7 +495,7 @@ To be used attached to `after-init-hook'."
       (side . bottom)
       (window . root)
       (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none)))))))
+      (window-parameters . ((mode-line-format . none))))))))
 
 (use-package centered-cursor-mode
   :bind
