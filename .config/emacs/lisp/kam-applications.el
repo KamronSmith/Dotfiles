@@ -126,21 +126,33 @@
     (put command 'disabled t)))
 
 (use-package calibredb
-  :commands (calibredb)
+  ;; :commands (calibredb)
+  :hook ((calibredb-search-mode . hide-cursor-mode)
+         (calibredb-search-mode . lin-mode))
   :bind
   ("C-c b" . calibredb)
   (:map calibredb-search-mode-map
         ("n" . next-line)
-        ("p" . previous-line))
+        ("p" . previous-line)
+        ("N" . calibredb-search-next-page)
+        ("P" . calibredb-search-previous-page)
+        ("g" . calibredb-search-refresh)
+        ("r" . calibredb-filter-dispatch))
+  :custom
+  (calibredb-format-nerd-icons t)
+  (calibredb-root-dir kam-books-directory)
+  (calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
+  (calibredb-library-alist `((,kam-books-directory)))
+  (calibredb-sort-by 'title)
+  (calibredb-order 'asc)
+  (calibredb-id-width 6)
+  (calibredb-title-width 75)
+  (calibredb-format-width 7)
   :config
-  (defvar kam-books-directory (expand-file-name "Books/" kam-documents-directory)
-    "Directory where all of my books live.")
-
-  (setq calibredb-format-nerd-icons t
-        calibredb-root-dir kam-books-directory
-        calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir)
-        calibredb-library-alist `((,kam-books-directory))
-        calibredb-sort-by 'title)
+  (defcustom kam-books-directory (expand-file-name "Books/" kam-documents-directory)
+    "Directory where all of my books live."
+    :type 'string
+    :group 'kam-os)
 
   (add-to-list 'display-buffer-alist
                '("\\*calibredb-search\\*"
