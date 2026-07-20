@@ -768,6 +768,8 @@ Add this to `dired-mode-hook'."
 
 (use-package trashed
   :commands (trashed)
+  :hook ((trashed-mode . hide-cursor-mode)
+         (trashed-mode . lin-mode))
   :bind
   ("C-c t" . trashed)
   :custom
