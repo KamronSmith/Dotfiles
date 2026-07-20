@@ -1807,7 +1807,7 @@ When `switch-to-buffer-obey-display-actions' is non-nil, `switch-to-buffer' comm
      ("^\\*Pacman:")
      ("^\\*Timeshift:")
      ("\\*ChatGPT\\*")
-     emms-browser-mode
+     emms-playlist-mode
      Man-mode
      help-mode
      Info-mode
