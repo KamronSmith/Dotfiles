@@ -360,13 +360,19 @@ To be used attached to `after-init-hook'."
   :bind
   (:map completion-preview-active-mode-map
     ("M-n" . completion-preview-next-candidate)
-    ("M-p" . completion-preview-prev-candidate))
+    ("M-p" . completion-preview-prev-candidate)
+    ("<tab>" . completion-preview-complete))
   :custom
   (completion-preview-minimum-symbol-length 2)
-  (completion-preview-exact-match-only t)
+  (completion-preview-exact-match-only nil)
+  (completion-preview-commands '(self-insert-command
+                                 insert-char
+                                 analyze-text-conversion
+                                 completion-preview-insert-word))
   (completion-preview-idle-delay 0.3)
+  (completion-preview-ignore-case t)
+  (completion-preview-sort-function #'identity)
   :config
-
   (with-eval-after-load 'org
     (push 'org-self-insert-command completion-preview-commands))
 
@@ -3662,6 +3668,7 @@ Where kam-test is an alist of choices mapped to values."
     (buffer-face-mode)
     (outline-minor-mode)
     (hl-line-mode)
+    (completion-preview-mode)
     (display-line-numbers-mode)
     (indent-tabs-mode -1)))
 
