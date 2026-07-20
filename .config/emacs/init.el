@@ -3767,7 +3767,7 @@ Where kam-test is an alist of choices mapped to values."
   (defun kam-git-clone ()
     "Run git clone using `magit' in `kam-tasks-projects-directory'."
     (interactive)
-    (let ((default-directory kam-tasks-projects-directory))
+    (let ((default-directory kam-projects-directory))
       (call-interactively 'magit-clone))
     (kam-project-update-list)))
 
