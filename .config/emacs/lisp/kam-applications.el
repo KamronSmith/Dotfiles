@@ -200,43 +200,6 @@
   ;;       emms-info-functions '(emms-info-native))
   ;; (add-to-list 'emms-player-list 'emms-player-vlc)
 
-  (defun kam-emms-add-track-to-playlist (buffer)
-    (interactive
-     (list (let* ((buf-list (mapcar #'(lambda (buf)
-                                        (list (buffer-name buf)))
-                                    (emms-playlist-buffer-list)))
-                  (sorted-buf-list (sort buf-list
-                                         #'(lambda (lbuf rbuf)
-                                             (< (length (car lbuf))
-                                                (length (car rbuf)))))))
-             (emms-completing-read "Playlist buffer to add track: "
-                                   sorted-buf-list nil t))))
-    (let ((previous-buffer emms-playlist-buffer)
-          (previous-selection (overlay-start emms-playlist-mode-selected-overlay)))
-      (emms-playlist-ensure-playlist-buffer)
-      (emms-playlist-set-playlist-buffer buffer)
-      (emms-playlist-mode-add-contents)
-      (emms-playlist-set-playlist-buffer previous-buffer)
-      (emms-playlist-select previous-selection)))
-
-  (defun kam-emms-insert-track-to-playlist ()
-    "Add the current track at point to the playlist set in `kam-emms-insert-track-to-playlist-destination'.
-When a prefix is used, ask where to insert the track and place it there."
-    (interactive)
-    (let* ((name (emms-track-get (emms-playlist-track-at) 'name))
-           (prev-playlist emms-playlist-buffer)
-           (dest-playlist (if (not current-prefix-arg)
-                              kam-emms-insert-track-to-playlist-destination
-                            (completing-read
-                             "Insert track in: "
-                             (mapcar #'buffer-name emms-playlist-buffers) nil t))))
-      (unless (eq kam-emms-insert-track-to-playlist-destination dest-playlist)
-        (setq kam-emms-insert-track-to-playlist-destination dest-playlist))
-      (emms-playlist-set-playlist-buffer dest-playlist)
-      (emms-insert-file name)
-      (emms-playlist-set-playlist-buffer prev-playlist)
-      (message "Added to: %s" dest-playlist)))
-
   (defun kam-emms-play-pause ()
     "If music from EMMS is playing, pause it.
 Otherwise, play."
