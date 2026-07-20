@@ -22,7 +22,7 @@ When the number of characters in a buffer exceeds this threshold,
 (defvar kam-consult-source-neighbor-file
   `(:name     "File in current directory"
               :narrow   ?.
-              :category file
+              :category 'file
               :face     consult-file
               :history  file-name-history
               :state    ,#'consult--file-state

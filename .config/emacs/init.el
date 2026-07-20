@@ -1388,7 +1388,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           consult-source-project-recent-file
           consult-source-hidden-buffer
           ;; TODO 2026-07-15: figure out where neighbor file went
-          ;; kam-consult-source-neighbor-file
+          kam-consult-source-neighbor-file
           consult-source-bookmark
           kam-consult-source-recent-file
           ;; kam-consult-source-dired-history
