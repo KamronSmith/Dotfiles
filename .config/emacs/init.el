@@ -2019,6 +2019,7 @@ Do nothing if search string is empty to start with."
      "node_modules"
      "build"
      "dist"))
+  (grep-save-buffers t)
   :config
   (add-to-list 'display-buffer-alist
                '("\\*grep\\*"
