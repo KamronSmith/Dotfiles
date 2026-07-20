@@ -5,7 +5,9 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'kam-common)
 (require 'kam-window)
+(require 'nerd-icons)
 
 (defgroup kam-mode-line nil
   "Extensions for a custom mode-line."
