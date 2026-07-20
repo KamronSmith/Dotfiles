@@ -3002,7 +3002,8 @@ to directory DIR."
     "Update the project list when deleting/adding projects."
     (interactive)
     (project-forget-zombie-projects)
-    (project-remember-projects-under kam-tasks-projects-directory t)))
+    (project-remember-projects-under kam-projects-directory)
+    (project-remember-projects-under kam-software-directory)))
 
 (use-package comint
   :ensure nil
