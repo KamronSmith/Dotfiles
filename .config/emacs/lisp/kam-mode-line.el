@@ -225,7 +225,7 @@ Also see `kam-mode-line-string-abbreviate'."
   "Abbreviate STR individual hyphen or underscore separated words.
 Also see `kam-mode-line-string-abbreviate-but-last'."
   (if (kam-mode-line--string-truncate-p str)
-      (mapconcat #'kam-mode-line--first-char (split-string str "[_-]") "-")
+      (mapconcat #'kam-first-char (split-string str "[_-]") "-")
     str))
 
 (defun kam-mode-line-buffer-lines ()
