@@ -58,7 +58,7 @@
   :group 'kam-os)
 
 (defcustom kam-software-directory (expand-file-name "Software/" kam-home-directory)
-  "Directory where all of my downloaded sofware projects live."
+  "Directory where all of my downloaded software projects live."
   :type 'string
   :group 'kam-os)
 
