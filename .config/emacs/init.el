@@ -1617,19 +1617,18 @@ Copied from the Consult code but made some changes."))
   ("C-c h f" . cape-file)
   :hook ((prog-mode . kam-cape-prog-mode-setup)
          (text-mode . kam-cape-text-mode-setup))
+  :custom
+  (completion-at-point-functions '(cape-dabbrev cape-file))   ; global values
   :config
-  (add-hook 'completion-at-point-functions #'cape-dabbrev)
-  (add-hook 'completion-at-point-functions #'cape-file)
-  (add-hook 'completion-at-point-functions #'cape-elisp-block)
-  (add-hook 'completion-at-point-functions #'cape-line)
-  (add-hook 'completion-at-point-functions #'cape-keyword)
-
   (defun kam-cape-text-mode-setup ()
+    "Set up `cape' for text."
     (setq-local completion-at-point-functions
                 '(cape-dict
-                  cape-dabbrev)))
+                  cape-dabbrev
+                  cape-emoji)))
 
   (defun kam-cape-prog-mode-setup ()
+    "Set up `cape' for programming."
     (setq-local completion-at-point-functions
                 '(cape-file
                   cape-keyword
