@@ -396,36 +396,36 @@ See `kam-mode-line-string-cut-middle'."
       "Bot")
      (t percent))))
 
-(defun kam-mode-line--reader-mode-stats ()
-  "Return statistics about the current `reader-mode' buffer."
-  (concat
-   (propertize " " 'face 'shadow)
-   " ["
-   (kam-mode-line--number-to-string-maybe (reader-current-pagenumber))
-   "/"
-   (kam-mode-line--number-to-string-maybe reader-current-doc-pagecount)
-   "]"
-   (propertize " 󱨄 " 'face 'shadow)
-   (kam-mode-line--number-to-string-maybe (kam-mode-line--reader-mode-doc-percentage))
-   " "
-   (propertize "  " 'face 'shadow)
-   (upcase (format-mode-line "%I"))))
+;; (defun kam-mode-line--reader-mode-stats ()
+;;   "Return statistics about the current `reader-mode' buffer."
+;;   (concat
+;;    (propertize " " 'face 'shadow)
+;;    " ["
+;;    (kam-mode-line--number-to-string-maybe (reader-current-pagenumber))
+;;    "/"
+;;    (kam-mode-line--number-to-string-maybe reader-current-doc-pagecount)
+;;    "]"
+;;    (propertize " 󱨄 " 'face 'shadow)
+;;    (kam-mode-line--number-to-string-maybe (kam-mode-line--reader-mode-doc-percentage))
+;;    " "
+;;    (propertize "  " 'face 'shadow)
+;;    (upcase (format-mode-line "%I"))))
 
-(defun kam-mode-line--reader-mode-doc-percentage ()
-  "Return the percentage of how far through the current document the point is."
-  (let* ((pg-num (reader-current-pagenumber))
-         (total-pg reader-current-doc-pagecount)
-         (percent (round (* (/
-                             (float pg-num)
-                             (float total-pg))
-                            100))))
-    (cond
-     ((or (= pg-num 1)
-          (= percent 0))
-      "Top")
-     ((>= percent 100)
-      "Bot")
-     (t percent))))
+;; (defun kam-mode-line--reader-mode-doc-percentage ()
+;;   "Return the percentage of how far through the current document the point is."
+;;   (let* ((pg-num (reader-current-pagenumber))
+;;          (total-pg reader-current-doc-pagecount)
+;;          (percent (round (* (/
+;;                              (float pg-num)
+;;                              (float total-pg))
+;;                             100))))
+;;     (cond
+;;      ((or (= pg-num 1)
+;;           (= percent 0))
+;;       "Top")
+;;      ((>= percent 100)
+;;       "Bot")
+;;      (t percent))))
 
 (defun kam-mode-line--number-to-string-maybe (input)
   "If INPUT is a number, turn it into a string.
@@ -441,8 +441,8 @@ Or if it is a string, keep it as it is."
 (defvar-local kam-mode-line-buffer-stats-var
   '(:eval
     (cond
-     ((derived-mode-p 'reader-mode)
-      (kam-mode-line--reader-mode-stats))
+     ;; ((derived-mode-p 'reader-mode)
+     ;;  (kam-mode-line--reader-mode-stats))
      (t (kam-mode-line-buffer-line-stats))))
   "Mode-line construct for the buffer stats indicator.")
 
