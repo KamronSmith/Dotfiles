@@ -32,10 +32,11 @@
   :ensure nil
   :custom
   (native-comp-async-report-warnings-errors 'silent)
-  (native-comp-prune-cache t)
   :config
-  (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Async-native-compile-log\\*" t)
-  (add-to-list 'switch-to-prev-buffer-skip-regexp "\\*Native-compile-Log\\*" t)
+  (add-to-list 'display-buffer-alist
+               '("\\*Compile-Log\\*"
+                 (display-buffer-no-window
+                  (allow-no-window . t))))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "\\*Async-native-compile-log\\*" t)
@@ -226,7 +227,10 @@
   (switch-to-prev-buffer-skip-regexp '("\\*Backtrace\\*"
                                        "\\*Warnings\\*"
                                        "\\*Compile-Log\\*"
-                                       "\\*Completions\\*"))
+                                       "\\*Completions\\*"
+                                       "\\*Async-native-compile-log\\*"
+                                       "\\*Native-compile-Log\\*"
+                                       "\\*Compile-Log\\*"))
   (large-file-warning-threshold nil)
   (find-ls-options '("-exec ls -ldh {} +" . "-ldh"))
   (redisplay-skip-fontification-on-input t)
@@ -489,19 +493,16 @@ To be used attached to `after-init-hook'."
       (display-buffer-in-side-window display-buffer-reuse-window)
       (side . bottom)
       (window . root)
-      (window-height . 0.35)
+      (window-height . 0.35))
      ("\\*Compile-Log\\*"
-      (display-buffer-in-side-window display-buffer-reuse-window)
-      (side . bottom)
-      (window . root)
-      (window-height . 0.35)
-      (window-parameters . ((mode-line-format . none))))
-     ("^\\*Pacman: "
-      (display-buffer-in-side-window display-buffer-reuse-window)
-      (side . bottom)
-      (window . root)
-      (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none))))))))
+      (display-buffer-no-window
+       (allow-no-window . t)))
+      ("^\\*Pacman: "
+       (display-buffer-in-side-window display-buffer-reuse-window)
+       (side . bottom)
+       (window . root)
+       (window-height . 0.45)
+       (window-parameters . ((mode-line-format . none)))))))
 
 (use-package centered-cursor-mode
   :bind
