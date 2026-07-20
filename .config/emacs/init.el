@@ -3658,8 +3658,7 @@ Where kam-test is an alist of choices mapped to values."
 
 (use-package text-mode
   :ensure nil
-  :hook ((text-mode . visual-fill-column-mode)
-         (text-mode . variable-pitch-mode)))
+  :hook (text-mode . visual-fill-column-mode))
 
 (use-package prog-mode
   :ensure nil
