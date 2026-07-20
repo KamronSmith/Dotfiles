@@ -2001,7 +2001,7 @@ Do nothing if search string is empty to start with."
    ("C-c C-c" . grep-edit-save-changes))
   :custom
   (grep-program "ripgrep")
-  (grep-command "rg -nS --follow --no-heading --color=always ")
+  (grep-command "rg -nS --context=3 --follow --heading --color=always ")
   (grep-use-null-device nil)
   (grep-find-ignored-directories
    '("SCCS"
