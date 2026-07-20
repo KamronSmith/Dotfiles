@@ -1216,7 +1216,14 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
                     (run-hooks 'standard-themes-after-load-theme-hook))))
     (kam-set-font-faces)
     (load-theme 'standard-dark :no-confirm)
-    (run-hooks 'standard-themes-after-load-theme-hook)))
+    (run-hooks 'standard-themes-after-load-theme-hook))
+
+  (defun kam-set-font (font)
+    "Set the default and fixed-pitch fonts to FONT.
+FONT should be a string that corresponds to a font-family."
+    (interactive (list (read-string "Font: ")))
+    (set-face-attribute 'default nil :font font :height 140 :weight 'regular :width 'regular)
+    (set-face-attribute 'fixed-pitch nil :font font :height 1.0 :weight 'regular :width 'regular)))
 
 (use-package ligature
   :config
