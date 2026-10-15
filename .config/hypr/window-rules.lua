@@ -23,7 +23,8 @@ hl.window_rule({
     name = "Emacs",
     match = { class = "^(emacs)$" },
     workspace = 2,
-    opacity = "1.0 1.0"
+    opacity = "1.0 1.0",
+    fullscreen_state = "3"
 })
 
 hl.window_rule({
@@ -86,7 +87,6 @@ hl.window_rule({
     float = true
 })
 
-
 hl.window_rule({
     name = "Library Dialog",
     match = { title = "^(Library)(.*)$" },
@@ -127,7 +127,7 @@ hl.window_rule({
 
 hl.window_rule({
     name = "Anki",
-    match = { class = "^(anki)$" },
+    match = { class = "^(anki)$", title = "^(Add)$" },
     float = true
 })
 
