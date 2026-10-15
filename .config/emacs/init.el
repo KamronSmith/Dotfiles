@@ -4466,15 +4466,14 @@ Add this function to the `ediff-quit-hook'."
 
 (use-package markdown-ts-mode
   :ensure nil
-  :defer t
-  :mode "\\.md\\'"
-  :hook (markdown-ts-mode . outline-minor-mode)
+  :hook (markdown-ts-mode . kam-markdown-ts-setup)
   :custom
-  (markdown-fontify-code-blocks-natively t)
-  (markdown-fontify-whole-heading-line t)
+  (markdown-ts-hide-markup t)
   :config
-  (add-to-list 'treesit-language-source-alist '(markdown "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown/src"))
-  (add-to-list 'treesit-language-source-alist '(markdown-inline "https://github.com/tree-sitter-grammars/tree-sitter-markdown" "split_parser" "tree-sitter-markdown-inline/src")))
+  (require 'markdown-ts-mode-x)
+  (defun kam-markdown-ts-setup ()
+    "Setup for `markdown-ts-mode'."
+    (setq-local treesit-font-lock-level 4)))
 
 (use-package yaml-ts-mode
   :ensure nil
