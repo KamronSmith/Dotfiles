@@ -198,7 +198,6 @@ With universal prefix ARG, run in the next window."
 
 (defun kam-no-split-window ()
   "Use in `split-window-preferred-function' to disable window splitting."
-  (interactive)
   nil)
 
 (defun kam-aw-consult-buffer (window)

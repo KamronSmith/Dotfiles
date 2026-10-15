@@ -441,7 +441,7 @@ To be used attached to `after-init-hook'."
   ("C-<prior>" . scroll-other-window-down)
   ("C-^" . kam-alternate-buffer)
   ("C-x 0" . kam-delete-window-dwim)
-  ("C-x 3" . kam-split-window-right)
+  ;; ("C-x 3" . kam-split-window-right)
   ("C-<next>" . scroll-other-window)
   :custom
   (window-sides-slots '(0 0 1 1))
