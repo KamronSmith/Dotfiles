@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=RAD Debugger
+Comment=RAD Debugger
+Exec=/home/kam/.local/bin/raddbg
+Icon=terminal
+Terminal=false
+Categories=System;Utility;Debugger
