@@ -438,11 +438,14 @@ To be used attached to `after-init-hook'."
   :ensure nil
   :bind
   ("C-l" . recenter)
-  ("C-<prior>" . scroll-other-window-down)
-  ("C-^" . kam-alternate-buffer)
   ("C-x 0" . kam-delete-window-dwim)
-  ;; ("C-x 3" . kam-split-window-right)
+  ("C-x C-0" . kam-delete-window-dwim)
+  ("C-x 1" . delete-other-windows)
+  ("C-x C-1" . delete-other-windows)
+  ("C-x 3" . kam-split-window-right)
+  ("C-x C-3" . kam-split-window-right)
   ("C-<next>" . scroll-other-window)
+  ("C-<prior>" . scroll-other-window-down)
   :custom
   (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'horizontal)
@@ -1450,6 +1453,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ([remap imenu] . consult-imenu)
          ("C-M-x" . consult-mode-command)
          ("C-x b" . consult-buffer)
+         ("C-x C-b" . consult-buffer)
          ("C-x r s" . consult-register-store)
          ("C-x r l" . consult-register-load)
          :map search-map
