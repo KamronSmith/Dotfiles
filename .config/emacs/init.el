@@ -237,6 +237,7 @@
   (large-file-warning-threshold nil)
   (find-ls-options '("-exec ls -ldh {} +" . "-ldh"))
   (redisplay-skip-fontification-on-input t)
+  (yank-transform-functions '(string-chop-newline))
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
@@ -282,9 +283,6 @@ To be used attached to `after-init-hook'."
          "/Users/kamronsmith/.config/emacs/init.el"
          t)
         (message "Copied config to emacs directory")))))
-
-  ;; (setq yank-transform-functions
-  ;;       '(string-chop-newline string-trim))
 
   (put 'narrow-to-region 'disabled nil)
 
@@ -2440,7 +2438,7 @@ it marks the next ARG lines after the ones already marked."
   (pulsar-pulse-line))
 
 (defun kam-cut-dwim (&optional n)
-  "Kill based on the position of the point in the buffer.
+  "Kill based on the context of the point in the buffer.
 
 If the region is active, kill the region.
 If the point is on an Org heading, kill the sub-tree.
