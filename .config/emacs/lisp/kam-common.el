@@ -30,14 +30,15 @@ regular expression. With optional N, search in the Nth line from point."
            (looking-at
             (alist-get type kam--line-regexp-alist))))))
 
-(defun kam-call-function-quietly (function)
-  "Call FUNCTION while suppressing any generated messages."
+(defun kam-call-function-quietly (orig-fun &rest args)
+  "Call FUNCTION while suppressing any generated messages.
+Use as :around advice for a noisy function."
   (let ((inhibit-message t))
-    (funcall function)))
+    (apply orig-fun args)))
 
 (defun kam-execute-command-on-file-buffer (cmd)
   "Execute CMD on the buffer and associated file."
-  (interactive "sCommand to excute: ")
+  (interactive "sCommand to execute: ")
   (let* ((file-name (buffer-file-name))
          (full-cmd (concat cmd " " file-name)))
     (async-shell-command full-cmd)))
@@ -104,6 +105,10 @@ of `completing-read-multiple'."
           minor-mode-list)
     active-modes))
 
+(defun kam-buffer-hidden-p (buf)
+  "Return non-nil if BUF is hidden."
+  (string-prefix-p " " (buffer-name buf)))
+
 (defun kam-clear-echo-area (&rest _nil)
   "Clear the echo area.
 Use this as advice :after a noisy function."
@@ -113,12 +118,28 @@ Use this as advice :after a noisy function."
   "Return the first character from STR."
   (substring str 0 1))
 
+(defun kam-filter-lines-in-string (input-string regexp &optional keep-matching)
+  "Filter lines in INPUT-STRING that match REGEXP.
+If KEEP-MATCHING is non-nil, keep lines that match; otherwise, remove them.
+Returns the filtered string."
+  (let* ((lines (split-string input-string "\\n" nil ""))
+         (filtered-lines (if keep-matching
+                             (cl-remove-if-not (lambda (line) (string-match-p regexp line)) lines)
+                           (cl-remove-if (lambda (line) (string-match-p regexp line)) lines))))
+    (mapconcat 'identity filtered-lines "\\n")))
+
 (defun kam-reload-mode (mode)
   "Reload active minor MODE.
 MODE is a symbol that represents an active minor mode. See
 `kam-active-minor-modes' for reference."
   (call-interactively mode)
   (call-interactively mode))
+
+(defun kam--mark (bounds)
+  "Mark between BOUNDS as a cons cell of beginning and end positions."
+  (push-mark (car bounds))
+  (goto-char (cdr bounds))
+  (activate-mark))
 
 (provide 'kam-common)
 ;;; kam-common.el ends here
