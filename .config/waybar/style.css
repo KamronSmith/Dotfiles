@@ -1,4 +1,4 @@
-* {
+x* {
     font-family: SauceCodePro Nerd Font;
     font-size: 18px;
     min-height: 0;
@@ -47,7 +47,9 @@
        #network,
        #cpu,
        #memory,
-       #mpris {
+       #mpris,
+#custom-terminal
+ {
            background-color: #101010;
            padding: 0.5rem 1rem;
            margin: 5px 0;
