@@ -28,3 +28,5 @@ compinit
 bindkey -e
 bindkey -e '^w' kill-whole-line
 bindkey -e '^\b' backward-kill-word
+
+stty -ixon # stops ctrl-s from freezing the terminal
