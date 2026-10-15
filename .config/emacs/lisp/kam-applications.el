@@ -112,7 +112,8 @@
         ("<backspace>" . kam-scroll-up))
   :hook ((eww-mode . centered-cursor-mode))
   :custom
-  (browse-url-browser-function 'eww-browse-url)
+  (browse-url-browser-function 'browse-url-firefox)
+  (browse-url-secondary-browser-function 'eww-browse-url)
   (eww-auto-rename-buffer 'title)
   (eww-header-line-format nil)
   (eww-bookmarks-directory (expand-file-name "eww/" kam-emacs-cache-directory))
@@ -123,7 +124,17 @@
   (dolist (command '( eww-list-bookmarks eww-add-bookmark eww-bookmark-mode
                       eww-list-buffers eww-toggle-fonts eww-toggle-colors
                       eww-switch-to-buffer))
-    (put command 'disabled t)))
+    (put command 'disabled t))
+
+  (defun kam-browse-url-at-point (&optional arg)
+    "Browse url at point.
+With optional ARG, open browser in EWW."
+    (interactive "P")
+    (let ((browse-url-browser-function
+           (if arg
+               browse-url-secondary-browser-function
+             browse-url-browser-function))))
+    (browse-url-at-point)))
 
 (use-package calibredb
   ;; :commands (calibredb)
@@ -140,8 +151,6 @@
         ("r" . calibredb-filter-dispatch))
   :custom
   (calibredb-format-nerd-icons t)
-  (calibredb-root-dir kam-books-directory)
-  (calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
   (calibredb-library-alist `((,kam-books-directory)))
   (calibredb-sort-by 'title)
   (calibredb-order 'asc)
@@ -149,16 +158,8 @@
   (calibredb-title-width 75)
   (calibredb-format-width 7)
   :config
-  (defcustom kam-books-directory (expand-file-name "Books/" kam-documents-directory)
-    "Directory where all of my books live."
-    :type 'string
-    :group 'kam-os)
-
-  (add-to-list 'display-buffer-alist
-               '("\\*calibredb-search\\*"
-                 (display-buffer-in-tab)
-                 (dedicated . t)
-                 (tab-name . " books")))
+  (setq calibredb-root-dir kam-books-directory
+        calibredb-db-dir (expand-file-name "metadata.db" calibredb-root-dir))
 
   (defun kam-calibredb-open-file-with-emacs (&optional candidate)
     "Open file with Emacs. Optional argument CANDIDATE is the selected item."
@@ -174,6 +175,7 @@
 
 ;;; EMMS
 (use-package emms
+  :demand t
   :bind
   ("C-c m m" . emms-browser)
   ("C-c m s" . kam-emms-play-pause)
@@ -196,6 +198,21 @@
   (emms-all)
   (emms-mpris-enable)
 
+  (add-to-list 'display-buffer-alist
+               '((major-mode . emms-browser-mode)
+                 (display-buffer-in-tab)
+                 (ignore-current-tab . t)
+                 (tab-name . " music")
+                 (dedicated . t)
+                 (window-parameters . ((no-delete-other-windows . t)))))
+
+  (with-eval-after-load 'consult
+    (add-to-list 'consult-buffer-filter "^Browsing by: " t)
+
+    (defvar kam-consult-source-songs
+      `(:name "Songs"
+              :items (directory-files kam-music-directory t directory-files-no-dot-files-regexp))))
+
   ;; (setq emms-player-vlc-player (executable-find "vlc")
   ;;       emms-info-functions '(emms-info-native))
   ;; (add-to-list 'emms-player-list 'emms-player-vlc)
@@ -217,13 +234,10 @@ Otherwise, play."
 (use-package emms-browser
   :ensure nil
   :after (emms)
-  :init
-  (add-to-list 'display-buffer-alist
-               `((derived-mode . emms-browser-mode)
-                 (display-buffer-in-tab)
-                 (dedicated . t)
-                 (tab-name . " music")
-                 (window-parameters . ((no-delete-other-windows . t)))))
+  :bind
+  (:map emms-browser-mode-map
+        ("SPC" . kam-scroll-down)
+        ("<backspace>" . kam-scroll-up))
   :hook ((emms-browser-mode . hide-cursor-mode)
          (emms-browser-mode . lin-mode))
   ;; (emms-browser-buffer-name "*Music*")

@@ -68,9 +68,9 @@ With optional ARG, scroll up that many times."
 
 ;;;###autoload
 (defun kam-delete-window-dwim (&optional arg)
-  "Do What I Mean to delete the current thing.
+  "Do what I mean to delete the current thing.
 When there is one window, THING is a window.
-When optional ARG is provided, kill the buffer that window holds.
+When optional prefix ARG (\\[universal-argument]) is provided, kill the buffer that window holds.
 When there is more than one `tab-bar-mode' tabs, THING is a tab."
   (declare (interactive-only t))
   (interactive "P")
@@ -135,6 +135,14 @@ Also see `kam-window-delete-popup-frame'." command)
           (delete-frame frame))))))
 
 ;;;###autoload
+(defun kam-ace-window ()
+  "Like the normal `ace-window' command, but splits the window if there is only one window."
+  (interactive)
+  (if (one-window-p) 
+      (kam-split-window-right)
+    (call-interactively 'ace-window)))
+
+;;;###autoload
 (defun kam-next-buffer (&optional arg)
   "Switch to the next ARGth buffer.
 With universal prefix ARG, run in the next window."
@@ -158,19 +166,6 @@ With universal prefix ARG, run in the next window."
         (setq prefix-arg current-prefix-arg))
     (previous-buffer arg)))
 
-;;;###autoload
-(defun kam-consult-buffer (&optional arg)
-  "Perform `consult-buffer', but disable `vertico-sort-function'.
-If optional ARG is provided, perform the buffer switch in the other window."
-  (interactive "P")
-  (if-let* (((equal arg '(4)))
-            (win (other-window-for-scrolling)))
-      (with-selected-window win
-        (let ((vertico-sort-function 'identity))
-          (consult-buffer)))
-    (let ((vertico-sort-function 'identity))
-      (consult-buffer))))
-
 (defun kam-get-alternate-buffer (&optional window)
   "Return the last buffer WINDOW has displayed other than the current one."
   (let* ((prev-buffers (window-prev-buffers))
@@ -178,14 +173,6 @@ If optional ARG is provided, perform the buffer switch in the other window."
     (if (eq (car head) (window-buffer window))
         (cadr prev-buffers)
       head)))
-
-(defun kam-ace-window (&optional arg)
-  "Perform the normal `ace-window' command, but with optional extras.
-When optional ARG is provided, if there is only one window in the frame,
-create a new window and switch to it."
-  (interactive "P")
-  ;; TODO 2026-05-21: Implement `kam-ace-window' command
-  )
 
 ;;;###autoload
 (defun kam-switch-to-alternate-buffer ()
@@ -202,6 +189,39 @@ create a new window and switch to it."
          (narrow-to-region (region-beginning) (region-end)))
         ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
         (t (narrow-to-defun))))
+
+(defun kam-display-buffer-in-mru-window (buffer alist)
+  "Display BUFFER in the most recently used window."
+  (let ((mru-win (get-mru-window t nil t)))
+    (when mru-win
+      (window--display-buffer buffer mru-win 'reuse alist))))
+
+(defun kam-no-split-window ()
+  "Use in `split-window-preferred-function' to disable window splitting."
+  (interactive)
+  nil)
+
+(defun kam-aw-consult-buffer (window)
+  "Perform `consult-buffer' in AW selected window."
+  (aw-switch-to-window window)
+  (let ((consult-preview-key nil))
+    (consult-buffer)))
+
+(defun kam-aw-delete-window (window)
+  "Perform `kam-delete-window-dwim' in the AW-selected window."
+  (aw-switch-to-window window)
+  (kam-delete-window-dwim))
+
+(defun kam-aw-one-command (window)
+  "Run a command in the AW-selected window."
+  (aw-switch-to-window window)
+  (with-selected-window window
+    (let* ((command (key-binding
+                     (read-key-sequence
+                      (format "Run in %s..." (buffer-name)))))
+           (this-command command))
+      (call-interactively command))))
+
 
 (provide 'kam-window)
 ;;; kam-window.el ends here

@@ -9,7 +9,7 @@
 (require 'marginalia)
 
 (defgroup kam-consult-tab ()
-  "Extensions for `consult' to manage tabs."
+  "Extensions to `consult' to manage tabs."
   :group 'kam-consult)
 
 (defcustom kam-consult-tab-icon "󰓩"
@@ -31,18 +31,22 @@ save the current list of buffers displayed in windows before calling consult com
 use this saved list in marginalia annotations of the current tab.")
 
 (defvar kam-consult-source-tab
-  `( :name "Tabs"
+  `( :name "Tab"
      :narrow ?t
      :annotate ,'kam-marginalia-annotate-tab
      ;; :state ,#'kam-consult-tab--state
+     :action
+     ,(lambda (tab)
+        (tab-bar-switch-to-tab (file-name-base
+                                (kam-consult-tab--string-deiconify tab))))
      :items
      ,(lambda ()
         (mapcar (lambda (tab) (concat kam-consult-tab-icon " " (alist-get 'name tab)))
                 (tab-bar-tabs))))
   "Source for all tabs.")
 
-(defvar kam-consult-source-project-tabs
-  `( :name "Projects"
+(defvar kam-consult-source-project
+  `( :name "Project"
      :narrow ?p
      :category project-file
      :face consult-file
@@ -140,28 +144,6 @@ This function is intended to be used with `kam-consult-tab--get-projects'."
     (dolist (tab (tab-bar-tabs))
       (push (alist-get 'name tab) tabs))
     tabs))
-
-(defun kam-consult-tab--prompt ()
-  "Prompt for tab selection and return the name of the selected candidate as a string."
-  (let ((marginalia-align-offset 15)
-        (kam-consult--tab-index-current-tab-name (alist-get 'name (tab-bar--current-tab)))
-        (kam-consult--tab-index-current-tab-bufs (mapcar #'buffer-name
-                                                         (mapcar #'window-buffer
-                                                                 (window-list)))))
-    (car (consult--multi '(kam-consult-source-tab kam-consult-source-project-tabs)
-                         ;; disable sorting
-                         :sort nil
-                         :require-match t))))
-
-;;;###autoload
-(defun kam-consult-tab (&optional arg)
-  "Select tab and switch to it, with completion enhanced by `completing-read'.
-With optional ARG, switch to that tab's absolute position."
-  (interactive "P")
-  (if arg
-      (tab-bar-select-tab arg)
-    (tab-bar-switch-to-tab (file-name-base (directory-file-name
-                                            (kam-consult-tab--string-deiconify (kam-consult-tab--prompt)))))))
 
 (provide 'kam-consult-tab)
 ;;; kam-consult-tab.el ends here

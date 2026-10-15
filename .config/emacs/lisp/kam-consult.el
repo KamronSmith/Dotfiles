@@ -8,6 +8,8 @@
 (require 'consult)
 (require 'org)
 (require 'kam-common)
+(require 'kam-org)
+(require 'info)
 
 (defgroup kam-consult ()
   "Extensions for `consult'."

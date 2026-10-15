@@ -64,48 +64,127 @@ See `kam-theme-update-custom-faces'.")
   (when kam-decolorify-mode
     (kam-decolorify--turn-off-colors)))
 
+(defvar kam-favorite-fonts
+  '("Aporetic Sans Mono"
+    "Iosevka")
+  "List of my favorite fonts.")
+
+(defun kam-load-font ()
+  "Choose a font from `kam-favorite-fonts'."
+  (interactive)
+  (let ((font (completing-read
+               "Font to load: "
+               kam-favorite-fonts)))
+    (set-face-attribute 'default nil :font font :height 140 :weight 'regular :width 'regular)
+    (set-face-attribute 'fixed-pitch nil :font font :height 1.0 :weight 'regular :width 'regular)))
 
 ;;; Decolorify Mode
+(defvar-local kam-decolorify--bg-main-cookie nil)
+
+(defvar-local kam-decolorify--builtin-cookie nil)
+
+(defvar-local kam-decolorify--constant-cookie nil)
+
+(defvar-local kam-decolorify--function-call-cookie nil)
+
+(defvar-local kam-decolorify--function-name-cookie nil)
+
+(defvar-local kam-decolorify--variable-use-cookie nil)
+
+(defvar-local kam-decolorify--variable-name-cookie nil)
+
+(defvar-local kam-decolorify--property-use-cookie nil)
+
+(defvar-local kam-decolorify--property-name-cookie nil)
+
+(defvar-local kam-decolorify--preprocessor-cookie nil)
+
+(defvar-local kam-decolorify--type-cookie nil)
+
+(defvar-local kam-decolorify--keyword-cookie nil)
+
+(defvar-local kam-decolorify-cookies nil
+  "List of all `kam-decolorify-mode' cookies")
+
 (define-minor-mode kam-decolorify-mode
   "Turn off the colors used in font lock highlighting.
 The intended effect is a much less colorful typing and programming experience."
-  :global t
+  :global nil
+  :init-value nil
   (if kam-decolorify-mode
       (kam-decolorify--turn-off-colors)
     (kam-decolorify--turn-on-colors)))
 
+(define-minor-mode kam-global-decolorify-mode
+  "Turn off the colors used in font lock highlighting in all buffers.
+The intended effect is a much less colorful typing and programming experience."
+  :global nil
+  :init-value nil
+  (if kam-global-decolorify-mode
+      (seq-remove #'kam-buffer-hidden-p (buffer-list))))
+
 (defun kam-decolorify--turn-off-colors ()
-  "Function to disable much of the colors used in syntax highlighting.
-Please see `kam-decolorify-mode'."
+  "Turn off the colors."
   (standard-themes-with-colors
-    (custom-set-faces
-     `(font-lock-builtin-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-constant-face ((,c :foreground ,fg-dim :weight regular)))
-     `(font-lock-function-call-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-function-name-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-variable-use-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-variable-name-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-property-use-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-property-name-face ((,c :foreground ,fg-main :weight regular)))
-     `(font-lock-preprocessor-face ((,c :foreground ,fg-dim)))
-     ;; `(font-lock-keyword-face ((,c :foreground ,cursor)))
-     `(font-lock-type-face ((,c :foreground ,fg-dim))))))
+    (setq kam-decolorify--builtin-cookie (face-remap-add-relative 'font-lock-type-face :foreground fg-dim))
+    (push kam-decolorify--builtin-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--constant-cookie (face-remap-add-relative 'font-lock-constant-face :foreground fg-dim))
+    (push kam-decolorify--constant-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--function-call-cookie (face-remap-add-relative 'font-lock-function-call-face :foreground fg-main))
+    (push kam-decolorify--function-call-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--function-name-cookie (face-remap-add-relative 'font-lock-function-name-face :foreground fg-main))
+    (push kam-decolorify--function-name-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--variable-use-cookie (face-remap-add-relative 'font-lock-variable-use-face :foreground fg-main))
+    (push kam-decolorify--variable-use-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--variable-name-cookie (face-remap-add-relative 'font-lock-variable-name-face :foreground fg-main))
+    (push kam-decolorify--variable-name-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--property-use-cookie (face-remap-add-relative 'font-lock-property-use-face :foreground fg-main))
+    (push kam-decolorify--property-use-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--property-name-cookie (face-remap-add-relative 'font-lock-property-name-face :foreground fg-main))
+    (push kam-decolorify--property-name-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--preprocessor-cookie (face-remap-add-relative 'font-lock-preprocessor-face :foreground fg-dim))
+    (push kam-decolorify--preprocessor-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--keyword-cookie (face-remap-add-relative 'font-lock-keyword-face :foreground fg-main :weight 'regular))
+    (push kam-decolorify--keyword-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--type-cookie (face-remap-add-relative 'font-lock-type-face :foreground keyword :weight 'regular))
+    (push kam-decolorify--type-cookie kam-decolorify-cookies)))
 
 (defun kam-decolorify--turn-on-colors ()
-  "Function to reenable much of the colors used in syntax highlighting.
-Please see `kam-decolorify-mode'."
-  (standard-themes-with-colors
-    (custom-set-faces
-     `(font-lock-builtin-face ((,c :foreground ,builtin)))
-     `(font-lock-constant-face ((,c :foreground ,constant)))
-     `(font-lock-function-call-face ((,c :foreground ,fnname-call)))
-     `(font-lock-function-name-face ((,c :foreground ,fnname)))
-     `(font-lock-variable-use-face ((,c :foreground ,variable-use)))
-     `(font-lock-variable-name-face ((,c :foreground ,variable)))
-     `(font-lock-property-use-face ((,c :foreground ,property)))
-     `(font-lock-property-name-face ((,c :foreground ,property)))
-     `(font-lock-preprocessor-face ((,c :foreground ,preprocessor)))
-     `(font-lock-type-face ((,c :foreground ,type))))))
+  "Turn on the colors."
+  (dolist (cookie kam-decolorify-cookies)
+    (face-remap-remove-relative cookie)
+    (setq cookie nil))
+  (setq kam-decolorify-cookies nil))
+
+;;; text scale
+(defvar kam-text-scale-adjust-history nil
+  "Minibuffer history for `kam-text-scale-adjust'.")
+
+(defun kam-text-scale-adjust--prompt ()
+  "Prompt for `kam-text-scale-adjust'."
+  (let ((default (car kam-text-scale-adjust-history)))
+    (read-number (format-prompt "Scale to adjust to"
+                                default)
+                 (- (string-to-number default))
+                 'kam-text-scale-adjust-history)))
+
+(defun kam-text-scale-adjust (increment)
+  "Adjust the text scale.
+INCREMENT should be a number."
+  (interactive (list (kam-text-scale-adjust--prompt)))
+  (text-scale-adjust increment))
+
+(advice-add #'kam-text-scale-adjust :around #'kam-call-function-quietly)
+
+(define-minor-mode kam-old-mode
+  "Turn Emacs into an old application."
+  :global t
+  (if kam-old-mode
+      (progn
+        (menu-bar-mode 1)
+        (tool-bar-mode 1))
+    (menu-bar-mode -1)
+    (tool-bar-mode -1)))
 
 (provide 'kam-theme)
 ;;; kam-theme.el ends here

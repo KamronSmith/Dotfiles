@@ -8,6 +8,7 @@
 (require 'isearch)
 (require 'replace)
 (require 'grep)
+(require 'kam-window)
 
 (defgroup kam-search ()
   "Extensions and functions related to searching."
@@ -64,6 +65,29 @@ Occur search to include."
          (proj-root (project-root proj))
          (default-directory proj-root))
     (grep command-args)))
+
+(defun kam-compile-goto-error ()
+  "Like `compile-goto-error' but does not split the window."
+  (interactive)
+  (let ((split-window-preferred-function #'kam-no-split-window)
+        (display-buffer-overriding-action '(kam-display-buffer-in-mru-window)))
+    (compile-goto-error)))
+
+(defun kam-next-error-no-select (&optional n)
+  "Like `next-error-no-select' but will not split the window.
+Additionally, it will also always only use the currently selected window."
+  (interactive)
+  (let ((split-window-preferred-function #'kam-no-split-window)
+        (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
+    (next-error-no-select n)))
+
+(defun kam-previous-error-no-select (&optional n)
+  "Like `previous-error-no-select' but will not split the window.
+Additionally, it will always only use the currently selected window."
+  (interactive)
+  (let ((split-window-preferred-function #'kam-no-split-window)
+        (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
+    (previous-error-no-select n)))
 
 (provide 'kam-search)
 ;;; kam-search.el ends here

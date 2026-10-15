@@ -10,7 +10,8 @@
 (require 'kam-timeshift)
 
 (defgroup kam-os ()
-  "Extensions to customize Emacs to fit my operating system.")
+  "Extensions to customize Emacs to fit my operating system.
+And the way I want to use a computer.")
 
 (defcustom kam-home-directory (expand-file-name "~/")
   "My home directory."
@@ -18,7 +19,12 @@
   :group 'kam-os)
 
 (defcustom kam-documents-directory (expand-file-name "~/Documents/")
-  "Base directory where the PARA organization system starts."
+  "Directory where all of my documents live."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-books-directory (expand-file-name "Books/" kam-documents-directory)
+  "Directory where all of my books live."
   :type 'string
   :group 'kam-os)
 
@@ -64,6 +70,11 @@
 
 (defcustom kam-share-directory (expand-file-name "Share/" kam-home-directory)
   "Directory where I put all of the files meant to be shared with other machines."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-media-directory "/run/media/kam/"
+  "Directory where my external hard drive mounts to."
   :type 'string
   :group 'kam-os)
 
@@ -202,11 +213,11 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 (defun kam-os-restart-emacs ()
   "Restart Emacs under a variety of operating system conditions."
   (interactive)
-  (run-hooks 'kill-emacs-hook)
   (cond
    ((and (eq system-type 'gnu/linux)
          (daemonp))
-    (kam-os-restart-service "emacs"))
+    (kam-os-restart-service "emacs")
+    (run-hooks 'kill-emacs-hook))
    ((eq system-type 'gnu-linux)
     (restart-emacs))
    ((eq system-type 'darwin)
@@ -285,6 +296,16 @@ SERVICE should be a string that corresponds to a service."
     (with-current-buffer buf
       (view-mode))))
 
+(defun kam-os-lsblk ()
+  "Run lsblk."
+  (interactive)
+  (let* ((buf "*Lsblk*")
+         (shell-command-buffer-name-async buf))
+    (async-shell-command "lsblk")
+    (with-current-buffer buf
+      (pop-to-buffer buf)
+      (view-mode))))
+
 (defun kam-os-list-fonts ()
   "List all of the currently installed fonts on the system."
   (interactive)
@@ -335,6 +356,14 @@ WALLPAPER should be a fully qualified path to an image file."
       (save-buffer)
       (kill-buffer buf))
     (kam-os-restart-service "hyprpaper")))
+
+;;; Media
+(defun kam-os-tab-in-media-directory ()
+  "Make a new tab in `kam-media-directory'."
+  (interactive)
+  (tab-new)
+  (tab-rename "󰿎 media")
+  (dired kam-media-directory))
 
 (provide 'kam-os)
 ;;; kam-os.el ends here

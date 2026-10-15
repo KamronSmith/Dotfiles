@@ -6,29 +6,46 @@
 
 ;;; Code:
 
+(require 'kam-common)
 (require 'org)
 (require 'consult)
 
+;; (defun kam-org-metaup ()
+;;   "Go to the previous heading or item, or to a higher level heading.
+;; If not on a heading or item, finds the previous heading backwards. If
+;; already on a heading, goes up higher in the tree."
+;;   (interactive)
+;;   (cond
+;;    ((org-at-block-p) (org-up-element))
+;;    ((org-in-src-block-p) (org-babel-goto-src-block-head))
+;;    ((kam-org--level-one-heading-p) (org-backward-heading-same-level 1))
+;;    (t (org-up-element))))
+
+;; (defun kam-org-metadown ()
+;;   "Go to the next heading or item, or to a higher level heading.
+;; If not on a heading or item, finds the next heading forwards. If already
+;; on a heading, goes up a level."
+;;   (interactive)
+;;   (cond
+;;    ((org-at-block-p) (org-down-element))
+;;    ((org-in-src-block-p) (kam-org-babel-goto-src-block-foot))
+;;    ((kam-org--level-one-heading-p) (org-forward-heading-same-level 1))
+;;    (t (org-next-visible-heading 1))))
+
 (defun kam-org-metaup ()
-  "Go to the previous heading or item, or to a higher level heading.
-If not on a heading or item, finds the previous heading backwards. If
-already on a heading, goes up higher in the tree."
   (interactive)
   (cond
    ((org-at-block-p) (org-up-element))
+   ((org-in-item-p) (org-up-element))
    ((org-in-src-block-p) (org-babel-goto-src-block-head))
-   ((kam-org--level-one-heading-p) (org-backward-heading-same-level 1))
-   (t (org-up-element))))
+   (t (org-previous-visible-heading 1))))
 
 (defun kam-org-metadown ()
-  "Go to the next heading or item, or to a higher level heading.
-If not on a heading or item, finds the next heading forwards. If already
-on a heading, goes up a level."
   (interactive)
   (cond
    ((org-at-block-p) (org-down-element))
+   ((org-in-item-p) (org-down-element))
    ((org-in-src-block-p) (kam-org-babel-goto-src-block-foot))
-   ((kam-org--level-one-heading-p) (org-forward-heading-same-level 1))
    (t (org-next-visible-heading 1))))
 
 (defun kam-org-control-metaup (&optional arg)
@@ -60,6 +77,28 @@ on a heading, goes up a level."
   (cond
    ((org-at-heading-p) (org-promote))
    ((org-at-item-p) (org-indent-item))))
+
+(defun kam-org-insert-new-line-below (n)
+  "Create N empty lines below the current one.
+When called interactively without a prefix argument, N is 1."
+  (interactive "p")
+  (goto-char (line-end-position))
+  (dotimes (_ n) (org-return)))
+
+(defun kam-org-insert-new-line-above (n)
+  "Create N empty lines above the current one.
+When called interactively without a prefix argument, N is 1."
+  (interactive "p")
+  (let ((point-min (point-min)))
+  (if (or (bobp)
+          (eq (point) point-min)
+          (eq (line-number-at-pos point-min) 1))
+      (progn
+        (goto-char (line-beginning-position))
+        (forward-line (- n))
+        (dotimes (_ n) (kam-org-insert-new-line-below n)))
+    (forward-line (- n))
+    (kam-org-insert-new-line-below n))))
 
 (defun kam-org-mark-item ()
   "Mark the Org item at point."
@@ -186,7 +225,7 @@ With prefix arg C-u, copy region instead of killing it."
         (goto-char pos)
         (if (eq kam-org-refile-region-position 'bottom)
             (org-end-of-subtree)
-          (org-end-of-meta-data-and-drawers))
+          (org-end-of-meta-data))
         (insert (format kam-org-refile-region-format text))))))
 
 (defvar kam-org-end-block-regexp "#\\+end_\\w+"
@@ -196,6 +235,15 @@ With prefix arg C-u, copy region instead of killing it."
   "Go to the end of an Org Babel block."
   (interactive)
   (goto-char (re-search-forward kam-org-end-block-regexp)))
+
+(defun kam-org-insert-last-stored-link-with-prompt ()
+  "Inserts the last stored link in `org-stored-links' while prompting for the description of the link."
+  (interactive)
+  (let ((links (copy-sequence org-stored-links)))
+    (if (null org-stored-links)
+        (user-error "No links to insert")
+      (setq l (pop links))
+      (org-insert-link nil (car l) (read-from-minibuffer "Link Text: ")))))
 
 (provide 'kam-org)
 ;;; kam-org.el ends here
