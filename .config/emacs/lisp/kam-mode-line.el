@@ -168,6 +168,168 @@
   "Face for mode-line indicators with a background."
   :group 'kam-mode-line-faces)
 
+(defvar-local kam-mode-line-logo
+  '(:eval
+    (cond
+     ((eq system-type 'gnu/linux)
+      (propertize " " 'face 'shadow))
+     ((eq system-type 'darwin)
+      (propertize " " 'face 'shadow))))
+  "Mode line construct to display the logo of the current system.")
+
+(defvar-local kam-mode-line-kbd-macro
+  '(:eval
+    (if (and (mode-line-window-selected-p) defining-kbd-macro)
+        (propertize "  " 'face 'kam-mode-line-indicator-yellow-bg)
+      ""))
+  "Mode line construct displaying `mode-line-defining-kbd-macro'.
+Specific to the current window's mode-line.")
+
+(defvar-local kam-mode-line-rectangle-mark
+  '(:eval
+    (if (bound-and-true-p rectangle-mark-mode)
+        (propertize " 󰹟 " 'face 'kam-mode-line-indicator-orange-bg)
+      ""))
+  "Mode line construct displaying `rectangle-mark-mode'.")
+
+(defvar-local kam-mode-line-narrow
+  '(:eval
+    (if (and (mode-line-window-selected-p)
+             (buffer-narrowed-p)
+             (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
+        (propertize " Narrow " 'face 'kam-mode-line-indicator-cyan-bg)
+      ""))
+  "Mode line construct to report the narrowed state of the current buffer.")
+
+(defvar-local kam-mode-line-remote-file
+  '(:eval
+    (if (file-remote-p default-directory)
+        (propertize "󰢹 "
+                    'face 'kam-mode-line-indicator-blue-bg
+                    'mouse-face 'mode-line-highlight)
+      ""))
+  "Mode line construct for showing remote file name.")
+
+(defvar-local kam-mode-line-buffer-modified
+  '(:eval
+    (propertize (kam-mode-line-buffer-modified)
+                'face 'kam-mode-line-indicator-gray
+                'mouse-face 'mode-line-highlight
+                'help-echo (kam-mode-line-buffer-name-help-echo)))
+  "Mode line construct for displaying the status of buffer modification.")
+
+(defvar-local kam-mode-line-buffer-identification
+  '(:eval
+    (propertize (kam-mode-line-buffer-name)
+                'face (kam-mode-line-buffer-identification-face)
+                'mouse-face 'mode-line-highlight
+                'help-echo (kam-mode-line-buffer-name-help-echo)))
+  "Mode line construct for identifying the buffers being displayed.")
+
+(defvar-local kam-mode-line-major-mode
+  '(:eval
+    (concat
+     (kam-mode-line-major-mode-indicator)
+     " "
+     (propertize
+      (kam-mode-line-string-abbreviate-but-last
+       (kam-mode-line-major-mode-name)
+       2)
+      'mouse-face 'mode-line-highlight
+      'help-echo (kam-mode-line-major-mode-help-echo))))
+  "Mode line construct for displaying major modes.")
+
+(defvar-local kam-mode-line-buffer-stats-var
+  '(:eval
+    (cond
+     ((bound-and-true-p reader-mode)
+      (kam-mode-line--reader-mode-stats))
+     (t (kam-mode-line-buffer-line-stats))))
+  "Mode-line construct for the buffer stats indicator.")
+
+(defvar-local kam-mode-line-process
+  '(:eval
+    (list '("" mode-line-process))
+    "Mode line construct for the running process indicator."))
+
+(defvar-local kam-mode-line-text-scale
+  '(:eval
+    (if (string= text-scale-mode-lighter "+0")
+        ""
+      (concat
+       " "
+       (propertize text-scale-mode-lighter
+                   'face 'kam-mode-line-indicator-green))))
+  "Mode line construct displaying the current text scale.")
+
+(defvar-local kam-mode-line-vc-branch
+  '(:eval
+    (when-let* (((mode-line-window-selected-p))
+                (file (buffer-file-name))
+                (backend (vc-backend file))
+                ;; ((vc-git-registered file))
+                (branch (kam-mode-line--vc-branch-name file backend))
+                (face (kam-mode-line--vc-face file backend)))
+      (kam-mode-line--vc-details file branch face)))
+  "Mode line construct to return propertized VC branch.")
+
+(defvar-local kam-mode-line-compile
+  '(:eval
+    (if (kam-mode-line--compilation-in-progress-p)
+        (propertize " Compiling "
+                    'face 'kam-mode-line-indicator-green
+                    'mouse-face 'mode-line-highlight)
+      ""))
+  "Mode line construct for displaying if Emacs is compiling something.")
+
+(defvar-local kam-mode-line-recursive-edit
+  '(:eval
+    (if (kam-mode-line--recursive-edit-in-progress-p)
+        (propertize " Recursive"
+                    'face 'kam-mode-line-indicator-orange-bg)
+      ""))
+  "Mode line construct for displaying if Emacs is in a recursive edit.")
+
+(defvar-local kam-mode-line-eglot
+  '(:eval
+    (if (eglot-managed-p)
+        (propertize " Eglot"
+                    'face 'kam-mode-line-indicator-gray)
+      ""))
+  "Mode line construct for displaying if the current buffer is managed by Eglot.")
+
+(defvar-local kam-mode-line-trashed
+  '(:eval
+    (if (derived-mode-p 'trashed-mode)
+        (propertize
+         (concat
+          "  "
+          (kam-mode-line--number-to-string-maybe (kam-mode-line--trashed-stats)))
+         'face 'kam-mode-line-indicator-gray))
+    ""))
+
+(defvar-local kam-mode-line-decolorify
+  '(:eval
+    (if kam-decolorify-mode
+        (concat
+         (propertize " D"
+                     'face 'kam-mode-line-indicator-red)
+         (propertize "E"
+                     'face 'kam-mode-line-indicator-green)
+         (propertize "C"
+                     'face 'kam-mode-line-indicator-blue))
+      ""))
+  "Mode line construct for displaying if the current buffer has `kam-decolorify-mode' enabled.")
+
+(defvar-local kam-mode-line-display-time
+  '(:eval
+    (if display-time-mode
+        (concat
+         (propertize "󰥔 " 'face 'kam-mode-line-indicator-gray)
+         (propertize (format-time-string "%H:%M") 'face 'bold))
+      ""))
+  "Mode line construct for displaying the current time.")
+
 (defun kam-mode-line--string-truncate-p (str)
   "Return non-nil if STR should be truncated.
 Please see `kam-mode-line-string-truncate-length'."
@@ -232,48 +394,6 @@ Also see `kam-mode-line-string-abbreviate-but-last'."
   "Return how many lines there are in the current buffer."
   (car (buffer-line-statistics)))
 
-(defvar-local kam-mode-line-logo
-  '(:eval
-    (cond
-     ((eq system-type 'gnu/linux)
-      (propertize " " 'face 'shadow))
-     ((eq system-type 'darwin)
-      (propertize " " 'face 'shadow))))
-  "Mode line construct to display the logo of the current system.")
-
-(defvar-local kam-mode-line-kbd-macro
-  '(:eval
-    (if (and (mode-line-window-selected-p) defining-kbd-macro)
-        (propertize " " 'face 'kam-mode-line-indicator-orange-bg)
-      ""))
-  "Mode line construct displaying `mode-line-defining-kbd-macro'.
-Specific to the current window's mode-line.")
-
-(defvar-local kam-mode-line-rectangle-mark
-  '(:eval
-    (if (bound-and-true-p rectangle-mark-mode)
-        (propertize "󰹟 " 'face 'kam-mode-line-indicator-orange-bg)
-      ""))
-  "Mode line construct displaying `rectangle-mark-mode'.")
-
-(defvar-local kam-mode-line-narrow
-  '(:eval
-    (if (and (mode-line-window-selected-p)
-             (buffer-narrowed-p)
-             (not (derived-mode-p 'Info-mode 'help-mode 'special-mode 'message-mode)))
-        (propertize " Narrowed " 'face 'kam-mode-line-indicator-cyan-bg)
-      ""))
-  "Mode line construct to report the narrowed state of the current buffer.")
-
-(defvar-local kam-mode-line-remote-file
-  '(:eval
-    (if (file-remote-p default-directory)
-        (propertize "󰢹 "
-                    'face 'kam-mode-line-indicator-blue-bg
-                    'mouse-face 'mode-line-highlight)
-      ""))
-  "Mode line construct for showing remote file name.")
-
 (defun kam-mode-line-buffer-identification-face ()
   "Return appropriate face or face list for `kam-mode-line-buffer-identification'."
   (when (mode-line-window-selected-p)
@@ -304,32 +424,17 @@ See `kam-mode-line-string-cut-middle'."
 
 (defun kam-mode-line-buffer-modified ()
   "Return a buffer modified icon if the buffer has been modified."
-  (if (buffer-modified-p)
+  (if (and buffer-file-name
+       (buffer-modified-p))
       ""
     ""))
-
-(defvar-local kam-mode-line-buffer-modified
-  '(:eval
-    (propertize (kam-mode-line-buffer-modified)
-                'face 'kam-mode-line-indicator-gray
-                'mouse-face 'mode-line-highlight
-                'help-echo (kam-mode-line-buffer-name-help-echo)))
-  "Mode line construct for displaying the status of buffer modification.")
-
-(defvar-local kam-mode-line-buffer-identification
-  '(:eval
-    (propertize (kam-mode-line-buffer-name)
-                'face (kam-mode-line-buffer-identification-face)
-                'mouse-face 'mode-line-highlight
-                'help-echo (kam-mode-line-buffer-name-help-echo)))
-  "Mode line construct for identifying the buffers being displayed.")
 
 (defun kam-mode-line-major-mode-indicator ()
   "Return the appropriate propertized mode line indicator for the major mode."
   (let ((indicator (cond
-                    ((derived-mode-p 'text-mode) "§ ")
-                    ((derived-mode-p 'prog-mode) "󰘧 ")
-                    ((derived-mode-p 'comint-mode) "󰆍 ")
+                    ((derived-mode-p 'text-mode) " § ")
+                    ((derived-mode-p 'prog-mode) " 󰘧 ")
+                    ((derived-mode-p 'comint-mode) " 󰆍 ")
                     (t ""))))
     (propertize indicator 'face 'shadow)))
 
@@ -352,19 +457,6 @@ See `kam-mode-line-string-cut-middle'."
   (if-let* ((parent (get major-mode 'derived-mode-parent)))
       (format "Symbol: `%s'. Derived from: `%s'" major-mode parent)
     (format "Symbol: `%s'." major-mode)))
-
-(defvar-local kam-mode-line-major-mode
-  '(:eval
-    (concat
-     (kam-mode-line-major-mode-indicator)
-     " "
-     (propertize
-      (kam-mode-line-string-abbreviate-but-last
-       (kam-mode-line-major-mode-name)
-       2)
-      'mouse-face 'mode-line-highlight
-      'help-echo (kam-mode-line-major-mode-help-echo))))
-  "Mode line construct for displaying major modes.")
 
 (defun kam-mode-line-buffer-line-stats ()
   "Return the propertized mode line indicators for the line stats in the current buffer."
@@ -396,36 +488,36 @@ See `kam-mode-line-string-cut-middle'."
       "Bot")
      (t percent))))
 
-;; (defun kam-mode-line--reader-mode-stats ()
-;;   "Return statistics about the current `reader-mode' buffer."
-;;   (concat
-;;    (propertize " " 'face 'shadow)
-;;    " ["
-;;    (kam-mode-line--number-to-string-maybe (reader-current-pagenumber))
-;;    "/"
-;;    (kam-mode-line--number-to-string-maybe reader-current-doc-pagecount)
-;;    "]"
-;;    (propertize " 󱨄 " 'face 'shadow)
-;;    (kam-mode-line--number-to-string-maybe (kam-mode-line--reader-mode-doc-percentage))
-;;    " "
-;;    (propertize "  " 'face 'shadow)
-;;    (upcase (format-mode-line "%I"))))
+(defun kam-mode-line--reader-mode-stats ()
+  "Return statistics about the current `reader-mode' buffer."
+  (concat
+   (propertize " " 'face 'shadow)
+   " ["
+   (kam-mode-line--number-to-string-maybe (reader-current-pagenumber))
+   "/"
+   (kam-mode-line--number-to-string-maybe reader-current-doc-pagecount)
+   "]"
+   (propertize " 󱨄 " 'face 'shadow)
+   (kam-mode-line--number-to-string-maybe (kam-mode-line--reader-mode-doc-percentage))
+   " "
+   (propertize "  " 'face 'shadow)
+   (upcase (format-mode-line "%I"))))
 
-;; (defun kam-mode-line--reader-mode-doc-percentage ()
-;;   "Return the percentage of how far through the current document the point is."
-;;   (let* ((pg-num (reader-current-pagenumber))
-;;          (total-pg reader-current-doc-pagecount)
-;;          (percent (round (* (/
-;;                              (float pg-num)
-;;                              (float total-pg))
-;;                             100))))
-;;     (cond
-;;      ((or (= pg-num 1)
-;;           (= percent 0))
-;;       "Top")
-;;      ((>= percent 100)
-;;       "Bot")
-;;      (t percent))))
+(defun kam-mode-line--reader-mode-doc-percentage ()
+  "Return the percentage of how far through the current document the point is."
+  (let* ((pg-num (reader-current-pagenumber))
+         (total-pg reader-current-doc-pagecount)
+         (percent (round (* (/
+                             (float pg-num)
+                             (float total-pg))
+                            100))))
+    (cond
+     ((or (= pg-num 1)
+          (= percent 0))
+      "Top")
+     ((>= percent 100)
+      "Bot")
+     (t percent))))
 
 (defun kam-mode-line--number-to-string-maybe (input)
   "If INPUT is a number, turn it into a string.
@@ -437,30 +529,6 @@ Or if it is a string, keep it as it is."
 (defun kam-mode-line--buffer-size ()
   "Return the size of the current buffer."
   (upcase (file-size-human-readable (buffer-size))))
-
-(defvar-local kam-mode-line-buffer-stats-var
-  '(:eval
-    (cond
-     ;; ((derived-mode-p 'reader-mode)
-     ;;  (kam-mode-line--reader-mode-stats))
-     (t (kam-mode-line-buffer-line-stats))))
-  "Mode-line construct for the buffer stats indicator.")
-
-(defvar-local kam-mode-line-process
-  '(:eval
-    (list '("" mode-line-process))
-    "Mode line construct for the running process indicator."))
-
-(defvar-local kam-mode-line-text-scale
-    '(:eval
-      (if (string= text-scale-mode-lighter "+0")
-          ""
-        (concat
-         " "
-         (propertize text-scale-mode-lighter
-                     'face 'kam-mode-line-indicator-green))))
-  "Mode line construct displaying the current text scale.")
-
 
 (declare-function vc-git--symbolic-ref "vc-git" (file))
 
@@ -542,17 +610,6 @@ The string is truncated if the width of the window is smaller than `split-width-
   "Return version control state face for FILE with BACKEND."
   (kam-mode-line--vc-get-face (vc-state file backend)))
 
-(defvar-local kam-mode-line-vc-branch
-  '(:eval
-    (when-let* (((mode-line-window-selected-p))
-                (file (buffer-file-name))
-                (backend (vc-backend file))
-                ;; ((vc-git-registered file))
-                (branch (kam-mode-line--vc-branch-name file backend))
-                (face (kam-mode-line--vc-face file backend)))
-      (kam-mode-line--vc-details file branch face)))
-  "Mode line construct to return propertized VC branch.")
-
 (defun kam-mode-line--compilation-in-progress-p ()
   "Return t if Emacs is compiling something."
   (when compilation-in-progress))
@@ -561,41 +618,6 @@ The string is truncated if the width of the window is smaller than `split-width-
   "Return t if Emacs is in a recursive edit.
 Minibuffer counts as a recursive edit, so recursion depth has to be greater than 1."
   (> (recursion-depth) 1))
-
-(defvar-local kam-mode-line-compile
-  '(:eval
-    (if (kam-mode-line--compilation-in-progress-p)
-        (propertize " Compiling "
-                    'face 'kam-mode-line-indicator-green
-                    'mouse-face 'mode-line-highlight)
-      ""))
-  "Mode line construct for displaying if Emacs is compiling something.")
-
-(defvar-local kam-mode-line-recursive-edit
-  '(:eval
-    (if (kam-mode-line--recursive-edit-in-progress-p)
-        (propertize " Recursive"
-                    'face 'kam-mode-line-indicator-orange-bg)
-      ""))
-  "Mode line construct for displaying if Emacs is in a recursive edit.")
-
-(defvar-local kam-mode-line-eglot
-    '(:eval
-      (if (eglot-managed-p)
-          (propertize " Eglot"
-                      'face 'kam-mode-line-indicator-gray)
-        ""))
-    "Mode line construct for displaying if the current buffer is managed by Eglot.")
-
-(defvar-local kam-mode-line-trashed
-  '(:eval
-    (if (derived-mode-p 'trashed-mode)
-        (propertize
-         (concat
-          "  "
-          (kam-mode-line--number-to-string-maybe (kam-mode-line--trashed-stats)))
-         'face 'kam-mode-line-indicator-gray))
-    ""))
 
 (defun kam-mode-line--trashed-stats ()
   "Return stats about the state of the trash-can, using `trashed-mode'."
