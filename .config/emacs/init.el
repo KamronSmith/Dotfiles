@@ -4317,8 +4317,9 @@ Add this function to the `ediff-quit-hook'."
                  (window . root)
                  ;; (window-height . 0.35)
                  (body-function . select-window)
-                 (window-parameters . (;; (mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+                 ;; (window-parameters . ((mode-line-format . none)
+                 ;;                       (no-delete-other-windows . t)))
+                 ))
 
   (add-to-list
    'switch-to-prev-buffer-skip-regexp
