@@ -37,6 +37,7 @@ dunst
 efibootmgr
 enchant
 expac
+fasm
 fd
 firefox
 flatpak
@@ -55,6 +56,7 @@ hyprpaper
 hyprpicker
 hyprpolkitagent
 hyprpwcenter
+hyprsunset
 imagemagick
 inkscape
 intellij-idea-community-edition
@@ -72,6 +74,7 @@ linux
 linux-firmware
 linux-headers
 lldb
+llvm
 lua-language-server
 lvm2
 m17n-lib
@@ -79,9 +82,11 @@ man-db
 man-pages
 mouseless
 mpv
+mpv-mpris
 mullvad-vpn
 mupdf
 nano
+nasm
 neovim
 notcurses
 noto-fonts
@@ -94,6 +99,7 @@ openssh
 otf-apple-sf-mono
 otf-monaspace-nerd
 pacman-contrib
+pandoc-cli
 paru
 paru-debug
 pavucontrol
@@ -106,6 +112,7 @@ puddletag
 pulseaudio-alsa
 pwvucontrol
 qbittorrent
+qmk
 qt5-wayland
 qt6-wayland
 raylib
@@ -128,6 +135,7 @@ tree-sitter
 tree-sitter-cli
 ttc-iosevka
 ttf-firacode-nerd
+ttf-jetbrains-mono
 ttf-symbola
 ttf-times-new-roman
 udiskie
