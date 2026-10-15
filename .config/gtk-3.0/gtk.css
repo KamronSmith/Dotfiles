@@ -1,0 +1,9 @@
+#emacs-pane #emacs-menubar {
+    background-color: #84888c;
+    color: #000000;
+}
+
+emacs-toolbar {
+    background-color: #c0c4c8;
+    color: #000000;
+}
