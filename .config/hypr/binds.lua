@@ -10,9 +10,12 @@ local clipboard = "cliphist list | rofi -dmenu -display-columns 2 -config ~/.dot
 
 
 local main_mod = "SUPER + "
+local alt_mod = "CONTROL + SUPER + "
 
+hl.bind(main_mod .. "a", hl.dsp.exec_cmd("playerctl next"))
 hl.bind(main_mod .. "b", hl.dsp.focus({ direction = "left"}))
 hl.bind(main_mod .. "c", hl.dsp.window.move({ workspace = 1 }))
+hl.bind(alt_mod .. "c", hl.dsp.window.move({ workspace = 1, follow = false }))
 hl.bind(main_mod .. "d", function ()
                             local exists = false
                             for _, w in ipairs(hl.get_windows()) do
@@ -27,15 +30,21 @@ hl.bind(main_mod .. "d", function ()
                                 hl.dispatch(hl.dsp.focus({ workspace = 1 }))
                             end
                         end)
-
-hl.bind(main_mod .. "e", hl.dsp.exec_cmd(fileManager))
+hl.bind(main_mod .. "e", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
 hl.bind(main_mod .. "f", hl.dsp.focus({ direction = "right"}))
 hl.bind(main_mod .. "g", hl.dsp.window.fullscreen())
 hl.bind(main_mod .. "i", hl.dsp.layout("swapwithmaster master"))
-hl.bind(main_mod .. "j", hl.dsp.window.float({ action = toggle }))
+hl.bind(main_mod .. "j", hl.dsp.window.float({ action = "toggle" }))
 
 hl.bind(main_mod .. "l", hl.dsp.window.move({ workspace = 2 }))
+hl.bind(alt_mod .. "l", hl.dsp.window.move({ workspace = 2, follow = false }))
+
 hl.bind(main_mod .. "m", hl.dsp.window.move({ workspace = 3 }))
+hl.bind(alt_mod .. "m", hl.dsp.window.move({ workspace = 3, follow = false }))
+
+hl.bind(main_mod .. "n", hl.dsp.exec_cmd("playerctl previous"))
+-- hl.bind(main_mod .. "o", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
+hl.bind(main_mod .. "o", hl.dsp.focus({ last = "last" }))
 
 hl.bind(main_mod .. "q", hl.dsp.window.close(hl.get_active_window()))
 hl.bind(main_mod .. "r", function ()
@@ -56,7 +65,11 @@ hl.bind(main_mod .. "r", function ()
 hl.bind(main_mod .. "s", hl.dsp.focus({ workspace = 4 }))
 hl.bind(main_mod .. "t", hl.dsp.focus({ workspace = 3 }))
 -- hl.bind(mainMod .. "v", hl.dsp.window.float({ action = "toggle"}))
+hl.bind(main_mod .. "u", hl.dsp.exec_cmd("playerctl play-pause"))
+
 hl.bind(main_mod .. "v", hl.dsp.window.move({ workspace = 4 }))
+hl.bind(alt_mod .. "v", hl.dsp.window.move({ workspace = 4, follow = false }))
+
 hl.bind(main_mod .. "x", hl.dsp.exec_cmd(menu))
 hl.bind(main_mod .. "y", hl.dsp.exec_cmd(clipboard))
 hl.bind(main_mod .. "z", hl.dsp.exec_cmd(terminal))
@@ -68,8 +81,6 @@ hl.bind(main_mod .. "mouse_up", hl.dsp.focus({ workspace = "e-1" }))
 hl.bind(main_mod .. "mouse:272", hl.dsp.window.drag(),   { mouse = true })
 hl.bind(main_mod .. "mouse:273", hl.dsp.window.resize(), { mouse = true })
 
-hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
-hl.bind("XF86AudioLowerVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
 hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
 hl.bind("XF86MonBrightnessUp", hl.dsp.exec_cmd("brightnessctl s 10%+"))
