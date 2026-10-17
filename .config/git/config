@@ -27,5 +27,7 @@
 [gpg]
 	program = gpg2
 	format = ssh
+[github]
+        user = KamronSmith
 # [gpg "ssh"]
 #	program = "/opt/1Password/op-ssh-sign"
