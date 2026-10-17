@@ -138,6 +138,7 @@ ttf-firacode-nerd
 ttf-jetbrains-mono
 ttf-symbola
 ttf-times-new-roman
+typescript-language-server
 udiskie
 unzip
 uwsm
