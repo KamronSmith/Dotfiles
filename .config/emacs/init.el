@@ -1044,7 +1044,8 @@ Duplicates are not saved."
   ("C-h F" . apropos-function)
   ("C-h V" . apropos-variable)
   :custom
-  (apropos-compact-layout t)
+  (apropos-compact-layout nil)
+  (apropos-do-all nil)
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Apropos\\*"
