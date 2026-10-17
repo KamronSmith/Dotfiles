@@ -1908,23 +1908,23 @@ This source is only enabled when the current buffer belongs to a project.")
   :after (diff)
   :bind
   ("M-o" . kam-ace-window)
-  ("C-x o" . kam-ace-window-prefix)
+  ;; ("C-x o" . kam-ace-window-prefix)
   (:map diff-mode-map
         ("M-o" . ace-window))
-  :custom
-  (aw-dispatch-always t)
-  (aw-keys '(?d ?n ?r ?e ?t ?a))
-  (aw-dispatch-alist
-   '((?m aw-swap-window "Swap Windows")
-     (?M aw-move-window "Move Window")
-     (?c aw-copy-window "Copy Window")
-     (?v aw-split-window-vert "Split Vert Window")
-     (?h aw-split-window-horz "Split Horz Window")
-     (?b kam-aw-consult-buffer "Select Buffer")
-     (?o kam-aw-one-command "Run command")
-     (?1 delete-other-windows "Delete Other Windows")
-     (?0 kam-aw-delete-window "Delete Window")
-     (?? aw-show-dispatch-help))))
+  :config
+  (setq aw-dispatch-always t)
+  (setq aw-keys '(?d ?n ?r ?e ?t ?a))
+  (setq aw-dispatch-alist
+        '((?m aw-swap-window "Swap Windows")
+          (?M aw-move-window "Move Window")
+          (?c aw-copy-window "Copy Window")
+          (?v aw-split-window-vert "Split Vert Window")
+          (?h aw-split-window-horz "Split Horz Window")
+          (?b kam-aw-consult-buffer "Select Buffer")
+          (?o kam-aw-one-command "Run command")
+          (?1 delete-other-windows "Delete Other Windows")
+          (?0 kam-aw-delete-window "Delete Window")
+          (?? aw-show-dispatch-help))))
 
 (use-package popper
   :after (org consult)
