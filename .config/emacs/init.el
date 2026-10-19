@@ -883,12 +883,32 @@ Duplicates are not saved."
   :bind
   (:map reader-mode-map
         ("SPC" . reader-next-page)
-        ("<backspace>" . reader-previous-page))
+        ("<backspace>" . reader-previous-page)
+        ("C-SPC" . kam-reader-goto-saved-page))
   ;; TODO 2026-07-15: figure out why reader-outline-mode-map is void when trying to set keybindings
   ;; (:map reader-outline-mode-map
   ;;       ("SPC" . kam-scroll-down)
   ;;       ("<backspace>" . kam-scroll-up))
-  )
+  :config
+  (defvar kam-reader-saved-page nil
+    "Saved page for `reader-mode'")
+
+  (defun kam-reader-save-page (N)
+    (interactive (list
+                  (reader-current-pagenumber)))
+    (setq kam-reader-saved-page N))
+
+  (defun kam-reader-goto-saved-page ()
+    (interactive)
+    (let* ((prev-pg-number (reader-current-pagenumber)))
+      (reader-goto-page kam-reader-saved-page)
+      (kam-reader-save-page prev-pg-number)))
+
+  (defun kam-reader-imenu ()
+    "Call `imenu', but save the current page number in `kam-reader-saved-page'."
+    (interactive)
+    (kam-reader-save-page (reader-current-pagenumber))
+    (consult-imenu)))
 
 (use-package repeat
   :ensure nil
@@ -998,14 +1018,13 @@ Duplicates are not saved."
     "i"   #'info-apropos)
 
   (keymap-set help-map "a" kam-help-apropos-map)
+
   (add-to-list 'display-buffer-alist
                '("\\*Help\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (mode help-mode)
-                 (window-parameters . ((mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+                 (display-buffer-reuse-window display-buffer-in-direction)
+                 (direction . right)
+                 (window . root)
+                 (mode help-mode)))
 
   (add-to-list 'display-buffer-alist
                '("\\*Error\\*"
@@ -1079,12 +1098,12 @@ Duplicates are not saved."
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Info\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
+                 (display-buffer-reuse-window
+                  display-buffer-use-least-recent-window
+                  display-buffer-in-direction)
+                 (direction . right)
                  (mode Info-mode)
-                 (window-parameters . ((mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+                 (window-parameters . (no-delete-other-windows . t))))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Info\\*" t)
@@ -2267,21 +2286,21 @@ If the current buffer belongs to a project, run the grep command in the project 
           dumb-jump-prefer-searcher 'rg)))
 
 (use-package electric
-:ensure nil
-:hook ((org-mode . electric-indent-mode)
-       (prog-mode . electric-indent-mode)
-       (text-mode . electric-quote-mode))
-:custom
-(electric-indent-actions '(yank))
-:config
-(electric-pair-mode)
+  :ensure nil
+  :hook ((org-mode . electric-indent-mode)
+         ;; (prog-mode . electric-indent-mode)
+         (text-mode . electric-quote-mode))
+  :custom
+  (electric-indent-actions '(yank))
+  :config
+  (electric-pair-mode)
 
-;; (add-to-list 'electric-pair-pairs
-;;              '("/*" . "*/"))
+  ;; (add-to-list 'electric-pair-pairs
+  ;;              '("/*" . "*/"))
 
-;; (add-to-list 'electric-pair-text-pairs
-;;              '("/*" "*/") t)
-)
+  ;; (add-to-list 'electric-pair-text-pairs
+  ;;              '("/*" "*/") t)
+  )
 
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
@@ -3498,12 +3517,10 @@ The shell is renamed to make opening multiple shells easier."
 
   (add-to-list 'display-buffer-alist
                '((major-mode . shell-command-mode)
-                 (display-buffer-in-side-window)
-                 (side . bottom)
+                 (display-buffer-reuse-window display-buffer-in-direction)
+                 (direction . right)
                  (window . root)
-                 (inhibit-same-window . t)
-                 (window-height . 0.4)
-                 (window-parameters . ((mode-line-format . none))))))
+                 (inhibit-same-window . t))))
 
 (use-package eshell
   :ensure nil
@@ -3902,6 +3919,7 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
          (prog-mode . buffer-face-mode)
+         (prog-mode . electric-indent-local-mode)
          (prog-mode . kam-decolorify-mode))
   :bind
   (:map prog-mode-map
@@ -3911,10 +3929,10 @@ Where kam-test is an alist of choices mapped to values."
   (defun kam-prog-mode-setup ()
     "Set up `prog-mode'."
     (setq-local buffer-face-mode-face 'fixed-pitch)
-    (blink-cursor-mode)
-    (electric-indent-local-mode)
+    (blink-cursor-mode 1)
+    (electric-indent-local-mode 1)
     ;; (hl-line-mode)
-    (kam-text-scale-adjust 1)
+    ;; (kam-text-scale-adjust 1)
     ;; (completion-preview-mode)
     (indent-tabs-mode -1)))
 
@@ -4291,8 +4309,8 @@ Add this function to the `ediff-quit-hook'."
         ("<backspace>" . kam-scroll-up)
         ("}" . compilation-next-file)
         ("{" . compilation-previous-file)
-        ("<next>" . kam-scroll-down)
         ("<prior>" . kam-scroll-up)
+        ("<next>" . kam-scroll-down)
         ("M-n" . kam-next-error-no-select)
         ("M-p" . kam-previous-error-no-select)
         ("M-@" . recompile)
@@ -4313,9 +4331,10 @@ Add this function to the `ediff-quit-hook'."
 
   (add-to-list 'display-buffer-alist
                '("\\*compilation\\*"
-                 (display-buffer-in-direction display-buffer-reuse-window)
+                 (display-buffer-reuse-window
+                  display-buffer-in-direction)
                  (direction . right)
-                 (window . root)
+                 (inhibit-same-window . t)
                  ;; (window-height . 0.35)
                  (body-function . select-window)
                  ;; (window-parameters . ((mode-line-format . none)
