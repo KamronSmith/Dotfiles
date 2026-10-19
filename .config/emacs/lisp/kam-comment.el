@@ -32,13 +32,9 @@
      (format "Select KEYWORD [%s]: " default)
      keywords nil nil nil 'kam-comment--keyword-history default)))
 
-(defun kam-comment--format-date ()
-  "Format date using `format-time-string'."
-  (format-time-string kam-comment-timestamp))
-
-(defun kam-comment--timestamp (keyword)
-  "Format string using current time KEYWORD."
-  (format "%s %s: " keyword (kam-comment--format-date)))
+(defun kam-comment--format (keyword)
+  "Format string using KEYWORD." 
+  (format "%s: " keyword))
 
 (defun kam-comment--format-comment (string)
   "Format comment STRING per `kam-comment-timestamp-keyword'.
@@ -55,8 +51,8 @@ STRING is a combination of a keyword and a timestamp."
     (save-excursion (newline))))
 
 ;;;###autoload
-(defun kam-comment-timestamp-keyword (keyword)
-  "Add timestamped comment with KEYWORD.
+(defun kam-comment-keyword (keyword)
+  "Add comment with KEYWORD.
 
 If the point is at the beginning of the line or if the line is empty (no
 characters at all or just indentation), the comment is started there in
@@ -68,7 +64,7 @@ comment is appended to the line with `comment-indent'."
   (interactive
    (list
     (kam-comment--keyword-prompt kam-comment-keywords)))
-  (let ((string (kam-comment--timestamp keyword))
+  (let ((string (kam-comment--format keyword))
         (beg (point)))
     (cond
      ((kam-line-regexp-p 'empty)
@@ -80,6 +76,11 @@ comment is appended to the line with `comment-indent'."
      (t
       (comment-indent t)
       (insert " " string)))))
+
+(defun kam-comment-todo ()
+  "Comment with a TODO"
+  (interactive)
+  (kam-comment-keyword "TODO"))
 
 ;;;###autoload
 (defun kam-comment-dwim (&optional n)

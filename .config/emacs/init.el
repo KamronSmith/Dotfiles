@@ -139,7 +139,7 @@
   ("C-M-<left>" . indent-rigidly-left)
   ("C-M-<right>" . indent-rigidly-right)
   ("C-M-," . nil)
-  ("C-M-;" . kam-comment-timestamp-keyword)
+  ("C-M-;" . kam-comment-todo)
   ("C-M-SPC" . kam-mark-sexp)
   ("C-M-(" . insert-parenthesis)
   ("C-M-=" . indent-region)
