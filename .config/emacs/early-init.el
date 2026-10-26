@@ -31,13 +31,17 @@
       use-package-compute-statistics t)
 
 (add-hook 'after-make-frame-functions
-	  (defun setup-control-keys (frame)
+	  (defun kam-setup-control-keys (frame)
 	    "Sets up the control keys that are normally taken by terminal Emacs."
 	    (with-selected-frame frame
 	      (when (display-graphic-p)
 		(define-key input-decode-map (kbd "C-i") [kam-i])
 		(define-key input-decode-map (kbd "C-m") [kam-m])
 		(define-key input-decode-map (kbd "C-[") [kam-lsb])))))
+
+(defvar kam-parrotos (when (string-equal "parrot" (system-name))
+                       t)
+  "Determine whether Emacs is running on a Parrot OS distro.")
 
 (provide 'early-init)
 ;;; early-init.el ends here
