@@ -23,7 +23,7 @@ mkdir ~/.config/nvim
 mkdir ~/.config/kitty
 
 echo -e "Installing programs..."
-sudo apt install $(cat tools.list | tr "\n" " ") -y
+sudo apt install $(cat $dotfiles_dir/tools.list | tr "\n" " ") -y
 
 wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage -O $software_dir/nvim
 sudo chmod a+x $software_dir/nvim
@@ -43,3 +43,5 @@ echo -e "Creating symlinks..."
 
 echo -e "Setting path..."
 source ~/.bashrc
+
+popd
