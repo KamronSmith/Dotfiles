@@ -15,8 +15,10 @@ case "$TERM" in
     xterm-color) color_prompt=yes;;
 esac
 
+PS1="[$(ip a)]-[\d \t]-[\u@\h:\w]\$"
 
+alias nc="ncat"
 
 force_color_prompt=yes
 
-export PATH=~/tools:/usr/local/bin:/usr/bin:/bin:/usr/local/games:/usr/games
+export PATH=~/tools:~/.local/bin/$PATH
