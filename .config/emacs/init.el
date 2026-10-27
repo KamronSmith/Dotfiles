@@ -4065,7 +4065,7 @@ Where kam-test is an alist of choices mapped to values."
   (add-to-list 'same-window-regexps "^magit: .*$")
   (add-to-list 'same-window-regexps "^magit-status: .*$")
 
-  (add-to-list 'project-switch-commands '(magit-project-status "Git" "g"))
+  (add-to-list 'project-switch-commands '(magit-project-status "Git" "v"))
 
   (defun kam-git-clone ()
     "Run git clone using `magit' in `kam-projects-directory'."
