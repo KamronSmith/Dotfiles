@@ -65,17 +65,18 @@ See `kam-theme-update-custom-faces'.")
     (kam-decolorify--turn-off-colors)))
 
 (defvar kam-favorite-fonts
-  '("Aporetic Sans Mono"
-    "Iosevka")
-  "List of my favorite fonts.")
+  '(("Aporetic Sans Mono" . 140)
+    ("Iosevka" . 140)
+    ("IBM Plex Mono" . 130))
+  "List of my favorite fonts and their font sizes.")
 
-(defun kam-load-font ()
+(defun kam-load-font (font)
   "Choose a font from `kam-favorite-fonts'."
-  (interactive)
-  (let ((font (completing-read
-               "Font to load: "
-               kam-favorite-fonts)))
-    (set-face-attribute 'default nil :font font :height 140 :weight 'regular :width 'regular)
+  (interactive (list (completing-read
+                      "Font to load: "
+                      kam-favorite-fonts)))
+  (let* ((font-size (cdr (assoc font kam-favorite-fonts))))
+    (set-face-attribute 'default nil :font font :height font-size :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font font :height 1.0 :weight 'regular :width 'regular)))
 
 ;;; Decolorify Mode
@@ -185,6 +186,15 @@ INCREMENT should be a number."
         (tool-bar-mode 1))
     (menu-bar-mode -1)
     (tool-bar-mode -1)))
+
+(define-minor-mode kam-documentation-mode
+  "Minor mode for buffers that display documentation."
+  :global nil
+  (if kam-documentation-mode
+      (progn
+        (face-remap-add-relative 'default :family "IBM Plex Mono" :height 130 :width 'regular)
+        (hide-cursor-mode 1))
+    (hide-cursor-mode -1)))
 
 (provide 'kam-theme)
 ;;; kam-theme.el ends here
