@@ -3146,6 +3146,12 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   :config
   (setq org-anki-api-key nil
         org-anki-default-deck "get that main main"))
+
+(use-package auctex
+  :custom
+  (TeX-auto-save t)
+  (TeX-parse-self t)
+  )
 
 (use-package project
   :ensure nil
