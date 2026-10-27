@@ -3167,7 +3167,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (project-switch-use-entire-map nil)
   (project-prune-zombie-projects '((list-first-read . project-prune-zombies-default)))
   (project-list-file (expand-file-name "projects" kam-emacs-cache-directory))
-  (project-vc-extra-root-markers '(".project" "Cargo.toml" "package.json" "go.mod" "build.zig"))
+  (project-vc-extra-root-markers '(".project" "Cargo.toml" "package.json" "go.mod" "build.zig" "tasks"))
   (project-vc-ignores '("nix/store/"
                         "node_modules/"
                         "go/pkg/"
