@@ -431,7 +431,8 @@ To be used attached to `after-init-hook'."
                 (name . "^\\*Alerts\\*$")))
       ("Music" (or (mode . emms-playlist-mode)
                    (mode . emms-browser-mode)
-                   (mode . emms-show-all-mode))))))
+                   (mode . emms-show-all-mode)))
+      ("EWW" (mode . eww-mode)))))
   :config
   (add-to-list 'ibuffer-formats "Recency"))
 
