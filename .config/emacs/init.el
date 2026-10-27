@@ -4583,7 +4583,10 @@ Add this function to the `ediff-quit-hook'."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package ghostel
-  :hook (ghostel-mode . kam-ghostel-setup)
+  :hook ((after-init . ghostel-compile-global-mode)
+         (after-init . ghostel-shell-command-global-mode)
+         (after-init . ghostel-comint-global-mode)
+         (ghostel-mode . kam-ghostel-setup))
   :bind
   ("C-x t" . ghostel)
   (:map ghostel-semi-char-mode-map
@@ -4593,6 +4596,7 @@ Add this function to the `ediff-quit-hook'."
   :custom
   ;; (ghostel-compile-finished-major-mode 'compilation-mode)
   ;; (ghostel-compile-finished-major-mode 'ghostel-compile-view-mode)
+  (ghostel-buffer-name "*terminal*")
   (ghostel-module-auto-install 'download)
   :config
   ;; (ghostel-compile-global-mode)
@@ -4602,20 +4606,36 @@ Add this function to the `ediff-quit-hook'."
     (visual-fill-column-mode -1)
     (centered-cursor-mode -1))
 
-  (ghostel-comint-global-mode)
   (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
 
   (keymap-set global-map "C-x t" 'ghostel)
 
-  (add-to-list 'display-buffer-alist
-               '("-Ghostel\\*$"         ; Matches `ghostel-project' buffer regex
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 ;; (inhibit-same-window . t)
-                 (window-height . 0.35)
-                 (mode ghostel-mode)
-                 (window-parameters . ((mode-line-format . none))))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("-Ghostel\\*$"         ; Matches `ghostel-project' buffer regex
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . bottom)
+  ;;                (window . root)
+  ;;                ;; (inhibit-same-window . t)
+  ;;                (window-height . 0.35)
+  ;;                (mode ghostel-mode)
+  ;;                (window-parameters . ((mode-line-format . none)))))
+  )
+
+(use-package ghostel-compile
+  :ensure nil
+  :hook (after-init . ghostel-compile-global-mode)
+  :custom
+  (ghostel-compile-buffer-name "*compilation*"))
+
+(use-package ghostel-shell-command
+  :ensure nil
+  :hook (after-init . ghostel-shell-command-global-mode)
+  :custom
+  (ghostel-shell-command-buffer-name "*Shell Command*"))
+
+(use-package ghostel-comint
+  :ensure nil
+  :hook (after-init . ghostel-comint-global-mode))
 
 (use-package pcre2el
   :config
