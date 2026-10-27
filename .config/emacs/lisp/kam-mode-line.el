@@ -434,7 +434,7 @@ See `kam-mode-line-string-cut-middle'."
   (let ((indicator (cond
                     ((derived-mode-p 'text-mode) " § ")
                     ((derived-mode-p 'prog-mode) " 󰘧 ")
-                    ((derived-mode-p 'comint-mode) " 󰆍 ")
+                    ;; ((derived-mode-p 'comint-mode) " 󰆍 ")
                     (t ""))))
     (propertize indicator 'face 'shadow)))
 
@@ -446,8 +446,12 @@ See `kam-mode-line-string-cut-middle'."
      (nerd-icons-sucicon "nf-custom-folder_oct"))
     ((derived-mode-p 'reader-mode)
      (nerd-icons-faicon "nf-fa-file_pdf"))
-     (t
-      (nerd-icons-icon-for-mode major-mode)))
+    ((derived-mode-p 'ghostel-mode)
+     (nerd-icons-devicon "nf-dev-terminal"))
+    ((derived-mode-p 'shell-mode)
+     (nerd-icons-devicon "nf-dev-bash"))
+    (t
+     (nerd-icons-icon-for-mode major-mode)))
    " "
    (capitalize
     (string-replace "-mode" "" (symbol-name major-mode)))))
