@@ -1365,7 +1365,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (defun kam-font-faces-setup ()
     (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 140 :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
-    (set-face-attribute 'variable-pitch nil :family "Iosevka" :height 1.0 :weight 'regular :width 'regular))
+    (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular))
 
   (if (daemonp)
       (add-hook 'after-make-frame-functions
@@ -3953,7 +3953,7 @@ Where kam-test is an alist of choices mapped to values."
 (use-package prog-mode
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
-         (prog-mode . buffer-face-mode)
+         ;; (prog-mode . buffer-face-mode)
          (prog-mode . electric-indent-local-mode)
          (prog-mode . kam-decolorify-mode))
   :bind
@@ -3984,7 +3984,7 @@ Where kam-test is an alist of choices mapped to values."
 
   (defun kam-conf-mode-set-font ()
     "Intended to set the font in `conf-mode'."
-    (setq buffer-face-mode-face 'fixed-pitch)
+    (setq-local buffer-face-mode-face 'fixed-pitch)
     (buffer-face-mode))
 
   (add-to-list 'auto-mode-alist
@@ -4037,7 +4037,7 @@ Where kam-test is an alist of choices mapped to values."
   :init
   (setq magit-define-global-key-bindings nil)
   :bind
-  ("C-c g" . magit-status)
+  ("C-x g" . magit-status)
   :custom
   (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration)
@@ -4549,7 +4549,10 @@ Add this function to the `ediff-quit-hook'."
 
 (use-package sgml-mode
   :ensure nil
-  :hook ((html-mode mthml-mode mhtml-ts-mode) . sgml-electric-tag-pair-mode))
+  :hook ((html-mode mthml-mode mhtml-ts-mode) . sgml-electric-tag-pair-mode)
+  :bind
+  (:map mhtml-ts-mode-map
+        ("M-o" . kam-ace-window)))
 
 (use-package transient
   :ensure nil
