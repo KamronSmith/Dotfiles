@@ -448,12 +448,12 @@ To be used attached to `after-init-hook'."
   ("C-<next>" . scroll-other-window)
   ("C-<prior>" . scroll-other-window-down)
   :custom
-  (window-sides-slots '(0 0 1 1))
+  ;; (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'horizontal)
-  (split-window-preferred-function 'split-window-sensibly)
+  (split-window-preferred-function 'kam-split-window-conservatively)
   (split-height-threshold nil)
   (split-width-threshold 0)
-  (even-window-sizes nil)
+  (even-window-sizes t)
   (cursor-in-non-selected-windows nil)
   (next-error-recenter '(4))
   (window-combination-resize t)
@@ -464,8 +464,8 @@ To be used attached to `after-init-hook'."
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows nil)
-  (display-buffer-base-action '((display-buffer-same-window)
-                                (reusable-frames . t)))
+  ;; (display-buffer-base-action '((display-buffer-same-window)
+  ;;                               (reusable-frames . t)))
   (display-buffer-alist
    `(("\\*Async Shell Command\\*"
       (display-buffer-reuse-window display-buffer-in-side-window)
@@ -519,7 +519,19 @@ To be used attached to `after-init-hook'."
     :doc "Buffer repeat map"
     :repeat t
     "<left>" 'kam-prev-buffer
-    "<right>" 'kam-next-buffer))
+    "<right>" 'kam-next-buffer)
+
+  (defun kam-split-window-conservatively (&optional window)
+    "Split WINDOW only if absolutely necessary.
+Only split if there is no split, and only split into left and right windows."
+    (interactive)
+    (let ((window (or window (selected-window))))
+      (if (and
+           (window-splittable-p window t)
+           (= (length (window-list)) 1))
+          (with-selected-window window
+            (split-window-right))
+        nil))))
 
 (use-package lin
   :custom
@@ -1023,12 +1035,12 @@ Duplicates are not saved."
 
   (keymap-set help-map "a" kam-help-apropos-map)
 
-  (add-to-list 'display-buffer-alist
-               '("\\*Help\\*"
-                 (display-buffer-reuse-window display-buffer-in-direction)
-                 (direction . right)
-                 (window . root)
-                 (mode help-mode)))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*Help\\*"
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . right)
+  ;;                (window . root)
+  ;;                (mode help-mode)))
 
   (add-to-list 'display-buffer-alist
                '("\\*Error\\*"
@@ -1070,14 +1082,14 @@ Duplicates are not saved."
   (apropos-compact-layout nil)
   (apropos-do-all nil)
   :config
-  (add-to-list 'display-buffer-alist
-               '("\\*Apropos\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (mode apropos-mode)
-                 (window-parameters . ((mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*Apropos\\*"
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . right)
+  ;;                (window-width . 0.5)
+  ;;                (mode apropos-mode)
+  ;;                (window-parameters . ((mode-line-format . none)
+  ;;                                      (no-delete-other-windows . t)))))
   (add-to-list 'consult-buffer-filter
                "\\*Apropos\\*"))
 
@@ -1965,13 +1977,13 @@ This source is only enabled when the current buffer belongs to a project.")
      ;; ("\\*Messages\\*")
      ;; ("\\*compilation\\*")
      ("Output\\*$")
-     ("\\*Apropos\\*")
+     ;; ("\\*Apropos\\*")
      ("\\*Async Shell Command\\*")
      ("\\Org Agenda\\*")
-     ("\\*Grep\\*")
+     ;; ("\\*Grep\\*")
      ("\\*Backtrace\\*")
-     ("\\*Warnings\\*")
-     ("\\*shell\\*")
+     ;; ("\\*Warnings\\*")
+     ;; ("\\*shell\\*")
      ("\\*eshell[\:\*]")
      ("-eshell\\*$")
      ("-shell\\*$")
@@ -1983,12 +1995,13 @@ This source is only enabled when the current buffer belongs to a project.")
      ("\\*ChatGPT\\*")
      ("\\*eldoc\\*")
      emms-playlist-mode
-     Man-mode
-     help-mode
-     Info-mode
-     Grep-mode
-     shell-command-mode
-     comint-mode))
+     ;; Man-mode
+     ;; help-mode
+     ;; Info-mode
+     ;; Grep-mode
+     ;; shell-command-mode
+     ;; comint-mode
+     ))
   (popper-display-control nil)
   :config
   (popper-mode)
@@ -3500,24 +3513,24 @@ The shell is renamed to make opening multiple shells easier."
     (let ((default-directory (getenv "HOME")))
       (shell)))
 
-  (add-to-list 'display-buffer-alist
-               '("-shell\\*$" ;; matches title for `project-shell'
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 (window-height . 0.35)
-                 (mode shell-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("-shell\\*$" ;; matches title for `project-shell'
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . bottom)
+  ;;                (window . root)
+  ;;                (window-height . 0.35)
+  ;;                (mode shell-mode)
+  ;;                (window-parameters . ((mode-line-format . none)))))
 
-  (add-to-list 'display-buffer-alist
-               '("\\*shell[\\*\\:]"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 ;; (inhibit-same-window . t)
-                 (window-height . 0.35)
-                 (mode shell-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*shell[\\*\\:]"
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . bottom)
+  ;;                (window . root)
+  ;;                ;; (inhibit-same-window . t)
+  ;;                (window-height . 0.35)
+  ;;                (mode shell-mode)
+  ;;                (window-parameters . ((mode-line-format . none)))))
 
   (add-to-list 'display-buffer-alist
                '((major-mode . shell-command-mode)
@@ -4338,9 +4351,12 @@ Add this function to the `ediff-quit-hook'."
   (add-to-list 'display-buffer-alist
                '("\\*compilation\\*"
                  (display-buffer-reuse-window
-                  display-buffer-in-direction)
+                  ;; kam-display-buffer-in-mru-window
+                  display-buffer-use-least-recent-window
+                  )
                  (direction . right)
-                 (inhibit-same-window . t)
+                 (window-width . 0.50)
+                 ;; (inhibit-same-window . t)
                  ;; (window-height . 0.35)
                  (body-function . select-window)
                  ;; (window-parameters . ((mode-line-format . none)
