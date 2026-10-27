@@ -1055,8 +1055,8 @@ Duplicates are not saved."
                                        (no-delete-other-windows . t)))))
 
   (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter
-                 "^\\*Help\\*" t)
+    ;; (add-to-list 'consult-buffer-filter
+    ;;              "^\\*Help\\*" t)
     (add-to-list 'consult-buffer-filter
                  "^\\*Error\\*" t)
     (add-to-list 'consult-buffer-filter
@@ -1121,42 +1121,41 @@ Duplicates are not saved."
                   display-buffer-use-least-recent-window
                   display-buffer-in-direction)
                  (direction . right)
-                 (mode Info-mode)
-                 (window-parameters . (no-delete-other-windows . t))))
+                 (inhibit-same-window . t)
+                 (mode . Info-mode)))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Info\\*" t)
 
-  (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter
-                 "^\\*Info\\*" t)))
+  ;; (with-eval-after-load 'consult
+  ;;  (add-to-list 'consult-buffer-filter
+  ;;               "^\\*Info\\*" t)
+  )
 
 (use-package man
   :ensure nil
   :hook (Man-mode . lin-mode)
   :bind
   ("M-s M-m" . man)
-  (:map Man-mode-map
-        ("p" . kam-docview-backward-paragraph)
-        ("n" . kam-docview-forward-paragraph))
   :custom
   (Man-notify-method 'pushy)
   :config
-  (add-to-list 'display-buffer-alist
-               '("\\*Man "
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (mode . Man-mode)
-                 (window-parameters . ((mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*Man "
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . right)
+  ;;                (window-width . 0.5)
+  ;;                (mode . Man-mode)
+  ;;                (window-parameters . ((mode-line-format . none)
+  ;;                                      (no-delete-other-windows . t)))))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Man " t)
 
-  (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter
-                 "^\\*Man " t)))
+  ;; (with-eval-after-load 'consult
+  ;;   (add-to-list 'consult-buffer-filter
+  ;;                "^\\*Man " t))
+  )
 
 (use-package emacs-news-mode
   :ensure nil
@@ -2225,13 +2224,12 @@ Used in `isearch-mode-end-hook'."
   :config
   (add-to-list 'display-buffer-alist
                '("\\*grep\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 (window-height . 0.35)
-                 (body-function . select-window)
-                 (window-parameters . ((mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+                 (display-buffer-reuse-window 
+                  display-buffer-use-least-recent-window
+                  display-buffer-in-direction)
+                 (direction . right)
+                 ;; (inhibit-same-window . t)
+                 (body-function . select-window)))
 
   (defun kam-grep-setup ()
     "Setup function for `grep-mode'."
@@ -2253,9 +2251,10 @@ If the current buffer belongs to a project, run the grep command in the project 
     "Setup function for `grep-edit-mode'."
     (hide-cursor-mode -1))
 
-  (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter
-                 "\\*grep\\*" t)))
+  ;; (with-eval-after-load 'consult
+  ;;   (add-to-list 'consult-buffer-filter
+  ;;                "\\*grep\\*" t))
+  )
 
 (use-package link-hint
   :bind
@@ -4370,9 +4369,10 @@ Add this function to the `ediff-quit-hook'."
                  (display-buffer-reuse-window
                   ;; kam-display-buffer-in-mru-window
                   display-buffer-use-least-recent-window
+                  display-buffer-in-direction
                   )
                  (direction . right)
-                 (window-width . 0.50)
+                 ;; (window-width . 0.50)
                  ;; (inhibit-same-window . t)
                  ;; (window-height . 0.35)
                  (body-function . select-window)
