@@ -61,7 +61,8 @@
 
 (use-package emacs
   :ensure nil
-  :hook (after-init . kam-initial-setup)
+  :hook ((after-init . kam-initial-setup)
+         (after-init . blink-cursor-mode))
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
   ("TAB" . nil)
