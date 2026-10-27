@@ -96,7 +96,7 @@ When there is more than one `tab-bar-mode' tabs, THING is a tab."
 ;;;###autoload
 (defun kam-split-window-below ()
   "Like the normal `split-window-below', but splits the window at the root if there are two windows.
-Additionally,select the newly formed window."
+Additionally, select the newly formed window."
   (interactive)
   (if (kam-two-windows-p)
       (split-root-window-below)
