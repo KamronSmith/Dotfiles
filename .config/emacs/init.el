@@ -3855,7 +3855,9 @@ Where kam-test is an alist of choices mapped to values."
   :config
   (set-fontset-font "fontset-default" nil "Symbols Nerd Font Mono" nil 'append)
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(ghostel-mode nerd-icons-devicon "nf-dev-terminal" :face nerd-icons-purple)))
+               '(ghostel-mode nerd-icons-devicon "nf-dev-terminal" :face nerd-icons-purple))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(Man-mode nerd-icons-faicon "nf-fa-info" :face nerd-icons-purple)))
 
 (use-package nerd-icons-dired
   :hook
