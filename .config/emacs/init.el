@@ -334,6 +334,7 @@ To be used attached to `after-init-hook'."
     (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
     (pulsar-pulse-line)
+    (buffer-face-mode)
     (centered-cursor-mode -1))
 
   (defun kam-minibuffer-exit ()
@@ -1700,8 +1701,8 @@ This source is only enabled when the current buffer belongs to a project.")
   :custom
   (marginalia-field-width 100)
   :config
-  ;; (setq marginalia-align 'left
-  ;; marginalia-align-offset 0)
+  (setq marginalia-align 'left
+        marginalia-align-offset 20)
   (marginalia-mode))
 
 (use-package embark
