@@ -3175,11 +3175,20 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
   ;; (project-prompter 'kam-project--read-project-by-name)
   :config
+  (defvar kam-project-switch-commands-to-remove
+    '((project-find-dir "Dired" "d")
+      (project-find-regexp "Find regexp")
+      (project-vc-dir "VC-Dir")
+      (project-eshell "Eshell"))
+    "List of commands to remove from `project-switch-commands'")
+  
   (setq project-switch-commands
-        (seq-remove (lambda (x) (memq x (or '(project-vc-dir "VC-Dir")
-                                       '(project-find-regexp "Find regexp")
-                                       '(project-find-dir "Find directory"))))
+        (seq-remove (lambda (x)
+                      (member x kam-project-switch-commands-to-remove))
                     project-switch-commands))
+
+  (add-to-list 'project-switch-commands '(project-shell "Shell" "s"))
+  (add-to-list 'project-switch-commands '(project-dired "Dired" "d"))
 
   (defun kam-project-switch-project (dir)
     "\"Switch\" to another project by running an Emacs command.
