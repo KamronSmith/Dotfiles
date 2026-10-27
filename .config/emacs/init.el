@@ -1438,7 +1438,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :config
   (defvar kam-vertico-multiform-maximal
     '((vertico-count . 15)
-      (vertico-resize . t))
+      (vertico-resize . nil))
     "List of configurations for maximal Vertico multiform.")
 
   (defvar kam-vertico-multiform-minimal
@@ -1449,10 +1449,10 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
 
   (setq vertico-multiform-categories
         `((embark-keybinding grid)
-          (consult-location ,@kam-vertico-multiform-maximal)
-          (imenu ,@kam-vertico-multiform-maximal)
-          (unicode-name ,@kam-vertico-multiform-maximal)
-          (multi-category ,@kam-vertico-multiform-maximal)
+          ;; (consult-location ,@kam-vertico-multiform-maximal)
+          ;; (imenu ,@kam-vertico-multiform-maximal)
+          ;; (unicode-name ,@kam-vertico-multiform-maximal)
+          ;; (multi-category ,@kam-vertico-multiform-maximal)
           ;; (file ,@kam-vertico-multiform-minimal
           ;;       (vertico-sort-function . vertico-sort-directories-first)
           ;;       (:keymap . vertico-directory-map))
@@ -1464,8 +1464,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           ;; (kam-consult-buffer ,@kam-vertico-multiform-minimal
           ;;                     (vertico-sort-function . nil))
           (consult-ripgrep buffer)
-          ;; (consult-buffer ,@kam-vertico-multiform-minimal
-          ;;                 (vertico-sort-function . nil))
+          (consult-buffer (vertico-sort-function . vertico-sort-history-alpha))
           ;; (project-find-file ,@kam-vertico-multiform-minimal)
           ))
 
