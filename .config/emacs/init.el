@@ -4419,14 +4419,15 @@ Add this function to the `ediff-quit-hook'."
   :ensure nil
   :hook ((c-ts-mode . kam-c-ts-mode-setup)
          (c-ts-mode . eglot-ensure))
+  :custom
+  (c-ts-mode-indent-style 'k&r)
+  (c-ts-mode-indent-offset 4)
   :config
   (defun kam-c-ts-mode-setup ()
     "Setup function for `c-ts-mode'."
     (hs-minor-mode)
     (treesit-fold-mode)
-    (c-ts-mode-toggle-comment-style -1)
-    (c-ts-mode-set-style 'k&r)
-    (setopt c-ts-mode-indent-offset 4)))
+    (c-ts-mode-toggle-comment-style -1)))
 
 (use-package python
   :defer t
