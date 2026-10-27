@@ -1,5 +1,6 @@
 1password
 1password-cli
+adobe-source-sans-fonts
 alsa-tools
 alsa-utils
 amd-ucode
@@ -57,6 +58,7 @@ hyprpicker
 hyprpolkitagent
 hyprpwcenter
 hyprsunset
+ifuse
 imagemagick
 inkscape
 intellij-idea-community-edition
@@ -128,6 +130,8 @@ stow
 sudo
 syncthing
 system-config-printer
+texlive-basic
+texlive-latexrecommended
 timeshift
 tldr
 tmux
@@ -135,6 +139,7 @@ tree-sitter
 tree-sitter-cli
 ttc-iosevka
 ttf-firacode-nerd
+ttf-ibm-plex
 ttf-jetbrains-mono
 ttf-symbola
 ttf-times-new-roman
@@ -144,6 +149,7 @@ unzip
 uwsm
 valgrind
 vim
+virtualbox
 vlc
 vlc-plugin-ffmpeg
 waybar
