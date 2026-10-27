@@ -2304,7 +2304,7 @@ If the current buffer belongs to a project, run the grep command in the project 
 
 (use-package electric
   :ensure nil
-  :hook ((org-mode . electric-indent-mode)
+  :hook ((org-mode . electric-indent-local-mode)
          ;; (prog-mode . electric-indent-mode)
          (text-mode . electric-quote-mode))
   :custom
@@ -3949,7 +3949,6 @@ Where kam-test is an alist of choices mapped to values."
     "Set up `prog-mode'."
     (setq-local buffer-face-mode-face 'fixed-pitch)
     (blink-cursor-mode 1)
-    (electric-indent-local-mode 1)
     ;; (hl-line-mode)
     ;; (kam-text-scale-adjust 1)
     ;; (completion-preview-mode)
