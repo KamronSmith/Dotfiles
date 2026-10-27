@@ -901,7 +901,8 @@ Duplicates are not saved."
   (:map reader-mode-map
         ("SPC" . reader-next-page)
         ("<backspace>" . reader-previous-page)
-        ("C-SPC" . kam-reader-goto-saved-page))
+        ("C-SPC" . kam-reader-goto-saved-page)
+        ("M-g M-i" . kam-reader-imenu))
   ;; TODO 2026-07-15: figure out why reader-outline-mode-map is void when trying to set keybindings
   ;; (:map reader-outline-mode-map
   ;;       ("SPC" . kam-scroll-down)
