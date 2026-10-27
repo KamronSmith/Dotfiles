@@ -3,7 +3,9 @@
 (require 'kam-os)
 
 (use-package elfeed
-  :hook (elfeed-show-mode . kam-writing-mode)
+  ;; :hook (elfeed-show-mode . kam-writing-mode)
+  :hook ((elfeed-search-mode . hide-cursor-mode)
+         (elfeed-search-mode . lin-mode))
   :bind
   ("C-c r" . elfeed)
   (:map elfeed-show-mode-map
@@ -14,9 +16,9 @@
   (:map elfeed-search-mode-map
         ;; ([remap scroll-down-command] . kam-scroll-up)
         ;; ([remap scroll-up-command] . kam-scroll-down)
-        ("g" . elfeed-update))
-  :hook ((elfeed-search-mode . hide-cursor-mode)
-         (elfeed-search-mode . lin-mode))
+        ("g" . elfeed-update)
+        ("u" . elfeed-search-unmark)
+        ("R" . elfeed-search-tag-unread))
   :custom
   (elfeed-db-directory (expand-file-name "elfeed" kam-emacs-cache-directory))
   (elfeed-enclosure-default-dir (expand-file-name "elfeed" kam-emacs-cache-directory))
@@ -148,7 +150,8 @@ With optional ARG, open browser in EWW."
         ("N" . calibredb-search-next-page)
         ("P" . calibredb-search-previous-page)
         ("g" . calibredb-search-refresh)
-        ("r" . calibredb-filter-dispatch))
+        ("r" . calibredb-filter-dispatch)
+        ("s" . calibredb-search-live-filter))
   :custom
   (calibredb-format-nerd-icons t)
   (calibredb-library-alist `((,kam-books-directory)))
