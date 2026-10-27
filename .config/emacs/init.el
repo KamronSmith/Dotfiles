@@ -933,7 +933,7 @@ Duplicates are not saved."
   :ensure nil
   :custom
   (repeat-on-final-keystroke t)
-  (repeat-exit-timeout 0.5)
+  (repeat-exit-timeout 1.0)
   (repeat-exit-key "C-g")
   (repeat-keep-prefix t)
   (repeat-check-key t)
