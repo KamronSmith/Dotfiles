@@ -2045,20 +2045,20 @@ Used in `popper-open-popup-hook'."
 (use-package tab-bar
   :ensure nil
   :defer t
-  :bind (:map tab-bar-mode-map
-              ("C-x t n" . tab-next)
-              ("C-x t p" . tab-previous)
-              ("C-x t +" . tab-close)
-              ("C-\\" . kam-consult-tab)
-              ("C-<tab>" . nil)
-              ("C-S-<tab>" . nil))
+  ;; :bind (:map tab-bar-mode-map
+  ;;             ("C-x t n" . tab-next)
+  ;;             ("C-x t p" . tab-previous)
+  ;;             ("C-x t +" . tab-close)
+  ;;             ("C-\\" . kam-consult-tab)
+  ;;             ("C-<tab>" . nil)
+  ;;             ("C-S-<tab>" . nil))
   :init
   (defun tab-bar-tab-group-format-default (tab _i &optional current-p)
     (propertize
      (concat (funcall tab-bar-tab-group-function tab))
      'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
 
-  (tab-bar-mode 1)
+  ;; (tab-bar-mode 1)
   :custom
   (tab-bar-show nil)
   (tab-bar-close-button-show nil)
@@ -2072,6 +2072,7 @@ Used in `popper-open-popup-hook'."
   (tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
 
   :config
+  (keymap-set ctl-x-map "t" nil)
   (defun kam-tab-bar-group-from-project ()
     "Call `tab-group' with the current project name as the group."
     (interactive)
