@@ -331,7 +331,7 @@ To be used attached to `after-init-hook'."
     "Function for settings as the minibuffer starts."
     (setq gc-cons-threshold most-positive-fixnum
           truncate-lines t)
-    (setq-local line-spacing '(1 . 1))
+    ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
     (pulsar-pulse-line)
     (buffer-face-mode)
