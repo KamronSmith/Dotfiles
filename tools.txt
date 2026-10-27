@@ -12,7 +12,6 @@ sqlmap
 radare2
 metasploit-framework
 python3
-spiderfoot
 theharvester
 remmina
 rdesktop
@@ -26,3 +25,6 @@ tmux
 kitty
 emacs
 stow
+openvpn
+telnet
+ftp
