@@ -18,6 +18,10 @@
   (package-native-compile t)
   (package-vc-allow-build-commands t))
 
+(set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'regular :width 'regular)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka" :height 1.0 :weight 'regular :width 'regular)
+(set-face-attribute 'variable-pitch nil :family "Iosevka" :height 1.0 :weight 'regular :width 'regular)
+
 (use-package native-compile
   :ensure nil
   :custom
@@ -1570,8 +1574,8 @@ If the current buffer belongs to a project, run the grep command in the project 
           ;; kam-consult-source-tab
           consult-source-buffer
           ;; consult-source-project-buffer
-          kam-consult-source-project-files
-          kam-consult-source-project
+          ;; kam-consult-source-project-files
+          ;; kam-consult-source-project
           kam-consult-source-neighbor-file
           kam-consult-source-bookmark
           kam-consult-source-recent-file
@@ -2586,3 +2590,26 @@ This command works similarly to `kam-delete-window-dwim', just in reverse."
     (if arg
         (kill-buffer-and-window)
       (kill-buffer))))
+
+(defun kam-comment-dwim (&optional n)
+  "Comment N lines, defaulting to the current line.
+When the region is active, comment its lines instead."
+  (interactive "p")
+  (if (region-active-p)
+      (comment-or-uncomment-region
+       (region-beginning) (region-end))
+    (save-excursion
+      (comment-line n)
+      (forward-line (- n)))))
+
+(defun kam-split-window-right ()
+  "Like the normal `split-window-right' but selects the newly formed window."
+  (interactive)
+  (split-window-right)
+  (windmove-right))
+
+(defun kam-quit-window (&optional arg)
+  "Quit the window.
+With optional ARG, kill the buffer."
+  (interactive)
+  (quit-window arg))
