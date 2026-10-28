@@ -2591,6 +2591,83 @@ With optional ARG, kill the buffer."
   (interactive)
   (quit-window arg))
 
+(defun kam-delete-window-dwim (&optional arg)
+  "Do what I mean to delete the current thing.
+When there is one window, THING is a window.
+When optional prefix ARG (\\[universal-argument]) is provided, kill the buffer that window holds.
+When there is more than one `tab-bar-mode' tabs, THING is a tab."
+  (declare (interactive-only t))
+  (interactive "P")
+  (cond
+   ((length> (window-list) 1)
+    (delete-window))
+   ((and (length> (window-list) 1)
+         arg)
+    (kill-buffer-and-window))
+   ((and (featurep 'tab-bar)
+         (length> (tab-bar-tabs) 1))
+    (tab-close))
+   (t
+    (user-error "Nothing to delete"))))
+
+(defun kam-scroll-down (&optional arg)
+  "Scroll down a half screen.
+With optional ARG, scroll down that many times.
+Please see "
+  (interactive)
+  (if (bound-and-true-p centered-cursor-mode)
+      (ccm-scroll-up arg)
+    (scroll-up arg)))
+
+(defun kam-scroll-up (&optional arg)
+  "Scroll up.
+With optional ARG, scroll up that many times."
+  (interactive)
+  (if (bound-and-true-p centered-cursor-mode)
+      (ccm-scroll-down arg)
+    (scroll-down arg)))
+
+(defun kam-ace-window ()
+  "Like the normal `ace-window' command, but splits the window if there is only one window."
+  (interactive)
+  (if (one-window-p) 
+      (kam-split-window-right)
+    (call-interactively 'ace-window)))
+
+(defun kam-next-buffer (&optional arg)
+  "Switch to the next ARGth buffer.
+With universal prefix ARG, run in the next window."
+  (interactive "P")
+  (if-let* (((equal arg '(4)))
+            (win (other-window-for-scrolling)))
+      (with-selected-window win
+        (next-buffer)
+        (setq prefix-arg current-prefix-arg))
+    (next-buffer arg)))
+
+;;;###autoload
+(defun kam-prev-buffer (&optional arg)
+  "Switch to the previous ARGth buffer.
+With universal prefix ARG, run in the next window."
+  (interactive "P")
+  (if-let* (((equal arg '(4)))
+            (win (other-window-for-scrolling)))
+      (with-selected-window win
+        (previous-buffer)
+        (setq prefix-arg current-prefix-arg))
+    (previous-buffer arg)))
+
+(defun kam-aw-consult-buffer (window)
+  "Perform `consult-buffer' in AW selected window."
+  (aw-switch-to-window window)
+  (let ((consult-preview-key nil))
+    (consult-buffer)))
+
+(defun kam-aw-delete-window (window)
+  "Perform `kam-delete-window-dwim' in the AW-selected window."
+  (aw-switch-to-window window)
+  (kam-delete-window-dwim))
+
 (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'regular :width 'regular)
 (set-face-attribute 'fixed-pitch nil :font "Iosevka" :height 1.0 :weight 'regular :width 'regular)
 (set-face-attribute 'variable-pitch nil :family "Iosevka" :height 1.0 :weight 'regular :width 'regular)
