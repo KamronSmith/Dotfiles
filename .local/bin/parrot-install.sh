@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -e
-pushd $HOME
+pushd $HOME > /dev/null
 
 software_dir="$HOME/software"
 vpn_dir="$HOME/vpn"
@@ -58,4 +58,4 @@ sudo apt remove neovim -y
 echo -e "Setting path..."
 source ~/.bashrc
 
-popd
+popd > /dev/null
