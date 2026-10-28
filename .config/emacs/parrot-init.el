@@ -294,8 +294,7 @@ To be used attached to `after-init-hook'."
           truncate-lines t)
     ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
-    (buffer-face-mode)
-    (centered-cursor-mode -1))
+    (buffer-face-mode))
 
   (defun kam-minibuffer-exit ()
     "Function for settings as the minibuffer exits."
@@ -2520,11 +2519,6 @@ The shell is renamed to make opening multiple shells easier."
   (ghostel-module-auto-install 'download)
   :config
   ;; (ghostel-compile-global-mode)
-
-  (defun kam-ghostel-setup ()
-    "Setup for `ghostel-mode'."
-    (visual-fill-column-mode -1)
-    (centered-cursor-mode -1))
 
   (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
 
