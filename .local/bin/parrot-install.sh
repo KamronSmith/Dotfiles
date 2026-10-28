@@ -2,10 +2,11 @@
 set -e
 pushd $HOME
 
-software_dir="$HOME/software/"
-vpn_dir="$HOME/vpn/"
-dotfiles_dir="$HOME/dotfiles/"
-bin_dir="$HOME/.local/bin/"
+software_dir="$HOME/software"
+vpn_dir="$HOME/vpn"
+dotfiles_dir="$HOME/dotfiles"
+bin_dir="$HOME/.local/bin"
+fonts_dir="$HOME/.local/share/fonts"
 
 echo -e "Updating system..."
 sudo parrot-upgrade
