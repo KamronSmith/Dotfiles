@@ -1616,6 +1616,24 @@ Copied from the Consult code but adjusted to only take the top 25 candidates.")
     "Project file source for `consult-buffer'.
 This source is only enabled when the current buffer belongs to a project.")
 
+  (defvar kam-consult-source-neighbor-file
+    `(:name     "File in current directory"
+                :narrow   ?.
+                :category 'file
+                :face     consult-file
+                :history  file-name-history
+                :state    ,#'consult--file-state
+                :new      ,#'consult--file-action
+                :items
+                ,(lambda ()
+                   (let ((ht (consult--buffer-file-hash)) items)
+                     (dolist (file (completion-pcm--filename-try-filter
+                                    (directory-files "." 'full "\\`[^.]" nil 100))
+                                   (nreverse items))
+                       (unless (or (gethash file ht) (not (file-regular-p file)))
+                         (push (file-name-nondirectory file) items))))))
+    "Neighboring file source for `consult-buffer'.")
+
   (defvar kam-consult-source-project-files-history nil
     "Minibuffer history for `kam-consult-source-project-files'.")
 
