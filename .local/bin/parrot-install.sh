@@ -21,7 +21,7 @@ echo -e "Creating directories..."
 mkdir -p $software_dir
 mkdir -p $vpn_dir
 mkdir -p $bin_dir
-mkidr -p $fonts_dir
+mkdir -p $fonts_dir
 mkdir -p $HOME/.config/tmux
 mkdir -p $HOME/.config/nvim
 mkdir -p $HOME/.config/kitty
