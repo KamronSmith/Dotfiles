@@ -1465,7 +1465,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
           ;; (kam-consult-buffer ,@kam-vertico-multiform-minimal
           ;;                     (vertico-sort-function . nil))
           (consult-ripgrep buffer)
-          (consult-buffer (vertico-sort-function . vertico-sort-history-alpha))
+          (consult-buffer (vertico-sort-function . nil))
           ;; (project-find-file ,@kam-vertico-multiform-minimal)
           ))
 
