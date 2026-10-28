@@ -1,3 +1,7 @@
+(defvar kam-emacs-cache-directory
+  (expand-file-name "cache/" user-emacs-directory)
+  "Directory containing temporary files for Emacs.")
+
 (use-package native-compile
   :ensure nil
   :custom
@@ -407,7 +411,7 @@ Only split if there is no split, and only split into left and right windows."
   (dired-create-empty-file-in-current-directory t)
   (dired-free-space 'separate)
   (dired-mouse-drag-files t)
-  (image-dired-dir (expand-file-name "image-dired/" kam-emacs-cache-directory))
+  ;; (image-dired-dir (expand-file-name "image-dired/" kam-emacs-cache-directory))
   (dired-guess-shell-alist-user
    '(("\\.\\(mp[34]\\|m4a\\|ogg\\|flac\\|webm\\|mkv\\)" "xdg-open")
      ("\\.\\(png\\|jpe?g\\|tiff\\)" "xdg-open")
@@ -651,7 +655,8 @@ Duplicates are not saved."
   (bookmark-automatically-show-annotations nil)
   (bookmark-fringe-mark nil)
   (bookmark-save-flag 1)
-  (bookmark-file (expand-file-name "bookmarks" kam-emacs-cache-directory)))
+  ;; (bookmark-file (expand-file-name "bookmarks" kam-emacs-cache-directory))
+  )
 
 (use-package register
   :ensure nil
@@ -862,8 +867,8 @@ Duplicates are not saved."
   (tramp-encoding-shell (executable-find "sh"))
   (sh-shell-file (executable-find "sh"))
   (tramp-default-remote-shell (executable-find "sh"))
-  (tramp-persistency-file-name (expand-file-name "tramp/tramp-persistence" kam-emacs-cache-directory))
-  (tramp-auto-save-directory (expand-file-name "tramp/" kam-emacs-cache-directory))
+  ;; (tramp-persistency-file-name (expand-file-name "tramp/tramp-persistence" kam-emacs-cache-directory))
+  ;; (tramp-auto-save-directory (expand-file-name "tramp/" kam-emacs-cache-directory))
   (tramp-copy-size-limit (* 2 1024 1024)) ;; 2MB
   (tramp-use-scp-direct-remote-copying t)
   (tramp-verbose 1)                     ; just warnings
@@ -905,7 +910,7 @@ Duplicates are not saved."
   (history-length 1000)
   (history-delete-duplicates t)
   (savehist-save-minibuffer-history t)
-  (savehist-file (expand-file-name "savehist" kam-emacs-cache-directory))
+  ;; (savehist-file (expand-file-name "savehist" kam-emacs-cache-directory))
   (savehist-additional-variables '(kill-ring
                                    mark-ring global-mark-ring
                                    search-ring regexp-search-ring)))
@@ -1252,8 +1257,9 @@ Used in `isearch-mode-end-hook'."
    ("<return>" . kam-compile-goto-error)
    ("}" . compilation-next-file)
    ("{" . compilation-previous-file)
-   :map grep-edit-mode-map
-   ("C-c C-c" . grep-edit-save-changes))
+   ;; :map grep-edit-mode-map
+   ;; ("C-c C-c" . grep-edit-save-changes)
+   )
   :custom
   (grep-program "ripgrep")
   ;; (grep-command "rg -nS --follow --context=3 --no-heading --color=always ")
@@ -1327,7 +1333,7 @@ If the current buffer belongs to a project, run the grep command in the project 
 (use-package saveplace
   :ensure nil
   :custom
-  (save-place-file (expand-file-name "saveplace" kam-emacs-cache-directory))
+  ;; (save-place-file (expand-file-name "saveplace" kam-emacs-cache-directory))
   (save-place-forget-unreadable-files t)
   (save-place-limit 10000)
   (save-place-autosave-interval 50)
