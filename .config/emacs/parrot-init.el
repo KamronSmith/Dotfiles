@@ -2552,3 +2552,37 @@ The shell is renamed to make opening multiple shells easier."
 (use-package ghostel-comint
   :ensure nil
   :hook (after-init . ghostel-comint-global-mode))
+
+(defun kam-keyboard-quit-dwim ()
+  "A better keyboard quit."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (keyboard-quit))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
+   ((> (minibuffer-depth) 0)
+    (abort-recursive-edit))
+   ((identity defining-kbd-macro)
+    (kmacro-keyboard-quit))
+   (t
+    (keyboard-escape-quit))))
+
+(defun kam-keyboard-escape-quit-advice (fun)
+  "Around advice for `keyboard-escape-quit', call FUN.
+Preserve window configuration when pressing \\[keyboard-escape-quit]."
+  (let ((buffer-quit-function (or buffer-quit-function #'ignore)))
+    (funcall fun)))
+
+(advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit-advice)
+
+(defun kam-kill-current-buffer (&optional arg)
+  "Kill the current buffer, without prompting the user.
+With optional prefix ARG (\\[universal-argument]), delete the buffer's window as well.
+
+This command works similarly to `kam-delete-window-dwim', just in reverse."
+  (interactive "P")
+  (let ((kill-buffer-query-functions nil))
+    (if arg
+        (kill-buffer-and-window)
+      (kill-buffer))))
