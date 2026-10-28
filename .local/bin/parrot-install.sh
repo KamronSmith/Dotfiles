@@ -29,6 +29,7 @@ wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64
 sudo chmod a+x $software_dir/nvim
 
 git clone https://github.com/DanielMiessler/SecLists/ $software_dir/SecLists --depth=1
+git clone https://github.com/lgandx/Responder $software_dir/Responder --depth=1
 
 echo -e "Removing programs..."
 sudo apt remove neovim -y
