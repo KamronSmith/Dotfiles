@@ -18,10 +18,6 @@
   (package-native-compile t)
   (package-vc-allow-build-commands t))
 
-(set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'regular :width 'regular)
-(set-face-attribute 'fixed-pitch nil :font "Iosevka" :height 1.0 :weight 'regular :width 'regular)
-(set-face-attribute 'variable-pitch nil :family "Iosevka" :height 1.0 :weight 'regular :width 'regular)
-
 (use-package native-compile
   :ensure nil
   :custom
@@ -2594,3 +2590,7 @@ When the region is active, comment its lines instead."
 With optional ARG, kill the buffer."
   (interactive)
   (quit-window arg))
+
+(set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'regular :width 'regular)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka" :height 1.0 :weight 'regular :width 'regular)
+(set-face-attribute 'variable-pitch nil :family "Iosevka" :height 1.0 :weight 'regular :width 'regular)
