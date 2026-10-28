@@ -3193,6 +3193,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
   (add-to-list 'project-switch-commands '(project-shell "Shell" "s"))
   (add-to-list 'project-switch-commands '(project-dired "Dired" "d"))
+  (add-to-list 'project-switch-commands '(project-dired "Grep" "g"))
 
   (defun kam-project-switch-project (dir)
     "\"Switch\" to another project by running an Emacs command.
