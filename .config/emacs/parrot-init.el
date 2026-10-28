@@ -704,7 +704,6 @@ Duplicates are not saved."
 
 (use-package help
   :ensure nil
-  :hook (help-mode . lin-mode)
   :bind
   (:map help-mode-map
         ("q" . kam-quit-window)
@@ -780,7 +779,6 @@ Duplicates are not saved."
 (use-package apropos
   :after (consult)
   :ensure nil
-  :hook (apropos-mode . lin-mode)
   :bind
   ("C-h F" . apropos-function)
   ("C-h V" . apropos-variable)
@@ -801,7 +799,6 @@ Duplicates are not saved."
 
 (use-package info
   :ensure nil
-  :hook (Info-mode . lin-mode)
   :bind
   ("C-h r" . info-display-manual)
   ("C-h R" . info-emacs-manual)
@@ -835,7 +832,6 @@ Duplicates are not saved."
 
 (use-package man
   :ensure nil
-  :hook (Man-mode . lin-mode)
   :bind
   ("M-s M-m" . man)
   :custom
