@@ -2,6 +2,22 @@
   (expand-file-name "cache/" user-emacs-directory)
   "Directory containing temporary files for Emacs.")
 
+(use-package package
+  :ensure nil
+  :custom
+  (use-package-always-ensure t)
+  (use-package-compute-statistics t)
+  (package-archives
+   '(("gnu-elpa"       . "https://elpa.gnu.org/packages/")
+     ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
+     ("nongnu"         . "https://elpa.nongnu.org/nongnu/")
+     ("melpa"          . "https://melpa.org/packages/")))
+
+  (package-vc-register-as-project nil)
+  (package-install-upgrade-built-in t)
+  (package-native-compile t)
+  (package-vc-allow-build-commands t))
+
 (use-package native-compile
   :ensure nil
   :custom
@@ -253,7 +269,7 @@ To be used attached to `after-init-hook'."
   :ensure nil
   :hook ((minibuffer-setup . cursor-intangible-mode)
          (minibuffer-setup . kam-minibuffer-setup)
-         (minibuffer-setup . minibuffer-nonselected-mode)
+         ;; (minibuffer-setup . minibuffer-nonselected-mode)
          (minibuffer-exit . kam-minibuffer-exit))
   :bind
   (:map minibuffer-local-map
