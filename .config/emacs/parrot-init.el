@@ -557,9 +557,6 @@ With optional ARG as a double prefix argument, remove all inserted subdirectorie
                                      (1- (line-end-position)))))
 
   (defun kam-dired-setup ()
-    (if hl-line-mode
-        (hl-line-mode -1)
-      (hl-line-mode 1))
     (kam-dired-setup-imenu))
 
   (defun kam-dired-setup-imenu ()
@@ -628,18 +625,12 @@ Duplicates are not saved."
 
 (use-package wdired
   :ensure nil
-  :hook (wdired-mode . kam-wdired-mode-setup)
   :bind
   (:map dired-mode-map
         ("w" . wdired-change-to-wdired-mode))
   :custom
   (wdired-allow-to-change-permissions t)
-  (wdired-create-parent-directories t)
-  :config
-  (defun kam-wdired-mode-setup ()
-    (if hl-line-mode
-        (hl-line-mode -1)
-      (hl-line-mode 1))))
+  (wdired-create-parent-directories t))
 
 (use-package repeat
   :ensure nil
@@ -656,7 +647,6 @@ Duplicates are not saved."
 (use-package bookmark
   :ensure nil
   :commands (bookmark-set bookmark-jump bookmark-bmenu-list)
-  :hook (bookmark-bmenu-mode . hl-line-mode)
   :custom
   (bookmark-use-annotations nil)
   (bookmark-automatically-show-annotations nil)
@@ -1299,10 +1289,6 @@ Used in `isearch-mode-end-hook'."
                  (direction . right)
                  ;; (inhibit-same-window . t)
                  (body-function . select-window)))
-
-  (defun kam-grep-setup ()
-    "Setup function for `grep-mode'."
-    (hl-line-mode))
 
   (defun kam-grep-symbol-at-point ()
     "Start a `grep' search for the symbol at point.
@@ -2252,7 +2238,7 @@ Numerical argument ARG determines the command being selected from to choose argu
                 completion-at-point-functions '(cape-file comint-completion-at-point t)
                 corfu-auto nil
                 corfu-quit-no-match t)
-    (hl-line-mode -1)
+    ;; (hl-line-mode -1)
     (comint-read-input-ring t)
     (shell-dirtrack-mode 1))
 
