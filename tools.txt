@@ -18,7 +18,6 @@ rdesktop
 crackmapexec
 libimage-exiftool-perl
 curl
-seclists
 testssl.sh
 git
 tmux
@@ -28,3 +27,4 @@ stow
 openvpn
 telnet
 ftp
+mysql*
