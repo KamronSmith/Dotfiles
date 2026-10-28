@@ -28,6 +28,8 @@ sudo apt install $(cat $dotfiles_dir/tools.txt | tr "\n" " ") -y
 wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage -O $software_dir/nvim
 sudo chmod a+x $software_dir/nvim
 
+git clone https://github.com/DanielMiessler/SecLists/ $software_dir/SecLists --depth=1
+
 echo -e "Removing programs..."
 sudo apt remove neovim -y
 
