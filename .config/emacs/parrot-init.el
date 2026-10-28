@@ -2491,8 +2491,7 @@ The shell is renamed to make opening multiple shells easier."
 (use-package ghostel
   :hook ((after-init . ghostel-compile-global-mode)
          (after-init . ghostel-shell-command-global-mode)
-         (after-init . ghostel-comint-global-mode)
-         (ghostel-mode . kam-ghostel-setup))
+         (after-init . ghostel-comint-global-mode))
   :bind
   ("C-x t" . ghostel)
   (:map ghostel-semi-char-mode-map
