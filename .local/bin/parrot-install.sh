@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -e
+# set -e
 pushd $HOME > /dev/null
 
 software_dir="$HOME/software"
