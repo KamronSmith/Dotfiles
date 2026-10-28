@@ -561,14 +561,9 @@ With optional ARG as a double prefix argument, remove all inserted subdirectorie
                                      (1- (line-end-position)))))
 
   (defun kam-dired-setup ()
-    (if hide-cursor-mode
-        (hide-cursor-mode -1)
-      (hide-cursor-mode 1))
     (if hl-line-mode
         (hl-line-mode -1)
       (hl-line-mode 1))
-    ;; (hide-cursor-mode)
-    ;; (hl-line-mode)
     (kam-dired-setup-imenu))
 
   (defun kam-dired-setup-imenu ()
@@ -646,9 +641,6 @@ Duplicates are not saved."
   (wdired-create-parent-directories t)
   :config
   (defun kam-wdired-mode-setup ()
-    (if hide-cursor-mode
-        (hide-cursor-mode -1)
-      (hide-cursor-mode 1))
     (if hl-line-mode
         (hl-line-mode -1)
       (hl-line-mode 1))))
@@ -1314,7 +1306,6 @@ Used in `isearch-mode-end-hook'."
 
   (defun kam-grep-setup ()
     "Setup function for `grep-mode'."
-    (hide-cursor-mode)
     (hl-line-mode))
 
   (defun kam-grep-symbol-at-point ()
@@ -1327,10 +1318,6 @@ If the current buffer belongs to a project, run the grep command in the project 
                                     (project-root (project-current)))
                                   default-directory)))
       (grep command)))
-
-  (defun kam-grep-edit-setup ()
-    "Setup function for `grep-edit-mode'."
-    (hide-cursor-mode -1))
 
   ;; (with-eval-after-load 'consult
   ;;   (add-to-list 'consult-buffer-filter
