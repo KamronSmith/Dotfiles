@@ -21,6 +21,7 @@ echo -e "Creating directories..."
 mkdir -p $software_dir
 mkdir -p $vpn_dir
 mkdir -p $bin_dir
+mkidr -p $fonts_dir
 mkdir -p $HOME/.config/tmux
 mkdir -p $HOME/.config/nvim
 mkdir -p $HOME/.config/kitty
@@ -43,6 +44,13 @@ sudo chmod a+x $bin_dir/nvim
 
 git clone https://github.com/DanielMiessler/SecLists/ $software_dir/SecLists --depth=1
 git clone https://github.com/lgandx/Responder $software_dir/Responder --depth=1
+
+echo -e "Installing fonts..."
+wget https://github.com/be5invis/Iosevka/releases/download/v34.9.1/PkgTTC-SGr-Iosevka-34.9.1.zip -O $fonts_dir/Iosevka.zip
+unzip $fonts_dir/Iosevka.zip
+mv $fonts_dir/Iosevka/* $fonts_dir
+rm -rf $fonts_dir/Iosevka
+fc-cache -f -v
 
 echo -e "Removing programs..."
 sudo apt remove neovim -y
