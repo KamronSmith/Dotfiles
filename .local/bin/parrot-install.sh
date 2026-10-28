@@ -5,6 +5,7 @@ pushd $HOME
 software_dir="~/Software/"
 vpn_dir="~/VPN/"
 dotfiles_dir="~/dotfiles/"
+bin_dir="~/.local/bin/"
 
 echo -e "Updating system..."
 sudo parrot-upgrade
@@ -25,8 +26,8 @@ mkdir ~/.config/kitty
 echo -e "Installing programs..."
 sudo apt install $(cat $dotfiles_dir/tools.txt | tr "\n" " ") -y
 
-wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage -O $software_dir/nvim
-sudo chmod a+x $software_dir/nvim
+wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage -O $bin_dir/nvim
+sudo chmod a+x $bin_dir/nvim
 
 git clone https://github.com/DanielMiessler/SecLists/ $software_dir/SecLists --depth=1
 git clone https://github.com/lgandx/Responder $software_dir/Responder --depth=1
