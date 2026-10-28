@@ -17,11 +17,22 @@ echo -e "Downloading dotfiles..."
 git clone https://github.com/KamronSmith/dotfiles.git $dotfiles_dir
 
 echo -e "Creating directories..."
-mkdir $software_dir
-mkdir $vpn_dir
-mkdir ~/.config/tmux
-mkdir ~/.config/nvim
-mkdir ~/.config/kitty
+mkdir -p $software_dir
+mkdir -p $vpn_dir
+mkdir -p $bin_dir
+mkdir -p $HOME/.config/tmux
+mkdir -p $HOME/.config/nvim
+mkdir -p $HOME/.config/kitty
+mkdir -p $HOME/.config/emacs
+
+echo -e "Creating symlinks..."
+ln -s $dotfiles_dir/.config/nvim/init.lua ~/.config/nvim/init.lua
+ln -s $dotfiles_dir/.config/tmux/tmux.conf ~/.config/tmux/tmux.conf
+ln -s $dotfiles_dir/.config/kitty/kitty.conf ~/.config/kitty/kitty.conf
+ln -s $dotfiles_dir/.config/emacs/early-init.el ~/.config/emacs/early-init.el
+ln -s $dotfiles_dir/.config/emacs/parrot-init.el ~/.config/emacs/init.el
+ln -s $dotfiles_dir/.bashrc $HOME/.bashrc
+ln -s $dotfiles_dir/.inputrc $HOME/.inputrc
 
 echo -e "Installing programs..."
 sudo apt install $(cat $dotfiles_dir/tools.txt | tr "\n" " ") -y
@@ -34,16 +45,6 @@ git clone https://github.com/lgandx/Responder $software_dir/Responder --depth=1
 
 echo -e "Removing programs..."
 sudo apt remove neovim -y
-
-echo -e "Creating symlinks..."
-# ln -s $HOME/tools/dotfiles/config/init.lua ~/.config/nvim/init.lua
-# ln -s $HOME/tools/dotfiles/config/tmux.conf ~/.config/tmux/tmux.conf
-# ln -s $HOME/tools/dotfiles/bin/tmux-sessionizer.sh $HOME/tools/tmux-sessionizer.sh
-# ln -s $HOME/tools/dotfiles/config/kitty.config ~/.config/kitty.conf
-
-# wget https://raw.githubusercontent.com/KamronSmith/Dotfiles/refs/heads/master/config/tmux.conf -O ~/.config/tmux
-# wget https://raw.githubusercontent.com/KamronSmith/Dotfiles/refs/heads/master/config/init.el -O ~/.config/nvim
-# wget https://raw.githubusercontent.com/KamronSmith/Dotfiles/refs/heads/master/bin/tmux-sessionizer.sh -O ~/tools/tmux-sessionizer.sh
 
 echo -e "Setting path..."
 source ~/.bashrc
