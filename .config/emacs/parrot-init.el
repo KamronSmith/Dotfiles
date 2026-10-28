@@ -2672,6 +2672,41 @@ With universal prefix ARG, run in the next window."
   (aw-switch-to-window window)
   (kam-delete-window-dwim))
 
+(use-package magit
+  :init
+  (setq magit-define-global-key-bindings nil)
+  :bind
+  ("C-x g" . magit-status)
+  :custom
+  (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
+  (magit-bury-buffer-function 'magit-restore-window-configuration)
+  (magit-commit-show-diff t)
+  (magit-format-file-function #'magit-format-file-nerd-icons)
+  :config
+  (magit-auto-revert-mode)
+  (magit-wip-mode)
+
+  (when (eq system-type 'darwin)
+    (setq magit-git-executable "/opt/homebrew/bin/git"))
+
+  (add-to-list 'consult-buffer-filter
+               "magit-")
+
+  (add-to-list 'switch-to-prev-buffer-skip-regexp
+               "magit-")
+
+  (add-to-list 'same-window-regexps "^magit: .*$")
+  (add-to-list 'same-window-regexps "^magit-status: .*$")
+
+  (add-to-list 'project-switch-commands '(magit-project-status "Git" "v"))
+
+  (defun kam-git-clone ()
+    "Run git clone using `magit' in `kam-projects-directory'."
+    (interactive)
+    (let ((default-directory kam-projects-directory))
+      (call-interactively 'magit-clone))
+    (kam-project-update-list)))
+
 (set-face-attribute 'default nil :font "Iosevka" :height 140 :weight 'regular :width 'regular)
 (set-face-attribute 'fixed-pitch nil :font "Iosevka" :height 1.0 :weight 'regular :width 'regular)
 (set-face-attribute 'variable-pitch nil :family "Iosevka" :height 1.0 :weight 'regular :width 'regular)
