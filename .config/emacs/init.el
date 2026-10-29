@@ -3253,7 +3253,7 @@ to directory DIR."
                                     default-directory)))
         (call-interactively command))))
 
-  (defun kam-project-compile ()
+  (defun kam-project-compile-maybe ()
     "Run `compile' in the project root directory if the buffer belongs to a project."
     (interactive)
     (if (kam-buffer-has-project-p (current-buffer))
@@ -4345,7 +4345,7 @@ Add this function to the `ediff-quit-hook'."
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter)
   :bind
-  ("C-@" . kam-project-compile)
+  ("C-@" . kam-project-compile-maybe)
   ("M-@" . recompile)
   (:map compilation-mode-map
         ("n" . compilation-next-error)
