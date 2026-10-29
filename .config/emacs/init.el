@@ -3838,7 +3838,8 @@ Where kam-test is an alist of choices mapped to values."
   (lin-face 'lin-yellow))
 
 (use-package rainbow-mode
-  :hook (prog-mode . rainbow-mode))
+  :hook ((prog-mode . rainbow-mode)
+         (conf-mode . rainbox-mode)))
 
 (use-package pulsar
   :hook ((next-error . pulsar-pulse-line)
