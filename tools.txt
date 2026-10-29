@@ -15,7 +15,6 @@ python3
 theharvester
 remmina
 rdesktop
-crackmapexec
 libimage-exiftool-perl
 curl
 testssl.sh
@@ -28,3 +27,4 @@ openvpn
 telnet
 ftp
 mysql*
+crackmapexec
