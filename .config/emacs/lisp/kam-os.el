@@ -258,8 +258,8 @@ SERVICE should be a string that corresponds to a service."
   ;; Check whether the service given is a system or user service
   (if (member service (kam-os--get-services))
       (let ((default-directory "/sudo::"))
-        (shell-command (concat "systemctl restart " service)))
-    (shell-command (concat "systemctl --user restart " service)))
+        (async-shell-command (concat "systemctl restart " service)))
+    (async-shell-command (concat "systemctl --user restart " service)))
   (message "Restarted service %s " service))
 
 (defun kam-os-stop-service (service)
