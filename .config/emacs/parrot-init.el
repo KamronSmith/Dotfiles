@@ -929,11 +929,6 @@ Duplicates are not saved."
   (defun kam-proced-settings ()
     (proced-toggle-auto-update 1)))
 
-(use-package rectangular-region-mode
-  :ensure nil
-  :custom
-  (rectangle-indicate-zero-width-rectangle nil))
-
 (use-package time-date
   :ensure nil
   :custom
