@@ -1484,7 +1484,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ([remap yank-pop] . consult-yank-pop)
          ([remap bookmark-jump] . consult-bookmark)
          ([remap switch-to-buffer] . consult-buffer)
-         ([remap imenu] . consult-imenu)
+         ([remap imenu] . kam-consult-project-imenu)
          ("C-M-x" . consult-mode-command)
          ("C-x b" . consult-buffer)
          ("C-x C-b" . consult-buffer)
@@ -1501,7 +1501,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ("M-l" . consult-flymake)
          ("M-e" . consult-compile-error)
          ("M-o" . consult-org-heading)
-         ("M-i" . consult-imenu)
+         ("M-i" . imenu)
          ("M-m" . consult-mark)
          ("M-k" . consult-global-mark)
          :map isearch-mode-map
@@ -1643,7 +1643,13 @@ This source is only enabled when the current buffer belongs to a project.")
             :items (lambda () (mapcar #'identity kam-dired-directory-history))))
 
   (consult-customize consult-buffer :preview-key nil)
-  (consult-customize consult-imenu :preview-key nil))
+  (consult-customize consult-imenu :preview-key nil)
+
+  (defun kam-consult-project-imenu ()
+    (interactive)
+    (if (kam-buffer-has-project-p (current-buffer))
+        (consult-imenu-multi)
+      (consult-imenu))))
 
 (use-package consult-dir
   :bind
