@@ -3756,8 +3756,7 @@ Where kam-test is an alist of choices mapped to values."
        `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
        `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
        `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
-       `(tool-bar ((,c :foreground "#000000" :background "#c0c4c8")))
-       `(menu ((,c :foreground "#000000" :background "#c0c4c8"))))))
+       `(line-number-current-line ((,c :foreground ,cursor :background ,bg-main))))))
 
   (standard-themes-load-theme 'standard-light)
   (kam-set-custom-faces))
