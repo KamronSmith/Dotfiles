@@ -44,7 +44,7 @@ hl.bind(alt_mod .. "m", hl.dsp.window.move({ workspace = 3, follow = false }))
 
 hl.bind(main_mod .. "n", hl.dsp.exec_cmd("playerctl previous"))
 -- hl.bind(main_mod .. "o", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"))
-hl.bind(main_mod .. "o", hl.dsp.focus({ last = "last" }))
+hl.bind(main_mod .. "Space", hl.dsp.focus({ last = "last" }))
 
 hl.bind(main_mod .. "q", hl.dsp.window.close(hl.get_active_window()))
 hl.bind(main_mod .. "r", function ()
