@@ -3759,7 +3759,7 @@ Where kam-test is an alist of choices mapped to values."
        `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
        `(line-number-current-line ((,c :foreground ,cursor :background ,bg-main))))))
 
-  (standard-themes-load-theme 'standard-light)
+  (standard-themes-load-theme 'standard-dark)
   (kam-set-custom-faces))
 
 (use-package ef-themes)
