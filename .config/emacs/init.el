@@ -4244,13 +4244,17 @@ Where kam-test is an alist of choices mapped to values."
   ;; :hook ((ediff-before-setup . kam-ediff-store-layout)
   ;;        (ediff-quit . kam-ediff-restore-layout))
   :init
-  (setopt ediff-split-window-function 'split-window-horizontally
-          ediff-window-setup-function 'ediff-setup-windows-plain)
+
   :custom
-  (setq ediff-keep-variants nil)
-  (setq ediff-make-buffers-readonly-at-startup nil)
-  (setq ediff-show-clashes-only t)
-  (setq ediff-diff-options "-w")
+  (ediff-split-window-function 'split-window-horizontally)
+  (ediff-window-setup-function 'ediff-setup-windows-plain)
+  (ediff-keep-variants nil)
+  (ediff-show-ancestor nil)
+  (ediff-make-buffers-readonly-at-startup nil)
+  (ediff-show-clashes-only t)
+  (ediff-diff-options "-w")
+  (ediff-custom-diff-options "--suppress-common-lines")
+  (ediff-ignore-similar-regions t)
   :config  
   ;; (defun kam-ediff-store-layout ()
   ;;     "Store current frame window configuration as a frame parameter.
