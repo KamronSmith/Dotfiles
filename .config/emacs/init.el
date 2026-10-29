@@ -35,8 +35,8 @@
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Compile-Log\\*"
-                 (display-buffer-no-window
-                  (allow-no-window . t))))
+                 (display-buffer-no-window)
+                 (allow-no-window . t))))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "\\*Async-native-compile-log\\*" t)
@@ -467,15 +467,15 @@ To be used attached to `after-init-hook'."
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows nil)
-  ;; (display-buffer-base-action '((display-buffer-same-window)
-  ;;                               (reusable-frames . t)))
+  (display-buffer-base-action '((display-buffer-reuse-window display-buffer-pop-up-window)
+                                (reusable-frames . t)))
   (display-buffer-alist
-   `(("\\*Async Shell Command\\*"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . bottom)
-      (window . root)
-      (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none))))
+   `(;; ("\\*Async Shell Command\\*"
+     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
+     ;;  (side . bottom)
+     ;;  (window . root)
+     ;;  (window-height . 0.45)
+     ;;  (window-parameters . ((mode-line-format . none))))
      ("Output\\*$"
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
@@ -488,12 +488,12 @@ To be used attached to `after-init-hook'."
       (window . root)
       (window-height . 0.35)
       (window-parameters . ((mode-line-format . none))))
-     ("^\\*Warnings\\*$"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . bottom)
-      (window . root)
-      (window-height . 0.35)
-      (window-parameters . ((mode-line-format . none))))
+     ;; ("^\\*Warnings\\*$"
+     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
+     ;;  (side . bottom)
+     ;;  (window . root)
+     ;;  (window-height . 0.35)
+     ;;  (window-parameters . ((mode-line-format . none))))
      ;; ("^\\*Messages\\*$"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
      ;;  (side . bottom)
@@ -3543,15 +3543,17 @@ The shell is renamed to make opening multiple shells easier."
   ;;                (mode shell-mode)
   ;;                (window-parameters . ((mode-line-format . none)))))
 
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*shell[\\*\\:]"
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . bottom)
-  ;;                (window . root)
-  ;;                ;; (inhibit-same-window . t)
-  ;;                (window-height . 0.35)
-  ;;                (mode shell-mode)
-  ;;                (window-parameters . ((mode-line-format . none)))))
+  (add-to-list 'display-buffer-alist
+               '("\\*shell[\\*\\:]"
+                 (display-buffer-reuse-window display-buffer-use-least-recent-window)
+                 ;; (side . bottom)
+                 ;; (window . root)
+                 ;; (inhibit-same-window . t)
+                 ;; (window-height . 0.35)
+                 (mode shell-mode)
+                 (body-function . select-window)
+                 ;; (window-parameters . ((mode-line-format . none))
+                 ))
 
   (add-to-list 'display-buffer-alist
                '((major-mode . shell-command-mode)
