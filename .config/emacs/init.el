@@ -450,6 +450,7 @@ To be used attached to `after-init-hook'."
   ("C-x C-3" . kam-split-window-right)
   ("C-<next>" . scroll-other-window)
   ("C-<prior>" . scroll-other-window-down)
+  ([remap quit-window] . kam-quit-window)
   :custom
   ;; (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'horizontal)
@@ -1485,8 +1486,8 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ([remap bookmark-jump] . consult-bookmark)
          ([remap switch-to-buffer] . consult-buffer)
          ([remap imenu] . kam-consult-project-imenu)
+         ([remap load-theme] . consult-theme)
          ("C-M-x" . consult-mode-command)
-         ("C-x b" . consult-buffer)
          ("C-x C-b" . consult-buffer)
          ("C-x r s" . consult-register-store)
          ("C-x r l" . consult-register-load)
