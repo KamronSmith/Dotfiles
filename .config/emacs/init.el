@@ -3969,7 +3969,6 @@ Where kam-test is an alist of choices mapped to values."
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
          ;; (prog-mode . buffer-face-mode)
-         (prog-mode . electric-indent-local-mode)
          (prog-mode . kam-decolorify-mode))
   :bind
   (:map prog-mode-map
@@ -3979,10 +3978,11 @@ Where kam-test is an alist of choices mapped to values."
   (defun kam-prog-mode-setup ()
     "Set up `prog-mode'."
     (setq-local buffer-face-mode-face 'fixed-pitch)
-    (blink-cursor-mode 1)
+    ;; (blink-cursor-mode 1)
     ;; (hl-line-mode)
     ;; (kam-text-scale-adjust 1)
     ;; (completion-preview-mode)
+    (electric-indent-local-mode 1)
     (indent-tabs-mode -1)))
 
 (use-package conf-mode
