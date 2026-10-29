@@ -173,140 +173,140 @@
   (user-mail-address "kamrosmith@gmail.com")
   (user-lisp-directory (locate-user-emacs-file "lisp/"))
   (line-spacing 1)
-(inhibit-splash-screen nil)
-(delete-pair-push-mark t)
-(delete-pair-blink-delay 0)
-(view-lossage-auto-refresh t)
-(create-lockfiles nil)
-(confirm-kill-emacs nil)
-(confirm-kill-processes nil)
-(initial-major-mode 'lisp-interaction-mode)
-(auto-save-file-name-transforms
- `((".*" ,(expand-file-name "auto-saves/\\1" kam-emacs-cache-directory) t)))
-(auto-save-interval 20)
-(auto-save-no-message t)
-(auto-save-timeout 3)
-(auto-save-list-file-prefix (expand-file-name "auto-saves/sessions/" kam-emacs-cache-directory))
-(backup-directory-alist `(("." . ,(expand-file-name "backups/" kam-emacs-cache-directory))))
-(make-backup-files t)
-(backup-inhibited nil)
-(backup-by-copying t)
-(backup-by-copying-when-mismatch t)
-(version-control t)
-(delete-old-versions t)
-(kill-buffer-delete-auto-save-files nil)
-(confirm-kill-emacs nil)
-(confirm-kill-processes nil)
-(confirm-non-existent-file-or-buffer nil)
-(use-short-answers t)
-(initial-scratch-message "")
-(delete-by-moving-to-trash t)
-(custom-file (make-temp-file "emacs-custom-"))
-(set-mark-command-repeat-pop t)
-(use-dialog-box nil)
-(use-file-dialog nil)
-(ad-redefinition-action 'accept)
-(list-matching-lines-default-context-lines 1)
-(tooltip-reuse-hidden-frame t)
-(tooltip-use-echo-area t)
-(undo-limit (* 13 160000))
-(undo-strong-limit (* 13 240000))
-(undo-outer-limit (* 13 24000000))
-(save-interprogram-paste-before-kill t)
-(mouse-drag-and-drop-region-cross-program t)
-(mouse-drag-and-drop-region-scroll-margin t)
-(fill-region-as-paragraph-function 'fill-region-as-paragraph-semlf)
-(font-log nil)
-(eval-expression-print-length nil)
-(echo-keystokes-help nil)
-(kill-do-not-save-duplicates t)
-(line-move-visual t)
-(sentence-end-double-space nil)
-(next-line-add-newlines t)
-(make-cursor-line-fully-visible t)
-(inhibit-compacting-font-caches nil)
-(blink-cursor-delay 0.85)
-(blink-cursor-interval 0.65)
-(blink-cursor-blinks 0)
-(locale-coding-system 'utf-8)
-(switch-to-prev-buffer-skip-regexp '("\\*Backtrace\\*"
-                                     "\\*Warnings\\*"
-                                     "\\*Compile-Log\\*"
-                                     "\\*Completions\\*"
-                                     "\\*Async-native-compile-log\\*"
-                                     "\\*Native-compile-Log\\*"))
-(large-file-warning-threshold nil)
-(find-ls-options '("-exec ls -ldh {} +" . "-ldh"))
-(redisplay-skip-fontification-on-input t)
-(yank-transform-functions '(string-chop-newline))
-:config
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(scroll-bar-mode -1)
-(tooltip-mode -1)
-(global-so-long-mode 1)
-(global-prettify-symbols-mode)
-(global-font-lock-mode)
+  (inhibit-splash-screen nil)
+  (delete-pair-push-mark t)
+  (delete-pair-blink-delay 0)
+  (view-lossage-auto-refresh t)
+  (create-lockfiles nil)
+  (confirm-kill-emacs nil)
+  (confirm-kill-processes nil)
+  (initial-major-mode 'lisp-interaction-mode)
+  (auto-save-file-name-transforms
+   `((".*" ,(expand-file-name "auto-saves/\\1" kam-emacs-cache-directory) t)))
+  (auto-save-interval 20)
+  (auto-save-no-message t)
+  (auto-save-timeout 3)
+  (auto-save-list-file-prefix (expand-file-name "auto-saves/sessions/" kam-emacs-cache-directory))
+  (backup-directory-alist `(("." . ,(expand-file-name "backups/" kam-emacs-cache-directory))))
+  (make-backup-files t)
+  (backup-inhibited nil)
+  (backup-by-copying t)
+  (backup-by-copying-when-mismatch t)
+  (version-control t)
+  (delete-old-versions t)
+  (kill-buffer-delete-auto-save-files nil)
+  (confirm-kill-emacs nil)
+  (confirm-kill-processes nil)
+  (confirm-non-existent-file-or-buffer nil)
+  (use-short-answers t)
+  (initial-scratch-message "")
+  (delete-by-moving-to-trash t)
+  (custom-file (make-temp-file "emacs-custom-"))
+  (set-mark-command-repeat-pop t)
+  (use-dialog-box nil)
+  (use-file-dialog nil)
+  (ad-redefinition-action 'accept)
+  (list-matching-lines-default-context-lines 1)
+  (tooltip-reuse-hidden-frame t)
+  (tooltip-use-echo-area t)
+  (undo-limit (* 13 160000))
+  (undo-strong-limit (* 13 240000))
+  (undo-outer-limit (* 13 24000000))
+  (save-interprogram-paste-before-kill t)
+  (mouse-drag-and-drop-region-cross-program t)
+  (mouse-drag-and-drop-region-scroll-margin t)
+  (fill-region-as-paragraph-function 'fill-region-as-paragraph-semlf)
+  (font-log nil)
+  (eval-expression-print-length nil)
+  (echo-keystokes-help nil)
+  (kill-do-not-save-duplicates t)
+  (line-move-visual t)
+  (sentence-end-double-space nil)
+  (next-line-add-newlines t)
+  (make-cursor-line-fully-visible t)
+  (inhibit-compacting-font-caches nil)
+  (blink-cursor-delay 0.85)
+  (blink-cursor-interval 0.65)
+  (blink-cursor-blinks 0)
+  (locale-coding-system 'utf-8)
+  (switch-to-prev-buffer-skip-regexp '("\\*Backtrace\\*"
+                                       "\\*Warnings\\*"
+                                       "\\*Compile-Log\\*"
+                                       "\\*Completions\\*"
+                                       "\\*Async-native-compile-log\\*"
+                                       "\\*Native-compile-Log\\*"))
+  (large-file-warning-threshold nil)
+  (find-ls-options '("-exec ls -ldh {} +" . "-ldh"))
+  (redisplay-skip-fontification-on-input t)
+  (yank-transform-functions '(string-chop-newline))
+  :config
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1)
+  (global-so-long-mode 1)
+  (global-prettify-symbols-mode)
+  (global-font-lock-mode)
 
-(prefer-coding-system 'utf-8)
-(set-language-environment "UTF-8")
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
+  (prefer-coding-system 'utf-8)
+  (set-language-environment "UTF-8")
+  (set-default-coding-systems 'utf-8)
+  (set-terminal-coding-system 'utf-8)
+  (set-keyboard-coding-system 'utf-8)
 
-(remq 'process-kill-buffer-query-function
-      kill-buffer-query-functions)
+  (remq 'process-kill-buffer-query-function
+        kill-buffer-query-functions)
 
-(setenv "GPG_AGENT_INFO" nil)
+  (setenv "GPG_AGENT_INFO" nil)
 
-(defun kam-initial-setup ()
-  "Sets up basic OS settings and if in the terminal.
+  (defun kam-initial-setup ()
+    "Sets up basic OS settings and if in the terminal.
 To be used attached to `after-init-hook'."
-  (cond
-   ((eq system-type 'gnu/linux)
-    (setq x-meta-keysym 'meta))
-   ((eq system-type 'darwin)
-    (setq mac-option-key-is-meta t
-          mac-command-key-is-meta t
-          mac-control-modifier 'control
-          mac-command-modifier 'meta
-          mac-option-modifier 'meta
-          insert-directory-program (executable-find "gls"))
-    (menu-bar-mode)
-    (add-to-list 'default-frame-alist '(ns-appearance . dark))
-    (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
+    (cond
+     ((eq system-type 'gnu/linux)
+      (setq x-meta-keysym 'meta))
+     ((eq system-type 'darwin)
+      (setq mac-option-key-is-meta t
+            mac-command-key-is-meta t
+            mac-control-modifier 'control
+            mac-command-modifier 'meta
+            mac-option-modifier 'meta
+            insert-directory-program (executable-find "gls"))
+      (menu-bar-mode)
+      (add-to-list 'default-frame-alist '(ns-appearance . dark))
+      (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
 
-    (defun kam-mac-copy-config-to-config-folder ()
-      "Copy the init.el from the .dotfiles folder to the .config/emacs folder."
-      (interactive)
-      (copy-file
-       (expand-file-name ".config/emacs/init.el" kam-dotfiles-directory)
-       "/Users/kamronsmith/.config/emacs/init.el"
-       t)
-      (message "Copied config to emacs directory")))))
+      (defun kam-mac-copy-config-to-config-folder ()
+        "Copy the init.el from the .dotfiles folder to the .config/emacs folder."
+        (interactive)
+        (copy-file
+         (expand-file-name ".config/emacs/init.el" kam-dotfiles-directory)
+         "/Users/kamronsmith/.config/emacs/init.el"
+         t)
+        (message "Copied config to emacs directory")))))
 
-(put 'narrow-to-region 'disabled nil)
+  (put 'narrow-to-region 'disabled nil)
 
-(keymap-global-set "C-M-(" 'insert-parentheses)
-(keymap-global-set "C-\"" 'kam-insert-quote)
-(keymap-global-set "M-\"" 'kam-insert-quote)
+  (keymap-global-set "C-M-(" 'insert-parentheses)
+  (keymap-global-set "C-\"" 'kam-insert-quote)
+  (keymap-global-set "M-\"" 'kam-insert-quote)
 
-(defvar-keymap kam-repeat-map
-  :doc "General repeat map"
-  :repeat t
-  "n" 'kam-next-error-no-select
-  "p" 'kam-previous-error-no-select
-  "M-n" 'kam-next-error-no-select
-  "M-p" 'kam-previous-error-no-select)
+  (defvar-keymap kam-repeat-map
+    :doc "General repeat map"
+    :repeat t
+    "n" 'kam-next-error-no-select
+    "p" 'kam-previous-error-no-select
+    "M-n" 'kam-next-error-no-select
+    "M-p" 'kam-previous-error-no-select)
 
-(when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
-  (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
+  (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
+    (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
-(setq-default comment-column 0
-              fill-column 100)
+  (setq-default comment-column 0
+                fill-column 100)
 
-(when (not kam-parrotos)
-  (setq-default line-spacing '(1 . 1))))
+  (when (not kam-parrotos)
+    (setq-default line-spacing '(1 . 1))))
 
 (use-package minibuffer
   :ensure nil
