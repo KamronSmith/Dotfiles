@@ -27,4 +27,5 @@ openvpn
 telnet
 ftp
 mysql*
+awscli
 crackmapexec
