@@ -4068,8 +4068,43 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package vc
   :ensure nil
+  :bind
+  (:map vc-prefix-map
+        ("e" . kam-vc-ediff))
   :custom
-  (vc-follow-symlinks t))
+  (vc-follow-symlinks t)
+  :config
+  (defun kam-vc-diff (&optional arg)
+    "Compare current buffer with its file, or file with backup or revision.
+With prefix ARG, compare the file with a selected backup when the file
+is not under version control."
+    (interactive "P")
+    (if (buffer-modified-p)
+        (diff-buffer-with-file (current-buffer))
+      (condition-case errdata (call-interactively #'vc-diff)
+        (error
+         (if (string-match-p "not under version control" (cadr errdata))
+             (if arg
+                 (diff (my/read-backup-file-name (buffer-file-name))
+                       (buffer-file-name))
+               (diff-backup (buffer-file-name)))
+           (apply #'signal errdata))))))
+  
+  (defun kam-vc-ediff (&optional arg)
+    "Run Ediff on the current buffer, file, or backup.
+With optional prefix ARG, compare the file with a selected backup when
+the file is not under version control."
+    (interactive "P")
+    (if (buffer-modified-p)
+        (call-interactively #'ediff-current-file)
+      (condition-case errdata (call-interactively #'vc-ediff)
+        (error
+         (if (string-match-p "not under version control" (cadr errdata))
+             (if arg
+                 (ediff-files (kam-read-backup-file-name (buffer-file-name))
+                              (buffer-file-name))
+               (ediff-backup (buffer-file-name)))
+           (apply #'signal errdata)))))))
 
 ;; (use-package flycheck
 ;;   :hook (after-init . global-flycheck-mode)

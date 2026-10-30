@@ -153,6 +153,11 @@ MODE is a symbol that represents an active minor mode. See
          (strings (split-string output "\n" t)))
     strings))
 
+(defun kam-read-backup-file-name (file)
+  (if-let* ((backup-files (file-backup-file-names file)))
+      (completing-read "Backup version: " backup-files nil t)
+    (user-error "No backup files available for file %s" (buffer-file-name))))
+
 (defun kam-completing-read (prompt collection &optional predicate require-match initial-input hist def inherit-input-method)
   "Call `completing-read' but return the value from COLLECTION with PROMPT.
 
