@@ -4026,6 +4026,13 @@ The shell is renamed to make opening multiple shells easier."
   (setq magit-define-global-key-bindings nil)
   :bind
   ("C-x g" . magit-status)
+  (:map vc-prefix-map
+        ("b" . magit-branch)
+        ("d" . magit-dispatch)
+        ("f" . magit-fetch-branch)
+        ("l" . magit-log-current)
+        ("P" . magit-push-current)
+        ("F" . magit-pull-branch))
   :custom
   (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration)
