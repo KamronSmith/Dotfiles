@@ -2841,14 +2841,16 @@ Else, use the symbol at point."
 
 (use-package org
   :ensure nil
+  :init
+  (defvar-keymap kam-org-map
+    :doc "Keymap for Org-related commands."
+    :prefix t)
   :hook ((org-mode . variable-pitch-mode)
          (org-mode . visual-line-mode)
          (org-mode . kam-org-syntax-table-modify)
          (org-mode . kam-org-set-custom-faces))
   :bind
-  (("C-c o l" . kam-consult-org-heading-link)
-   ("C-c o p" . org-set-property)
-   ("C-c o n" . kam-org-insert-notes-drawer)
+  (("C-c o" . kam-org-map)
    :map org-mode-map
    ("<prior>" . kam-scroll-down)
    ("<next>" . kam-scroll-up)
@@ -2884,6 +2886,11 @@ Else, use the symbol at point."
    :map org-src-mode-map
    ("C-'" . org-edit-src-exit)
    ("C-<backspace>" . kam-control-backspace)
+   :map kam-org-map
+   ("l" . kam-consult-org-heading-link)
+   ("i" . org-toggle-item)
+   ("p" . org-set-property)
+   ("n" . kam-org-insert-notes-drawer)
    :repeat-map kam-org-repeat-map
    ("C-p" . org-previous-visible-heading)
    ("C-n" . org-next-visible-heading))
