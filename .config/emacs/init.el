@@ -4257,10 +4257,8 @@ the file is not under version control."
 
 (use-package ediff
   :ensure nil
-  ;; :hook ((ediff-before-setup . kam-ediff-store-layout)
-  ;;        (ediff-quit . kam-ediff-restore-layout))
-  :init
-
+  :hook ((ediff-before-setup . kam-ediff-store-layout)
+         (ediff-quit . kam-ediff-restore-layout))
   :custom
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain)
@@ -4272,22 +4270,21 @@ the file is not under version control."
   (ediff-custom-diff-options "--suppress-common-lines")
   (ediff-ignore-similar-regions t)
   :config  
-  ;; (defun kam-ediff-store-layout ()
-  ;;     "Store current frame window configuration as a frame parameter.
-  ;; Add this function to the `ediff-before-setup-hook'."
-  ;;     (let ((frame (selected-frame)))
-  ;;       (set-frame-parameter
-  ;;        frame
-  ;;        'kam-ediff-last-layout
-  ;;        (current-window-configuration frame))))
+  (defun kam-ediff-store-layout ()
+    "Store current frame window configuration as a frame parameter.
+  Add this function to the `ediff-before-setup-hook'."
+    (let ((frame (selected-frame)))
+      (set-frame-parameter
+       frame
+       'kam-ediff-last-layout
+       (current-window-configuration frame))))
 
-  ;;   (defun kam-ediff-restore-layout ()
-  ;;     "Restore the frame's window configuration.
-  ;; Add this function to the `ediff-quit-hook'."
-  ;;     (if-let* ((layout (frame-parameter (selected-frame) 'kam-ediff-last-layout)))
-  ;;         (set-window-configuration layout)
-  ;;       (message "No Ediff window configuration for the current frame")))
-  )
+  (defun kam-ediff-restore-layout ()
+    "Restore the frame's window configuration.
+  Add this function to the `ediff-quit-hook'."
+    (if-let* ((layout (frame-parameter (selected-frame) 'kam-ediff-last-layout)))
+        (set-window-configuration layout)
+      (message "No Ediff window configuration for the current frame"))))
 
 (use-package eldoc
   :ensure nil
