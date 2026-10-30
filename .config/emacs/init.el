@@ -3668,42 +3668,6 @@ The shell is renamed to make opening multiple shells easier."
 
 
 (advice-add 'kam-sudo-shell-command :after 'kam-clear-echo-area)
-
-(defun kam-completing-read (prompt collection &optional predicate require-match initial-input hist def inherit-input-method)
-  "Call `completing-read' but return the value from COLLECTION with PROMPT.
-
-simple wrapper around the `completing-read' function that assumes the
-collection is either an alist or a hashtable, and returns the _value_ of
-the choice, not the selected choice.
-
-An example function would look like: \(defun
-kam-test-function (selection) \(interactive (list (kam-completing-read
-\"Prompt: \" kam-test))) \(message \"%s\" selection))
-
-Where kam-test is an alist of choices mapped to values."
-  (cl-flet ((assoc-list-p (obj) (and (listp obj) (consp (car obj)))))
-    (let* ((choice
-            (completing-read prompt collection predicate require-match initial-input hist def inherit-input-method))
-           (results (cond
-                     ((hash-table-p collection) (gethash choice collection))
-                     ((assoc-list-p collection) (alist-get choice collection def nil 'equal))
-                     (t choice))))
-      (if (listp results) (first results) results))))
-
-(defun kam-rename-file (name)
-  "Apply NAME to the current file and rename its buffer."
-  (interactive
-   (list (read-string "Rename current file: " (file-relative-name (buffer-file-name)))))
-  (let ((file (buffer-file-name)))
-    (if (vc-registered file)
-        (vc-rename-file file name))
-    (set-visited-file-name name t t)))
-
-(defun kam-revert-buffer ()
-  "Revert the current buffer from its file without asking for confirmation."
-  (interactive)
-  (revert-buffer t t t))
-
 
 (use-package standard-themes
   :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
