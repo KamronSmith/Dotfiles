@@ -3908,8 +3908,9 @@ The shell is renamed to make opening multiple shells easier."
                 kam-mode-line-decolorify
                 " "
                 mode-line-format-right-align
-                kam-mode-line-display-time
-                ;; kam-mode-line-vc-branch      ;; disabled because causing excessive tramp load times
+                kam-mode-line-vc-branch
+                "   "
+                kam-mode-line-display-time      ;; disabled because causing excessive tramp load times
                 ))                              ;; not sure why
 
 
