@@ -4563,6 +4563,10 @@ The shell is renamed to make opening multiple shells easier."
 (use-package diff-hl
   :hook ((magit-post-refresh . diff-hl-magit-post-refresh)
          (prog-mode . diff-hl-mode))
+  :bind
+  (:map diff-hl-command-map
+        ("n" . diff-hl-next-hunk)
+        ("p" . diff-hl-previous-hunk))
   :custom
   (diff-hl-flydiff-delay 0.4)
   (diff-hl-show-staged-changes nil)
