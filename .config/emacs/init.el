@@ -2152,7 +2152,10 @@ This command works similarly to `kam-delete-window-dwim', just in reverse."
   (isearch-lazy-count-suffix-format nil)
   (isearch-repeat-on-direction-change t)
   (isearch-whitespace-regexp ".*?")
+  (isearch-regexp-lax-whitespace t)
   (isearch-allow-scroll 'unlimited)
+  (search-ring-max 1000)
+  (regexp-search-ring-max 1000)
   :config
   (defun kam-isearch-removed-failed-or-last-char ()
     "Remove failed part of search string, or last char if successful.
