@@ -1139,7 +1139,7 @@ Duplicates are not saved."
   :bind
   ("M-s M-m" . man)
   :custom
-  (Man-notify-method 'pushy)
+  (Man-notify-method 'aggressive)
   :config
   ;; (add-to-list 'display-buffer-alist
   ;;              '("\\*Man "
