@@ -79,7 +79,7 @@
   ([kam-m] . back-to-indentation)
   ("C-o" . kam-open-line-dwim)
   ("C-w" . kam-cut-dwim)
-  ("C-t" . kam-transpose-char)
+  ("C-t" . kam-transpose-chars)
   ("C-v" . undo)
   ("C-q" . quoted-insert)
   ("C-z" . repeat)
@@ -2664,9 +2664,9 @@ If called interactively without a prefix numeric argument, N is 1."
       (join-line)
     (backward-kill-word 1)))
 
-(defun kam-transpose-char (&optional arg)
-  "Interchange the characters behind the point."
-  (interactive "p")
+(defun kam-transpose-chars ()
+  "Interchange the two characters behind the point."
+  (interactive)
   (cond
    ((eolp) (transpose-chars 1))
    (t (transpose-chars -1) (forward-char 1))))
