@@ -4049,10 +4049,11 @@ The shell is renamed to make opening multiple shells easier."
   (magit-bury-buffer-function 'magit-restore-window-configuration)
   (magit-commit-show-diff t)
   (magit-format-file-function #'magit-format-file-nerd-icons)
+  (magit-save-repository-buffers 'dontask)
   :config
   (magit-auto-revert-mode)
   (magit-wip-mode)
-
+  
   (when (eq system-type 'darwin)
     (setq magit-git-executable "/opt/homebrew/bin/git"))
 
