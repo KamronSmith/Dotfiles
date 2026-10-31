@@ -3722,7 +3722,7 @@ The shell is renamed to make opening multiple shells easier."
     (standard-themes-with-colors
       (custom-set-faces
        ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
-       `(region ((,c :extend nil)))
+       `(region ((,c :extend t)))
        `(fringe ((,c :background ,bg-main)))
        `(cursor ((,c :foreground ,fg-main :background ,cursor)))
        `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
