@@ -403,7 +403,9 @@ To be used attached to `after-init-hook'."
 (use-package ibuffer
   :ensure nil
   :bind
-  ([remap list-buffers] . ibuffer)
+  (([remap list-buffers] . ibuffer)
+   ("C-c C-n" . ibuffer-forward-filter-group)
+   ("C-c C-p" . ibuffer-backward-filter-group))
   :hook ((ibuffer-mode . lin-mode)
          (ibuffer-mode . (lambda ()
                            (ibuffer-switch-to-saved-filter-groups "Default"))))
