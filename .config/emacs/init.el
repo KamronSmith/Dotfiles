@@ -245,8 +245,9 @@
   (scroll-bar-mode -1)
   (tooltip-mode -1)
   (global-so-long-mode 1)
-  (global-prettify-symbols-mode)
-  (global-font-lock-mode)
+  (global-prettify-symbols-mode 1)
+  (global-font-lock-mode 1)
+  (editorconfig-mode 1)
 
   (prefer-coding-system 'utf-8)
   (set-language-environment "UTF-8")
