@@ -4735,19 +4735,19 @@ the file is not under version control."
   (outline-indent-ellipsis " ⌄"))
 
 (use-package outline
-:ensure nil
-:hook ((outline-minor-mode . kam-outline-setup)
-       (emacs-lisp-mode . outline-minor-mode)
-       (conf-mode . outline-minor-mode)
-       (markdown-mode . outline-minor-mode)
-       (diff-mode . outline-minor-mode)))
-:config
-(defun kam-outline-setup ()
-(let* ((display-table (or buffer-display-table (make-display-table)))
-       (face-offset (* (face-id 'shadow) (ash 1 22)))
-       (value (vconcat (mapcar (lambda (c) (+ face-offset c)) " ⌄"))))
-  (set-display-table-slot display-table 'selective-display value)
-  (setq buffer-display-table display-table)))
+  :ensure nil
+  :hook ((outline-minor-mode . kam-outline-setup)
+         (emacs-lisp-mode . outline-minor-mode)
+         (conf-mode . outline-minor-mode)
+         (markdown-mode . outline-minor-mode)
+         (diff-mode . outline-minor-mode))
+  :config
+  (defun kam-outline-setup ()
+    (let* ((display-table (or buffer-display-table (make-display-table)))
+           (face-offset (* (face-id 'shadow) (ash 1 22)))
+           (value (vconcat (mapcar (lambda (c) (+ face-offset c)) " ⌄"))))
+      (set-display-table-slot display-table 'selective-display value)
+      (setq buffer-display-table display-table))))
 
 (use-package treesit-fold
   :commands (treesit-fold-close
