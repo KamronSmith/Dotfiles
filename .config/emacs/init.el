@@ -2858,6 +2858,7 @@ Else, use the symbol at point."
    :map org-mode-map
    ("<prior>" . kam-scroll-down)
    ("<next>" . kam-scroll-up)
+   ("C-<return>" . org-metaup)
    ("C-<up>" . org-previous-visible-heading)
    ("C-<down>" . org-next-visible-heading)
    ("C-<left>" . kam-prev-buffer)
@@ -2887,6 +2888,7 @@ Else, use the symbol at point."
    ("C-x k" . kam-kill-current-buffer)
    ("C-x n" . kam-narrow-or-widen-dwim)
    ("C-c C-x C-b" . org-tree-to-indirect-buffer)
+   ("C-c <kam-i>" . org-toggle-item)
    :map org-src-mode-map
    ("C-'" . org-edit-src-exit)
    ("C-<backspace>" . kam-control-backspace)
@@ -2898,6 +2900,7 @@ Else, use the symbol at point."
    :repeat-map kam-org-repeat-map
    ("C-p" . org-previous-visible-heading)
    ("C-n" . org-next-visible-heading))
+  
   :custom
   (org-auto-align-tags nil)
   (org-M-RET-may-split-line nil)
