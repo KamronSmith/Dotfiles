@@ -36,12 +36,12 @@
   (add-to-list 'display-buffer-alist
                '("\\*Compile-Log\\*"
                  (display-buffer-no-window)
-                 (allow-no-window . t))))
+                 (allow-no-window . t)))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "\\*Async-native-compile-log\\*" t)
     (add-to-list 'consult-buffer-filter "\\*Native-compile-Log\\*" t)
-    (add-to-list 'consult-buffer-filter "\\*Compile-Log\\*" t))
+    (add-to-list 'consult-buffer-filter "\\*Compile-Log\\*" t)))
 
 (use-package exec-path-from-shell
   :init
