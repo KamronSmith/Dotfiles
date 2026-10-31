@@ -365,5 +365,17 @@ WALLPAPER should be a fully qualified path to an image file."
   (tab-rename "󰿎 media")
   (dired kam-media-directory))
 
+;;; VPN
+
+(defun kam-vpn-connect ()
+  "Connect to the VPN."
+  (interactive)
+  (shell-command "mullvad connect"))
+
+(defun kam-vpn-disconnect ()
+  "Disconnect from the VPN."
+  (interactive)
+  (shell-command "mullvad disconnect"))
+
 (provide 'kam-os)
 ;;; kam-os.el ends here
