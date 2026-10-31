@@ -28,4 +28,5 @@ telnet
 ftp
 mysql*
 awscli
+python3-impacket
 crackmapexec
