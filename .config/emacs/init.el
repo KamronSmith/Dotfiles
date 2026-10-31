@@ -3701,7 +3701,7 @@ The shell is renamed to make opening multiple shells easier."
 
   (defvar kam-standard-themes-palette-dark-overrides
     '((fg-prompt cyan)
-      ;; (bg-main "#181818")   tsoding
+      (bg-main "#181818") ;;   tsoding
       (bg-prompt unspecified)
       (bg-prose-block-delimiter "#312f34")
       (bg-prose-block-contents "#29272c")
