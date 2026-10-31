@@ -3839,7 +3839,11 @@ The shell is renamed to make opening multiple shells easier."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(ghostel-mode nerd-icons-devicon "nf-dev-terminal" :face nerd-icons-purple))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(Man-mode nerd-icons-faicon "nf-fa-info" :face nerd-icons-purple)))
+               '(Man-mode nerd-icons-faicon "nf-fa-info" :face nerd-icons-purple))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(reb-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(reb-lisp-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple)))
 
 (use-package nerd-icons-dired
   :hook
