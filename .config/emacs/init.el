@@ -3811,7 +3811,7 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package rainbow-mode
   :hook ((prog-mode . rainbow-mode)
-         (conf-mode . rainbox-mode)))
+         (conf-mode . rainbow-mode)))
 
 (use-package pulsar
   :hook ((next-error . pulsar-pulse-line)
