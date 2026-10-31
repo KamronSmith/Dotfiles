@@ -24,7 +24,7 @@ hl.window_rule({
     match = { class = "^(emacs)$" },
     workspace = 2,
     opacity = "1.0 1.0",
-    fullscreen_state = "3"
+    -- fullscreen_state = "3"
 })
 
 hl.window_rule({
