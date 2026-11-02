@@ -4619,7 +4619,7 @@ the file is not under version control."
   :ensure nil
   :hook (markdown-ts-mode . kam-markdown-ts-setup)
   :custom
-  (markdown-ts-hide-markup t)
+  (markdown-ts-hide-markup nil)
   :config
   (require 'markdown-ts-mode-x)
   (defun kam-markdown-ts-setup ()
