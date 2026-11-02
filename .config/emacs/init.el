@@ -4433,7 +4433,7 @@ the file is not under version control."
   (compilation-scroll-output 'first-error)
   (compilation-max-output-line-length nil)
   (compile-command "")
-  (compilation-skip-threshold 2)
+  (compilation-skip-threshold 1)
   :config
   (defun kam-compile-make-interactive ()
     "Advise `compile' so that it becomes interactive."
