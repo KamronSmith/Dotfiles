@@ -2066,6 +2066,11 @@ Used in `popper-open-popup-hook'."
   (add-to-list 'popper-reference-buffers
                (list "consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)")))
 
+(use-package goto-chg
+  :bind
+  ("C-M-<" . goto-last-change)
+  ("C-M->" . goto-last-change-reverse))
+
 ;; (defun kam-tab-new-tab-one-command ()
 ;;   "Create a new tab and and run a command in the newly created tab."
 ;;   (interactive)
