@@ -44,6 +44,8 @@ if [[ $OSTYPE == 'linux-gnu' ]]; then
 
     declare -a system_packages
     mapfile -t system_packages < "$PWD"/arch_system_packages.txt
+    # We don't auto install arch_foreign_packages, probably for the best
+    # You should go through it and install whatever packages you want manually
 
     echo 'Updating system package databases and upgrading system packages'
     sudo pacman -Syu --noconfirm
