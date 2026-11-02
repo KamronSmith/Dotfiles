@@ -2670,7 +2670,8 @@ This command can be followed by the standard `yank-pop' (default is bound to \\[
       (delete-region (region-beginning) (region-end))
     (delete-region (line-beginning-position) (line-end-position)))
   (yank)
-  (setq this-command 'yank))
+  (setq this-command 'yank)
+  (kam-indent-dwim))
 
 (defun kam-kill-whole-line ()
   "Kill the whole line, regardless of the cursor position within the line.
