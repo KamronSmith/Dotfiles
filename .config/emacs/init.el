@@ -355,8 +355,8 @@ To be used attached to `after-init-hook'."
   :config
   (defun kam-minibuffer-setup ()
     "Function for settings as the minibuffer starts."
-    (setq gc-cons-threshold most-positive-fixnum
-          truncate-lines nil)
+    (setq gc-cons-threshold most-positive-fixnum)
+    (setq-local truncate-lines t)
     ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
     (buffer-face-mode))
