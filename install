@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+#
+# Author: Kamron Smith
+# Date: Nov 02 2026
+#
+# install my dotfiles
+# make sure you run the script inside the dotfiles directory
+# 
+# This install script presupposes you are either on an arch system
+# or a macOS system. If you are not on either, good luck
+
+if [[ "$EUID" != 0 ]]; then
+    echo "Please run this script with sudo or as root" >&2
+    exit 1
+fi
+
+nuke_directory_contents_if_exists () {
+    local dir=$1
+    # This is a useless check but just to be safe
+    if [[ -d "$dir" ]]; then
+        rm -rfv "$dir/*" --preserve-root
+    fi
+}
+
+prepare_config_dir_for_stow () {
+    local -a dirs
+    local config_dir="$PWD/.config"
+
+    shopt -s nullglob
+    for dir in "$config_dir"/*; do
+        if [[ -d "$file" ]]; then
+            dirs+="$file"
+        fi
+    done
+
+    for dir in dirs; do
+        if [[ -d "~/.config/$dir" ]]; then
+            nuke_directory_contents_if_exists "~/.config/$dir"
+        fi
+    done
+}
+
+if [[ $OSTYPE == 'linux-gnu' ]]; then
+
+    declare -a system_packages
+    mapfile -t system_packages < "$PWD"/arch_system_packages.txt
+
+    echo 'Updating system package databases and upgrading system packages'
+    sudo pacman -Syu --noconfirm
+
+    echo 'Installing packages'
+    sudo pacman -S --needed -noconfirm "${system_packages[@]}"
+
+    prepare_config_dir_for_stow
+
+    stow "$PWD"
+fi
+
+defaults () {
+    echo defaults "$@"
+    command defaults "$@"
+}
+
+if [[ -d ~/Library && $OSTYPE == 'darwin'* ]]; then
+    echo 'Installing Mac keyboard shortcuts'
+    mkdir -pv ~/Library/KeyBindings
+    ln -sv "$PWD/DefaultKeyBinding.dict" \
+       ~/Library/KeyBindings/DefaultKeyBinding.dict
+fi
+
+if defaults read com.apple.finder &>/dev/null; then
+    echo 'Configuring macOS'
+
+    chflags nohidden ~/Library
+
+    # Disable autocorrect
+    defaults write -g NSAutomaticSpellingCorrectionEnabled -bool false
+
+    # Disable auto-capitalization
+    defaults write -g NSAutomaticCapitalizationEnabled -bool false
+
+    # Set a shorter delay until key repeat
+    defaults write -g InitialKeyRepeat -int 15
+
+    # Set a fast keyboard repeat rate
+    defaults write -g KeyRepeat -int 2
+
+    # Reenable key repeat for pressing and holding keys
+    defaults write -g ApplePressAndHoldEnabled -bool false
+
+    # Show all extensions in finder
+    defaults write -g AppleShowAllExtensions -bool true
+
+    # Save to disk, not icloud by default
+    defaults write -g NSDocumentSaveNewDocumentsToCloud -bool false
+
+    # Disable smart quotes and dashes
+    defaults write -g NSAutomaticQuoteSubstitutionEnabled -bool false
+    defaults write -g NSAutomaticDashSubstitutionEnabled -bool false
+
+    # enable full keyboard access for all controls
+    defaults write -g AppleKeyboardUIMode -int 3
+
+    # show full posix paths in finder
+    defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+
+    # show status bar in finder
+    defaults write com.apple.finder ShowStatusBar -bool true
+
+    # new finder windows start at home dir
+    defaults write com.apple.finder NewWindowTarget -string PfHm
+    defaults write com.apple.finder NewWindowTargetPath -string "file:///$HOME"
+
+    # finder only search current dir
+    defaults write com.apple.finder FXDefaultSearchScope -string SCcf
+
+    # dock disable recents
+    defaults write com.apple.dock show-recents -bool false
+
+    # spotlight don't send stuff to apple
+    defaults write com.apple.lookup lookupEnabled -dict-add suggestionsEnabled -bool no
+
+    # spotlight don't index mounted volumes
+    echo 'Sudo needed to update Spotlight settings'
+    sudo defaults write /.Spotlight-V100/VolumeConfiguration \
+         Exclusions -array /Volumes
+
+    echo 'Done: killing Dock and Finder'
+    killall Dock Finder
+fi
+
+true
