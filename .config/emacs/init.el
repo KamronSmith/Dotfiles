@@ -3782,8 +3782,7 @@ The shell is renamed to make opening multiple shells easier."
        `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
        `(line-number-current-line ((,c :foreground ,cursor :background ,bg-main))))))
 
-  (standard-themes-load-theme 'standard-dark)
-  (kam-set-custom-faces))
+  (standard-themes-load-theme 'standard-dark))
 
 (use-package ef-themes)
 
