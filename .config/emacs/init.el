@@ -3241,6 +3241,7 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   :config
   (defvar kam-project-switch-commands-to-remove
     '((project-find-dir "Dired" "d")
+      (project-find-dir "Find directory")
       (project-find-regexp "Find regexp")
       (project-vc-dir "VC-Dir")
       (project-eshell "Eshell"))
