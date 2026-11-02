@@ -266,6 +266,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (comment-empty-lines t)
   (comment-multi-line t)
   (comment-style 'multi-line)
+  (view-read-only t)
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
