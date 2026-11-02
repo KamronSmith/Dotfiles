@@ -1,8 +1,11 @@
+parrot
+tasks
 \.git
 \.gitignore
 \.luarc\.json
-parrot
-installed_packages\.txt
+arch_system_packages\.txt
+arch_foreign_packages\.txt
 TAGS
-tools.txt
-tasks
+DefaultKeyBinding\.dict
+README\.md
+install\.sh
