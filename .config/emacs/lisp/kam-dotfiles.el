@@ -15,9 +15,15 @@
   :type 'string
   :group 'kam-dotfiles)
 
-(defcustom kam-dotfiles-installed-packages-file
-  (expand-file-name "installed_packages.txt" kam-dotfiles-directory)
+(defcustom kam-dotfiles-installed-system-packages-file
+  (expand-file-name "arch_system_packages.txt" kam-dotfiles-directory)
   "A file listing all of the explicitly installed packages on the system."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-dotfiles-installed-foreign-packages-file
+  (expand-file-name "arch_foreign_packages.txt" kam-dotfiles-directory)
+  "A file listing all of the explicitly installed foreign packages on the system."
   :type 'string
   :group 'kam-os)
 

@@ -88,8 +88,16 @@ And the way I want to use a computer.")
   (split-string (shell-command-to-string "pacman -Qq") "\n"))
 
 (defun kam-os--installed-packages-explicitly ()
-  "Return all explicitly installed packages as a list of strings."
-  (split-string (shell-command-to-string "pacman -Qe | awk '{print $1}'")))
+  "Return all explicitly installed packages as a list of strings.
+
+This does not include foreign installed packages, such as the packages installed from the AUR."
+  (split-string (shell-command-to-string "pacman -Qneq | awk '{print $1}'")))
+
+(defun kam-os--installed-foreign-packages-explicitly ()
+  "Return all explicitly installed foreign packages as a list of strings.
+
+This includes packages from the AUR."
+  (split-string (shell-command-to-string "pacman -Qqme | awk '{print $1}'")))
 
 (defun kam-os--list-package-dependencies (packages)
   "Return the dependencies of PACKAGES as a list of strings."
@@ -110,16 +118,23 @@ PACKAGES should be a list of strings."
                               default)))
 
 (defun kam-os--write-explicitly-installed-packages-to-file ()
-  "Write all explicitly installed packages to `kam-dotfiles-installed-packages-file'."
-  (with-current-buffer (find-file-noselect kam-dotfiles-installed-packages-file t)
+  "Write all explicitly installed packages to associated files.
+They will be written to `kam-dotfiles-installed-system-packages-file' and `kam-dotfiles-installed-foreign-packages-file'"
+  (with-current-buffer (find-file-noselect kam-dotfiles-installed-system-packages-file t)
     (erase-buffer)
     (insert (mapconcat #'identity (kam-os--installed-packages-explicitly) "\n"))
-    (save-buffer)))
+    (save-buffer)
+    (kill-buffer))
+  (with-current-buffer (find-file-noselect kam-dotfiles-installed-foreign-packages-file t)
+    (erase-buffer)
+    (insert (mapconcat #'identity (kam-os--installed-foreign-packages-explicitly) "\n"))
+    (save-buffer)
+    (kill-buffer)))
 
 ;;;###autoload
 (defun kam-os-package-install ()
   "Install one or multiple system packages using Pacman.
-Additionally, save the updated list of installed packages in `kam-dotfiles-installed-packages-file'."
+Additionally, save the updated list of installed packages in `kam-dotfiles-installed-system-packages-file'."
   (interactive)
   (let* ((default-directory "/sudo::")
          (chosen-package (kam-os--choose-package (kam-os--available-packages)))
@@ -134,7 +149,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 ;;;###autoload
 (defun kam-os-package-uninstall ()
   "Remove one or more system packages and all of their unused dependencies.
-Additionally, save the updated list of installed packages in `kam-dotfiles-installed-packages-file'."
+Additionally, save the updated list of installed packages in `kam-dotfiles-installed-system-packages-file'."
   (interactive)
   (let* ((default-directory "/sudo::")
          (chosen-package (kam-os--choose-package (kam-os--installed-packages)))
