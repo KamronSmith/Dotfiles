@@ -34,6 +34,8 @@ ln -sv $dotfiles_dir/.config/kitty/kitty.conf ~/.config/kitty/kitty.conf
 ln -sv $dotfiles_dir/.config/emacs/early-init.el ~/.config/emacs/early-init.el
 ln -sv $dotfiles_dir/.config/emacs/parrot-init.el ~/.config/emacs/init.el
 ln -sv $dotfiles_dir/.bashrc $HOME/.bashrc
+ln -sv $dotfiles_dir/.bash_profile $HOME/.bash_profile
+ln -sv $dotfiles_dir/.bash_completions $HOME/.bash_completions
 ln -sv $dotfiles_dir/.inputrc $HOME/.inputrc
 
 echo -e "Installing programs..."

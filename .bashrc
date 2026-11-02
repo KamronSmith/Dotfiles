@@ -27,4 +27,6 @@ alias nc="ncat"
 
 force_color_prompt=yes
 
+. ~/.bash_completion
+
 export PATH=~/.local/bin/:$PATH
