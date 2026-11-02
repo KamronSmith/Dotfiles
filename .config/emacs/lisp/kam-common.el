@@ -191,7 +191,8 @@ Where kam-test is an alist of choices mapped to values."
 (defun kam-revert-buffer ()
   "Revert the current buffer from its file without asking for confirmation."
   (interactive)
-  (revert-buffer t t t))
+  (revert-buffer t t t)
+  (message "Reverted buffer `%s'" (buffer-name (current-buffer))))
 
 (provide 'kam-common)
 ;;; kam-common.el ends here

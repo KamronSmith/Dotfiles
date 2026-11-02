@@ -168,6 +168,8 @@
         ("w" . occur-edit-mode))
   (:map goto-map
         ("M-c" . goto-char))
+  (:map ctl-x-x-map
+        ("g" . kam-revert-buffer))
   :custom
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
