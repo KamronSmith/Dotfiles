@@ -477,6 +477,9 @@ To be used attached to `after-init-hook'."
   ("C-<next>" . scroll-other-window)
   ("C-<prior>" . scroll-other-window-down)
   ([remap quit-window] . kam-quit-window)
+  (:repeat-map kam-repeat-map
+               ("<left>" . kam-prev-buffer)
+               ("<right>" . kam-next-buffer))
   :custom
   ;; (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'horizontal)
@@ -545,12 +548,6 @@ To be used attached to `after-init-hook'."
       (window-height . 0.45)
       (window-parameters . ((mode-line-format . none))))))
   :config
-  (defvar-keymap kam-buffer-repeat-map
-    :doc "Buffer repeat map"
-    :repeat t
-    "<left>" 'kam-prev-buffer
-    "<right>" 'kam-next-buffer)
-
   (defun kam-split-window-conservatively (&optional window)
     "Split WINDOW only if absolutely necessary.
 Only split if there is no split, and only split into left and right windows."
