@@ -4445,10 +4445,10 @@ the file is not under version control."
                '("\\*compilation\\*"
                  (display-buffer-reuse-window
                   ;; kam-display-buffer-in-mru-window
-                  display-buffer-use-least-recent-window
-                  display-buffer-in-direction
+                  ;; display-buffer-use-least-recent-window
+                  ;; display-buffer-in-direction
                   )
-                 (direction . right)
+                 ;; (direction . right)
                  ;; (window-width . 0.50)
                  ;; (inhibit-same-window . t)
                  ;; (window-height . 0.35)
