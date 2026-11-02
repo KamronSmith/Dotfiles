@@ -163,7 +163,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   ;; ("C-M-e" . sp-end-of-sexp)
   ("C-M-e" . kam-end-of-sexp)
   ("C-M-f" . forward-sexp)
-  ("C-M-i" . kam-insert-new-line-above)
   ("C-M-k" . kill-sexp)
   ("C-M-n" . forward-list)
   ("C-M-p" . backward-list)
@@ -286,14 +285,14 @@ Enable that mode to its keybindings take over those of the major mode.")
   (set-default-coding-systems 'utf-8)
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
-
+  
   (remq 'process-kill-buffer-query-function
         kill-buffer-query-functions)
-
+  
   (setenv "GPG_AGENT_INFO" nil)
 
   (defun kam-initial-setup ()
-    "Sets up basic OS settings and if in the terminal.
+    "Set up basic OS settings and if in the terminal.
 To be used attached to `after-init-hook'."
     (cond
      ((eq system-type 'gnu/linux)
@@ -2877,7 +2876,7 @@ Else, use the symbol at point."
   (let* ((sym (or (when (region-active-p) 
                     (buffer-substring-no-properties (region-beginning) (region-end)))
                   (thing-at-point 'symbol)))
-         (to-string (read-string (format "query replace %s with: " sym))))
+         (to-string (read-string (format "Query replace %s with: " sym))))
     (deactivate-mark)
     (query-replace sym to-string)))
 
