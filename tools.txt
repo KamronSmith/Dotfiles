@@ -29,4 +29,6 @@ ftp
 mysql*
 awscli
 python3-impacket
+ripgrep
+fd-find
 crackmapexec
