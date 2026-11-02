@@ -104,6 +104,16 @@ See `kam-theme-update-custom-faces'.")
 
 (defvar-local kam-decolorify--keyword-cookie nil)
 
+(defvar-local kam-decolorify--heading-0-cookie nil)
+
+(defvar-local kam-decolorify--heading-1-cookie nil)
+
+(defvar-local kam-decolorify--heading-2-cookie nil)
+
+(defvar-local kam-decolorify--heading-3-cookie nil)
+
+(defvar-local kam-decolorify--heading-4-cookie nil)
+
 (defvar-local kam-decolorify-cookies nil
   "List of all `kam-decolorify-mode' cookies")
 
@@ -148,7 +158,17 @@ The intended effect is a much less colorful typing and programming experience."
     (setq kam-decolorify--keyword-cookie (face-remap-add-relative 'font-lock-keyword-face :foreground fg-main :weight 'regular))
     (push kam-decolorify--keyword-cookie kam-decolorify-cookies)
     (setq kam-decolorify--type-cookie (face-remap-add-relative 'font-lock-type-face :foreground keyword :weight 'regular))
-    (push kam-decolorify--type-cookie kam-decolorify-cookies)))
+    (push kam-decolorify--type-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--heading-0-cookie (face-remap-add-relative 'modus-themes-heading-0 :foreground fg-main))
+    (push kam-decolorify--heading-0-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--heading-1-cookie (face-remap-add-relative 'modus-themes-heading-1 :foreground fg-main))
+    (push kam-decolorify--heading-1-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--heading-2-cookie (face-remap-add-relative 'modus-themes-heading-2 :foreground fg-main))
+    (push kam-decolorify--heading-2-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--heading-3-cookie (face-remap-add-relative 'modus-themes-heading-3 :foreground fg-main))
+    (push kam-decolorify--heading-3-cookie kam-decolorify-cookies)
+    (setq kam-decolorify--heading-4-cookie (face-remap-add-relative 'modus-themes-heading-4 :foreground fg-main))
+    (push kam-decolorify--heading-4-cookie kam-decolorify-cookies)))
 
 (defun kam-decolorify--turn-on-colors ()
   "Turn on the colors."
