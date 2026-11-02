@@ -276,6 +276,8 @@ Enable that mode to its keybindings take over those of the major mode.")
   (global-so-long-mode 1)
   (global-prettify-symbols-mode 1)
   (global-font-lock-mode 1)
+  (global-visual-line-mode 1)
+  (global-visual-wrap-prefix-mode 1)
   (blink-cursor-mode 1)
   (editorconfig-mode 1)
   (kam-override-mode 1)
@@ -354,12 +356,10 @@ To be used attached to `after-init-hook'."
   (defun kam-minibuffer-setup ()
     "Function for settings as the minibuffer starts."
     (setq gc-cons-threshold most-positive-fixnum
-          truncate-lines t)
+          truncate-lines nil)
     ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
-    (pulsar-pulse-line)
-    (buffer-face-mode)
-    (centered-cursor-mode -1))
+    (buffer-face-mode))
 
   (defun kam-minibuffer-exit ()
     "Function for settings as the minibuffer exits."
