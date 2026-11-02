@@ -37,7 +37,7 @@ ln -sv $dotfiles_dir/.bashrc $HOME/.bashrc
 ln -sv $dotfiles_dir/.inputrc $HOME/.inputrc
 
 echo -e "Installing programs..."
-sudo apt install $(cat $dotfiles_dir/tools.txt | tr "\n" " ") -y
+sudo apt install $(cat $dotfiles_dir/parrot/tools.txt | tr "\n" " ") -y
 
 wget https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.appimage -O $bin_dir/nvim
 sudo chmod a+x $bin_dir/nvim

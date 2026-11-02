@@ -1,6 +1,7 @@
 \.git
 \.gitignore
 \.luarc\.json
+parrot
 installed_packages\.txt
 TAGS
 tools.txt
