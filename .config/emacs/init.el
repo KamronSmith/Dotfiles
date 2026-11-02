@@ -170,6 +170,9 @@
         ("M-c" . goto-char))
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
+  (:map kam-override-mode-map
+        ("C-M-i" . kam-indent-dwim)
+        ("M-r" . kam-duplicate-line-or-region))
   :custom
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
@@ -302,6 +305,16 @@ To be used attached to `after-init-hook'."
     "M-n" 'kam-next-error-no-select
     "M-p" 'kam-previous-error-no-select)
 
+  (defvar-keymap kam-override-mode-map
+    :doc "Keymap for `kam-override-mode'.
+Enable that mode to its keybindings take over those of the major mode.")
+
+  (define-minor-mode kam-override-mode
+    "Enable the `kam-override-mode-map'."
+    :init-value nil
+    :global t
+    :keymap kam-override-mode-map)
+  
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
