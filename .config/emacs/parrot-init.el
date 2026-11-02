@@ -45,6 +45,20 @@
 
 (use-package emacs
   :ensure nil
+  (defvar-keymap kam-repeat-map
+    :doc "General repeat map"
+    :repeat t)
+
+  (defvar-keymap kam-override-mode-map
+    :doc "Keymap for `kam-override-mode'.
+Enable that mode to its keybindings take over those of the major mode.")
+
+  (define-minor-mode kam-override-mode
+    "Enable the `kam-override-mode-map'."
+    :init-value nil
+    :global t
+    :keymap kam-override-mode-map)
+  
   :hook ((after-init . kam-initial-setup)
          (after-init . blink-cursor-mode))
   :bind
@@ -87,8 +101,8 @@
   ("M-m" . kam-mark-line)
   ("M-g M-n" . next-error-no-select)
   ("M-g M-p" . previous-error-no-select)
-  ("M-n" . kam-forward-paragraph)
-  ("M-p" . kam-backward-paragraph)
+  ("M-n" . forward-paragraph)
+  ("M-p" . backward-paragraph)
   ("M-q" . fill-paragraph)
   ("M-t" . kam-transpose-words)
   ("M-u" . upcase-dwim)
@@ -135,7 +149,6 @@
   ;; ("C-M-e" . sp-end-of-sexp)
   ("C-M-e" . kam-end-of-sexp)
   ("C-M-f" . forward-sexp)
-  ("C-M-i" . kam-insert-new-line-above)
   ("C-M-k" . kill-sexp)
   ("C-M-n" . forward-list)
   ("C-M-p" . backward-list)
@@ -151,7 +164,17 @@
   (:map occur-mode-map
         ("w" . occur-edit-mode))
   (:map goto-map
-        ("M-c" . goto-char))
+        ("M-c" . goto-char)
+        ("M-n" . next-error-no-select)
+        ("M-p" . previous-error-no-select))
+  (:map kam-override-mode-map
+        ("C-M-i" . kam-indent-dwim)
+        ("M-r" . duplicate-dwim))
+  (:repeat-map kam-repeat-map
+               ("n" . next-error-no-select)
+               ("p" . previous-error-no-select)
+               ("M-n" . next-error-no-select)
+               ("M-p" . previous-error-no-select))
   :custom
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
@@ -218,14 +241,24 @@
   (find-ls-options '("-exec ls -ldh {} +" . "-ldh"))
   (redisplay-skip-fontification-on-input t)
   (yank-transform-functions '(string-chop-newline))
+  (comment-empty-lines t)
+  (comment-multi-line t)
+  (comment-style 'multi-line)
+  (view-read-only t)
+  (duplicate-region-final-position -1)
+  (duplicate-line-final-position -1)
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
   (tooltip-mode -1)
   (global-so-long-mode 1)
-  (global-prettify-symbols-mode)
-  (global-font-lock-mode)
+  (global-prettify-symbols-mode 1)
+  (global-font-lock-mode 1)
+  (global-visual-line-mode 1)
+  (blink-cursor-mode 1)
+  (editorconfig-mode 1)
+  (kam-override-mode 1)
 
   (prefer-coding-system 'utf-8)
   (set-language-environment "UTF-8")
@@ -286,8 +319,8 @@ To be used attached to `after-init-hook'."
   :config
   (defun kam-minibuffer-setup ()
     "Function for settings as the minibuffer starts."
-    (setq gc-cons-threshold most-positive-fixnum
-          truncate-lines t)
+    (setq gc-cons-threshold most-positive-fixnum)
+    (setq-local truncate-lines t)
     ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
     (buffer-face-mode))
@@ -2457,10 +2490,10 @@ The shell is renamed to make opening multiple shells easier."
                '("\\*compilation\\*"
                  (display-buffer-reuse-window
                   ;; kam-display-buffer-in-mru-window
-                  display-buffer-use-least-recent-window
-                  display-buffer-in-direction
+                  ;; display-buffer-use-least-recent-window
+                  ;; display-buffer-in-direction
                   )
-                 (direction . right)
+                 ;; (direction . right)
                  ;; (window-width . 0.50)
                  ;; (inhibit-same-window . t)
                  ;; (window-height . 0.35)
