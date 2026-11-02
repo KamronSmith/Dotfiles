@@ -61,8 +61,7 @@
 
 (use-package emacs
   :ensure nil
-  :hook ((after-init . kam-initial-setup)
-         (after-init . blink-cursor-mode))
+  :hook ((after-init . kam-initial-setup))
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
   ("TAB" . nil)
@@ -252,6 +251,7 @@
   (global-so-long-mode 1)
   (global-prettify-symbols-mode 1)
   (global-font-lock-mode 1)
+  (blink-cursor-mode 1)
   (editorconfig-mode 1)
 
   (prefer-coding-system 'utf-8)
