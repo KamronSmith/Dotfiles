@@ -2698,6 +2698,18 @@ If called interactively without a prefix numeric argument, N is 1."
   (forward-word -1)
   (transpose-words 1))
 
+(defun kam-indent-dwim ()
+  "Indent the current defun in `prog-mode' or paragraph in `text-mode'."
+  (interactive)
+  (save-excursion
+    (cond
+     ((derived-mode-p 'prog-mode)
+      (mark-defun))
+     ((derived-mode-p 'text-mode)
+      (mark-paragraph)))
+    (indent-for-tab-command)
+    (deactivate-mark)))
+
 (defun kam-kill-sexp (&optional arg interactive)
   "Kill the sexp following point. With ARG, do it that many times."
   (interactive "p\nd")
