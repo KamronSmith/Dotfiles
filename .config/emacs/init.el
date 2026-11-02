@@ -324,24 +324,6 @@ To be used attached to `after-init-hook'."
   (keymap-global-set "C-\"" 'kam-insert-quote)
   (keymap-global-set "M-\"" 'kam-insert-quote)
 
-  (defvar-keymap kam-repeat-map
-    :doc "General repeat map"
-    :repeat t
-    "n" 'kam-next-error-no-select
-    "p" 'kam-previous-error-no-select
-    "M-n" 'kam-next-error-no-select
-    "M-p" 'kam-previous-error-no-select)
-
-  (defvar-keymap kam-override-mode-map
-    :doc "Keymap for `kam-override-mode'.
-Enable that mode to its keybindings take over those of the major mode.")
-
-  (define-minor-mode kam-override-mode
-    "Enable the `kam-override-mode-map'."
-    :init-value nil
-    :global t
-    :keymap kam-override-mode-map)
-  
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
