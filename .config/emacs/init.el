@@ -61,6 +61,21 @@
 
 (use-package emacs
   :ensure nil
+  :init
+  (defvar-keymap kam-repeat-map
+    :doc "General repeat map"
+    :repeat t)
+
+  (defvar-keymap kam-override-mode-map
+    :doc "Keymap for `kam-override-mode'.
+Enable that mode to its keybindings take over those of the major mode.")
+
+  (define-minor-mode kam-override-mode
+    "Enable the `kam-override-mode-map'."
+    :init-value nil
+    :global t
+    :keymap kam-override-mode-map)
+  
   :hook ((after-init . kam-initial-setup))
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
@@ -100,8 +115,6 @@
   ("M-i" . kam-insert-new-line-below)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
-  ("M-g M-n" . next-error-no-select)
-  ("M-g M-p" . previous-error-no-select)
   ("M-n" . kam-forward-paragraph)
   ("M-p" . kam-backward-paragraph)
   ("M-q" . fill-paragraph)
@@ -166,12 +179,19 @@
   (:map occur-mode-map
         ("w" . occur-edit-mode))
   (:map goto-map
-        ("M-c" . goto-char))
+        ("M-c" . goto-char)
+        ("M-n" . next-error-no-select)
+        ("M-p" . previous-error-no-select))
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
+  (:map kam-repeat-map
+        ("n" . kam-next-error-no-select)
+        ("p" . kam-previous-error-no-select)
+        ("M-n" . kam-next-error-no-select)
+        ("M-p" . kam-previous-error-no-select))
   (:map kam-override-mode-map
         ("C-M-i" . kam-indent-dwim)
-        ("M-r" . kam-duplicate-line-or-region))
+        ("M-r" . duplicate-dwim))
   :custom
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
@@ -253,6 +273,7 @@
   (global-font-lock-mode 1)
   (blink-cursor-mode 1)
   (editorconfig-mode 1)
+  (kam-override-mode 1)
 
   (prefer-coding-system 'utf-8)
   (set-language-environment "UTF-8")
