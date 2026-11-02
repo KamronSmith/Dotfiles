@@ -184,14 +184,14 @@ Enable that mode to its keybindings take over those of the major mode.")
         ("M-p" . previous-error-no-select))
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
-  (:map kam-repeat-map
-        ("n" . kam-next-error-no-select)
-        ("p" . kam-previous-error-no-select)
-        ("M-n" . kam-next-error-no-select)
-        ("M-p" . kam-previous-error-no-select))
   (:map kam-override-mode-map
         ("C-M-i" . kam-indent-dwim)
         ("M-r" . duplicate-dwim))
+  (:repeat-map kam-repeat-map
+        ("n" . next-error-no-select)
+        ("p" . previous-error-no-select)
+        ("M-n" . next-error-no-select)
+        ("M-p" . previous-error-no-select))
   :custom
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
