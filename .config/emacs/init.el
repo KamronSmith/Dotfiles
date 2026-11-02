@@ -2122,13 +2122,7 @@ Used in `popper-open-popup-hook'."
     (interactive)
     (if tab-bar-show
         (setopt tab-bar-show nil)
-      (setopt tab-bar-show t)))
-
-  (defvar-keymap kam-tab-bar-repeat-map
-    :repeat t
-    :doc "Repeat map for tabs"
-    "p" 'tab-previous
-    "n" 'tab-next))
+      (setopt tab-bar-show t))))
 
 (defun kam-keyboard-quit-dwim ()
   "A better keyboard quit."
