@@ -158,27 +158,6 @@ MODE is a symbol that represents an active minor mode. See
       (completing-read "Backup version: " backup-files nil t)
     (user-error "No backup files available for file %s" (buffer-file-name))))
 
-(defun kam-completing-read (prompt collection &optional predicate require-match initial-input hist def inherit-input-method)
-  "Call `completing-read' but return the value from COLLECTION with PROMPT.
-
-simple wrapper around the `completing-read' function that assumes the
-collection is either an alist or a hashtable, and returns the _value_ of
-the choice, not the selected choice.
-
-An example function would look like: \(defun
-kam-test-function (selection) \(interactive (list (kam-completing-read
-\"Prompt: \" kam-test))) \(message \"%s\" selection))
-
-Where kam-test is an alist of choices mapped to values."
-  (cl-flet ((assoc-list-p (obj) (and (listp obj) (consp (car obj)))))
-    (let* ((choice
-            (completing-read prompt collection predicate require-match initial-input hist def inherit-input-method))
-           (results (cond
-                     ((hash-table-p collection) (gethash choice collection))
-                     ((assoc-list-p collection) (alist-get choice collection def nil 'equal))
-                     (t choice))))
-      (if (listp results) (first results) results))))
-
 (defun kam-rename-file (name)
   "Apply NAME to the current file and rename its buffer."
   (interactive
