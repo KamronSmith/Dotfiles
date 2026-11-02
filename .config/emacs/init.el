@@ -2371,8 +2371,13 @@ If the current buffer belongs to a project, run the grep command in the project 
 (use-package visible-mark
   :custom
   (visible-mark-max 1)
-  (visible-mark-forward-max 2)
   :config
+  (defface kam-visible-mark-face-1
+    `((t (:background "purple" :foreground "black")))
+    "Face for the most recent mark."
+    :group 'visible-mark)
+
+  (setq visible-mark-faces `(kam-visible-mark-face-1))
   (global-visible-mark-mode))
 
 (use-package vundo
