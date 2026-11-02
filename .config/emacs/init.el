@@ -2347,7 +2347,7 @@ If the current buffer belongs to a project, run the grep command in the project 
   :custom
   (electric-indent-actions '(yank))
   :config
-  (electric-pair-mode)
+  (electric-pair-mode 1)
 
   ;; (add-to-list 'electric-pair-pairs
   ;;              '("/*" . "*/"))
