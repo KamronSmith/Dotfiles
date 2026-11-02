@@ -18,23 +18,23 @@ echo -e "Downloading dotfiles..."
 git clone https://github.com/KamronSmith/dotfiles.git $dotfiles_dir
 
 echo -e "Creating directories..."
-mkdir -p $software_dir
-mkdir -p $vpn_dir
-mkdir -p $bin_dir
-mkdir -p $fonts_dir
-mkdir -p $HOME/.config/tmux
-mkdir -p $HOME/.config/nvim
-mkdir -p $HOME/.config/kitty
-mkdir -p $HOME/.config/emacs
+mkdir -pv $software_dir
+mkdir -pv $vpn_dir
+mkdir -pv $bin_dir
+mkdir -pv $fonts_dir
+mkdir -pv $HOME/.config/tmux
+mkdir -pv $HOME/.config/nvim
+mkdir -pv $HOME/.config/kitty
+mkdir -pv $HOME/.config/emacs
 
 echo -e "Creating symlinks..."
-ln -s $dotfiles_dir/.config/nvim/init.lua ~/.config/nvim/init.lua
-ln -s $dotfiles_dir/.config/tmux/tmux.conf ~/.config/tmux/tmux.conf
-ln -s $dotfiles_dir/.config/kitty/kitty.conf ~/.config/kitty/kitty.conf
-ln -s $dotfiles_dir/.config/emacs/early-init.el ~/.config/emacs/early-init.el
-ln -s $dotfiles_dir/.config/emacs/parrot-init.el ~/.config/emacs/init.el
-ln -s $dotfiles_dir/.bashrc $HOME/.bashrc
-ln -s $dotfiles_dir/.inputrc $HOME/.inputrc
+ln -sv $dotfiles_dir/.config/nvim/init.lua ~/.config/nvim/init.lua
+ln -sv $dotfiles_dir/.config/tmux/tmux.conf ~/.config/tmux/tmux.conf
+ln -sv $dotfiles_dir/.config/kitty/kitty.conf ~/.config/kitty/kitty.conf
+ln -sv $dotfiles_dir/.config/emacs/early-init.el ~/.config/emacs/early-init.el
+ln -sv $dotfiles_dir/.config/emacs/parrot-init.el ~/.config/emacs/init.el
+ln -sv $dotfiles_dir/.bashrc $HOME/.bashrc
+ln -sv $dotfiles_dir/.inputrc $HOME/.inputrc
 
 echo -e "Installing programs..."
 sudo apt install $(cat $dotfiles_dir/tools.txt | tr "\n" " ") -y
