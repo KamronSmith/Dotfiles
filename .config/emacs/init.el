@@ -4623,9 +4623,6 @@ the file is not under version control."
   :config
   (add-to-list 'treesit-language-source-alist '(yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml" "master" "src")))
 
-(use-package nix-mode
-  :mode "\\.nix\\'")
-
 (use-package sgml-mode
   :ensure nil
   :hook ((html-mode mthml-mode mhtml-ts-mode) . sgml-electric-tag-pair-mode)
