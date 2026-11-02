@@ -4542,7 +4542,7 @@ the file is not under version control."
   :config
   (defun kam-asm-mode-setup ()
     "Setup for `asm-mode'."
-    (electric-indent-mode -1)
+    (electric-indent-local-mode -1)
     (setq tab-stop-list (number-sequence 4 80 4))))
 
 (use-package rust-ts-mode
