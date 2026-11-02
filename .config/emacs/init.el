@@ -2343,7 +2343,8 @@ If the current buffer belongs to a project, run the grep command in the project 
   :ensure nil
   :hook ((org-mode . electric-indent-local-mode)
          ;; (prog-mode . electric-indent-mode)
-         (text-mode . electric-quote-mode))
+         ;; (text-mode . electric-quote-mode)
+         )
   :custom
   (electric-indent-actions '(yank))
   :config
