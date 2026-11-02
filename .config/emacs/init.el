@@ -559,42 +559,42 @@ Only split if there is no split, and only split into left and right windows."
   :custom
   (lin-face 'lin-yellow))
 
-(use-package centered-cursor-mode
-  :bind
-  (:map ccm-map
-        ("C-v" . nil)
-        ("M-v" . nil)
-        ("<prior>" . nil)
-        ("<next>" . nil))
-  :custom
-  (ccm-recenter-at-end-of-file t)
-  :config
-  (global-centered-cursor-mode)
-  (add-to-list 'ccm-ignored-commands
-               'ultra-scroll)
-
-  (add-to-list 'ccm-ignored-commands
-               'kam-keyboard-quit-dwim)
-  (add-to-list 'ccm-ignored-commands
-               'vertico-exit)
-  (add-to-list 'ccm-ignored-commands
-               'kam-quit-window)
-  (add-to-list 'ccm-ignored-commands
-               'quit-window)
-
-  (defun kam-ccm-ignored-modes-p ()
-    "Check if mode is listed under `kam-ccm-ignored-modes'."
-    (and (eq major-mode (or 'minibuffer-mode
-                            'minibuffer-inactive-mode))
-         (seq-contains-p (kam-active-minor-modes) (or 'vertico-mode
-                                                      'completion-list-mode))))
-
-  (add-to-list 'ccm-inhibit-centering-when 'kam-ccm-ignored-modes-p)
-
-  (defvar kam-ccm-ignored-modes '(minibuffer-mode
-                                  minibuffer-inactive-mode
-                                  vertico-mode
-                                  completion-list-mode)))
+;; (use-package centered-cursor-mode
+;;   :bind
+;;   (:map ccm-map
+;;         ("C-v" . nil)
+;;         ("M-v" . nil)
+;;         ("<prior>" . nil)
+;;         ("<next>" . nil))
+;;   :custom
+;;   (ccm-recenter-at-end-of-file t)
+;;   :config
+;;   (global-centered-cursor-mode)
+;;   (add-to-list 'ccm-ignored-commands
+;;                'ultra-scroll)
+;; 
+;;   (add-to-list 'ccm-ignored-commands
+;;                'kam-keyboard-quit-dwim)
+;;   (add-to-list 'ccm-ignored-commands
+;;                'vertico-exit)
+;;   (add-to-list 'ccm-ignored-commands
+;;                'kam-quit-window)
+;;   (add-to-list 'ccm-ignored-commands
+;;                'quit-window)
+;; 
+;;   (defun kam-ccm-ignored-modes-p ()
+;;     "Check if mode is listed under `kam-ccm-ignored-modes'."
+;;     (and (eq major-mode (or 'minibuffer-mode
+;;                             'minibuffer-inactive-mode))
+;;          (seq-contains-p (kam-active-minor-modes) (or 'vertico-mode
+;;                                                       'completion-list-mode))))
+;; 
+;;   (add-to-list 'ccm-inhibit-centering-when 'kam-ccm-ignored-modes-p)
+;; 
+;;   (defvar kam-ccm-ignored-modes '(minibuffer-mode
+;;                                   minibuffer-inactive-mode
+;;                                   vertico-mode
+;;                                   completion-list-mode)))
 
 (use-package pixel-scroll
   :ensure nil
