@@ -17,6 +17,12 @@ esac
 
 PS1="[\d \t]-[\u@\h:\w]\$ "
 
+shopt -s autocd
+shopt -s cdspell
+shopt -s checkwinsize
+shopt -s dirspell
+shopt -s extglob
+
 alias nc="ncat"
 
 force_color_prompt=yes
