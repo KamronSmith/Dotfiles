@@ -79,11 +79,11 @@ And the way I want to use a computer.")
   :group 'kam-os)
 
 (defvar kam-os-package-managers
-  '((arch . gnu/linux)
-    (brew . darwin)
-    (apt . parrotos)
-    (chocolatey . windows))
-  "List of package managers.")
+  '((arch . pacman)
+    (darwin . brew)
+    (parrotos . apt)
+    (windows . chocolatey))
+  "Alist of operating systems and their associated package managers.")
 
 ;;; Arch
 (defun kam-os--available-packages ()
