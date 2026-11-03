@@ -78,6 +78,13 @@ And the way I want to use a computer.")
   :type 'string
   :group 'kam-os)
 
+(defvar kam-os-package-managers
+  '((arch . gnu/linux)
+    (brew . darwin)
+    (apt . parrotos)
+    (chocolatey . windows))
+  "List of package managers.")
+
 ;;; Arch
 (defun kam-os--available-packages ()
   "Return all available packages to install as a list of strings."
