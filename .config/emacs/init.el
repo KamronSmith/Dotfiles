@@ -1973,9 +1973,7 @@ This source is only enabled when the current buffer belongs to a project.")
 (use-package ace-window
   :after (diff)
   :bind
-  ("M-o" . kam-ace-window)
-  ;; ("C-x o" . kam-ace-window-prefix)
-  (:map diff-mode-map
+  (:map kam-override-mode-map
         ("M-o" . ace-window))
   :config
   (setq aw-dispatch-always t)
