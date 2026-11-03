@@ -1988,6 +1988,7 @@ This source is only enabled when the current buffer belongs to a project.")
           (?o kam-aw-one-command "Run command")
           (?1 delete-other-windows "Delete Other Windows")
           (?0 kam-aw-delete-window "Delete Window")
+          (?q kam-aw-delete-window "Delete Window")
           (?? aw-show-dispatch-help))))
 
 (use-package popper
