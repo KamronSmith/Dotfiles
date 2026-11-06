@@ -4713,8 +4713,7 @@ the file is not under version control."
 
   (defun kam-ghostel-setup ()
     "Setup for `ghostel-mode'."
-    (visual-fill-column-mode -1)
-    (centered-cursor-mode -1))
+    (visual-fill-column-mode -1))
 
   (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
 

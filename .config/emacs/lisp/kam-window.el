@@ -53,18 +53,14 @@ With optional ARG, kill the buffer."
 With optional ARG, scroll down that many times.
 Please see "
   (interactive)
-  (if (bound-and-true-p centered-cursor-mode)
-      (ccm-scroll-up arg)
-    (scroll-up arg)))
+  (scroll-up arg))
 
 ;;;###autoload
 (defun kam-scroll-up (&optional arg)
   "Scroll up.
 With optional ARG, scroll up that many times."
   (interactive)
-  (if (bound-and-true-p centered-cursor-mode)
-      (ccm-scroll-down arg)
-    (scroll-down arg)))
+  (scroll-down arg))
 
 ;;;###autoload
 (defun kam-delete-window-dwim (&optional arg)
