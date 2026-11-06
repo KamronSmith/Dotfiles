@@ -3863,7 +3863,7 @@ The shell is renamed to make opening multiple shells easier."
 (use-package pulsar
   :hook ((next-error . pulsar-pulse-line)
          ;; (consult-after-jump . pulsar-recenter-center)
-         ;; (consult-after-jump . pulsar-reveal-entry)
+         (consult-after-jump . pulsar-reveal-entry)
          ;; (imenu-after-jump . pulsar-recenter-center)
          (imenu-after-jump . pulsar-reveal-entry))
   :custom
