@@ -1984,9 +1984,10 @@ This source is only enabled when the current buffer belongs to a project.")
           (?h aw-split-window-horz "Split Horz Window")
           (?b kam-aw-consult-buffer "Select Buffer")
           (?o kam-aw-one-command "Run command")
+          (?x kam-aw-execute-extended-command "Run an interactive command")
           (?1 delete-other-windows "Delete Other Windows")
-          (?0 kam-aw-delete-window "Delete Window")
-          (?q kam-aw-delete-window "Delete Window")
+          (?0 kam-aw-delete-window-dwim "Delete Window")
+          (?q kam-aw-delete-window-dwim "Delete Window")
           (?? aw-show-dispatch-help))))
 
 (use-package popper

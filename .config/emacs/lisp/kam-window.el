@@ -199,13 +199,17 @@ With universal prefix ARG, run in the next window."
 (defun kam-aw-consult-buffer (window)
   "Perform `consult-buffer' in AW selected window."
   (aw-switch-to-window window)
-  (let ((consult-preview-key nil))
-    (consult-buffer)))
+  (consult-buffer))
 
-(defun kam-aw-delete-window (window)
+(defun kam-aw-delete-window-dwim (window)
   "Perform `kam-delete-window-dwim' in the AW-selected window."
   (aw-switch-to-window window)
   (kam-delete-window-dwim))
+
+(defun kam-aw-execute-extended-command (window)
+  "Perform `execute-extended-command' in the AW-selected window."
+  (aw-switch-to-window window)
+  (call-interactively 'execute-extended-command))
 
 (defun kam-aw-one-command (window)
   "Run a command in the AW-selected window."
