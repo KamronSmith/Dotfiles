@@ -3987,6 +3987,11 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package text-mode
   :ensure nil
+  :hook (text-mode . kam-text-mode-setup)
+  :config
+  (defun kam-text-mode-setup ()
+    "Setup function for `text-mode'."
+    (auto-fill-mode -1)))
 
 (use-package prog-mode
   :ensure nil
