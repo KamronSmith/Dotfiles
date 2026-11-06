@@ -1969,7 +1969,6 @@ This source is only enabled when the current buffer belongs to a project.")
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
 
 (use-package ace-window
-  :after (diff)
   :bind
   (:map kam-override-mode-map
         ("M-o" . ace-window))
