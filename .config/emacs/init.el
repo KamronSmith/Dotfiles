@@ -495,8 +495,9 @@ To be used attached to `after-init-hook'."
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows nil)
-  (display-buffer-base-action '((display-buffer-reuse-window display-buffer-pop-up-window)
-                                (reusable-frames . t)))
+  ;; (display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
+  ;;                               (reusable-frames . t)))
+  (display-buffer-base-action '(nil))
   (display-buffer-alist
    `(;; ("\\*Async Shell Command\\*"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
