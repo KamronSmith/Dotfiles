@@ -3858,9 +3858,7 @@ The shell is renamed to make opening multiple shells easier."
   :custom
   (lin-face 'lin-yellow))
 
-(use-package rainbow-mode
-  :hook ((prog-mode . rainbow-mode)
-         (conf-mode . rainbow-mode)))
+(use-package rainbow-mode)
 
 (use-package pulsar
   :hook ((next-error . pulsar-pulse-line)
