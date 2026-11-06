@@ -919,12 +919,10 @@ Duplicates are not saved."
   (trashed-use-header-line t)
   (trashed-sort-key '("Date deleted" . t)))
 
-(use-package reader
+(use-package emureader
   :unless kam-parrotos
-  :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
-            :make "all")
   :bind
-  (:map reader-mode-map
+  (:map emureader-mode-map
         ("SPC" . reader-next-page)
         ("<backspace>" . reader-previous-page)
         ("C-SPC" . kam-reader-goto-saved-page)
@@ -934,24 +932,24 @@ Duplicates are not saved."
   ;;       ("SPC" . kam-scroll-down)
   ;;       ("<backspace>" . kam-scroll-up))
   :config
-  (defvar kam-reader-saved-page nil
-    "Saved page for `reader-mode'")
+  (defvar kam-emureader-saved-page nil
+    "Saved page for `emureader-mode'")
 
-  (defun kam-reader-save-page (N)
+  (defun kam-emureader-save-page (N)
     (interactive (list
-                  (reader-current-pagenumber)))
-    (setq kam-reader-saved-page N))
+                  (emureader-current-pagenumber)))
+    (setq kam-emureader-saved-page N))
 
-  (defun kam-reader-goto-saved-page ()
+  (defun kam-emureader-goto-saved-page ()
     (interactive)
-    (let* ((prev-pg-number (reader-current-pagenumber)))
-      (reader-goto-page kam-reader-saved-page)
-      (kam-reader-save-page prev-pg-number)))
+    (let* ((prev-pg-number (emureader-current-pagenumber)))
+      (emureader-goto-page kam-emureader-saved-page)
+      (kam-emureader-save-page prev-pg-number)))
 
-  (defun kam-reader-imenu ()
-    "Call `imenu', but save the current page number in `kam-reader-saved-page'."
+  (defun kam-emureader-imenu ()
+    "Call `imenu', but save the current page number in `kam-emureader-saved-page'."
     (interactive)
-    (kam-reader-save-page (reader-current-pagenumber))
+    (kam-emureader-save-page (emureader-current-pagenumber))
     (consult-imenu)))
 
 (use-package repeat
