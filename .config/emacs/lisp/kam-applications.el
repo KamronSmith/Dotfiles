@@ -112,7 +112,6 @@
   (:map eww-mode-map
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up))
-  :hook ((eww-mode . centered-cursor-mode))
   :custom
   (browse-url-browser-function 'browse-url-firefox)
   (browse-url-secondary-browser-function 'eww-browse-url)
