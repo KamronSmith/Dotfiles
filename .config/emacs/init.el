@@ -3889,7 +3889,11 @@ The shell is renamed to make opening multiple shells easier."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(reb-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(reb-lisp-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple)))
+               '(reb-lisp-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(emacs-news-view-mode nerd-icons-faicon "nf-fa-newspaper" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(embark-collect-mode nerd-icons-codicon "nf-cod-collection" :face nerd-icons-blue)))
 
 (use-package nerd-icons-dired
   :hook
