@@ -3621,6 +3621,11 @@ The shell is renamed to make opening multiple shells easier."
                  (window . root)
                  (inhibit-same-window . t))))
 
+(use-package readline-completion
+  :after (shell)
+  :config
+  (add-hook 'shell-dynamic-complete-functions #'readline-completion-at-point))
+
 (use-package eshell
   :ensure nil
   :hook ((eshell-mode . completion-preview-mode)
