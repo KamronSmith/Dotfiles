@@ -3467,10 +3467,10 @@ Numerical argument ARG determines the command being selected from to choose argu
         ("C-w" . unix-word-rubout)
         ("M-r" . consult-history))
   :custom
-  (shell-file-name (executable-find "zsh"))
+  (shell-file-name (executable-find "bash"))
   (shell-command-prompt-show-cwd t)
-  (explicit-shell-file-name (executable-find "zsh"))
-  (explicit-zsh-args '("--interactive" "--login"))
+  (explicit-shell-file-name (executable-find "bash"))
+  ;; (explicit-zsh-args '("--interactive" "--login"))
   (tramp-default-remote-shell "/bin/bash")
   (shell-command-prompt-show-cwd t)
   (shell-input-autoexpand nil)
