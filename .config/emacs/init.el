@@ -1205,13 +1205,15 @@ Duplicates are not saved."
   (:map reb-mode-map
         ("RET" . newline)
         ("C-c RET" . kam-re-builder-replace-regexp)
+        ("C-c <tab>" . reb-change-syntax)
         ("C-g" . reb-quit)
         :map reb-lisp-mode-map
         ("RET" . newline)
         ("C-c RET" . kam-re-builder-replace-regexp)
+        ("C-c <tab>" . reb-change-syntax)
         ("C-g" . reb-quit))
   :custom
-  (reb-re-syntax 'string)
+  (reb-re-syntax 'rx)
   :config
   (defvar kam-re-builder-positions nil
     "Store point and region bounds before calling re-builder")
