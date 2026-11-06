@@ -3938,6 +3938,7 @@ The shell is renamed to make opening multiple shells easier."
                 kam-mode-line-kbd-macro
                 kam-mode-line-narrow
                 kam-mode-line-rectangle-mark
+                kam-mode-line-mark-active
                 kam-mode-line-recursive-edit
                 " "
                 kam-mode-line-buffer-modified
@@ -3963,6 +3964,7 @@ The shell is renamed to make opening multiple shells easier."
 
 
 (dolist (construct '(kam-mode-line-kbd-macro
+                     kam-mode-line-mark-active
                      kam-mode-line-rectangle-mark
                      kam-mode-line-narrow
                      kam-mode-line-recursive-edit
