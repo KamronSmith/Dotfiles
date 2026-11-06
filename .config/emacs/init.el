@@ -3866,7 +3866,7 @@ The shell is renamed to make opening multiple shells easier."
          ;; (consult-after-jump . pulsar-recenter-center)
          ;; (consult-after-jump . pulsar-reveal-entry)
          ;; (imenu-after-jump . pulsar-recenter-center)
-         (imenu-after-jmup . pulsar-reveal-entry))
+         (imenu-after-jump . pulsar-reveal-entry))
   :custom
   (pulsar-delay 0.05)
   (pulsar-iterations 5)
