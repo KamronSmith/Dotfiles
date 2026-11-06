@@ -3918,12 +3918,10 @@ The shell is renamed to make opening multiple shells easier."
   (grep-use-headings t))
 
 (use-package visual-fill-column
-  :hook (
-         ;; (minibuffer-setup . (lambda ()
-         ;; (when (minibufferp) (kam-visual-fill-column-disable))))
-         (image-mode . kam-visual-fill-column-disable)
+  :hook ((image-mode . kam-visual-fill-column-disable)
          (transient-setup-buffer . kam-visual-fill-column-disable)
-         (prog-mode . kam-visual-fill-column-disable))
+         (prog-mode . kam-visual-fill-column-disable)
+         (text-mode . visual-fill-column-mode))
   :config
   (defun kam-visual-fill-column-disable ()
     "Turn off `visual-fill-column-mode'."
@@ -3989,7 +3987,6 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package text-mode
   :ensure nil
-  :hook (text-mode . visual-fill-column-mode))
 
 (use-package prog-mode
   :ensure nil
