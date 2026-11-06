@@ -195,7 +195,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
   (user-lisp-directory (locate-user-emacs-file "lisp/"))
-  (line-spacing 1)
   (inhibit-splash-screen nil)
   (delete-pair-push-mark t)
   (delete-pair-blink-delay 0)
@@ -328,11 +327,9 @@ To be used attached to `after-init-hook'."
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
-  (setq-default comment-column 0
-                fill-column 100)
-
-  (when (not kam-parrotos)
-    (setq-default line-spacing '(1 . 1))))
+  (setq-default comment-column 0)
+  (setq-default fill-column 100)
+  (setq-default line-spacing nil))
 
 (use-package minibuffer
   :ensure nil
@@ -1387,7 +1384,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :config
   (defun kam-font-faces-setup ()
-    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 140 :weight 'regular :width 'regular)
+    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
     (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular))
 
