@@ -4461,7 +4461,8 @@ the file is not under version control."
 
 (use-package whitespace
   :ensure nil
-  :hook ((after-init . whitespace-mode)
+  :hook ((prog-mode . whitespace-mode)
+         (text-mode . whitespace-mode)
          (whitespace-mode . kam-whitespace-setup))
   :custom
   (whitespace-style
