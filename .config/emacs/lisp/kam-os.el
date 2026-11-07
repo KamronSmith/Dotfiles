@@ -78,6 +78,27 @@ And the way I want to use a computer.")
   :type 'string
   :group 'kam-os)
 
+(defvar kam-os-package-managers
+  '((arch . pacman)
+    (darwin . brew)
+    (parrotos . apt)
+    (windows . chocolatey))
+  "Alist of operating systems and their associated package managers.")
+
+(defvar kam-os-current-system
+  (cond
+   ((eq system-type 'darwin)
+    'darwin)
+   ((and (eq system-type 'gnu/linux)
+         (string-equal (shell-command-to-string "uname -s") "Arch"))
+    'arch)
+   ((and (eq system-type 'gnu/linux)
+         (string-equal (shell-command-to-string "uname -s") "Debian"))
+    'parrotos)
+   (t 'unknown))
+  "Determine the operating system this Emacs is currently running on.")
+
+
 ;;; Arch
 (defun kam-os--available-packages ()
   "Return all available packages to install as a list of strings."

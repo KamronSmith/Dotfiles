@@ -153,7 +153,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-M-<right>" . indent-rigidly-right)
   ("C-M-," . nil)
   ("C-M-;" . kam-comment-todo)
-  ("C-M-SPC" . kam-mark-sexp)
+  ("C-M-SPC" . mark-sexp)
   ("C-M-(" . insert-parenthesis)
   ("C-M-=" . indent-region)
   ("C-M-a" . kam-beginning-of-sexp)
@@ -195,7 +195,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   (user-full-name "Kamron Smith")
   (user-mail-address "kamrosmith@gmail.com")
   (user-lisp-directory (locate-user-emacs-file "lisp/"))
-  (line-spacing 1)
   (inhibit-splash-screen nil)
   (delete-pair-push-mark t)
   (delete-pair-blink-delay 0)
@@ -277,7 +276,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (global-prettify-symbols-mode 1)
   (global-font-lock-mode 1)
   (global-visual-line-mode 1)
-  (global-visual-wrap-prefix-mode 1)
+  ;; (global-visual-wrap-prefix-mode 1)
   (blink-cursor-mode 1)
   (editorconfig-mode 1)
   (kam-override-mode 1)
@@ -328,11 +327,9 @@ To be used attached to `after-init-hook'."
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
 
-  (setq-default comment-column 0
-                fill-column 100)
-
-  (when (not kam-parrotos)
-    (setq-default line-spacing '(1 . 1))))
+  (setq-default comment-column 0)
+  (setq-default fill-column 100)
+  (setq-default line-spacing nil))
 
 (use-package minibuffer
   :ensure nil
@@ -355,8 +352,8 @@ To be used attached to `after-init-hook'."
   :config
   (defun kam-minibuffer-setup ()
     "Function for settings as the minibuffer starts."
-    (setq gc-cons-threshold most-positive-fixnum
-          truncate-lines nil)
+    (setq gc-cons-threshold most-positive-fixnum)
+    (setq-local truncate-lines t)
     ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
     (buffer-face-mode))
@@ -427,8 +424,9 @@ To be used attached to `after-init-hook'."
   :ensure nil
   :bind
   (([remap list-buffers] . ibuffer)
-   ("C-c C-n" . ibuffer-forward-filter-group)
-   ("C-c C-p" . ibuffer-backward-filter-group))
+   (:map ibuffer-mode-map
+         ("C-c C-n" . ibuffer-forward-filter-group)
+         ("C-c C-p" . ibuffer-backward-filter-group)))
   :hook ((ibuffer-mode . lin-mode)
          (ibuffer-mode . (lambda ()
                            (ibuffer-switch-to-saved-filter-groups "Default"))))
@@ -497,8 +495,9 @@ To be used attached to `after-init-hook'."
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows nil)
-  (display-buffer-base-action '((display-buffer-reuse-window display-buffer-pop-up-window)
-                                (reusable-frames . t)))
+  ;; (display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
+  ;;                               (reusable-frames . t)))
+  (display-buffer-base-action '(nil))
   (display-buffer-alist
    `(;; ("\\*Async Shell Command\\*"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
@@ -518,12 +517,9 @@ To be used attached to `after-init-hook'."
       (window . root)
       (window-height . 0.35)
       (window-parameters . ((mode-line-format . none))))
-     ;; ("^\\*Warnings\\*$"
-     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
-     ;;  (side . bottom)
-     ;;  (window . root)
-     ;;  (window-height . 0.35)
-     ;;  (window-parameters . ((mode-line-format . none))))
+     ("^\\*Warnings\\*$"
+      (display-buffer-no-window)
+      (allow-no-window . t))
      ;; ("^\\*Messages\\*$"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
      ;;  (side . bottom)
@@ -919,12 +915,10 @@ Duplicates are not saved."
   (trashed-use-header-line t)
   (trashed-sort-key '("Date deleted" . t)))
 
-(use-package reader
+(use-package emureader
   :unless kam-parrotos
-  :vc (:url "https://codeberg.org/MonadicSheep/emacs-reader"
-            :make "all")
   :bind
-  (:map reader-mode-map
+  (:map emureader-mode-map
         ("SPC" . reader-next-page)
         ("<backspace>" . reader-previous-page)
         ("C-SPC" . kam-reader-goto-saved-page)
@@ -934,24 +928,24 @@ Duplicates are not saved."
   ;;       ("SPC" . kam-scroll-down)
   ;;       ("<backspace>" . kam-scroll-up))
   :config
-  (defvar kam-reader-saved-page nil
-    "Saved page for `reader-mode'")
+  (defvar kam-emureader-saved-page nil
+    "Saved page for `emureader-mode'")
 
-  (defun kam-reader-save-page (N)
+  (defun kam-emureader-save-page (N)
     (interactive (list
-                  (reader-current-pagenumber)))
-    (setq kam-reader-saved-page N))
+                  (emureader-current-pagenumber)))
+    (setq kam-emureader-saved-page N))
 
-  (defun kam-reader-goto-saved-page ()
+  (defun kam-emureader-goto-saved-page ()
     (interactive)
-    (let* ((prev-pg-number (reader-current-pagenumber)))
-      (reader-goto-page kam-reader-saved-page)
-      (kam-reader-save-page prev-pg-number)))
+    (let* ((prev-pg-number (emureader-current-pagenumber)))
+      (emureader-goto-page kam-emureader-saved-page)
+      (kam-emureader-save-page prev-pg-number)))
 
-  (defun kam-reader-imenu ()
-    "Call `imenu', but save the current page number in `kam-reader-saved-page'."
+  (defun kam-emureader-imenu ()
+    "Call `imenu', but save the current page number in `kam-emureader-saved-page'."
     (interactive)
-    (kam-reader-save-page (reader-current-pagenumber))
+    (kam-emureader-save-page (emureader-current-pagenumber))
     (consult-imenu)))
 
 (use-package repeat
@@ -1207,13 +1201,15 @@ Duplicates are not saved."
   (:map reb-mode-map
         ("RET" . newline)
         ("C-c RET" . kam-re-builder-replace-regexp)
+        ("C-c <tab>" . reb-change-syntax)
         ("C-g" . reb-quit)
         :map reb-lisp-mode-map
         ("RET" . newline)
         ("C-c RET" . kam-re-builder-replace-regexp)
+        ("C-c <tab>" . reb-change-syntax)
         ("C-g" . reb-quit))
   :custom
-  (reb-re-syntax 'string)
+  (reb-re-syntax 'rx)
   :config
   (defvar kam-re-builder-positions nil
     "Store point and region bounds before calling re-builder")
@@ -1387,7 +1383,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   :ensure nil
   :config
   (defun kam-font-faces-setup ()
-    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 140 :weight 'regular :width 'regular)
+    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
     (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular))
 
@@ -1971,11 +1967,8 @@ This source is only enabled when the current buffer belongs to a project.")
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
 
 (use-package ace-window
-  :after (diff)
   :bind
-  ("M-o" . kam-ace-window)
-  ;; ("C-x o" . kam-ace-window-prefix)
-  (:map diff-mode-map
+  (:map kam-override-mode-map
         ("M-o" . ace-window))
   :config
   (setq aw-dispatch-always t)
@@ -1988,8 +1981,10 @@ This source is only enabled when the current buffer belongs to a project.")
           (?h aw-split-window-horz "Split Horz Window")
           (?b kam-aw-consult-buffer "Select Buffer")
           (?o kam-aw-one-command "Run command")
+          (?x kam-aw-execute-extended-command "Run an interactive command")
           (?1 delete-other-windows "Delete Other Windows")
-          (?0 kam-aw-delete-window "Delete Window")
+          (?0 kam-aw-delete-window-dwim "Delete Window")
+          (?q kam-aw-delete-window-dwim "Delete Window")
           (?? aw-show-dispatch-help))))
 
 (use-package popper
@@ -2343,7 +2338,8 @@ If the current buffer belongs to a project, run the grep command in the project 
   :ensure nil
   :hook ((org-mode . electric-indent-local-mode)
          ;; (prog-mode . electric-indent-mode)
-         (text-mode . electric-quote-mode))
+         ;; (text-mode . electric-quote-mode)
+         )
   :custom
   (electric-indent-actions '(yank))
   :config
@@ -3469,10 +3465,10 @@ Numerical argument ARG determines the command being selected from to choose argu
         ("C-w" . unix-word-rubout)
         ("M-r" . consult-history))
   :custom
-  (shell-file-name (executable-find "zsh"))
+  (shell-file-name (executable-find "bash"))
   (shell-command-prompt-show-cwd t)
-  (explicit-shell-file-name (executable-find "zsh"))
-  (explicit-zsh-args '("--interactive" "--login"))
+  (explicit-shell-file-name (executable-find "bash"))
+  ;; (explicit-zsh-args '("--interactive" "--login"))
   (tramp-default-remote-shell "/bin/bash")
   (shell-command-prompt-show-cwd t)
   (shell-input-autoexpand nil)
@@ -3622,6 +3618,11 @@ The shell is renamed to make opening multiple shells easier."
                  (direction . right)
                  (window . root)
                  (inhibit-same-window . t))))
+
+(use-package readline-completion
+  :after (shell)
+  :config
+  (add-hook 'shell-dynamic-complete-functions #'readline-completion-at-point))
 
 (use-package eshell
   :ensure nil
@@ -3854,16 +3855,14 @@ The shell is renamed to make opening multiple shells easier."
   :custom
   (lin-face 'lin-yellow))
 
-(use-package rainbow-mode
-  :hook ((prog-mode . rainbow-mode)
-         (conf-mode . rainbow-mode)))
+(use-package rainbow-mode)
 
 (use-package pulsar
   :hook ((next-error . pulsar-pulse-line)
          ;; (consult-after-jump . pulsar-recenter-center)
-         ;; (consult-after-jump . pulsar-reveal-entry)
+         (consult-after-jump . pulsar-reveal-entry)
          ;; (imenu-after-jump . pulsar-recenter-center)
-         (imenu-after-jmup . pulsar-reveal-entry))
+         (imenu-after-jump . pulsar-reveal-entry))
   :custom
   (pulsar-delay 0.05)
   (pulsar-iterations 5)
@@ -3888,7 +3887,13 @@ The shell is renamed to make opening multiple shells easier."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(reb-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(reb-lisp-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple)))
+               '(reb-lisp-mode nerd-icons-mdicon "nf-md-regex" :face nerd-icons-purple))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(emacs-news-view-mode nerd-icons-faicon "nf-fa-newspaper" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(embark-collect-mode nerd-icons-codicon "nf-cod-collection" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(git-rebase-mode nerd-icons-mdicon "nf-md-git" :face nerd-icons-green)))
 
 (use-package nerd-icons-dired
   :hook
@@ -3917,12 +3922,10 @@ The shell is renamed to make opening multiple shells easier."
   (grep-use-headings t))
 
 (use-package visual-fill-column
-  :hook (
-         ;; (minibuffer-setup . (lambda ()
-         ;; (when (minibufferp) (kam-visual-fill-column-disable))))
-         (image-mode . kam-visual-fill-column-disable)
+  :hook ((image-mode . kam-visual-fill-column-disable)
          (transient-setup-buffer . kam-visual-fill-column-disable)
-         (prog-mode . kam-visual-fill-column-disable))
+         (prog-mode . kam-visual-fill-column-disable)
+         (text-mode . visual-fill-column-mode))
   :config
   (defun kam-visual-fill-column-disable ()
     "Turn off `visual-fill-column-mode'."
@@ -3940,6 +3943,7 @@ The shell is renamed to make opening multiple shells easier."
                 kam-mode-line-kbd-macro
                 kam-mode-line-narrow
                 kam-mode-line-rectangle-mark
+                kam-mode-line-mark-active
                 kam-mode-line-recursive-edit
                 " "
                 kam-mode-line-buffer-modified
@@ -3965,6 +3969,7 @@ The shell is renamed to make opening multiple shells easier."
 
 
 (dolist (construct '(kam-mode-line-kbd-macro
+                     kam-mode-line-mark-active
                      kam-mode-line-rectangle-mark
                      kam-mode-line-narrow
                      kam-mode-line-recursive-edit
@@ -3986,7 +3991,11 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package text-mode
   :ensure nil
-  :hook (text-mode . visual-fill-column-mode))
+  :hook (text-mode . kam-text-mode-setup)
+  :config
+  (defun kam-text-mode-setup ()
+    "Setup function for `text-mode'."
+    (auto-fill-mode -1)))
 
 (use-package prog-mode
   :ensure nil
@@ -4156,33 +4165,6 @@ the file is not under version control."
                               (buffer-file-name))
                (ediff-backup (buffer-file-name)))
            (apply #'signal errdata)))))))
-
-;; (use-package flycheck
-;;   :hook (after-init . global-flycheck-mode)
-;;   ;;  TODO 2026-07-15: enabling this option sets the load path correctly, but flycheck errors out
-;;   ;;  figure out why
-;;   :custom
-;;   (flycheck-emacs-lisp-load-path 'inherit)
-;;   :config
-;;   (add-to-list 'switch-to-prev-buffer-skip-regexp
-;;                "\\*Flycheck error messages\\*" t)
-
-;;   (with-eval-after-load 'consult
-;;     (add-to-list 'consult-buffer-filter "\\*Flycheck error messages\\*" t)))
-
-;; (use-package flycheck-eglot
-;;   :after (flycheck eglot)
-;;   :config
-;;   (global-flycheck-eglot-mode 1))
-
-;; ;; (use-package flyover
-;; ;;   :after (flycheck)
-;; ;;   ;; :hook (flycheck-mode . flyover-mode)
-;; ;;   :custom
-;; ;;   (flyover-line-position-offset 0)
-;; ;;   (flyover-show-virtual-line nil)
-;; ;;   (flyover-show-at-eol t)
-;; ;;   (flyover-display-mode 'hide-on-same-line))
 
 (use-package flymake
   :after (consult)
@@ -4479,13 +4461,14 @@ the file is not under version control."
 
 (use-package whitespace
   :ensure nil
-  :hook ((after-init . whitespace-mode)
+  :hook ((prog-mode . whitespace-mode)
+         (text-mode . whitespace-mode)
          (whitespace-mode . kam-whitespace-setup))
   :custom
   (whitespace-style
-   '(face tabs tab-mark))
-  (whitespace-display-mappings '((space-mark 32 [183])
-                                 (tab-mark ?\t [187 ?\t] [62 ?\t])))
+   '(face tabs trailing indentation page-delimiters tab-mark))
+  (whitespace-display-mappings '((tab-mark ?\t [187 ?\t] [62 ?\t])))
+  
   :config
   (defun kam-whitespace-setup ()
     ;; (add-to-list 'write-file-functions 'delete-trailing-whitespace)
@@ -4618,7 +4601,7 @@ the file is not under version control."
   :ensure nil
   :hook (markdown-ts-mode . kam-markdown-ts-setup)
   :custom
-  (markdown-ts-hide-markup t)
+  (markdown-ts-hide-markup nil)
   :config
   (require 'markdown-ts-mode-x)
   (defun kam-markdown-ts-setup ()
@@ -4713,8 +4696,7 @@ the file is not under version control."
 
   (defun kam-ghostel-setup ()
     "Setup for `ghostel-mode'."
-    (visual-fill-column-mode -1)
-    (centered-cursor-mode -1))
+    (visual-fill-column-mode -1))
 
   (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
 

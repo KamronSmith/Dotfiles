@@ -53,18 +53,14 @@ With optional ARG, kill the buffer."
 With optional ARG, scroll down that many times.
 Please see "
   (interactive)
-  (if (bound-and-true-p centered-cursor-mode)
-      (ccm-scroll-up arg)
-    (scroll-up arg)))
+  (scroll-up arg))
 
 ;;;###autoload
 (defun kam-scroll-up (&optional arg)
   "Scroll up.
 With optional ARG, scroll up that many times."
   (interactive)
-  (if (bound-and-true-p centered-cursor-mode)
-      (ccm-scroll-down arg)
-    (scroll-down arg)))
+  (scroll-down arg))
 
 ;;;###autoload
 (defun kam-delete-window-dwim (&optional arg)
@@ -203,13 +199,17 @@ With universal prefix ARG, run in the next window."
 (defun kam-aw-consult-buffer (window)
   "Perform `consult-buffer' in AW selected window."
   (aw-switch-to-window window)
-  (let ((consult-preview-key nil))
-    (consult-buffer)))
+  (consult-buffer))
 
-(defun kam-aw-delete-window (window)
+(defun kam-aw-delete-window-dwim (window)
   "Perform `kam-delete-window-dwim' in the AW-selected window."
   (aw-switch-to-window window)
   (kam-delete-window-dwim))
+
+(defun kam-aw-execute-extended-command (window)
+  "Perform `execute-extended-command' in the AW-selected window."
+  (aw-switch-to-window window)
+  (call-interactively 'execute-extended-command))
 
 (defun kam-aw-one-command (window)
   "Run a command in the AW-selected window."

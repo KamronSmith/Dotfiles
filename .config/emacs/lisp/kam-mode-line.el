@@ -330,6 +330,13 @@ Specific to the current window's mode-line.")
       ""))
   "Mode line construct for displaying the current time.")
 
+(defvar-local kam-mode-line-mark-active
+  '(:eval
+    (if mark-active
+        (propertize "  " 'face 'kam-mode-line-indicator-orange-bg)
+      ""))
+  "Mode line construct for displaying if the mark is active.")
+
 (defun kam-mode-line--string-truncate-p (str)
   "Return non-nil if STR should be truncated.
 Please see `kam-mode-line-string-truncate-length'."

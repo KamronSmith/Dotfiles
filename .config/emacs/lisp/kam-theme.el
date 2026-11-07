@@ -65,9 +65,9 @@ See `kam-theme-update-custom-faces'.")
     (kam-decolorify--turn-off-colors)))
 
 (defvar kam-favorite-fonts
-  '(("Aporetic Sans Mono" . 140)
-    ("Iosevka" . 140)
-    ("IBM Plex Mono" . 130))
+  '(("Aporetic Sans Mono" . 150)
+    ("Iosevka" . 160)
+    ("IBM Plex Mono" . 140))
   "List of my favorite fonts and their font sizes.")
 
 (defun kam-load-font (font)
