@@ -4164,33 +4164,6 @@ the file is not under version control."
                (ediff-backup (buffer-file-name)))
            (apply #'signal errdata)))))))
 
-;; (use-package flycheck
-;;   :hook (after-init . global-flycheck-mode)
-;;   ;;  TODO 2026-07-15: enabling this option sets the load path correctly, but flycheck errors out
-;;   ;;  figure out why
-;;   :custom
-;;   (flycheck-emacs-lisp-load-path 'inherit)
-;;   :config
-;;   (add-to-list 'switch-to-prev-buffer-skip-regexp
-;;                "\\*Flycheck error messages\\*" t)
-
-;;   (with-eval-after-load 'consult
-;;     (add-to-list 'consult-buffer-filter "\\*Flycheck error messages\\*" t)))
-
-;; (use-package flycheck-eglot
-;;   :after (flycheck eglot)
-;;   :config
-;;   (global-flycheck-eglot-mode 1))
-
-;; ;; (use-package flyover
-;; ;;   :after (flycheck)
-;; ;;   ;; :hook (flycheck-mode . flyover-mode)
-;; ;;   :custom
-;; ;;   (flyover-line-position-offset 0)
-;; ;;   (flyover-show-virtual-line nil)
-;; ;;   (flyover-show-at-eol t)
-;; ;;   (flyover-display-mode 'hide-on-same-line))
-
 (use-package flymake
   :after (consult)
   :ensure nil
