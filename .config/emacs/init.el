@@ -3891,7 +3891,9 @@ The shell is renamed to make opening multiple shells easier."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(emacs-news-view-mode nerd-icons-faicon "nf-fa-newspaper" :face nerd-icons-blue))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(embark-collect-mode nerd-icons-codicon "nf-cod-collection" :face nerd-icons-blue)))
+               '(embark-collect-mode nerd-icons-codicon "nf-cod-collection" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(git-rebase-mode nerd-icons-mdicon "nf-md-git" :face nerd-icons-green)))
 
 (use-package nerd-icons-dired
   :hook
