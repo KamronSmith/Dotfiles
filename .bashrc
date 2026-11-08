@@ -1,5 +1,7 @@
 [[ -n $PS1 ]] || return
 
+stty -ixon # stops ctrl-s from freezing the terminal
+
 HISTCONTROL=ignoredups:ignorespace
 HISTSIZE=100000
 HISTFILESIZE=200000
