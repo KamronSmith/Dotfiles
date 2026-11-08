@@ -9,6 +9,22 @@
 # This install script presupposes you are either on an arch system
 # or a macOS system. If you are not on either, good luck
 
+help () {
+    echo "Install my dotfiles"
+    echo
+    echo "Syntax: install OS [-b|h]"
+    echo "options:"
+    echo "b	Backup already stored files to a folder"
+    echo "h	Print this help message"
+}
+
+while getopts ":h"; do
+    case $option in
+        h) help
+           exit;;
+    esac
+done
+
 if [[ "$EUID" != 0 ]]; then
     echo "Please run this script with sudo or as root" >&2
     exit 1
