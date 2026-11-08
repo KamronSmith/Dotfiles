@@ -19,11 +19,6 @@ esac
 
 PS1="[\d \t]-[\u@\h:\w]\$ "
 
-export EDITOR='nvim'
-export VISUAL='nvim'
-export MANPAGER='less'
-export PAGER='less'
-
 alias nc='ncat'
 alias l='ls'
 alias ll='ls -lha'
@@ -35,5 +30,3 @@ command -v xdg-open &>/dev/null &&
 force_color_prompt=yes
 
 . ~/.bash_completion
-
-export PATH=~/.local/bin/:$PATH
