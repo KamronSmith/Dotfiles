@@ -29,4 +29,6 @@ command -v xdg-open &>/dev/null &&
 
 force_color_prompt=yes
 
-. ~/.bash_completion
+if [[ -f ~/.bash_completion ]]; then
+    . ~/.bash_completions
+fi
