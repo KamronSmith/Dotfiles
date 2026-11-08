@@ -1,3 +1,4 @@
+# -*- mode: conf; -*-
 set bell-style none
 set keyseq-timeout 1200
 
