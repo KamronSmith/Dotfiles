@@ -42,6 +42,9 @@ fi
 command -v xdg-open &>/dev/null &&
     alias open='xdg-open'
 
+backup () {
+    cp -riv $1 ${1}-$(date +%Y%m%d%H%M).bak;
+}
 
 if [[ -f ~/.bash_completion ]]; then
     . ~/.bash_completions
