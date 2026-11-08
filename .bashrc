@@ -13,13 +13,14 @@ shopt -s checkwinsize
 shopt -s dirspell
 shopt -s extglob
 
-[ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+# [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
 
 case "$TERM" in
     xterm-color) color_prompt=yes;;
 esac
 
 PS1="[\d \t]-[\u@\h:\w]\$ "
+force_color_prompt=yes
 
 alias nc='ncat'
 alias l='ls'
@@ -29,7 +30,6 @@ alias ls='ls -p --color=auto'
 command -v xdg-open &>/dev/null &&
     alias open='xdg-open'
 
-force_color_prompt=yes
 
 if [[ -f ~/.bash_completion ]]; then
     . ~/.bash_completions
