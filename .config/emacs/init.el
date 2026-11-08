@@ -267,6 +267,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (view-read-only t)
   (duplicate-region-final-position -1)
   (duplicate-line-final-position -1)
+  (exchange-point-and-mark-highlight-region nil)
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
