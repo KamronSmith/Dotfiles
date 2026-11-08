@@ -23,9 +23,21 @@ PS1="[\d \t]-[\u@\h:\w]\$ "
 force_color_prompt=yes
 
 alias nc='ncat'
+alias vim='nvim'
+alias vi='nvim'
+alias n='nvim'
 alias l='ls'
 alias ll='ls -lha'
 alias ls='ls -p --color=auto'
+alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
+
+if [[ $OSTYPE == 'darwin'* ]]; then
+    alias rm='trash'
+fi
+
+if [[ $OSTYPE == 'linux-gnu' ]]; then
+    alias rm='trash-put'
+fi
 
 command -v xdg-open &>/dev/null &&
     alias open='xdg-open'
