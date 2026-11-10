@@ -39,18 +39,18 @@ Respects comments and strings. Powered by `kam-expreg--sexp'."
   (kam--mark (kam-expreg--sexp))
   (kill-region nil nil t))
 
-(defun kam-end-of-sexp (&optional arg)
+(defun kam-end-of-sexp (&optional n)
   "Move forward to next end of sexp.
-With optional ARG, do it that many times."
+With optional N, do it that many times."
   (interactive "p")
-  (dotimes (_ arg)
+  (dotimes (_ n)
     (goto-char (cdr (kam-expreg--sexp)))))
 
-(defun kam-beginning-of-sexp (&optional arg)
+(defun kam-beginning-of-sexp (&optional n)
   "Move backward to the beginning of a sexp.
-With optional ARG, do it that many times."
+With optional N, do it that many times."
   (interactive "p")
-  (dotimes (_ arg)
+  (dotimes (_ n)
     (goto-char (car (kam-expreg--sexp)))))
 
 (defun kam-expreg--org-heading ()
