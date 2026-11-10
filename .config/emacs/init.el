@@ -2990,6 +2990,7 @@ Numerical argument ARG determines the command being selected from to choose argu
   ;; (explicit-zsh-args '("--interactive" "--login"))
   (tramp-default-remote-shell "/bin/bash")
   (shell-command-prompt-show-cwd t)
+  (shell-command-buffer-name "*Shell Command*")
   (shell-input-autoexpand nil)
   (shell-highlight-undef-enable t)
   (shell-get-old-input-include-continuation-lines t)
