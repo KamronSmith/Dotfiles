@@ -2363,6 +2363,8 @@ If the current buffer belongs to a project, run the grep command in the project 
   (("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this))
   :custom
+  (mc/always-run-for-all t)
+  (mc/always-repeat-command t)
   (mc/list-file (expand-file-name "mc-lists.el" kam-emacs-cache-directory)))
 
 (use-package expreg
