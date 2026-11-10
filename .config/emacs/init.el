@@ -2037,7 +2037,7 @@ This source is only enabled when the current buffer belongs to a project.")
      ("\\*Playlist\\*")
      ("^\\*Pacman:")
      ("^\\*Timeshift:")
-     ("\\*ChatGPT\\*")
+     ;; ("\\*ChatGPT\\*")
      ("\\*eldoc\\*")
      emms-playlist-mode
      ;; Man-mode
@@ -4173,17 +4173,6 @@ the file is not under version control."
   (setq shr-use-colors nil
         shr-use-fonts nil
         shr-fill-text nil))
-
-(use-package gptel
-  :custom
-  (gptel-default-mode 'org-mode)
-  :config
-  (add-to-list 'display-buffer-alist
-               '("\\*ChatGPT\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (window-parameters . ((mode-line-format . none))))))
 
 (use-package ghostel
   :hook ((after-init . ghostel-compile-global-mode)

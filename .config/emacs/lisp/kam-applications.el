@@ -81,12 +81,13 @@
       ;; (split-width-threshold nil))
       (elfeed-show-prev)))
 
-  (add-to-list 'display-buffer-alist
-               '("\\*elfeed-search\\*"
-                 (display-buffer-in-tab)
-                 (dedicated . t)
-                 (tab-name . " elfeed")
-                 (window-parameters . ((no-delete-other-windows . t))))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*elfeed-search\\*"
+  ;;                (display-buffer-in-tab)
+  ;;                (dedicated . t)
+  ;;                (tab-name . " elfeed")
+  ;;                (window-parameters . ((no-delete-other-windows . t)))))
+  )
 
 (use-package elfeed-tube
   :after (elfeed)
@@ -200,13 +201,13 @@ With optional ARG, open browser in EWW."
   (emms-all)
   (emms-mpris-enable)
 
-  (add-to-list 'display-buffer-alist
-               '((major-mode . emms-browser-mode)
-                 (display-buffer-in-tab)
-                 (ignore-current-tab . t)
-                 (tab-name . " music")
-                 (dedicated . t)
-                 (window-parameters . ((no-delete-other-windows . t)))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '((major-mode . emms-browser-mode)
+  ;;                (display-buffer-in-tab)
+  ;;                (ignore-current-tab . t)
+  ;;                (tab-name . " music")
+  ;;                (dedicated . t)
+  ;;                (window-parameters . ((no-delete-other-windows . t)))))
 
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "^Browsing by: " t)
@@ -286,6 +287,13 @@ With optional ARG, go to the previous song that many times."
                  'emms-playlist-mode t)))
 
 ;;; LLM Client
-(use-package gptel)
+(use-package gptel
+  :custom
+  (gptel-default-mode 'org-mode)
+  :config
+  (defun chatgpt ()
+    "Get a chatgpt buffer."
+    (interactive)
+    (gptel "*ChatGPT*")))
 
 (provide 'kam-applications)
