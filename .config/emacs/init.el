@@ -3476,8 +3476,8 @@ The shell is renamed to make opening multiple shells easier."
                 mode-line-format-right-align
                 kam-mode-line-vc-branch
                 "   "
-                kam-mode-line-display-time      ;; disabled because causing excessive tramp load times
-                ))                              ;; not sure why
+                kam-mode-line-display-time
+                ))
 
 
 (dolist (construct '(kam-mode-line-kbd-macro
