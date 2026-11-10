@@ -5,6 +5,7 @@
 [core]
 	editor = emacsclient -c -a ""
 	whitespace = trailing-space,space-before-tab
+        excludesFile = ~/.config/git/.gitignore
 [column]
 	ui = auto
 [init]
