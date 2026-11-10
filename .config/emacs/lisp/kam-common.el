@@ -476,7 +476,7 @@ Else, use the symbol at point."
     (deactivate-mark)
     (query-replace sym to-string)))
 
-(defun kam-keyboard-quit-dwim ()
+(defun kam-keyboard-escape-quit-dwim ()
   "A better keyboard quit."
   (interactive)
   (cond
@@ -490,21 +490,6 @@ Else, use the symbol at point."
     (kmacro-keyboard-quit))
    (t
     (keyboard-escape-quit))))
-
-(defun kam-keyboard-escape-quit-dwim (orig-fn &rest args)
-  "A better keyboard quit."
-  (interactive)
-  (cond
-   ((region-active-p)
-    (keyboard-quit))
-   ((derived-mode-p 'completion-list-mode)
-    (delete-completion-window))
-   ((> (minibuffer-depth) 0)
-    (abort-recursive-edit))
-   ((identity defining-kbd-macro)
-    (kmacro-keyboard-quit))
-   (t
-    (apply orig-fn args))))
 
 (defun kam-keyboard-escape-quit (orig-fn &rest args)
   "Perform `keyboard-escape-quit' without disturbing the window configuration."

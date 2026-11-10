@@ -82,7 +82,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
   ("TAB" . nil)
-  ("<escape>" . kam-keyboard-quit-dwim)
+  ("<escape>" . kam-keyboard-escape-quit-dwim)
   ("<home>" . nil)
   ("<end>" . nil)
   ("<up>" . nil)
@@ -592,7 +592,7 @@ Only split if there is no split, and only split into left and right windows."
 ;;                'ultra-scroll)
 ;; 
 ;;   (add-to-list 'ccm-ignored-commands
-;;                'kam-keyboard-quit-dwim)
+;;                'kam-keyboard-escape-quit-dwim)
 ;;   (add-to-list 'ccm-ignored-commands
 ;;                'vertico-exit)
 ;;   (add-to-list 'ccm-ignored-commands
@@ -1431,7 +1431,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
   (:map vertico-map
         ("C-." . embark-act)
         ("<kam-i>" . vertico-insert)
-        ("<escape>" . kam-keyboard-quit-dwim)
+        ("<escape>" . kam-keyboard-escape-quit-dwim)
         ("<next>" . vertico-scroll-up)
         ("<prior>" . vertico-scroll-down)
         ("M-<return>" . vertico-exit-input)
@@ -1441,7 +1441,7 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
         ("<up>" . nil)
         ("<down>" . nil)
         ("C-<return>" . minibuffer-force-complete-and-exit)
-        ("C-g" . kam-keyboard-quit-dwim))
+        ("C-g" . kam-keyboard-escape-quit-dwim))
   :custom
   (vertico-resize nil)
   (vertico-cycle t)
