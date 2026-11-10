@@ -506,6 +506,10 @@ To be used attached to `after-init-hook'."
   (truncate-partial-width-windows nil)
   (quit-window-kill-buffer nil)
   (kill-buffer-quit-windows nil)
+  (scroll-conservatively 0)
+  (scroll-margin 5)
+  (scroll-preserve-screen-position t)
+  (next-screen-context-lines 20)
   ;; (display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
   ;;                               (reusable-frames . t)))
   (display-buffer-base-action '(nil))
@@ -616,12 +620,11 @@ Only split if there is no split, and only split into left and right windows."
         ("<next>" . kam-scroll-down)))
 
 (use-package ultra-scroll
-  :custom
-  (scroll-margin 0)
-  (scroll-conservatively 3)
-  (scroll-preserve-screen-position t)
-  (scroll-error-top-bottom t)
-  (next-screen-context-lines 20)
+  ;; :custom
+  ;; (scroll-margin 0)
+  ;; (scroll-conservatively 3)
+  ;; (scroll-preserve-screen-position t)
+  ;; (scroll-error-top-bottom t)
   :config
   (ultra-scroll-mode 1))
 
