@@ -237,7 +237,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (save-interprogram-paste-before-kill t)
   (mouse-drag-and-drop-region-cross-program t)
   (mouse-drag-and-drop-region-scroll-margin t)
-  (fill-region-as-paragraph-function 'fill-region-as-paragraph-semlf)
+  (fill-region-as-paragraph-function 'fill-region-as-paragraph-default)
   (font-log nil)
   (eval-expression-print-length nil)
   (echo-keystokes-help nil)
@@ -276,11 +276,13 @@ Enable that mode to its keybindings take over those of the major mode.")
   (global-so-long-mode 1)
   (global-prettify-symbols-mode 1)
   (global-font-lock-mode 1)
-  (global-visual-line-mode 1)
-  ;; (global-visual-wrap-prefix-mode 1)
   (blink-cursor-mode 1)
   (editorconfig-mode 1)
   (kam-override-mode 1)
+
+  (setq-default comment-column 0)
+  (setq-default fill-column 100)
+  (setq-default line-spacing nil)
 
   (prefer-coding-system 'utf-8)
   (set-language-environment "UTF-8")
@@ -336,11 +338,7 @@ To be used attached to `after-init-hook'."
   (keymap-global-set "M-\"" 'kam-insert-quote)
 
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
-    (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory)))
-
-  (setq-default comment-column 0)
-  (setq-default fill-column 100)
-  (setq-default line-spacing nil))
+    (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory))))
 
 (use-package minibuffer
   :ensure nil
@@ -367,7 +365,9 @@ To be used attached to `after-init-hook'."
     (setq-local truncate-lines t)
     ;; (setq-local line-spacing '(1 . 1))
     (face-remap-add-relative 'default :height 1.1)
-    (buffer-face-mode))
+    (visual-line-mode -1)
+    (visual-wrap-prefix-mode -1)
+    (buffer-face-mode 1))
 
   (defun kam-minibuffer-exit ()
     "Function for settings as the minibuffer exits."
@@ -2320,7 +2320,7 @@ If the current buffer belongs to a project, run the grep command in the project 
 (use-package electric
   :ensure nil
   :hook ((org-mode . electric-indent-local-mode)
-         ;; (prog-mode . electric-indent-mode)
+         (prog-mode . electric-indent-local-mode)
          ;; (text-mode . electric-quote-mode)
          )
   :custom
@@ -3438,10 +3438,10 @@ The shell is renamed to make opening multiple shells easier."
   (grep-use-headings t))
 
 (use-package visual-fill-column
-  :hook ((image-mode . kam-visual-fill-column-disable)
+  :hook ((visual-line-mode . visual-fill-column-for-vline)
+         (image-mode . kam-visual-fill-column-disable)
          (transient-setup-buffer . kam-visual-fill-column-disable)
-         (prog-mode . kam-visual-fill-column-disable)
-         (text-mode . visual-fill-column-mode))
+         (prog-mode . kam-visual-fill-column-disable))
   :config
   (defun kam-visual-fill-column-disable ()
     "Turn off `visual-fill-column-mode'."
@@ -3507,48 +3507,43 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package text-mode
   :ensure nil
-  :hook (text-mode . kam-text-mode-setup)
+  :hook ((text-mode . kam-text-mode-setup)
+         (text-mode . visual-line-mode)
+         (text-mode . visual-wrap-prefix-mode))
   :config
   (defun kam-text-mode-setup ()
     "Setup function for `text-mode'."
-    (auto-fill-mode -1)))
+    (auto-fill-mode -1)
+    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)))
 
 (use-package prog-mode
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
-         ;; (prog-mode . buffer-face-mode)
-         (prog-mode . kam-decolorify-mode))
-  :bind
-  (:map prog-mode-map
-        ;; ("M-q" . upcase-dwim)
-        ("RET" . newline))
+         (prog-mode . buffer-face-mode)
+         (prog-mode . kam-decolorify-mode)
+         (prog-mode . auto-fill-mode)
+         (prog-mode . display-fill-column-indicator-mode))
+  ;; :bind
+  ;; (:map prog-mode-map
+  ;;       ("RET" . newline))
   :config
   (defun kam-prog-mode-setup ()
     "Set up `prog-mode'."
-    (setq-local buffer-face-mode-face 'fixed-pitch)
-    ;; (blink-cursor-mode 1)
-    ;; (hl-line-mode)
-    ;; (kam-text-scale-adjust 1)
-    ;; (completion-preview-mode)
-    (electric-indent-local-mode 1)
+    (setopt-local buffer-face-mode-face 'fixed-pitch)
     (indent-tabs-mode -1)))
 
 (use-package conf-mode
   :ensure nil
-  :hook (conf-mode . kam-conf-mode-setup)
+  :hook ((conf-mode . kam-conf-mode-setup)
+         (conf-mode . buffer-face-mode)
+         (conf-mode . display-line-numbers-mode)
+         (conf-mode . outline-minor-mode))
   :mode ("\\.env\\..*\\'" "\\.env\\'")
   :config
   (defun kam-conf-mode-setup ()
     "Set up `conf-mode'."
-    (display-line-numbers-mode)
-    (kam-conf-mode-set-font)
-    (indent-tabs-mode -1)
-    (outline-minor-mode))
-
-  (defun kam-conf-mode-set-font ()
-    "Intended to set the font in `conf-mode'."
     (setq-local buffer-face-mode-face 'fixed-pitch)
-    (buffer-face-mode))
+    (indent-tabs-mode -1))
 
   (add-to-list 'auto-mode-alist
                '("\\pkgs_arch.txt\\'" . conf-mode)))
@@ -3800,7 +3795,7 @@ the file is not under version control."
   :ensure nil
   :hook (prog-mode . display-line-numbers-mode)
   :custom
-  (display-line-numbers-type 'visual)
+  (display-line-numbers-type 'relative)
   (display-line-numbers-widen t)
   (display-line-numbers-width 4))
 
