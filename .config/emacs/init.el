@@ -3946,12 +3946,6 @@ the file is not under version control."
   (compile-command "")
   (compilation-skip-threshold 1)
   :config
-  (defun kam-compile-make-interactive ()
-    "Advise `compile' so that it becomes interactive."
-    (defadvice compile (before ad-compile-smart activate)
-      "Advises `compile' so it sets the argument COMINT to t."
-      (ad-set-arg 1 t)))
-
   (add-to-list 'display-buffer-alist
                '("\\*compilation\\*"
                  (display-buffer-reuse-window
