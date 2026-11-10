@@ -3526,6 +3526,7 @@ The shell is renamed to make opening multiple shells easier."
   (defun kam-prog-mode-setup ()
     "Set up `prog-mode'."
     (setopt-local buffer-face-mode-face 'fixed-pitch)
+    (setopt-local comment-auto-fill-only-comments t)
     (indent-tabs-mode -1)))
 
 (use-package conf-mode
