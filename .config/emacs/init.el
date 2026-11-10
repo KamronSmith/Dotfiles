@@ -510,9 +510,9 @@ To be used attached to `after-init-hook'."
   (scroll-margin 5)
   (scroll-preserve-screen-position t)
   (next-screen-context-lines 20)
-  ;; (display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
-  ;;                               (reusable-frames . t)))
-  (display-buffer-base-action '(display-buffer-reuse-window display-buffer-same-window))
+  (display-buffer-base-action '((display-buffer-reuse-window
+                                 display-buffer-pop-up-window
+                                 display-buffer-same-window)))
   (display-buffer-alist
    `(;; ("\\*Async Shell Command\\*"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
