@@ -3980,10 +3980,8 @@ the file is not under version control."
          (text-mode . whitespace-mode)
          (whitespace-mode . kam-whitespace-setup))
   :custom
-  (whitespace-style
-   '(face tabs trailing indentation page-delimiters tab-mark))
   (whitespace-display-mappings '((tab-mark ?\t [187 ?\t] [62 ?\t])))
-  
+  (whitespace-style '(face tabs trailing indentation tab-mark))
   :config
   (defun kam-whitespace-setup ()
     ;; (add-to-list 'write-file-functions 'delete-trailing-whitespace)
