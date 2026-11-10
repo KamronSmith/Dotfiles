@@ -1144,14 +1144,15 @@ Duplicates are not saved."
         ("<next>" . scroll-down-line)
         ("<prior>" . scroll-up-line))
   :config
-  (add-to-list 'display-buffer-alist
-               '("\\*Info\\*"
-                 (display-buffer-reuse-window
-                  display-buffer-use-least-recent-window
-                  display-buffer-in-direction)
-                 (direction . right)
-                 (inhibit-same-window . t)
-                 (mode . Info-mode)))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*Info\\*"
+  ;;                (display-buffer-reuse-window
+  ;;                 ;; display-buffer-use-least-recent-window
+  ;;                 ;; display-buffer-in-direction
+  ;;                 )
+  ;;                ;; (direction . right)
+  ;;                ;; (inhibit-same-window . t)
+  ;;                ))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Info\\*" t)
