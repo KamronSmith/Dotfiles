@@ -88,11 +88,11 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("<left>" . nil)
   ("<right>" . nil)
   ("C-d" . delete-forward-char)
-  ("C-g" . kam-keyboard-quit-dwim)
+  ("C-g" . kam-keyboard-escape-quit-dwim)
   ("C-j" . kam-join-line-dwim)
   ([kam-m] . back-to-indentation)
   ("C-o" . kam-open-line-dwim)
-  ("C-w" . kam-cut-dwim)
+  ("C-w" . kam-kill-dwim)
   ("C-t" . kam-transpose-chars)
   ("C-v" . undo)
   ("C-q" . quoted-insert)
@@ -320,6 +320,16 @@ To be used attached to `after-init-hook'."
         (message "Copied config to emacs directory")))))
 
   (put 'narrow-to-region 'disabled nil)
+
+  ;; Overrides
+  (advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit)
+  (advice-add #'yank :around #'kam-yank)
+  
+  (define-advice pop-global-mark (:around (pgm) use-display-buffer)
+    "Make `pop-to-buffer' jump buffers via `display-buffer'."
+    (cl-letf (((symbol-function 'switch-to-buffer)
+               #'pop-to-buffer))
+      (apply pgm)))
 
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
@@ -1910,11 +1920,21 @@ This source is only enabled when the current buffer belongs to a project.")
     (goto-char pt)
     (kam-consult-line-symbol-at-point))
 
-  (defun kam-avy-action-kam-cut (pt)
+  (defun kam-avy-action-kam-kill-dwim (pt)
     (unwind-protect
         (save-excursion
           (goto-char pt)
-          (kam-cut-dwim))
+          (kam-kill-dwim))
+      (select-window
+       (cdr
+        (ring-ref avy-ring 0))))
+    t)
+
+  (defun kam-avy-action-kam-kill-ring-save-dwim (pt)
+    (unwind-protect
+        (save-excursion
+          (goto-char pt)
+          (kam-kill-ring-save-dwim))
       (select-window
        (cdr
         (ring-ref avy-ring 0))))
@@ -1954,15 +1974,11 @@ This source is only enabled when the current buffer belongs to a project.")
         (ring-ref avy-ring 0))))
     t)
 
-  (defun kam-avy-zap-to-char ()
-    (interactive)
-    (avy-with avy-goto-char-timer
-      (avy-action-zap-to-char pt)))
-
   (setf (alist-get ?. avy-dispatch-alist) 'kam-avy-action-embark)
-  (setf (alist-get ?w avy-dispatch-alist) 'kam-avy-action-kam-cut)
+  (setf (alist-get ?w avy-dispatch-alist) 'kam-avy-action-kam-kill-dwim)
+  (setf (alist-get ?h avy-dispatch-alist) 'kam-avy-action-kam-kill-ring-save-dwim)
   (setf (alist-get ?o avy-dispatch-alist) 'kam-avy-action-org-refile)
-  (setf (alist-get ?v avy-dispatch-alist) 'kam-avy-action-mark-to-char)
+  (setf (alist-get ?\  avy-dispatch-alist) 'kam-avy-action-mark-to-char)
   (setf (alist-get ?l avy-dispatch-alist) 'kam-avy-action-org-store-link)
   (setf (alist-get ?p avy-dispatch-alist) 'kam-avy-action-consult-line-at-point)
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
@@ -2119,40 +2135,6 @@ Used in `popper-open-popup-hook'."
     (if tab-bar-show
         (setopt tab-bar-show nil)
       (setopt tab-bar-show t))))
-
-(defun kam-keyboard-quit-dwim ()
-  "A better keyboard quit."
-  (interactive)
-  (cond
-   ((region-active-p)
-    (keyboard-quit))
-   ((derived-mode-p 'completion-list-mode)
-    (delete-completion-window))
-   ((> (minibuffer-depth) 0)
-    (abort-recursive-edit))
-   ((identity defining-kbd-macro)
-    (kmacro-keyboard-quit))
-   (t
-    (keyboard-escape-quit))))
-
-(defun kam-keyboard-escape-quit-advice (fun)
-  "Around advice for `keyboard-escape-quit', call FUN.
-Preserve window configuration when pressing \\[keyboard-escape-quit]."
-  (let ((buffer-quit-function (or buffer-quit-function #'ignore)))
-    (funcall fun)))
-
-(advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit-advice)
-
-(defun kam-kill-current-buffer (&optional arg)
-  "Kill the current buffer, without prompting the user.
-With optional prefix ARG (\\[universal-argument]), delete the buffer's window as well.
-
-This command works similarly to `kam-delete-window-dwim', just in reverse."
-  (interactive "P")
-  (let ((kill-buffer-query-functions nil))
-    (if arg
-        (kill-buffer-and-window)
-      (kill-buffer))))
 
 ;;; Isearch
 (use-package isearch
@@ -2411,473 +2393,6 @@ If the current buffer belongs to a project, run the grep command in the project 
     (when (eq major-mode 'org-mode)
       (add-to-list 'expreg-functions #'kam-expreg--org-heading t)
       (add-to-list 'expreg-functions #'kam-expreg--org-element t))))
-
-(defun kam-mark-sexp ()
-  "Mark symbolic expression at or near point.
-Repeat to extend the region forward to the next symbolic expression."
-  (interactive)
-  (if (and (region-active-p)
-           (eq last-command this-command))
-      (ignore-errors (forward-sexp 1))
-    (when-let* ((thing (cond
-                        ((thing-at-point 'url) 'url)
-                        ((thing-at-point 'sexp) 'sexp)
-                        ((thing-at-point 'string) 'string)
-                        ((thing-at-point 'word) 'word))))
-      (kam--mark (bounds-of-thing-at-point thing)))))
-
-(defun kam-mark-line (&optional arg allow-extend)
-  "Put mark at beginning of the line, point at end.
-
-With argument ARG, puts mark at end of a following line, so that
-the number of lines marked equals ARG.
-
-If ARG is negative, point is put at end of this line, mark is put
-at beginning of this or a previous line.
-
-Interactively (or if ALLOW-EXTEND is non-nil), if this command is
-repeated or (in Transient Mark mode) if the mark is active,
-it marks the next ARG lines after the ones already marked."
-  (interactive "P\np")
-  (cond ((and allow-extend
-              (or (and (eq last-command this-command) (mark t))
-                  (region-active-p)))
-         (setq arg (if arg (prefix-numeric-value arg)
-                     (if (> (mark) (point)) -1 1)))
-
-         ;; (goto-char (mark))
-         (forward-line arg)
-         (end-of-line))
-        (t
-         (progn
-           (end-of-line)
-           (set-mark
-            (line-beginning-position))))))
-
-(defun kam-mark-line-with-newline ()
-  "Select the whole line with the newline of the previous line."
-  (interactive)
-  (if (eq visual-line-mode t)
-      (kam--mark
-       (cons (line-beginning-position)
-             (save-excursion
-               (forward-line 1)
-               (line-beginning-position))))
-    (kam--mark
-     (cons (line-beginning-position)
-           (save-excursion
-             (forward-line 1)
-             (save-excursion
-               (line-beginning-position)))))))
-
-(defun kam-mark-point-to-end-of-line ()
-  "Set the mark at the end of the line, regardless of where the cursor is on the line."
-  (interactive)
-  (if (eq visual-line-mode t)
-      (kam--mark
-       (cons
-        (point)
-        (point (end-of-visual-line))))
-    (kam--mark
-     (cons
-      (point)
-      (line-end-position)))))
-
-(defun kam-mark-point-to-end-of-buffer ()
-  "Mark from the point to the end of the buffer."
-  (interactive)
-  (set-mark
-   (save-excursion
-     (goto-char (point-max))
-     (point))))
-
-(define-advice pop-global-mark (:around (pgm) use-display-buffer)
-  "Make `pop-to-buffer' jump buffers via `display-buffer'."
-  (cl-letf (((symbol-function 'switch-to-buffer)
-             #'pop-to-buffer))
-    (funcall pgm)))
-
-(defun kam-kill-ring-trim ()
-  "Trim the first element on the kill ring of whitespace."
-  (setcar kill-ring (string-trim (car kill-ring) t t)))
-
-(defun kam-copy-line ()
-  "Copy N lines to the `kill-ring'."
-  (save-excursion
-    (kill-ring-save
-     (progn
-       (back-to-indentation)
-       (point))
-     (progn
-       (forward-line 1)
-       (line-beginning-position))))
-  (pulsar-pulse-line))
-
-(defun kam-cut-dwim (&optional n)
-  "Kill based on the context of the point in the buffer.
-
-If the region is active, kill the region.
-If the point is on an Org heading, kill the sub-tree.
-If the point is at an item in an Org list, kill that item.
-If none of the previous conditions are true, kill the current line.
-
-When called interactively without a prefix numeric argument, N is 1,
-which controls how many lines will be cut."
-  (interactive "p")
-  (when (> n 1)
-    (setq n (+ n 1)))
-  (dotimes (_ n)
-    (cond ((region-active-p)
-           (kill-region nil nil t)
-           (setq this-command 'kill-region))
-          ((and (derived-mode-p 'org-mode)
-                (org-at-heading-p))
-           (when (eq last-command 'org-cut-subtree)
-             (append-next-kill))
-           (org-cut-subtree)
-           (setq this-command 'org-cut-subtree))
-          ((and (derived-mode-p 'org-mode)
-                (org-in-item-p))
-           (when (eq last-command 'kill-region)
-             (append-next-kill))
-           (kam-org-kill-item)
-           (setq this-command 'kill-region))
-          (t
-           (when (eq last-command 'kam-kill-whole-line)
-             (append-next-kill))
-           (kam-kill-whole-line)
-           (setq this-command 'kam-kill-whole-line)))))
-
-(defun kam-kill-ring-save-dwim (&optional n)
-  "A DWIM command for copying.
-
- If point is at an Org heading, copy the subtree. If the
-point is at an Org item, copy the item. Else, copy the line.
-When called interactively without a prefix numeric argument, N is 1."
-  (interactive "p")
-  (cond ((region-active-p)
-         (copy-region-as-kill (region-beginning) (region-end))
-         (setq this-command 'copy-region-as-kill))
-        ((and (derived-mode-p 'org-mode) (org-at-heading-p))
-         (org-copy-subtree)
-         (setq this-command 'org-copy-subtree))
-        ((and (derived-mode-p 'org-mode) (org-in-item-p)) ;; Org-in-item-p doesnt work if out of org mode
-         (copy-region-as-kill (car (kam-org-item-bounds)) (cdr (kam-org-item-bounds)))
-         (setq this-command 'copy-region-as-kill))
-        (t
-         (kam-copy-line)
-         (setq this-command 'copy-region-as-kill))))
-
-(defun kam-duplicate-line-or-region ()
-  "Duplicate the current line or active region."
-  (interactive)
-  (unless mark-ring
-    (push-mark (point) t nil))
-  (kam--duplicate-buffer-substring
-   (if (region-active-p)
-       (cons (region-beginning) (region-end))
-     (cons (line-beginning-position) (line-end-position)))))
-
-(advice-add #'kam-duplicate-line-or-region :after #'kam-indent-region-advice)
-
-(defun kam-yank-dwim ()
-  "Indent after you yank."
-  (interactive)
-  (let* ((yank-transform-functions '(string-chop-newline string-trim)))
-    (yank)))
-
-(defun kam-delete-pair-dwim ()
-  "Delete pair following or preceding point."
-  (interactive)
-  (if (eq (point) (cdr (bounds-of-thing-at-point 'sexp)))
-      (delete-pair -1)
-    (delete-pair 1)))
-
-(defun kam-insert-new-line-below (n)
-  "Create N empty lines below the current one.
-When called interactively without a prefix numeric argument, N is 1."
-  (interactive "p")
-  (goto-char (line-end-position))
-  (dotimes (_ n) (newline-and-indent)))
-
-(defun kam-insert-new-line-above (n)
-  "Create N empty lines above the current one.
-When called interactively without a prefix numeric argument, N is 1."
-  (interactive "p")
-  (let ((point-min (point-min)))
-    (if (or (bobp)
-            (eq (point) point-min)
-            (eq (line-number-at-pos point-min) 1))
-        (progn
-          (goto-char (line-beginning-position))
-          (forward-line (- n))
-          (dotimes (_ n) (kam-insert-new-line-below n)))
-      (forward-line (- n))
-      (kam-insert-new-line-below n))))
-
-(defun kam-join-line-dwim (n)
-  "Join lines.
-When called interactively without a prefix numeric argument, N is 1."
-  (interactive "P")
-  (let ((numeric-arg (prefix-numeric-value n)))
-    (save-excursion
-      (set-mark (point))
-      (forward-line numeric-arg)
-      (join-line nil (region-beginning) (region-end)))
-    (indent-according-to-mode)))
-
-;; old `kam-join-line-dwim'
-;; (if (eolp)
-;;     (save-excursion
-;;       (set-mark (point))
-;;       (forward-line numeric-arg)
-;;       (join-line nil (region-beginning) (region-end))
-;;       (indent-according-to-mode))
-;;   (save-excursion
-;;     (set-mark (point))
-;;     (forward-line numeric-arg)
-;;     (join-line t (region-beginning) (region-end))
-;;     (indent-according-to-mode)))
-
-(defun kam-open-line-dwim (n)
-  "Open the line and indent it to the proper place.
-When called interactively without a prefix numeric argument, N is 1."
-  (interactive "P")
-  (let ((arg (prefix-numeric-value n)))
-    (save-excursion
-      (open-line arg)
-      (forward-line arg)
-      (indent-according-to-mode))
-    (indent-according-to-mode)))
-
-(defun kam-yank-replace-line-or-region ()
-  "Replace line or region with the latest kill.
-This command can be followed by the standard `yank-pop' (default is bound to \\[yank-pop])."
-  (interactive)
-  (if (use-region-p)
-      (delete-region (region-beginning) (region-end))
-    (delete-region (line-beginning-position) (line-end-position)))
-  (yank)
-  (setq this-command 'yank)
-  (kam-indent-dwim))
-
-(defun kam-kill-whole-line ()
-  "Kill the whole line, regardless of the cursor position within the line.
-If called interactively without a prefix numeric argument, N is 1."
-  (kill-region (progn
-                 (back-to-indentation)
-                 (point))
-               (progn
-                 (forward-line 1)
-                 (back-to-indentation)
-                 (point))))
-
-(defun kam-kill-from-point-to-beginning-of-line ()
-  "Kill from the point to the beginning of the line."
-  (interactive)
-  (kill-region (line-beginning-position) (point)))
-
-(defun kam-delete-from-point-to-beginning-text ()
-  "Delete from the point up to and including the text."
-  (interactive)
-  (while (or (not (kam-line-only-spaces-or-symbols-p))
-             (bolp))
-    (delete-char -1)))
-
-(defun kam-control-backspace ()
-  "Kill the word behind point. If the line is empty, join it with the previous line."
-  (interactive)
-  (if (or (kam-line-empty-before-point-p)
-          (bolp))
-      (join-line)
-    (backward-kill-word 1)))
-
-(defun kam-transpose-chars ()
-  "Interchange the two characters behind the point."
-  (interactive)
-  (cond
-   ((eolp) (transpose-chars 1))
-   (t (transpose-chars -1) (forward-char 1))))
-
-(defun kam-transpose-words ()
-  "Interchange the words behind the point."
-  (interactive)
-  (forward-word -1)
-  (transpose-words 1))
-
-(defun kam-indent-dwim ()
-  "Indent the current defun in `prog-mode' or paragraph in `text-mode'."
-  (interactive)
-  (save-excursion
-    (cond
-     ((derived-mode-p 'prog-mode)
-      (mark-defun))
-     ((derived-mode-p 'text-mode)
-      (mark-paragraph)))
-    (indent-for-tab-command)
-    (deactivate-mark)))
-
-(defun kam-kill-sexp (&optional arg interactive)
-  "Kill the sexp following point. With ARG, do it that many times."
-  (interactive "p\nd")
-  (if interactive
-      (condition-case _
-          (kam-kill-sexp arg nil)
-        (scan-error (user-error (if (> arg 0)
-                                    "No next sexp"
-                                  "No previous sexp"))))
-    (let ((old-point (point)))
-      (kam-forward-sexp (or arg 1))
-      (kill-region old-point (point)))))
-
-(defun kam-end-of-string ()
-  (interactive)
-  (while (in-string-p)
-    (forward-char 1))
-  (point))
-
-(defun kam-beginning-of-string ()
-  (interactive)
-  (while (in-string-p)
-    (forward-char -1))
-  (point))
-
-(defun kam-forward-sexp (&optional arg interactive)
-  "Move forward across a sexp.
-With ARG, do it that many times. Negative ARG -N means move backwards across N sexps.
-This command assumes a string or a comment is a sexp."
-  (interactive "p\nd")
-  (if interactive
-      (condition-case _
-          (kam-forward-sexp arg nil)
-        (scan-error (user-error (if (> arg 0)
-                                    "No next sexp"
-                                  "No previous sexp"))))
-    (if (in-string-p)
-        (progn
-          (kam-end-of-string)
-          (forward-char -1))
-      (forward-sexp arg))))
-
-(defun kam-backward-sexp (&optional arg interactive)
-  "Move backwards across a sexp.
-With ARG, do it that many times. Negative ARG -N means move forward across N sexps.
-This command consides a string or a comment a sexp.
-Uses `kam-forward-sexp' to do the work."
-  (interactive "p\nd")
-  (or arg (setq arg 1))
-  (if (in-string-p)
-      (progn
-        (kam-beginning-of-string)
-        (forward-char 1))
-    (kam-forward-sexp (- arg) interactive)))
-
-(defun kam-narrow-or-widen-dwim (p)
-  "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
-Intelligently means: region, subtree, or defun, whichever applies first."
-  (interactive "P")
-  (declare (interactive-only))
-  (cond ((and (buffer-narrowed-p) (not p)) (widen))
-        ((region-active-p)
-         (narrow-to-region (region-beginning) (region-end)))
-        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
-        (t (narrow-to-defun))))
-
-(defun kam-current-sexp ()
-  "Returns the current expression based on the position of the point within or on the edges of an s-expression."
-  ;; doesnt work good right now
-  (cond
-   ((thing-at-point 'url) 'url)
-   ((thing-at-point 'word) 'word)
-   ((thing-at-point 'string) 'string)
-   ((thing-at-point 'sexp) 'sexp)))
-
-(defun kam-current-elisp-sexp ()
-  "Returns the current Elisp expression based on the position of the point within or on the edges of an s-expression."
-  (cond
-   ((looking-at "(") (sexp-at-point))
-   ((looking-back ")" 1) (elisp--preceding-sexp))
-   (t (save-excursion
-        (search-backward "(")
-        (sexp-at-point)))))
-
-(defun kam-eval-current-sexp ()
-  "Evaluates the current sexp at point.
-Additionally, if the region is active, evaluate the region.
-
-Unlike `eval-last-sexp', the point doesn't need to be at the end of the expression, but can be at the beginning (on the parenthesis) or somewhere inside."
-  (interactive)
-  (if (region-active-p)
-      (eval-region (region-beginning) (region-end))
-    (eval-expression (kam-current-elisp-sexp))))
-
-(defun kam-kill-around-sexp ()
-  "Kills the everything inside the list at point including the delimiters."
-  (interactive)
-  (backward-up-list)
-  (kam-kill-sexp))
-
-(defun kam-insert-quote (&optional arg)
-  "Enclose following ARG sexps in quotes."
-  (interactive "P")
-  (insert-pair arg ?\" ?\"))
-
-(defun kam-forward-paragraph (&optional arg)
-  "Move forward ARG paragraphs while keeping the point in the center of the screen."
-  (interactive "p")
-  (forward-paragraph arg)
-  (recenter))
-
-(defun kam-backward-paragraph (&optional arg)
-  "Move backward ARG paragraphs while keeping the point in the center of the screen."
-  (interactive)
-  (backward-paragraph arg)
-  (recenter))
-
-(defun kam-unfill-paragraph ()
-  "Replace newline characters in current paragraph by single spaces.
-This command does the inverse of `fill-paragraph'."
-  (interactive)
-  (let ((fill-column most-positive-fixnum))
-    (fill-paragraph nil)))
-
-(defun kam-multi-line-below ()
-  "Move a half screen below."
-  (interactive)
-  (forward-line (floor (window-height) 2))
-  (setq this-command 'scroll-down-command))
-
-(defun kam-multi-line-above ()
-  "Move a half screen above."
-  (interactive)
-  (forward-line (- (floor (window-height) 2)))
-  (setq this-command 'scroll-down-command))
-
-(defun kam-indent-region-advice (&rest ignored)
-  (let ((deactivate deactivate-mark))
-    (if (region-active-p)
-        (indent-region (region-beginning) (region-end))
-      (indent-region (line-beginning-position) (line-end-position)))
-    (setq deactivate-mark deactivate)))
-
-(defun kam-yank-undo (&optional arg)
-  "Undo the yank you just did.
-Reverses the direction you are going in the kill ring.
-With optional ARG, repeat the undos that many times."
-  (interactive "p")
-  (yank-pop (- arg)))
-
-(defun kam-query-replace-dwim ()
-  "Query replace, DWIM.
-If the region is active, query replace the thing in the region.
-Else, use the symbol at point."
-  (interactive)
-  (let* ((sym (or (when (region-active-p) 
-                    (buffer-substring-no-properties (region-beginning) (region-end)))
-                  (thing-at-point 'symbol)))
-         (to-string (read-string (format "Query replace %s with: " sym))))
-    (deactivate-mark)
-    (query-replace sym to-string)))
 
 (use-package org
   :ensure nil
@@ -3871,7 +3386,7 @@ The shell is renamed to make opening multiple shells easier."
   (pulsar-region-face 'pulsar-yellow)
   (pulsar-highlight-face 'pulsar-yellow)
   (pulsar-pulse-on-window-change nil)
-  (pulsar-pulse-region-functions nil)
+  (pulsar-pulse-region-functions '(kam-kill-line kill-ring-save))
   :config
   ;; (add-to-list 'pulsar-pulse-functions 'recenter)
   ;; (advice-add 'isearch-forward :after 'pulsar-recenter-center)
