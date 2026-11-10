@@ -1071,21 +1071,19 @@ Duplicates are not saved."
 
   (keymap-set help-map "a" kam-help-apropos-map)
 
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*Help\\*"
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . right)
-  ;;                (window . root)
-  ;;                (mode help-mode)))
-
   (add-to-list 'display-buffer-alist
-               '("\\*Error\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (window-width . 0.35)
-                 (mode help-mode)
-                 (window-parameters . ((mode-line-format . none)
-                                       (no-delete-other-windows . t)))))
+               '((major-mode . help-mode)
+                 (display-buffer-reuse-mode-window)
+                 (mode help-mode)))
+
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("\\*Error\\*"
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . bottom)
+  ;;                (window-width . 0.35)
+  ;;                (mode help-mode)
+  ;;                (window-parameters . ((mode-line-format . none)
+  ;;                                      (no-delete-other-windows . t)))))
 
   (with-eval-after-load 'consult
     ;; (add-to-list 'consult-buffer-filter
