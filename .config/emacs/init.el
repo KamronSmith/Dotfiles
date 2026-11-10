@@ -2341,18 +2341,6 @@ If the current buffer belongs to a project, run the grep command in the project 
 (use-package aggressive-indent
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
-(use-package visible-mark
-  :custom
-  (visible-mark-max 1)
-  :config
-  (defface kam-visible-mark-face-1
-    `((t (:background "purple" :foreground "black")))
-    "Face for the most recent mark."
-    :group 'visible-mark)
-
-  (setq visible-mark-faces `(kam-visible-mark-face-1))
-  (global-visible-mark-mode))
-
 (use-package vundo
   :bind
   (:map vundo-mode-map
@@ -4311,6 +4299,30 @@ the file is not under version control."
                       :foreground "#808080"
                       :box nil
                       :weight 'bold))
+
+(use-package visible-mark
+  :preface
+  (defface kam-visible-mark-face
+    `((t nil))
+    "Visible mark")
+  :custom
+  (visible-mark-max 1)
+  (visible-mark-faces `(kam-visible-mark-face))
+  :custom-face
+  (visible-mark-active
+   ((t (:foreground ,(modus-themes-get-color-value 'fg-main)
+                    :background ,(modus-themes-get-color-value 'bg-search-static)))))
+  (kam-visible-mark-face
+   ((t (:foreground ,(modus-themes-get-color-value 'fg-main)
+                    :background ,(modus-themes-get-color-value 'bg-search-static)))))
+  :config
+  (global-visible-mark-mode))
+
+(use-package sly
+  :bind
+  (:map sly-mrepl-mode-map
+        ("RET" . newline)
+        ("C-<return>" . sly-mrepl-return)))
 
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.config/emacs/lisp/yt-dlp.el")
