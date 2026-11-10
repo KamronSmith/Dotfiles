@@ -520,12 +520,12 @@ To be used attached to `after-init-hook'."
      ;;  (window . root)
      ;;  (window-height . 0.45)
      ;;  (window-parameters . ((mode-line-format . none))))
-     ("Output\\*$"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . bottom)
-      (window . root)
-      (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none))))
+     ;; ("Output\\*$"
+     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
+     ;;  (side . bottom)
+     ;;  (window . root)
+     ;;  (window-height . 0.45)
+     ;;  (window-parameters . ((mode-line-format . none))))
      ("\\*Backtrace\\*"
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
@@ -2241,8 +2241,8 @@ Used in `isearch-mode-end-hook'."
   (add-to-list 'display-buffer-alist
                '("\\*grep\\*"
                  (display-buffer-reuse-window 
-                  display-buffer-use-least-recent-window
-                  display-buffer-in-direction)
+                  ;; display-buffer-use-least-recent-window
+                  )
                  (direction . right)
                  ;; (inhibit-same-window . t)
                  (body-function . select-window)))
@@ -3121,7 +3121,7 @@ The shell is renamed to make opening multiple shells easier."
 
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
-                 (display-buffer-reuse-window display-buffer-use-least-recent-window)
+                 (display-buffer-reuse-window)
                  ;; (side . bottom)
                  ;; (window . root)
                  ;; (inhibit-same-window . t)
@@ -3131,12 +3131,13 @@ The shell is renamed to make opening multiple shells easier."
                  ;; (window-parameters . ((mode-line-format . none))
                  ))
 
-  (add-to-list 'display-buffer-alist
-               '((major-mode . shell-command-mode)
-                 (display-buffer-reuse-window display-buffer-in-direction)
-                 (direction . right)
-                 (window . root)
-                 (inhibit-same-window . t))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '((major-mode . shell-command-mode)
+  ;;                (display-buffer-reuse-window display-buffer-in-direction)
+  ;;                (direction . right)
+  ;;                (window . root)
+  ;;                (inhibit-same-window . t)))
+  )
 
 (use-package readline-completion
   :after (shell)
