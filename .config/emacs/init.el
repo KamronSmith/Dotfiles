@@ -1989,7 +1989,7 @@ This source is only enabled when the current buffer belongs to a project.")
 (use-package ace-window
   :bind
   (:map kam-override-mode-map
-        ("M-o" . ace-window))
+        ("M-o" . kam-ace-window))
   :config
   (setq aw-dispatch-always t)
   (setq aw-keys '(?d ?n ?r ?e ?t ?a))
