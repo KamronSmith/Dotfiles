@@ -512,7 +512,7 @@ To be used attached to `after-init-hook'."
   (next-screen-context-lines 20)
   ;; (display-buffer-base-action '((display-buffer-reuse-window display-buffer-same-window)
   ;;                               (reusable-frames . t)))
-  (display-buffer-base-action '(nil))
+  (display-buffer-base-action '(display-buffer-reuse-window display-buffer-same-window))
   (display-buffer-alist
    `(;; ("\\*Async Shell Command\\*"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
