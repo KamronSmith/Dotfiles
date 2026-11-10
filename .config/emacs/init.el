@@ -2974,6 +2974,7 @@ Numerical argument ARG determines the command being selected from to choose argu
   :hook (shell-mode . kam-shell-mode-setup)
   :bind
   ("C-x s" . shell)
+  ([remap shell-command] . kam-shell-command)
   ("C-!" . shell-command)
   (:map shell-mode-map
         ("C-^" . kam-shell-up-directory)
