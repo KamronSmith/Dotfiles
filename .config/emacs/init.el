@@ -45,18 +45,20 @@
 
 (use-package exec-path-from-shell
   :init
-  (setq exec-path-from-shell-shell-name (executable-find "zsh")
-        exec-path-from-shell-variables '("PATH"
-                                         "MANPATH"
-                                         "SHELL"
-                                         "SSH_AUTH_SOCK"
-                                         "GNUPGHOME"
-                                         "LANG"
-                                         "DISPLAY"
-                                         "WAYLAND_DISPLAY"
-                                         "XDG_DATA_HOME"
-                                         "XDG_CONFIG_HOME"
-                                         "HYPRLAND_INSTANCE_SIGNATURE"))
+  (setopt exec-path-from-shell-shell-name (executable-find "zsh"))
+  (setopt exec-path-from-shell-debug t)
+  (setopt exec-path-from-shell-variables '("PATH"
+                                           "MANPATH"
+                                           "SHELL"
+                                           "SSH_AUTH_SOCK"
+                                           "GNUGPGHOME"
+                                           "LANG"
+                                           "DISPLAY"
+                                           "WAYLAND_DISPLAY"
+                                           "XDG_DATA_HOME"
+                                           "GIT_SSH_SIGNING_PROGRAM"
+                                           "XDG_CONFIG_HOME"
+                                           "HYPRLAND_INSTANCE_SIGNATURE"))
   (exec-path-from-shell-initialize))
 
 (use-package emacs
@@ -1531,7 +1533,6 @@ With non-nil optional argument DELIMITED, only replace matches surrounded by act
          ("M-p" . kam-consult-line-symbol-at-point)
          ("M-d" . consult-line)
          :map goto-map
-         ("M-l" . consult-flymake)
          ("M-e" . consult-compile-error)
          ("M-o" . consult-org-heading)
          ("M-i" . imenu)
@@ -3672,25 +3673,37 @@ the file is not under version control."
                (ediff-backup (buffer-file-name)))
            (apply #'signal errdata)))))))
 
-(use-package flymake
-  :after (consult)
-  :ensure nil
-  :hook (after-init . flymake-mode)
-  :bind
-  (:map prog-mode-map
-        ("M-g M-b" . flymake-goto-prev-error)
-        ("M-g M-f" . flymake-goto-next-error))
-  :custom
-  (flymake-inline-diagnostics nil)
-  (flymake-margin-indicators-string
-   '((error "!»" compilation-error)
-     (warning "»" compilation-warning)
-     (note "»" compilation-info)))
+;; (use-package flymake
+;;   :after (consult)
+;;   :ensure nil
+;;   :hook (after-init . flymake-mode)
+;;   :bind
+;;   (:map prog-mode-map
+;;         ("M-g M-b" . flymake-goto-prev-error)
+;;         ("M-g M-f" . flymake-goto-next-error))
+;;   :custom
+;;   (flymake-inline-diagnostics nil)
+;;   (flymake-margin-indicators-string
+;;    '((error "!»" compilation-error)
+;;      (warning "»" compilation-warning)
+;;      (note "»" compilation-info)))
+;;   :config
+;;   (add-to-list 'consult-buffer-filter
+;;                "\\*Flymake diagnostics for ")
+;;   (add-to-list 'switch-to-prev-buffer-skip-regexp
+;;                "\\*Flymake diagnostics for "))
+
+(use-package flycheck
+  :ensure t
+  :hook ((after-init . global-flycheck-mode)
+         (after-init . global-flycheck-annotate-mode))
   :config
-  (add-to-list 'consult-buffer-filter
-               "\\*Flymake diagnostics for ")
-  (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "\\*Flymake diagnostics for "))
+  (global-flycheck-eglot-mode 1))
+
+(use-package consult-flycheck
+  :bind
+  (:map goto-map
+        ("M-l" . consult-flycheck)))
 
 (use-package eglot
   :ensure nil
@@ -3994,8 +4007,7 @@ the file is not under version control."
   (epa-keys-select-method 'minibuffer)
   (epa-pinentry-mode 'loopback)
   :config
-  (setenv "GPG_AGENT_INFO" nil)
-  (setenv "GNUGPGHOME" "~/.gnupg"))
+  (setenv "GPG_AGENT_INFO" nil))
 
 (use-package epg
   :ensure nil
