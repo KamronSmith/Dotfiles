@@ -3,9 +3,9 @@ tasks
 \.git
 \.gitignore
 \.luarc\.json
-arch_system_packages\.txt
-arch_foreign_packages\.txt
 TAGS
 DefaultKeyBinding\.dict
+packages
 README\.md
-install\.sh
+install
+Makefile
