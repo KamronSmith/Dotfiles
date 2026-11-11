@@ -3517,7 +3517,9 @@ The shell is renamed to make opening multiple shells easier."
   (defun kam-text-mode-setup ()
     "Setup function for `text-mode'."
     (auto-fill-mode -1)
-    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)))
+    (indent-tabs-mode -1)
+    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)
+    (setopt-local display-line-numbers 'visual)))
 
 (use-package prog-mode
   :ensure nil
