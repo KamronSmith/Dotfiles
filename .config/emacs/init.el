@@ -757,11 +757,14 @@ For more information, read `dired-maybe-insert-subdir'."
   (defun kam-dired-insert-subdir (&optional arg)
     "Generic command to insert subdirectories in Dired buffers.
 
-When items are marked, insert those which are subdirectories of the current directory. Ignore regular files.
-If no files are active and point is on a subdirectory line, insert it directly.
-If no files are active and point is not on a subdirectory line, prompt for a subdirectory using completion.
-When optional ARG as a single prefix (`\\[universal-argument]') argument, prompt for command line flags to pass to the underlying ls program.
-With optional ARG as a double prefix argument, remove all inserted subdirectories."
+When items are marked, insert those which are subdirectories of the
+current directory. Ignore regular files. If no files are active and
+point is on a subdirectory line, insert it directly. If no files are
+active and point is not on a subdirectory line, prompt for a
+subdirectory using completion. When optional ARG as a single
+prefix (`\\[universal-argument]') argument, prompt for command line
+flags to pass to the underlying ls program. With optional ARG as a
+double prefix argument, remove all inserted subdirectories."
     (interactive "p")
     (let* ((name (dired-get-marked-files))
            (flags (when (eq arg 4)
@@ -1227,20 +1230,23 @@ Duplicates are not saved."
   (reb-re-syntax 'rx)
   :config
   (defvar kam-re-builder-positions nil
-    "Store point and region bounds before calling re-builder")
+    "Store point and region bounds before calling `re-builder'.")
 
-  (advice-add 're-builder :before
-              (defun kam-re-builder-save-state (&rest _)
-                "Save into `kam-rebuilder-positions' the point and the region before calling `re-builder'."
-                (setq kam-re-builder-positions
-                      (cons (point)
-                            (when (region-active-p)
-                              (list (region-beginning)
-                                    (region-end)))))))
+  (defun kam-re-builder-save-state (&rest _)
+    "Save point and region into `kam-rebuilder-positions'.
+This function is meant to be run :before `re-builder'."
+    (setq kam-re-builder-positions
+          (cons (point)
+                (when (region-active-p)
+                  (list (region-beginning)
+                        (region-end))))))
+
+  (advice-add 're-builder :before 'kam-re-builder-save-state)
 
   (defun kam-re-builder-replace-regexp (&optional delimited)
-    "Run `query-replace-regexp' with the contents of 're-builder'.
-With non-nil optional argument DELIMITED, only replace matches surrounded by actual boundaries."
+    "Run `query-replace-regexp' with the contents of `re-builder'.
+With non-nil optional argument DELIMITED, only replace matches
+surrounded by actual boundaries."
     (interactive "P")
     (reb-update-regexp)
     (let* ((re (reb-target-value 'reb-regexp))
@@ -2254,7 +2260,8 @@ Used in `isearch-mode-end-hook'."
 
   (defun kam-grep-symbol-at-point ()
     "Start a `grep' search for the symbol at point.
-If the current buffer belongs to a project, run the grep command in the project directory."
+If the current buffer belongs to a project, run the grep command in the
+project directory."
     (interactive)
     (let* ((sym (thing-at-point 'symbol t))
            (command (concat grep-command sym))
@@ -2835,7 +2842,7 @@ to directory DIR."
     (dired (project-root (project-current))))
 
   (defun kam-project-remember-advice ()
-    "Advice intended to be run after project creation commands to properly remember the projects."
+    "Remember projects after creation."
     (project-remember-projects-under kam-projects-directory t)
     (kam-clear-echo-area))
 
@@ -2905,10 +2912,11 @@ ARGS is a list of strings."
 
   (defvar kam-comint--input-history-prompt nil
     "Minibuffer history of `kam-comint--input-history-prompt'.
-Not to be confused with the shell input history, which is stored in the `comint-input-ring' (see `kam-comint--history-to-list').")
+Not to be confused with the shell input history, which is stored in the
+`comint-input-ring' (see `kam-comint--history-to-list').")
 
   (defun kam-comint--presorted-completion-table (completions)
-    "Completion table for `kam-comint--input-history-prompt' that doesn't mess up the sorting."
+    "Completion table for `kam-comint--input-history-prompt' with no sorting."
     (lambda (string pred action)
       (if (eq action 'metadata)
           `(metadata (display-sort-function . ,#'identity))
@@ -2935,15 +2943,17 @@ Not to be confused with the shell input history, which is stored in the `comint-
       (split-string args)))
 
   (defun kam-comint-insert-arguments-from-command (&optional arg)
-    "Insert any number of arguments from a previously run command using minibuffer completion.
-If there is a numerical argument, the arguments are selected from the ARGth run command."
+    "Insert any number of arguments from a previously run command.
+If there is a numerical argument, the arguments are selected from the
+ARGth run command."
     (interactive "p")
     (kam-comint--insert
      (kam-comint--get-args-prompt arg)))
 
   (defun kam-comint--get-args-prompt (&optional arg)
-    "Select an argument from a previously run command using minibuffer completion.
-Numerical argument ARG determines the command being selected from to choose arguments."
+    "Select an argument from a previously run command.
+Numerical argument ARG determines the command being selected from to
+choose arguments."
     (interactive "p")
     (let* ((command-index (or (- 1 arg) 1))
            (command (nth command-index (kam-comint--history-to-list)))
@@ -3059,7 +3069,7 @@ Push `shell-last-dir' to `kam-shell-cd--directories'."
       (user-error "No directories have been tracked")))
 
   (defun kam-shell-cd ()
-    "Navigate to a previously visited directory in `shell-mode', or to any directory offered by `consult-dir'."
+    "Navigate to directory in `shell-mode', with `consult-dir'."
     (declare (interactive-only t))
     (interactive)
     (let ((shell-dirs (delete-dups
@@ -3080,8 +3090,9 @@ Push `shell-last-dir' to `kam-shell-cd--directories'."
                                         (consult-dir--pick "Switch directory: "))))))))
 
   (defun kam-shell-here ()
-    "Opens a new shell in the directory associated with the current buffer's file.
-The shell is renamed to match that directory to make multiple shell windows easier."
+    "Open a shell in the directory associated with the current buffer's file.
+The shell is renamed to match that directory to make multiple shell
+windows easier."
     (interactive)
     (let* ((parent (if (buffer-file-name)
                        (file-name-directory (buffer-file-name))
@@ -3091,7 +3102,7 @@ The shell is renamed to match that directory to make multiple shell windows easi
       (rename-buffer (concat "*shell: " name "*"))))
 
   (defun kam-shell-up-directory ()
-    "Navigates a directory higher in the directory tree."
+    "Navigate a directory higher in the directory tree."
     (interactive)
     (kam-comint--insert-and-send "cd .."))
 
@@ -3271,10 +3282,9 @@ The shell is renamed to make opening multiple shells easier."
     "Custom overrides for Standard-Themes Dark.")
 
   (defun kam-set-custom-faces ()
-    "Function which sets faces across the configuration using the `standard-themes-with-colors' macro.
- Uses the colors set in either
- `kam-standard-themes-palette-dark-overrides' or
- `kam-standard-themes-palette-light-overrides'."
+    "Set faces across the configuration with `standard-themes'.
+ Uses the colors set in either `kam-standard-themes-palette-dark-overrides' or
+`kam-standard-themes-palette-light-overrides'."
     (if (eq (modus-themes-get-current-theme) 'standard-dark)
         (setq standard-themes-common-palette-overrides kam-standard-themes-palette-dark-overrides)
       (setq standard-themes-common-palette-overrides kam-standard-themes-palette-light-overrides))
