@@ -140,7 +140,8 @@ PACKAGES should be a list of strings."
 
 (defun kam-os--write-explicitly-installed-packages-to-file ()
   "Write all explicitly installed packages to associated files.
-They will be written to `kam-dotfiles-installed-system-packages-file' and `kam-dotfiles-installed-foreign-packages-file'"
+They will be written to `kam-dotfiles-installed-system-packages-file'
+and `kam-dotfiles-installed-foreign-packages-file'"
   (with-current-buffer (find-file-noselect kam-dotfiles-installed-system-packages-file t)
     (erase-buffer)
     (insert (mapconcat #'identity (kam-os--installed-packages-explicitly) "\n"))
