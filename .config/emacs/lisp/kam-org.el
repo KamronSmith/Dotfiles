@@ -103,7 +103,7 @@ When called interactively without a prefix argument, N is 1."
 (defun kam-org-mark-item ()
   "Mark the Org item at point."
   (interactive)
-  (kam--mark (kam-org-item-bounds)))
+  (kam-mark (kam-org-item-bounds)))
 
 (defun kam-org-kill-item ()
   "Kill the Org item at point."

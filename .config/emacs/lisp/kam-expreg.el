@@ -29,14 +29,14 @@ Does not include the delimiters."
   "Mark the inside of a pair of delimiters at point.
 Respects comments and strings. Powered by `kam-expreg--sexp'."
   (interactive)
-  (kam--mark (kam-expreg--sexp)))
+  (kam-mark (kam-expreg--sexp)))
 
 ;;;###autoload
 (defun kam-kill-inner-sexp ()
   "Kill the inside of a pair of delimiters at point.
 Respects comments and strings. Powered by `kam-expreg--sexp'."
   (interactive)
-  (kam--mark (kam-expreg--sexp))
+  (kam-mark (kam-expreg--sexp))
   (kill-region nil nil t))
 
 (defun kam-end-of-sexp (&optional n)

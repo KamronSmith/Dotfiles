@@ -133,11 +133,16 @@ MODE is a symbol that represents an active minor mode. See
   (call-interactively mode)
   (call-interactively mode))
 
-(defun kam--mark (bounds)
+(defun kam-mark (bounds)
   "Mark between BOUNDS as a cons cell of beginning and end positions."
-  (push-mark (car bounds))
-  (goto-char (cdr bounds))
-  (activate-mark))
+  (let ((beg (car bounds))
+        (end (cdr bounds)))
+    (if (> beg end)
+        (progn
+          (goto-char beg)
+          (push-mark end nil t))
+      (goto-char beg)
+      (push-mark end nil t))))
 
 (defun kam-grep-list-of-strings (regexp &optional grep-args directory)
   "Return a list of grep results as a list of strings using REGEXP."
@@ -183,46 +188,60 @@ If ARG is negative, point is put at end of this line, mark is put
 it marks the next ARG lines after the ones already marked."
   (interactive "P\np")
   (cond ((and allow-extend
-              (or (and (eq last-command this-command) (mark t))
-                  (and transient-mark-mode mark-active)))
+              (or (and (eq last-command this-command)
+                       (mark t))
+                  (and transient-mark-mode
+                       mark-active)))
          (setq arg (if arg (prefix-numeric-value arg)
                      (if (< (mark) (point)) -1 1)))
-         (set-mark
-          (save-excursion
-            (goto-char (mark))
-            (forward-line arg)
-            (point))))
+         (if visual-line-mode
+             (kam-mark
+              (cons (point)
+                    (save-excursion
+                      (goto-char (mark))
+                      (line-move-visual (prefix-numeric-value arg))
+                      (point))))
+           (kam-mark
+            (cons (point)
+                  (save-excursion
+                    (goto-char (mark))
+                    (forward-line (prefix-numeric-value arg))
+                    (point))))))
         (t (progn
              (when (> (prefix-numeric-value arg) 1)
                (setq arg (1+ (prefix-numeric-value arg))))
-             (beginning-of-line)
-             (push-mark
-              (save-excursion
-                (forward-line arg)
-                (point))
-              t t)))))
+             (if visual-line-mode
+                 (kam-mark
+                  (cons (beginning-of-visual-line)
+                        (save-excursion
+                          (line-move-visual (prefix-numeric-value arg))
+                          (beginning-of-visual-line)
+                          (point))))
+               (kam-mark
+                (cons (line-beginning-position)
+                      (save-excursion
+                        (forward-line (prefix-numeric-value arg))
+                        (line-beginning-position)))))))))
 
 (defun kam-mark-point-to-end-of-line ()
   "Set the mark at the end of the line, regardless of where the cursor is on the line."
   (interactive)
-  (if (eq visual-line-mode t)
-      (push-mark
-       (save-excursion
-         (end-of-visual-line)
-         (point))
-       t t)
-    (push-mark
-     (line-end-position)
-     nil t)))
+  (if visual-line-mode
+      (kam-mark
+       (cons (point)
+             (save-excursion
+               (end-of-visual-line)
+               (point))))
+    (kam-mark
+     (cons (point)
+           (line-end-position)))))
 
 (defun kam-mark-point-to-end-of-buffer ()
-  "Mark from the point to the end of the buffer."
+  "Mark from point to the end of the buffer."
   (interactive)
-  (push-mark
-   (save-excursion
-     (goto-char (point-max))
-     (point))
-   t t))
+  (kam-mark
+   (cons (point)
+         (point-max))))
 
 (defun kam-copy-line-as-kill (&optional n)
   "Copy N lines to the `kill-ring'."
@@ -249,7 +268,7 @@ which controls how many lines will be cut."
          (setq this-command 'kill-region))
         (t
          (kam-kill-line n)
-         )))
+         (setq this-command 'kill-region))))
 
 (defun kam-kill-ring-save-dwim (&optional n)
   "A DWIM command for copying.
@@ -475,6 +494,21 @@ Else, use the symbol at point."
          (to-string (read-string (format "Query replace %s with: " sym))))
     (deactivate-mark)
     (query-replace sym to-string)))
+
+(defun kam-keyboard-escape-quit-dwim ()
+  "A better keyboard quit."
+  (interactive)
+  (cond
+   ((region-active-p)
+    (keyboard-quit))
+   ((derived-mode-p 'completion-list-mode)
+    (delete-completion-window))
+   ((> (minibuffer-depth) 0)
+    (abort-recursive-edit))
+   ((identity defining-kbd-macro)
+    (kmacro-keyboard-quit))
+   (t
+    (keyboard-escape-quit))))
 
 (defun kam-keyboard-escape-quit-dwim ()
   "A better keyboard quit."
