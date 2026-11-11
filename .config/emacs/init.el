@@ -644,6 +644,8 @@ Only split if there is no split, and only split into left and right windows."
         ("i" . kam-dired-insert-subdir)
         ("R" . dired-do-rename)
         ("\\" . dired-create-empty-file)
+        ("C-w" . dired-do-delete)
+        ("M-w" . dired-copy-filename-as-kill)
         ([kam-i] . kam-split-window-right))
   :custom
   (dired-listing-switches "-AGFhlv --group-directories-first --time-style=long-iso")
