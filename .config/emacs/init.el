@@ -938,10 +938,10 @@ Duplicates are not saved."
   :unless kam-parrotos
   :bind
   (:map emureader-mode-map
-        ("SPC" . reader-next-page)
-        ("<backspace>" . reader-previous-page)
-        ("C-SPC" . kam-reader-goto-saved-page)
-        ("M-g M-i" . kam-reader-imenu))
+        ("SPC" . emureader-next-page)
+        ("<backspace>" . emureader-previous-page)
+        ("C-SPC" . kam-emureader-goto-saved-page)
+        ("M-g M-i" . kam-emureader-imenu))
   ;; TODO 2026-07-15: figure out why reader-outline-mode-map is void when trying to set keybindings
   ;; (:map reader-outline-mode-map
   ;;       ("SPC" . kam-scroll-down)
@@ -952,19 +952,19 @@ Duplicates are not saved."
 
   (defun kam-emureader-save-page (N)
     (interactive (list
-                  (emureader-current-pagenumber)))
+                  (emureader-current-doc-pagenumber)))
     (setq kam-emureader-saved-page N))
 
   (defun kam-emureader-goto-saved-page ()
     (interactive)
-    (let* ((prev-pg-number (emureader-current-pagenumber)))
+    (let* ((prev-pg-number (emureader-current-doc-pagenumber)))
       (emureader-goto-page kam-emureader-saved-page)
       (kam-emureader-save-page prev-pg-number)))
 
   (defun kam-emureader-imenu ()
     "Call `imenu', but save the current page number in `kam-emureader-saved-page'."
     (interactive)
-    (kam-emureader-save-page (emureader-current-pagenumber))
+    (kam-emureader-save-page (emureader-current-doc-pagenumber))
     (consult-imenu)))
 
 (use-package repeat

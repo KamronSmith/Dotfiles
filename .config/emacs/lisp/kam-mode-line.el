@@ -242,8 +242,8 @@ Specific to the current window's mode-line.")
 (defvar-local kam-mode-line-buffer-stats-var
   '(:eval
     (cond
-     ((bound-and-true-p reader-mode)
-      (kam-mode-line--reader-mode-stats))
+     ((derived-mode-p 'emureader-mode)
+      (kam-mode-line--emureader-mode-stats))
      (t (kam-mode-line-buffer-line-stats))))
   "Mode-line construct for the buffer stats indicator.")
 
@@ -451,7 +451,7 @@ See `kam-mode-line-string-cut-middle'."
    (cond
     ((derived-mode-p 'dired-mode)
      (nerd-icons-sucicon "nf-custom-folder_oct"))
-    ((derived-mode-p 'reader-mode)
+    ((derived-mode-p 'emureader-mode)
      (nerd-icons-faicon "nf-fa-file_pdf"))
     ((derived-mode-p 'ghostel-mode)
      (nerd-icons-devicon "nf-dev-terminal"))
@@ -487,10 +487,9 @@ See `kam-mode-line-string-cut-middle'."
 (defun kam-mode-line--buffer-percentage ()
   "Return the percentage of how far through the current buffer the point is."
   (let* ((line-number (line-number-at-pos))
-        (percent (round (* (/
-                            (float line-number)
-                            (float (kam-mode-line-buffer-lines)))
-                           100))))
+         (percent (round (* (/ (float line-number)
+                               (float (kam-mode-line-buffer-lines)))
+                            100))))
     (cond
      ((or (= line-number 1)
           (= percent 0))
@@ -499,35 +498,29 @@ See `kam-mode-line-string-cut-middle'."
       "Bot")
      (t percent))))
 
-(defun kam-mode-line--reader-mode-stats ()
-  "Return statistics about the current `reader-mode' buffer."
+(defun kam-mode-line--emureader-mode-stats ()
+  "Return statistics about the current `emureader-mode' buffer."
   (concat
    (propertize " " 'face 'shadow)
    " ["
-   (kam-mode-line--number-to-string-maybe (reader-current-pagenumber))
+   (kam-mode-line--number-to-string-maybe (emureader-current-doc-pagenumber))
    "/"
-   (kam-mode-line--number-to-string-maybe reader-current-doc-pagecount)
+   (kam-mode-line--number-to-string-maybe emureader-current-doc-pagecount)
    "]"
    (propertize " 󱨄 " 'face 'shadow)
-   (kam-mode-line--number-to-string-maybe (kam-mode-line--reader-mode-doc-percentage))
+   (kam-mode-line--number-to-string-maybe (kam-mode-line--emureader-mode-doc-percentage))
    " "
    (propertize "  " 'face 'shadow)
    (upcase (format-mode-line "%I"))))
 
-(defun kam-mode-line--reader-mode-doc-percentage ()
+(defun kam-mode-line--emureader-mode-doc-percentage ()
   "Return the percentage of how far through the current document the point is."
-  (let* ((pg-num (reader-current-pagenumber))
-         (total-pg reader-current-doc-pagecount)
-         (percent (round (* (/
-                             (float pg-num)
-                             (float total-pg))
-                            100))))
+  (let* ((pg-num (emureader-current-doc-pagenumber))
+         (total-pg (float emureader-current-doc-pagecount))
+         (percent (round (* (/ (float pg-num) total-pg) 100))))
     (cond
-     ((or (= pg-num 1)
-          (= percent 0))
-      "Top")
-     ((>= percent 100)
-      "Bot")
+     ((or (= pg-num 1) (= percent 0)) "Top")
+     ((>= percent 100) "Bot")
      (t percent))))
 
 (defun kam-mode-line--number-to-string-maybe (input)
