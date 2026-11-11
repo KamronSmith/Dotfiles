@@ -2988,7 +2988,7 @@ choose arguments."
   (shell-file-name (executable-find "zsh"))
   (shell-command-prompt-show-cwd t)
   (explicit-shell-file-name (executable-find "zsh"))
-  ;; (explicit-zsh-args '("--interactive" "--login"))
+  (explicit-zsh-args '("--interactive" "--login"))
   (tramp-default-remote-shell "/bin/bash")
   (shell-command-prompt-show-cwd t)
   (shell-command-buffer-name "*Shell Command*")
