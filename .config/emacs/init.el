@@ -46,7 +46,6 @@
 (use-package exec-path-from-shell
   :init
   (setopt exec-path-from-shell-shell-name (executable-find "zsh"))
-  (setopt exec-path-from-shell-debug t)
   (setopt exec-path-from-shell-variables '("PATH"
                                            "MANPATH"
                                            "SHELL"
@@ -1095,18 +1094,16 @@ Duplicates are not saved."
     ;;              "^\\*Help\\*" t)
     (add-to-list 'consult-buffer-filter
                  "^\\*Error\\*" t)
-    (add-to-list 'consult-buffer-filter
-                 "\\*Shell Command Output\\*" t)
     ;; (add-to-list 'consult-buffer-filter
     ;;              "\\*Messages\\*" t)
     )
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "\\*Shell Command Output\\*" t)
-  (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "\\*Messages\\*" t)
-  (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "\\*Help\\*" t)
+               "\\*Shell Command\\*" t)
+  ;; (add-to-list 'switch-to-prev-buffer-skip-regexp
+  ;;              "\\*Messages\\*" t)
+  ;; (add-to-list 'switch-to-prev-buffer-skip-regexp
+  ;;              "\\*Help\\*" t)
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "\\*Error\\*" t))
 
