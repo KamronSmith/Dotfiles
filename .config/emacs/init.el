@@ -3705,6 +3705,8 @@ the file is not under version control."
   :ensure t
   :hook ((after-init . global-flycheck-mode)
          (after-init . global-flycheck-annotate-mode))
+  :custom
+  (flycheck-emacs-lisp-load-path 'inherit)
   :config
   (global-flycheck-eglot-mode 1))
 
