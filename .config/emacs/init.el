@@ -395,6 +395,7 @@ To be used attached to `after-init-hook'."
   (completion-ignore-case t)
   (completions-sort 'historical)
   (read-file-name-completion-ignore-case t)
+  (completion-pcm-leading-wildcard t)
   (read-buffer-completion-ignore-case t)
   (read-extended-command-predicate #'command-completion-default-include-p))
 
