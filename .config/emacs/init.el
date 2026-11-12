@@ -1453,6 +1453,8 @@ surrounded by actual boundaries."
         ("<next>" . vertico-scroll-up)
         ("<prior>" . vertico-scroll-down)
         ("M-<return>" . vertico-exit-input)
+        ("M-n" . vertico-next-group)
+        ("M-p" . vertico-previous-group)
         ("M-w" . vertico-save)
         ("M-<" . vertico-first)
         ("M->" . vertico-last)
