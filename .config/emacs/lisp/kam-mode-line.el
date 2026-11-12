@@ -292,7 +292,8 @@ Specific to the current window's mode-line.")
 
 (defvar-local kam-mode-line-eglot
   '(:eval
-    (if (eglot-managed-p)
+    (if (and (fboundp 'eglot-managed-p)
+             (eglot-managed-p))
         (propertize " Eglot"
                     'face 'kam-mode-line-indicator-gray)
       ""))
