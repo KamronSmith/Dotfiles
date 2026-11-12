@@ -3549,7 +3549,6 @@ The shell is renamed to make opening multiple shells easier."
   :ensure nil
   :hook ((conf-mode . kam-conf-mode-setup)
          (conf-mode . buffer-face-mode)
-         (conf-mode . display-line-numbers-mode)
          (conf-mode . outline-minor-mode))
   :mode ("\\.env\\..*\\'" "\\.env\\'")
   :config
@@ -3820,7 +3819,8 @@ the file is not under version control."
 
 (use-package display-line-numbers
   :ensure nil
-  :hook (prog-mode . display-line-numbers-mode)
+  :hook ((prog-mode . display-line-numbers-mode)
+         (conf-mode . display-line-numbers-mode))
   :custom
   (display-line-numbers-type 'relative)
   (display-line-numbers-widen t)
