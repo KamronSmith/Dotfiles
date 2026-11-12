@@ -301,14 +301,14 @@ Enable that mode to its keybindings take over those of the major mode.")
 To be used attached to `after-init-hook'."
     (cond
      ((eq system-type 'gnu/linux)
-      (setq x-meta-keysym 'meta))
+      (setopt x-meta-keysym 'meta))
      ((eq system-type 'darwin)
-      (setq mac-option-key-is-meta t
-            mac-command-key-is-meta t
-            mac-control-modifier 'control
-            mac-command-modifier 'meta
-            mac-option-modifier 'meta
-            insert-directory-program (executable-find "gls"))
+      (setopt mac-option-key-is-meta t)
+      (setopt mac-command-key-is-meta t)
+      (setopt mac-control-modifier 'control)
+      (setopt mac-command-modifier 'meta)
+      (setopt mac-option-modifier 'meta)
+      (setopt insert-directory-program (executable-find "gls"))
       (menu-bar-mode)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
@@ -362,17 +362,14 @@ To be used attached to `after-init-hook'."
   :config
   (defun kam-minibuffer-setup ()
     "Function for settings as the minibuffer starts."
-    (setq gc-cons-threshold most-positive-fixnum)
-    (setq-local truncate-lines t)
-    ;; (setq-local line-spacing '(1 . 1))
-    (face-remap-add-relative 'default :height 1.1)
-    (visual-line-mode -1)
-    (visual-wrap-prefix-mode -1)
-    (buffer-face-mode 1))
+    (setopt gc-cons-threshold most-positive-fixnum)
+    (setopt-local truncate-lines t)
+    ;; (setopt-local line-spacing '(1 . 1))
+    (face-remap-add-relative 'default :height 1.1))
 
   (defun kam-minibuffer-exit ()
     "Function for settings as the minibuffer exits."
-    (setq gc-cons-threshold (* 1000 1000 8))))
+    (setopt gc-cons-threshold (* 1000 1000 8))))
 
 (use-package completion
   :ensure nil
@@ -842,16 +839,16 @@ double prefix argument, remove all inserted subdirectories."
 Duplicates are not saved."
     (when dired-directory
       (push dired-directory kam-dired-directory-history)
-      (setq kam-dired-directory-history (delete-dups kam-dired-directory-history))))
+      (setopt kam-dired-directory-history (delete-dups kam-dired-directory-history))))
 
   (define-minor-mode kam-dired-disable-revert-buffer-mode
     "Disable reverting the buffer in `dired-mode' when a file changes."
     :global nil
     (if kam-dired-disable-revert-buffer-mode
-        (setq-local dired-do-revert-buffer nil
-                    dired-auto-revert-buffer nil)
-      (setq-local dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
-                  dired-auto-revert-buffer t))))
+        (setopt-local dired-do-revert-buffer nil
+                      dired-auto-revert-buffer nil)
+      (setopt-local dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
+                    dired-auto-revert-buffer t))))
 
 (use-package dired-x
   :ensure nil
@@ -951,10 +948,10 @@ Duplicates are not saved."
   (defvar kam-emureader-saved-page nil
     "Saved page for `emureader-mode'")
 
-  (defun kam-emureader-save-page (N)
+  (defun kam-emureader-save-page (n)
     (interactive (list
                   (emureader-current-doc-pagenumber)))
-    (setq kam-emureader-saved-page N))
+    (setopt kam-emureader-saved-page n))
 
   (defun kam-emureader-goto-saved-page ()
     (interactive)
@@ -1235,11 +1232,11 @@ Duplicates are not saved."
   (defun kam-re-builder-save-state (&rest _)
     "Save point and region into `kam-rebuilder-positions'.
 This function is meant to be run :before `re-builder'."
-    (setq kam-re-builder-positions
-          (cons (point)
-                (when (region-active-p)
-                  (list (region-beginning)
-                        (region-end))))))
+    (setopt kam-re-builder-positions
+            (cons (point)
+                  (when (region-active-p)
+                    (list (region-beginning)
+                          (region-end))))))
 
   (advice-add 're-builder :before 'kam-re-builder-save-state)
 
@@ -1266,7 +1263,7 @@ surrounded by actual boundaries."
            (end (caddr kam-re-builder-positions)))
       (with-selected-window reb-target-window
         (goto-char pnt)
-        (setq kam-re-builder-positions nil)
+        (setopt kam-re-builder-positions nil)
         (reb-quit)
         (query-replace-regexp re replacement delimited beg end)))))
 
@@ -1489,26 +1486,26 @@ surrounded by actual boundaries."
       (vertico-cycle . nil))
     "List of configurations for minimal Vertico multiform.")
 
-  (setq vertico-multiform-categories
-        `((embark-keybinding grid)
-          ;; (consult-location ,@kam-vertico-multiform-maximal)
-          ;; (imenu ,@kam-vertico-multiform-maximal)
-          ;; (unicode-name ,@kam-vertico-multiform-maximal)
-          ;; (multi-category ,@kam-vertico-multiform-maximal)
-          ;; (file ,@kam-vertico-multiform-minimal
-          ;;       (vertico-sort-function . vertico-sort-directories-first)
-          ;;       (:keymap . vertico-directory-map))
-          ))
+  (setopt vertico-multiform-categories
+          `((embark-keybinding grid)
+            ;; (consult-location ,@kam-vertico-multiform-maximal)
+            ;; (imenu ,@kam-vertico-multiform-maximal)
+            ;; (unicode-name ,@kam-vertico-multiform-maximal)
+            ;; (multi-category ,@kam-vertico-multiform-maximal)
+            ;; (file ,@kam-vertico-multiform-minimal
+            ;;       (vertico-sort-function . vertico-sort-directories-first)
+            ;;       (:keymap . vertico-directory-map))
+            ))
 
-  (setq vertico-multiform-commands
-        `((jinx-correct grid (vertico-grid-annotate . 20))
-          ;; (execute-extended-command ,@kam-vertico-multiform-minimal)
-          ;; (kam-consult-buffer ,@kam-vertico-multiform-minimal
-          ;;                     (vertico-sort-function . nil))
-          ;; (consult-ripgrep buffer)
-          (consult-buffer (vertico-sort-function . nil))
-          ;; (project-find-file ,@kam-vertico-multiform-minimal)
-          ))
+  (setopt vertico-multiform-commands
+          `((jinx-correct grid (vertico-grid-annotate . 20))
+            ;; (execute-extended-command ,@kam-vertico-multiform-minimal)
+            ;; (kam-consult-buffer ,@kam-vertico-multiform-minimal
+            ;;                     (vertico-sort-function . nil))
+            ;; (consult-ripgrep buffer)
+            (consult-buffer (vertico-sort-function . nil))
+            ;; (project-find-file ,@kam-vertico-multiform-minimal)
+            ))
 
   (vertico-multiform-mode 1))
 
@@ -1606,19 +1603,19 @@ surrounded by actual boundaries."
 
   ;; (advice-add 'consult-yank-pop :after 'kam-indent-region-advice)
 
-  (setq consult-buffer-sources
-        '(
-          ;; kam-consult-source-tab
-          consult-source-buffer
-          ;; consult-source-project-buffer
-          kam-consult-source-project-files
-          kam-consult-source-project
-          kam-consult-source-neighbor-file
-          kam-consult-source-bookmark
-          kam-consult-source-recent-file
-          ;; kam-consult-source-dired-history
-          consult-source-hidden-buffer
-          ))
+  (setopt consult-buffer-sources
+          '(
+            ;; kam-consult-source-tab
+            consult-source-buffer
+            ;; consult-source-project-buffer
+            kam-consult-source-project-files
+            kam-consult-source-project
+            kam-consult-source-neighbor-file
+            kam-consult-source-bookmark
+            kam-consult-source-recent-file
+            ;; kam-consult-source-dired-history
+            consult-source-hidden-buffer
+            ))
 
   (defvar kam-consult-source-bookmark
     `( :name     "Bookmark"
@@ -1727,15 +1724,15 @@ This source is only enabled when the current buffer belongs to a project.")
             :history file-name-history
             :items kam-consult-dir-jumps--get-dirs))
 
-  (setq consult-dir-sources
-        '(consult-dir--source-bookmark
-          ;; kam-consult-source-dired-history
-          consult-dir--source-default
-          consult-dir--source-project
-          consult-dir--source-recentf
-          consult-dir--source-tramp-local
-          ;; kam-consult-dir--source-jumps
-          )))
+  (setopt consult-dir-sources
+          '(consult-dir--source-bookmark
+            ;; kam-consult-source-dired-history
+            consult-dir--source-default
+            consult-dir--source-project
+            consult-dir--source-recentf
+            consult-dir--source-tramp-local
+            ;; kam-consult-dir--source-jumps
+            )))
 
 ;; (use-package consult-flycheck
 ;;   :bind
@@ -1745,9 +1742,9 @@ This source is only enabled when the current buffer belongs to a project.")
 (use-package marginalia
   :custom
   (marginalia-field-width 100)
+  (marginalia-align 'left)
+  (marginalia-align-offset 20)
   :config
-  (setq marginalia-align 'left
-        marginalia-align-offset 20)
   (marginalia-mode))
 
 (use-package embark
@@ -1789,36 +1786,39 @@ This source is only enabled when the current buffer belongs to a project.")
 (use-package embark-consult)
 
 (use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion))
+                                   (command (styles kam-orderless-with-initialism))
+                                   (variable (styles kam-orderless-with-initialism))
+                                   (symbol (styles kam-orderless-with-initialism))))
+  (orderless-component-separator #'orderless-escapable-split)
+  (orderless-style-dispatchers (list #'kam-orderless-consult-dispatch
+                                     #'orderless-kwd-dispatch
+                                     #'orderless-affix-dispatch))
   :config
+  (orderless-define-completion-style kam-orderless-with-initialism
+    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
+
   (defun kam-orderless--consult-suffix ()
     "Regexp which matches the end of string with Consult tofu support."
-    (if (and (boundp 'consult--tofu-char) (boundp 'consult--tofu-range))
+    (if (and (boundp 'consult--tofu-char)
+             (boundp 'consult--tofu-range))
         (format "[%c-%c]*$"
                 consult--tofu-char
                 (+ consult--tofu-char consult--tofu-range -1))
       "$"))
 
   (defun kam-orderless-consult-dispatch (word _index _total)
+    "Make regular expressions work with `orderless' in Consult sessions."
     (cond
      ((string-suffix-p "$" word)
       `(orderless-regexp . ,(concat (substring word 0 -1) (kam-orderless--consult-suffix))))
      ((and (or minibuffer-completing-file-name
                (derived-mode-p 'eshell-mode))
            (string-match-p "\\`\\.." word))
-      `(orderless-regexp . ,(concat "\\." (substring word 1) (kam-orderless--consult-suffix))))))
-
-  (orderless-define-completion-style kam-orderless-with-initialism
-    (orderless-matching-styles '(orderless-initialism orderless-literal orderless-regexp)))
-
-  (setq completion-styles '(orderless basic)
-        completion-category-defaults nil
-        completion-category-overrides '((file (styles partial-completion))
-                                        (command (styles kam-orderless-with-initialism))
-                                        (variable (styles kam-orderless-with-initialism))
-                                        (symbol (styles kam-orderless-with-initialism)))
-        orderless-component-separator #'orderless-escapable-split
-        orderless-style-dispatchers (list #'kam-orderless-consult-dispatch
-                                          #'orderless-affix-dispatch)))
+      `(orderless-regexp . ,(concat "\\." (substring word 1) (kam-orderless--consult-suffix)))))))
 
 (use-package corfu
   :bind
@@ -1891,19 +1891,19 @@ This source is only enabled when the current buffer belongs to a project.")
   :config
   (defun kam-cape-text-mode-setup ()
     "Set up `cape' for text."
-    (setq-local completion-at-point-functions
-                '(cape-dict
-                  cape-dabbrev
-                  cape-emoji)))
+    (setopt-local completion-at-point-functions
+                  '(cape-dict
+                    cape-dabbrev
+                    cape-emoji)))
 
   (defun kam-cape-prog-mode-setup ()
     "Set up `cape' for programming."
-    (setq-local completion-at-point-functions
-                '(cape-file
-                  cape-keyword
-                  ;; cape-line
-                  cape-dabbrev
-                  t))))
+    (setopt-local completion-at-point-functions
+                  '(cape-file
+                    cape-keyword
+                    ;; cape-line
+                    cape-dabbrev
+                    t))))
 
 (use-package avy
   :bind
@@ -2004,26 +2004,28 @@ This source is only enabled when the current buffer belongs to a project.")
   :bind
   (:map kam-override-mode-map
         ("M-o" . kam-ace-window))
-  :config
-  (setq aw-dispatch-always t)
-  (setq aw-keys '(?d ?n ?r ?e ?t ?a))
-  (setq aw-dispatch-alist
-        '((?m aw-swap-window "Swap Windows")
-          (?M aw-move-window "Move Window")
-          (?c aw-copy-window "Copy Window")
-          (?v aw-split-window-vert "Split Vert Window")
-          (?h aw-split-window-horz "Split Horz Window")
-          (?b kam-aw-consult-buffer "Select Buffer")
-          (?o kam-aw-one-command "Run command")
-          (?x kam-aw-execute-extended-command "Run an interactive command")
-          (?1 delete-other-windows "Delete Other Windows")
-          (?0 kam-aw-delete-window-dwim "Delete Window")
-          (?q kam-aw-delete-window-dwim "Delete Window")
-          (?? aw-show-dispatch-help))))
+  :custom
+  (aw-dispatch-always t)
+  (aw-keys '(?d ?n ?r ?e ?t ?a))
+  (aw-dispatch-alist
+   '((?m aw-swap-window "Swap Windows")
+     (?M aw-move-window "Move Window")
+     (?c aw-copy-window "Copy Window")
+     (?v aw-split-window-vert "Split Vert Window")
+     (?h aw-split-window-horz "Split Horz Window")
+     (?b kam-aw-consult-buffer "Select Buffer")
+     (?o kam-aw-one-command "Run command")
+     (?x kam-aw-execute-extended-command "Run an interactive command")
+     (?1 delete-other-windows "Delete Other Windows")
+     (?0 kam-aw-delete-window-dwim "Delete Window")
+     (?q kam-aw-delete-window-dwim "Delete Window")
+     (?? aw-show-dispatch-help))))
 
 (use-package popper
   :after (org consult)
-  :hook (popper-open-popup . kam-popper-select-popup)
+  :hook (;; (after-init . (popper-mode
+         ;;                popper-echo-mode))
+         (popper-open-popup . kam-popper-select-popup))
   :bind
   (("C-," . popper-toggle)
    ("C-M-," . popper-cycle)
@@ -2031,6 +2033,9 @@ This source is only enabled when the current buffer belongs to a project.")
   (:map org-mode-map
         ("C-," . popper-toggle))
   :custom
+  (consult-preview-excluded-buffers
+   (lambda (buf)
+     (kam-popper-buffer-p buf)))
   (popper-reference-buffers
    '(
      ;; ("\\*Messages\\*")
@@ -2063,9 +2068,6 @@ This source is only enabled when the current buffer belongs to a project.")
      ))
   (popper-display-control nil)
   :config
-  (popper-mode)
-  (popper-echo-mode)
-
   (defun kam-popper-buffer-p (buf)
     "Return non-nil if BUF is a Popper-controlled buffer."
     (let ((name (buffer-name buf)))
@@ -2085,12 +2087,7 @@ Used in `popper-open-popup-hook'."
     (when popper-open-popup-alist
       t))
 
-  (setq consult-preview-excluded-buffers
-        (lambda (buf)
-          (kam-popper-buffer-p buf)))
-
-  (add-to-list 'popper-reference-buffers
-               (list "consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)")))
+  (add-to-list 'popper-reference-buffers (list "consult-\\(.*\\)?\\(find\\|grep\\|ripgrep\\|fd\\)")))
 
 (use-package goto-chg
   :bind
@@ -3257,23 +3254,7 @@ The shell is renamed to make opening multiple shells easier."
 (advice-add 'kam-sudo-shell-command :after 'kam-clear-echo-area)
 
 (use-package standard-themes
-  :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
-  :init
-  (standard-themes-take-over-modus-themes-mode 1)
-  :config
-  (setq standard-themes-to-toggle '(standard-dark
-                                    standard-light))
-  (setq standard-themes-disable-other-themes t)
-  (setq standard-themes-italic-constructs t)
-  (setq standard-themes-bold-constructs t)
-  (setq standard-themes-mixed-fonts t)
-  (setq standard-themes-prompts '(heavy))
-  (setq standard-themes-completions '((selection . (bold))))
-  (setq standard-themes-headings '((1 . (bold variable-pitch 1))
-                                   (2 . (bold variable-pitch 1))
-                                   (3 . (bold variable-pitch 1))
-                                   (t . (bold variable-pitch 1))))
-
+  :preface
   (defvar kam-standard-themes-palette-light-overrides
     '((cursor "#000000"))
     "Custom overrides for Standard-Themes Light.")
@@ -3289,7 +3270,21 @@ The shell is renamed to make opening multiple shells easier."
       (fg-heading-2 rainbow-1)
       (docstring string))
     "Custom overrides for Standard-Themes Dark.")
-
+  :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
+  :init
+  (standard-themes-take-over-modus-themes-mode 1)
+  :config
+  (setopt standard-themes-to-toggle '(standard-dark
+                                      standard-light))
+  (setopt standard-themes-disable-other-themes t)
+  (setopt standard-themes-variable-pitch-ui nil)
+  (setopt standard-themes-italic-constructs nil)
+  (setopt standard-themes-bold-constructs t)
+  (setopt standard-themes-mixed-fonts nil)
+  (setopt standard-themes-headings '((section-minibuffer . (bold 1.1))
+                                     (section-other . (bold 1.1))
+                                     (commit-summary . (bold 1.1))
+                                     (t . (bold 1))))
   (defun kam-set-custom-faces ()
     "Set faces across the configuration with `standard-themes'.
  Uses the colors set in either `kam-standard-themes-palette-dark-overrides' or
