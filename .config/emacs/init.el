@@ -633,11 +633,6 @@ Only split if there is no split, and only split into left and right windows."
         ("<next>" . kam-scroll-down)))
 
 (use-package ultra-scroll
-  ;; :custom
-  ;; (scroll-margin 0)
-  ;; (scroll-conservatively 3)
-  ;; (scroll-preserve-screen-position t)
-  ;; (scroll-error-top-bottom t)
   :config
   (ultra-scroll-mode 1))
 
@@ -955,10 +950,6 @@ Duplicates are not saved."
         ("<backspace>" . emureader-previous-page)
         ("C-SPC" . kam-emureader-goto-saved-page)
         ("M-g M-i" . kam-emureader-imenu))
-  ;; TODO 2026-07-15: figure out why reader-outline-mode-map is void when trying to set keybindings
-  ;; (:map reader-outline-mode-map
-  ;;       ("SPC" . kam-scroll-down)
-  ;;       ("<backspace>" . kam-scroll-up))
   :config
   (defvar kam-emureader-saved-page nil
     "Saved page for `emureader-mode'")
