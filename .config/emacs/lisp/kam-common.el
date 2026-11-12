@@ -41,13 +41,16 @@ regular expression. With optional N, search in the Nth line from point."
          (full-cmd (concat cmd " " file-name)))
     (async-shell-command full-cmd)))
 
-(defun kam-sudo ()
-  "Find the current file or directory using SUDO."
-  (interactive)
-  (let ((destination (or buffer-file-name default-directory)))
-    (if (string= (file-remote-p destination 'method) "sudo")
-        (user-error "Already using `sudo'")
-      (find-file (format "/sudo::/%s" destination)))))
+(defun kam-sudo-find-file (file)
+  "Edit FILE using Sudo."
+  (when (file-writable-p file)
+    (user-error "File is user writeable, aborting sudo"))
+  (find-file (if (file-remote-p file)
+                 (concat "/" (file-remote-p file 'method) ":"
+                         (file-remote-p file 'user) "@" (file-remote-p file 'host)
+                         "|sudo:root@"
+                         (file-remote-p file 'host) ":" (file-remote-p file 'localname))
+               (concat "/sudo:root@localhost:" file))))
 
 (defun kam--duplicate-buffer-substring (boundaries)
   "Duplicate buffer substring between BOUNDARIES.

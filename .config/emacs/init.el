@@ -477,7 +477,7 @@ To be used attached to `after-init-hook'."
 (use-package window
   :ensure nil
   :bind
-  ("C-l" . recenter)
+  ("C-l" . recenter-top-bottom)
   ("C-x 0" . kam-delete-window-dwim)
   ("C-x C-0" . kam-delete-window-dwim)
   ("C-x 1" . delete-other-windows)
@@ -1054,6 +1054,7 @@ Duplicates are not saved."
         ("<next>" . scroll-down-line)
         ("<prior>" . scroll-up-line))
   (:map help-map
+        ("p" . describe-package)
         ("C-k" . find-function-on-key))
   :custom
   (help-window-select t)
@@ -1504,7 +1505,7 @@ surrounded by actual boundaries."
           ;; (execute-extended-command ,@kam-vertico-multiform-minimal)
           ;; (kam-consult-buffer ,@kam-vertico-multiform-minimal
           ;;                     (vertico-sort-function . nil))
-          (consult-ripgrep buffer)
+          ;; (consult-ripgrep buffer)
           (consult-buffer (vertico-sort-function . nil))
           ;; (project-find-file ,@kam-vertico-multiform-minimal)
           ))
@@ -1753,8 +1754,10 @@ This source is only enabled when the current buffer belongs to a project.")
   :bind
   ([remap describe-bindings] . embark-bindings)
   ("C-." . embark-act)
+  ("C-;" . embark-dwim)
   (:map minibuffer-local-map
-        ("C-c C-c" . embark-collect)
+        ("C-." . embark-act)
+        ("C-c C-b" . embark-become)
         ("C-c C-e" . embark-export))
   (:map embark-general-map
         ("SPC" . embark-cycle)
@@ -1763,19 +1766,24 @@ This source is only enabled when the current buffer belongs to a project.")
         (";" . kam-comment-dwim))
   (:map embark-region-map
         ("a" . align-regexp))
+  (:map embark-file-map
+        ("s" . kam-sudo-find-file)
+        ("S" . make-symbolic-link))
   :custom
+  (embark-quit-after-action nil)
   (prefix-help-command #'embark-prefix-help-command)
   (embark-prompter #'embark-keymap-prompter)
   (embark-indicators '(embark-highlight-indicator
                        embark-isearch-highlight-indicator))
   :config
-  (add-to-list 'display-buffer-alist
-               '("^\\*Embark Export:"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (mode apropos-mode)
-                 (window-parameters . ((mode-line-format . none))))))
+  ;; (add-to-list 'display-buffer-alist
+  ;;              '("^\\*Embark Export:"
+  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
+  ;;                (side . right)
+  ;;                (window-width . 0.5)
+  ;;                (mode apropos-mode)
+  ;;                (window-parameters . ((mode-line-format . none)))))
+  )
 
 (use-package embark-consult)
 
