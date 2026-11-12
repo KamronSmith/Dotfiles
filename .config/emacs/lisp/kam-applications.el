@@ -291,9 +291,18 @@ With optional ARG, go to the previous song that many times."
   :custom
   (gptel-default-mode 'org-mode)
   :config
+  (gptel-highlight-mode)
+  
   (defun chatgpt ()
-    "Get a chatgpt buffer."
+    "Get a ChatGPT buffer."
     (interactive)
-    (gptel "*ChatGPT*")))
+    (gptel "*ChatGPT*")
+    (pop-to-buffer "*ChatGPT*"))
+
+  (defun claude ()
+    "Get a Claude buffer."
+    (interactive)
+    (pop-to-buffer (gptel "*Claude*"))))
 
 (provide 'kam-applications)
+;;; kam-applications.el ends here
