@@ -290,6 +290,9 @@ With optional ARG, go to the previous song that many times."
 (use-package gptel
   :custom
   (gptel-default-mode 'org-mode)
+  (gptel-model (gptel-make-anthropic "Claude"
+                 :stream t
+                 :key gptel-api-key))
   :config
   (gptel-highlight-mode)
   
