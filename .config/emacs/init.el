@@ -511,7 +511,7 @@ To be used attached to `after-init-hook'."
   (next-screen-context-lines 20)
   (display-buffer-base-action '((display-buffer-reuse-window
                                  display-buffer-pop-up-window
-                                 display-buffer-same-window)))
+                                 display-buffer-use-least-recent-window)))
   (display-buffer-alist
    `(;; ("\\*Async Shell Command\\*"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
