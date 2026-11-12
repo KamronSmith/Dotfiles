@@ -290,12 +290,13 @@ With optional ARG, go to the previous song that many times."
 
 ;;; LLM Client
 (use-package gptel
-  :custom
-  (gptel-default-mode 'org-mode)
-  (gptel-model (gptel-make-anthropic "Claude"
-                 :stream t
-                 :key gptel-api-key))
   :config
+  (setq gptel-default-mode 'org-mode)
+  (setq gptel-model (gptel-make-anthropic "Claude"
+                      :stream t
+                      :key gptel-api-key))
+  (setq gptel-highlight-methods '(face))
+
   (gptel-highlight-mode)
   
   (defun chatgpt ()
