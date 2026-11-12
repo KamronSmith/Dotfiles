@@ -487,16 +487,15 @@ See `kam-mode-line-string-cut-middle'."
 (defun kam-mode-line--buffer-percentage ()
   "Return the percentage of how far through the current buffer the point is."
   (let* ((line-number (line-number-at-pos))
-         (percent (round (* (/ (float line-number)
-                               (float (kam-mode-line-buffer-lines)))
-                            100))))
-    (cond
-     ((or (= line-number 1)
-          (= percent 0))
-      "Top")
-     ((>= percent 100)
-      "Bot")
-     (t percent))))
+         (total-lines (kam-mode-line-buffer-lines)))
+    (if (<= total-lines 0)
+        "Top"
+      (let ((percent (round (* (/ (float line-number) total-lines)
+                               100.0))))
+        (cond
+         ((or (= line-number 1) (= percent 0)) "Top")
+         ((>= percent 100) "Bot")
+         (t percent))))))
 
 (defun kam-mode-line--emureader-mode-stats ()
   "Return statistics about the current `emureader-mode' buffer."
@@ -515,13 +514,17 @@ See `kam-mode-line-string-cut-middle'."
 
 (defun kam-mode-line--emureader-mode-doc-percentage ()
   "Return the percentage of how far through the current document the point is."
-  (let* ((pg-num (emureader-current-doc-pagenumber))
-         (total-pg (float emureader-current-doc-pagecount))
-         (percent (round (* (/ (float pg-num) total-pg) 100))))
-    (cond
-     ((or (= pg-num 1) (= percent 0)) "Top")
-     ((>= percent 100) "Bot")
-     (t percent))))
+  (let ((pg-num (emureader-current-doc-pagenumber))
+        (total-pg emureader-current-doc-pagecount))
+    (if (or (not (numberp pg-num))
+            (not (numberp total-pg))
+            (<= total-pg 0))
+        ""
+      (let ((percent (round (* 100.0 (/ (float pg-num) total-pg)))))
+        (cond
+         ((or (= pg-num 1) (= percent 0)) "Top")
+         ((>= percent 100) "Bot")
+         (t percent))))))
 
 (defun kam-mode-line--number-to-string-maybe (input)
   "If INPUT is a number, turn it into a string.
