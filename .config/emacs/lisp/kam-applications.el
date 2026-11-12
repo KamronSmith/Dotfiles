@@ -5,7 +5,9 @@
 (use-package elfeed
   ;; :hook (elfeed-show-mode . kam-writing-mode)
   :hook ((elfeed-search-mode . hide-cursor-mode)
-         (elfeed-search-mode . lin-mode))
+         (elfeed-search-mode . lin-mode)
+         (elfeed-show-mode . visual-line-mode)
+         (elfeed-show-mode . kam-writing-mode))
   :bind
   ("C-c r" . elfeed)
   (:map elfeed-show-mode-map

@@ -77,7 +77,8 @@ Enable that mode to its keybindings take over those of the major mode.")
     :global t
     :keymap kam-override-mode-map)
   
-  :hook ((after-init . kam-initial-setup))
+  :hook ((after-init . kam-initial-setup)
+         (visual-line-mode . visual-wrap-prefix-mode))
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
   ("TAB" . nil)
@@ -3518,8 +3519,7 @@ The shell is renamed to make opening multiple shells easier."
 (use-package text-mode
   :ensure nil
   :hook ((text-mode . kam-text-mode-setup)
-         (text-mode . visual-line-mode)
-         (text-mode . visual-wrap-prefix-mode))
+         (text-mode . visual-line-mode))
   :config
   (defun kam-text-mode-setup ()
     "Setup function for `text-mode'."
