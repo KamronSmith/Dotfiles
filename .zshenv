@@ -21,7 +21,7 @@ export XDG_CACHE_HOME="$HOME/.cache"
 export EDITOR="emacsclient -c -a ''"
 export GIT_EDITOR="$EDITOR"
 export VISUAL="$EDITOR"
-export GNUGPGHOME="$XDG_CONFIG_HOME/gnupg"
+export GNUPGHOME="$XDG_CONFIG_HOME/gnupg"
 export CARGO_HOME="$XDG_DATA_HOME/cargo"
 export RUSTUP_HOME="$XDG_DATA_HOME/rustup"
 

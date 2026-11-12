@@ -50,7 +50,7 @@
                                            "MANPATH"
                                            "SHELL"
                                            "SSH_AUTH_SOCK"
-                                           "GNUGPGHOME"
+                                           "GNUPGHOME"
                                            "LANG"
                                            "DISPLAY"
                                            "WAYLAND_DISPLAY"
