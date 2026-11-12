@@ -3531,7 +3531,6 @@ The shell is renamed to make opening multiple shells easier."
 (use-package prog-mode
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
-         (prog-mode . buffer-face-mode)
          (prog-mode . kam-decolorify-mode)
          (prog-mode . auto-fill-mode)
          (prog-mode . display-fill-column-indicator-mode))
@@ -3541,20 +3540,17 @@ The shell is renamed to make opening multiple shells easier."
   :config
   (defun kam-prog-mode-setup ()
     "Set up `prog-mode'."
-    (setopt-local buffer-face-mode-face 'fixed-pitch)
     (setopt-local comment-auto-fill-only-comments t)
     (indent-tabs-mode -1)))
 
 (use-package conf-mode
   :ensure nil
   :hook ((conf-mode . kam-conf-mode-setup)
-         (conf-mode . buffer-face-mode)
          (conf-mode . outline-minor-mode))
   :mode ("\\.env\\..*\\'" "\\.env\\'")
   :config
   (defun kam-conf-mode-setup ()
     "Set up `conf-mode'."
-    (setq-local buffer-face-mode-face 'fixed-pitch)
     (indent-tabs-mode -1))
 
   (add-to-list 'auto-mode-alist
