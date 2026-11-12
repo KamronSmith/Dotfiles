@@ -1418,7 +1418,7 @@ surrounded by actual boundaries."
   (defun kam-font-faces-setup ()
     (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
-    (set-face-attribute 'variable-pitch nil :family "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular))
+    (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular))
 
   (if (daemonp)
       (add-hook 'after-make-frame-functions
