@@ -1533,6 +1533,7 @@ surrounded by actual boundaries."
          ("C-x r l" . consult-register-load)
          :map search-map
          ("M-f" . consult-fd)
+         ("M-g" . consult-ripgrep)
          ("M-k" . consult-keep-lines)
          ("M-u" . consult-focus-lines)
          ;; ("M-l" . consult-line)
@@ -2213,7 +2214,8 @@ Used in `isearch-mode-end-hook'."
   :hook ((grep-mode . kam-grep-setup)
          (grep-edit-mode . kam-grep-edit-setup))
   :bind
-  (("M-s g" . grep)
+  (
+   ;; ("M-s g" . grep)
    :map grep-mode-map
    ("C-c C-p" . compilation-previous-file)
    ("C-c C-n" . compilation-next-file)
