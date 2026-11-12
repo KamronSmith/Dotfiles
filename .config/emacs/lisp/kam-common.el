@@ -29,10 +29,10 @@ regular expression. With optional N, search in the Nth line from point."
            (looking-at
             (alist-get type kam--line-regexp-alist))))))
 
-(defun kam-call-function-quietly (orig-fun &rest args)
+(defun kam-call-function-quietly (orig-fn &rest args)
   "Call ORIG-FN with ARGS while suppressing any generated messages."
   (let ((inhibit-message t))
-    (apply orig-fun args)))
+    (apply orig-fn args)))
 
 (defun kam-execute-command-on-file-buffer (cmd)
   "Execute CMD on the buffer and associated file."
@@ -287,25 +287,23 @@ called interactively without a prefix numeric argument, N is 1."
          (setq this-command 'kill-ring-save))))
 
 (defun kam-yank (orig-fn &rest args)
-   "Custom yank function.
+  "Custom yank function.
 
 `kam-yank' emulates the pasting functionality in Vim. If the most
 current kill contains a newline character, create a new line below the
 point and insert the string to be yanked there. Else, just insert the
 yank."
-   (interactive)
-   (cond ((bolp)
-          (save-excursion
-            (apply orig-fn args)))
-         ((kam-line-regexp-p 'empty)
-          (save-excursion
-            (apply orig-fn args)))
-         ((string-search "\n" (current-kill 0 t))
-          (kam-insert-new-line-below 1)
-          (save-excursion
-            (apply orig-fn args)))
-         (t (save-excursion
-              (apply orig-fn args)))))
+  (interactive)
+  (cond ((or (bolp)
+             (kam-line-regexp-p 'empty))
+         (save-excursion
+           (apply orig-fn args)))
+        ((string-search "\n" (current-kill 0 t))
+         (kam-insert-new-line-below 1)
+         (save-excursion
+           (apply orig-fn args)))
+        (t (save-excursion
+             (apply orig-fn args)))))
 
 (defun kam-delete-pair-dwim ()
   "Delete pair following or preceding point."
