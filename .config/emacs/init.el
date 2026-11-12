@@ -1439,7 +1439,6 @@ surrounded by actual boundaries."
   :hook (after-init . vertico-mode)
   :bind
   (:map vertico-map
-        ("C-." . embark-act)
         ("<kam-i>" . vertico-insert)
         ("<escape>" . kam-keyboard-escape-quit-dwim)
         ("<next>" . vertico-scroll-up)
