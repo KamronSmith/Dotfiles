@@ -26,9 +26,9 @@
       user-lisp-directory "~/.config/emacs/lisp"
       user-init-file "~/.dotfiles/.config/emacs/init.el")
 
-(setq use-package-enable-imenu-support t
-      use-package-always-demand t
-      use-package-compute-statistics t)
+(setopt use-package-enable-imenu-support t
+        use-package-always-demand nil
+        use-package-compute-statistics t)
 
 (add-hook 'after-make-frame-functions
           (defun kam-setup-control-keys (frame)
