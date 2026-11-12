@@ -3539,8 +3539,7 @@ The shell is renamed to make opening multiple shells easier."
     "Setup function for `text-mode'."
     (auto-fill-mode -1)
     (indent-tabs-mode -1)
-    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)
-    (setopt-local display-line-numbers 'visual)))
+    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)))
 
 (use-package prog-mode
   :ensure nil
