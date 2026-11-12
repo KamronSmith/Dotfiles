@@ -3546,14 +3546,14 @@ The shell is renamed to make opening multiple shells easier."
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
          (prog-mode . kam-decolorify-mode)
-         (prog-mode . auto-fill-mode)
-         (prog-mode . display-fill-column-indicator-mode))
+         (prog-mode . auto-fill-mode))
   ;; :bind
   ;; (:map prog-mode-map
   ;;       ("RET" . newline))
   :config
   (defun kam-prog-mode-setup ()
     "Set up `prog-mode'."
+    (setopt-local truncate-lines t)
     (setopt-local comment-auto-fill-only-comments t)
     (indent-tabs-mode -1)))
 
