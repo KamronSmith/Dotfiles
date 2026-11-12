@@ -3311,9 +3311,8 @@ The shell is renamed to make opening multiple shells easier."
        `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
        `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
        `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
-       `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
-       `(line-number-current-line ((,c :foreground ,cursor :background ,bg-main))))))
-
+       `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular))))))
+  
   (standard-themes-load-theme 'standard-dark))
 
 (use-package ef-themes)
