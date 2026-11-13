@@ -137,8 +137,8 @@ With optional ARG, open browser in EWW."
     (let ((browse-url-browser-function
            (if arg
                browse-url-secondary-browser-function
-             browse-url-browser-function))))
-    (browse-url-at-point)))
+             browse-url-browser-function)))
+      (browse-url-at-point))))
 
 (use-package calibredb
   ;; :commands (calibredb)
