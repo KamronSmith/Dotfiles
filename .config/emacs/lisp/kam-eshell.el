@@ -68,6 +68,7 @@ parent directory."
     (kam-eshell--pwd-replace-home
      (eshell/pwd)))))
 
+;;;###autoload
 (defun kam-eshell-next-prompt (&optional n)
   "Move to the end of the Nth next prompt in the buffer.
 See `eshell-prompt-regexp'."
@@ -78,6 +79,7 @@ See `eshell-prompt-regexp'."
       (re-search-forward eshell-prompt-regexp nil t n)))
   (eshell-skip-prompt))
 
+;;;###autoload
 (defun kam-eshell-previous-prompt (&optional n)
   "Move to the end of the Nth previous prompt in the buffer.
 See `eshell-prompt-regexp'."
@@ -87,6 +89,7 @@ See `eshell-prompt-regexp'."
   (re-search-backward kam-eshell-prompt-regexp)
   (end-of-line))
 
+;;;###autoload
 (defun eshell/clear ()
   "Clear the Eshell buffer."
   (interactive)
@@ -116,6 +119,7 @@ Optionally, use REGEXP to search for previous directories."
       (t (eshell/cd (if regexp (eshell-find-previous-directory regexp)
                       (completing-read "cd: " eshell-dirs))))))))
 
+;;;###autoload
 (defun kam-eshell-here ()
   "Opens up a new shell in the directory associated with the current buffers file.
 The Eshell buffer is renamed to match that directory in order to make multiple Eshell windows easier."

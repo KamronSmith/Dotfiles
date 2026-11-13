@@ -38,6 +38,7 @@
 ;;          (prx (eval kam-todo-regex))
 ;;          "\'")))
 
+;;;###autoload
 (defun kam-project-todo-grep ()
   "Grep for TODOs starting in the current project's root directory."
   (interactive)
@@ -46,6 +47,7 @@
          (default-directory root))
     (kam-todo-grep)))
 
+;;;###autoload
 (defun kam-project-files ()
   "Return all project files in a given directory, respects .gitignore."
   (interactive)

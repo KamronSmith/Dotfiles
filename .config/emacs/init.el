@@ -98,6 +98,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-w" . kam-kill-dwim)
   ("C-t" . transpose-chars)
   ("C-v" . undo)
+  ("C-y" . kam-yank)
   ("C-q" . quoted-insert)
   ("C-z" . repeat)
   ("C-SPC" . set-mark-command)
@@ -328,8 +329,7 @@ To be used attached to `after-init-hook'."
   (put 'narrow-to-region 'disabled nil)
 
   ;; Overrides
-  (advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit)
-  (advice-add #'yank :around #'kam-yank)
+  (advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit-advice)
   
   (define-advice pop-global-mark (:around (pgm) use-display-buffer)
     "Make `pop-to-buffer' jump buffers via `display-buffer'."

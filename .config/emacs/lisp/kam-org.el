@@ -5,7 +5,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
 (require 'kam-common)
 (require 'org)
 (require 'consult)
@@ -32,6 +31,7 @@
 ;;    ((kam-org--level-one-heading-p) (org-forward-heading-same-level 1))
 ;;    (t (org-next-visible-heading 1))))
 
+;;;###autoload
 (defun kam-org-metaup ()
   (interactive)
   (cond
@@ -40,6 +40,7 @@
    ((org-in-src-block-p) (org-babel-goto-src-block-head))
    (t (org-previous-visible-heading 1))))
 
+;;;###autoload
 (defun kam-org-metadown ()
   (interactive)
   (cond
@@ -48,12 +49,14 @@
    ((org-in-src-block-p) (kam-org-babel-goto-src-block-foot))
    (t (org-next-visible-heading 1))))
 
+;;;###autoload
 (defun kam-org-control-metaup (&optional arg)
   (interactive "p")
   (if (org-at-heading-p)
       (org-metaup arg)
     (backward-up-list arg)))
 
+;;;###autoload
 (defun kam-org-control-metadown (&optional arg)
   (interactive "p")
   (if (org-at-heading-p)
@@ -71,6 +74,7 @@
               (point)))
     (user-error "%s" "Point is not in an Org item")))
 
+;;;###autoload
 (defun kam-org-insert-super-heading (arg)
   (interactive "P")
   (org-insert-heading arg)
@@ -78,6 +82,7 @@
    ((org-at-heading-p) (org-promote))
    ((org-at-item-p) (org-indent-item))))
 
+;;;###autoload
 (defun kam-org-insert-new-line-below (n)
   "Create N empty lines below the current one.
 When called interactively without a prefix argument, N is 1."
@@ -85,31 +90,34 @@ When called interactively without a prefix argument, N is 1."
   (goto-char (line-end-position))
   (dotimes (_ n) (org-return)))
 
+;;;###autoload
 (defun kam-org-insert-new-line-above (n)
   "Create N empty lines above the current one.
 When called interactively without a prefix argument, N is 1."
   (interactive "p")
   (let ((point-min (point-min)))
-  (if (or (bobp)
-          (eq (point) point-min)
-          (eq (line-number-at-pos point-min) 1))
-      (progn
-        (goto-char (line-beginning-position))
-        (forward-line (- n))
-        (dotimes (_ n) (kam-org-insert-new-line-below n)))
-    (forward-line (- n))
-    (kam-org-insert-new-line-below n))))
+    (if (or (bobp)
+            (eq (point) point-min)
+            (eq (line-number-at-pos point-min) 1))
+        (progn
+          (goto-char (line-beginning-position))
+          (forward-line (- n))
+          (dotimes (_ n) (kam-org-insert-new-line-below n)))
+      (forward-line (- n))
+      (kam-org-insert-new-line-below n))))
 
+;;;###autoload
 (defun kam-org-mark-item ()
   "Mark the Org item at point."
   (interactive)
   (kam-mark (kam-org-item-bounds)))
 
+;;;###autoload
 (defun kam-org-kill-item ()
   "Kill the Org item at point."
   (interactive)
-  (let ((bounds (kam-org-item-bounds)))
-    (kill-region (car bounds) (cdr bounds))))
+  (kam-mark (kam-org-item-bounds))
+  (kill-region nil nil t))
 
 (defun kam-org--level-one-heading-p ()
   "Return non-nil if the point is on a level one Org heading."
@@ -117,6 +125,7 @@ When called interactively without a prefix argument, N is 1."
       t
     nil))
 
+;;;###autoload
 (defun kam-org-promote-subtrees ()
   "Promote the subtree and all subtrees under it at point."
   (interactive)
@@ -125,6 +134,7 @@ When called interactively without a prefix argument, N is 1."
    nil
    'tree))
 
+;;;###autoload
 (defun kam-org-demote-subtrees ()
   "Demote the subtree and all subtrees at point."
   (interactive)
@@ -133,6 +143,7 @@ When called interactively without a prefix argument, N is 1."
    nil
    'tree))
 
+;;;###autoload
 (defun kam-org-up-heading ()
   "Move up a heading."
   (interactive "p")
@@ -141,12 +152,14 @@ When called interactively without a prefix argument, N is 1."
    ((kam-org--level-one-heading-p) (org-backward-heading-same-level arg))
    (t (org-up-element))))
 
+;;;###autoload
 (defun kam-org-insert-date-range ()
   (interactive)
   (org-time-stamp nil)
   (insert "--")
   (org-time-stamp nil))
 
+;;;###autoload
 (defun kam-org-archive-done-tasks ()
   (interactive)
   (org-map-entries
@@ -188,6 +201,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
         subtree-end
       nil)))
 
+;;;###autoload
 (defun kam-org-refile-to-current-file ()
   "Refile the heading under the point to a heading in the current file only."
   (interactive)
@@ -199,6 +213,7 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 (defvar kam-org-refile-region-position 'bottom
   "Where to refile a region. Use 'top to refile the region at the beginning of the subtree.")
 
+;;;###autoload
 (defun kam-consult-org-refile-region (beg end &optional copy)
   "Refile the active region with minibuffer completion.
 If no region is active, refile the current paragraph.
@@ -231,11 +246,13 @@ With prefix arg C-u, copy region instead of killing it."
 (defvar kam-org-end-block-regexp "#\\+end_\\w+"
   "Regexp that matches the end of an Org Babel block.")
 
+;;;###autoload
 (defun kam-org-babel-goto-src-block-foot ()
   "Go to the end of an Org Babel block."
   (interactive)
   (goto-char (re-search-forward kam-org-end-block-regexp)))
 
+;;;###autoload
 (defun kam-org-insert-last-stored-link-with-prompt ()
   "Inserts the last stored link in `org-stored-links' while prompting for the description of the link."
   (interactive)

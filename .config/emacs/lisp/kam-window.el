@@ -221,6 +221,5 @@ With universal prefix ARG, run in the next window."
            (this-command command))
       (call-interactively command))))
 
-
 (provide 'kam-window)
 ;;; kam-window.el ends here

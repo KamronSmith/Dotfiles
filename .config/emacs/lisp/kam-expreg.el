@@ -1,3 +1,9 @@
+;;; kam-expreg.el --- -*- lexical-binding: t; -*-
+;;; Summary: 
+
+;;; Commentary: 
+
+;;; Code: 
 (require 'expreg)
 (require 'org)
 
@@ -39,14 +45,16 @@ Respects comments and strings. Powered by `kam-expreg--sexp'."
   (kam-mark (kam-expreg--sexp))
   (kill-region nil nil t))
 
-(defun kam-end-of-sexp (&optional n)
+;;;###autoload
+(defun kam-expreg-end-of-sexp (&optional n)
   "Move forward to next end of sexp.
 With optional N, do it that many times."
   (interactive "p")
   (dotimes (_ n)
     (goto-char (cdr (kam-expreg--sexp)))))
 
-(defun kam-beginning-of-sexp (&optional n)
+;;;###autoload
+(defun kam-expreg-beginning-of-sexp (&optional n)
   "Move backward to the beginning of a sexp.
 With optional N, do it that many times."
   (interactive "p")
@@ -74,3 +82,4 @@ With optional N, do it that many times."
       `((element . ,(cons beg end))))))
 
 (provide 'kam-expreg)
+;;; kam-expreg.el ends here

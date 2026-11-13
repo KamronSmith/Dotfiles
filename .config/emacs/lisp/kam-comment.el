@@ -77,6 +77,7 @@ comment is appended to the line with `comment-indent'."
       (comment-indent t)
       (insert " " string)))))
 
+;;;###autoload
 (defun kam-comment-todo ()
   "Comment with a TODO"
   (interactive)

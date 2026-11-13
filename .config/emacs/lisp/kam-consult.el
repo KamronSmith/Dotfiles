@@ -136,38 +136,45 @@ PROMPT is the prompt of `consult-imenu'."
                    " ")))
       (consult-ripgrep))))
 
+;;;###autoload
 (defun kam-consult-line-symbol-at-point ()
   "Start a `consult-line' search with the symbol at point."
   (interactive)
   (consult-line
    (or (thing-at-point 'symbol))))
 
+;;;###autoload
 (defun kam-consult-isearch ()
   "Start a `consult-line' search within an Isearch session."
   (interactive)
   (consult-line isearch-string))
 
+;;;###autoload
 (defun kam-consult-ripgrep-symbol-at-point ()
   "Start a `consult-ripgrep' search with the symbol at point."
   (interactive)
   (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
     (consult-ripgrep nil (thing-at-point 'symbol))))
 
+;;;###autoload
 (defun kam-consult-search-emacs-info-pages ()
   "Search through the Emacs info pages."
   (interactive)
   (consult-info "emacs" "efaq"))
 
+;;;###autoload
 (defun kam-consult-search-elisp-info-pages ()
   "Search through the Emacs Lisp pages."
   (interactive)
   (consult-info "elisp" "eintr"))
 
+;;;###autoload
 (defun kam-consult-search-org-info-pages ()
   "Search through the Org info pages."
   (interactive)
   (consult-info "org"))
 
+;;;###autoload
 (defun kam-consult-search-manual (manual)
   "Search through MANUAL, which is prompted for by `completing-read'."
   (interactive

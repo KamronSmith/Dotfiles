@@ -1,21 +1,13 @@
-;; -*- lexical-binding: t; -*-
+;;; yt-dlp.el --- -*- lexical-binding: t; -*-
+;;; Summary: 
+
+;;; Commentary: 
+
+;;; Code: 
 (require 'kam-os)
 
 (defvar kam-ytdlp-download-music-history nil
   "Minibuffer history of `kam-ytdlp-download-music'.")
-
-;;;###autoload
-(defun kam-ytdlp-download-music (url)
-  "Download a music video from YouTube, given URL."
-  (interactive (list (kam-ytdlp--download-prompt kam-ytdlp-download-music-history)))
-  (let* ((default-directory kam-music-directory))
-    (async-shell-command
-     (concat
-      "yt-dlp "
-      (shell-quote-argument url)
-      " -t mp3 --audio-quality 0 "
-      "--embed-thumbnail "
-      "--no-playlist"))))
 
 (defvar kam-ytdlp-download-video-history nil
   "Minibuffer history for `kam-ytdlp-download-video'.")
@@ -38,3 +30,19 @@ music or video."
       "yt-dlp "
       "-t mp4 "
       (shell-quote-argument url)))))
+
+;;;###autoload
+(defun kam-ytdlp-download-music (url)
+  "Download a music video from YouTube, given URL."
+  (interactive (list (kam-ytdlp--download-prompt kam-ytdlp-download-music-history)))
+  (let* ((default-directory kam-music-directory))
+    (async-shell-command
+     (concat
+      "yt-dlp "
+      (shell-quote-argument url)
+      " -t mp3 --audio-quality 0 "
+      "--embed-thumbnail "
+      "--no-playlist"))))
+
+(provide 'yt-dlp)
+;;; yt-dlp.el ends here

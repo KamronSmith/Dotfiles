@@ -1,5 +1,9 @@
-;; -*- lexical-binding: t; -*-
+;;; hide-cursor-mode.el --- -*- lexical-binding: t; -*-
+;;; Summary: 
 
+;;; Commentary: 
+
+;;; Code: 
 (defvar-local hide-cursor--original nil)
 
 (define-minor-mode hide-cursor-mode
@@ -8,7 +12,10 @@
   :lighter "H"
   (if hide-cursor-mode
       (progn
-	(setq-local hide-cursor--original cursor-type)
-	(setq-local cursor-type nil))
+        (setq-local hide-cursor--original cursor-type)
+        (setq-local cursor-type nil))
     (setq cursor-type (or hide-cursor--original
-			  t))))
+                          t))))
+
+(provide 'hide-cursor-mode)
+;;; hide-cursor-mode.el ends here

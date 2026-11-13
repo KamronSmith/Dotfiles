@@ -5,6 +5,9 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'kmacro)
+(require 'org)
+
 (defgroup kam-common ()
   "A group of functions intended to be used throughout the configuration."
   :group 'editing)
@@ -34,6 +37,7 @@ regular expression. With optional N, search in the Nth line from point."
   (let ((inhibit-message t))
     (apply orig-fn args)))
 
+;;;###autoload
 (defun kam-execute-command-on-file-buffer (cmd)
   "Execute CMD on the buffer and associated file."
   (interactive "sCommand to execute: ")
@@ -41,6 +45,7 @@ regular expression. With optional N, search in the Nth line from point."
          (full-cmd (concat cmd " " file-name)))
     (async-shell-command full-cmd)))
 
+;;;###autoload
 (defun kam-sudo-find-file (file)
   "Edit FILE using Sudo."
   (when (file-writable-p file)
@@ -173,12 +178,14 @@ MODE is a symbol that represents an active minor mode. See
         (vc-rename-file file name))
     (set-visited-file-name name t t)))
 
+;;;###autoload
 (defun kam-revert-buffer ()
   "Revert the current buffer from its file without asking for confirmation."
   (interactive)
   (revert-buffer t t t)
   (message "Reverted buffer `%s'" (buffer-name (current-buffer))))
 
+;;;###autoload
 (defun kam-mark-line (&optional arg allow-extend)
   "Put mark at the beginning of the next line, point at the beginning.
 
@@ -226,6 +233,7 @@ it marks the next ARG lines after the ones already marked."
                         (forward-line (prefix-numeric-value arg))
                         (line-beginning-position)))))))))
 
+;;;###autoload
 (defun kam-mark-point-to-end-of-line ()
   "Set the mark at the end of the line, regardless of where the cursor is on the line."
   (interactive)
@@ -239,6 +247,7 @@ it marks the next ARG lines after the ones already marked."
      (cons (point)
            (line-end-position)))))
 
+;;;###autoload
 (defun kam-mark-point-to-end-of-buffer ()
   "Mark from point to the end of the buffer."
   (interactive)
@@ -246,6 +255,7 @@ it marks the next ARG lines after the ones already marked."
    (cons (point)
          (point-max))))
 
+;;;###autoload
 (defun kam-copy-line-as-kill (&optional n)
   "Copy N lines to the `kill-ring'."
   (interactive "p")
@@ -253,12 +263,14 @@ it marks the next ARG lines after the ones already marked."
     (kam-mark-line n)
     (kill-ring-save nil nil t)))
 
+;;;###autoload
 (defun kam-kill-line (&optional n)
   "Kill the current line, regardless of where the point is on the line."
   (interactive "p")
   (kam-mark-line n)
   (kill-region nil nil t))
 
+;;;###autoload
 (defun kam-kill-dwim (&optional n)
   "A DWIM command for killing.
 
@@ -273,6 +285,7 @@ which controls how many lines will be cut."
          (kam-kill-line n)
          (setq this-command 'kill-region))))
 
+;;;###autoload
 (defun kam-kill-ring-save-dwim (&optional n)
   "A DWIM command for copying.
 
@@ -286,7 +299,8 @@ called interactively without a prefix numeric argument, N is 1."
          (kam-copy-line-as-kill n)
          (setq this-command 'kill-ring-save))))
 
-(defun kam-yank (orig-fn &rest args)
+;;;###autoload
+(defun kam-yank ()
   "Custom yank function.
 
 `kam-yank' emulates the pasting functionality in Vim. If the most
@@ -296,15 +310,13 @@ yank."
   (interactive)
   (cond ((or (bolp)
              (kam-line-regexp-p 'empty))
-         (save-excursion
-           (apply orig-fn args)))
+         (yank))
         ((string-search "\n" (current-kill 0 t))
          (kam-insert-new-line-below 1)
-         (save-excursion
-           (apply orig-fn args)))
-        (t (save-excursion
-             (apply orig-fn args)))))
+         (yank))
+        (t (yank))))
 
+;;;###autoload
 (defun kam-delete-pair-dwim ()
   "Delete pair following or preceding point."
   (interactive)
@@ -312,17 +324,17 @@ yank."
       (delete-pair -1)
     (delete-pair 1)))
 
+;;;###autoload
 (defun kam-insert-new-line-below (&optional n)
   "Create N empty lines below the current one.
-
 When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (goto-char (line-end-position))
   (dotimes (_ n) (newline-and-indent)))
 
+;;;###autoload
 (defun kam-insert-new-line-above (&optional n)
   "Create N empty lines above the current one.
-
 When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (let ((point-min (point-min)))
@@ -336,9 +348,9 @@ When called interactively without a prefix numeric argument, N is 1."
       (forward-line (- n))
       (kam-insert-new-line-below n))))
 
+
 (defun kam-join-line-dwim (n)
   "Join lines.
-
 When called interactively without a prefix numeric argument, N is 1."
   (interactive "P")
   (let ((numeric-arg (prefix-numeric-value n)))
@@ -348,9 +360,9 @@ When called interactively without a prefix numeric argument, N is 1."
       (join-line nil (region-beginning) (region-end)))
     (indent-according-to-mode)))
 
-(defun kam-open-line-dwim (n)
+;;;###autoload
+(defun kam-open-line-dwim (&optional n)
   "Open the line and indent it to the proper place.
-
 When called interactively without a prefix numeric argument, N is 1."
   (interactive "P")
   (let ((arg (prefix-numeric-value n)))
@@ -360,9 +372,9 @@ When called interactively without a prefix numeric argument, N is 1."
       (indent-according-to-mode))
     (indent-according-to-mode)))
 
+;;;###autoload
 (defun kam-yank-replace-line-or-region ()
   "Replace line or region with the latest kill.
-
 This command can be followed by the standard `yank-pop' (default is
 bound to \\[yank-pop])."
   (interactive)
@@ -373,11 +385,13 @@ bound to \\[yank-pop])."
   (setq this-command 'yank)
   (kam-indent-dwim))
 
+;;;###autoload
 (defun kam-kill-from-point-to-beginning-of-line ()
   "Kill from the point to the beginning of the line."
   (interactive)
   (kill-region (line-beginning-position) (point)))
 
+;;;###autoload
 (defun kam-delete-from-point-to-beginning-text ()
   "Delete from the point up to and including the text."
   (interactive)
@@ -385,6 +399,7 @@ bound to \\[yank-pop])."
              (bolp))
     (delete-char -1)))
 
+;;;###autoload
 (defun kam-control-backspace ()
   "Kill the word behind point. If the line is empty, join it with the previous line."
   (interactive)
@@ -393,6 +408,7 @@ bound to \\[yank-pop])."
       (join-line)
     (backward-kill-word 1)))
 
+;;;###autoload
 (defun kam-transpose-chars ()
   "Interchange the two characters behind the point."
   (interactive)
@@ -400,12 +416,14 @@ bound to \\[yank-pop])."
    ((eolp) (transpose-chars 1))
    (t (transpose-chars -1) (forward-char 1))))
 
+;;;###autoload
 (defun kam-transpose-words ()
   "Interchange the words behind the point."
   (interactive)
   (forward-word -1)
   (transpose-words 1))
 
+;;;###autoload
 (defun kam-indent-dwim ()
   "Indent the current defun in `prog-mode' or paragraph in `text-mode'."
   (interactive)
@@ -430,9 +448,9 @@ bound to \\[yank-pop])."
     (forward-char -1))
   (point))
 
+;;;###autoload
 (defun kam-narrow-or-widen-dwim (p)
   "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
-
 Intelligently means: region, subtree, or defun, whichever applies first."
   (interactive "P")
   (declare (interactive-only))
@@ -451,9 +469,9 @@ Intelligently means: region, subtree, or defun, whichever applies first."
         (search-backward "(")
         (sexp-at-point)))))
 
+;;;###autoload
 (defun kam-eval-current-sexp ()
   "Evaluates the current sexp at point.
-
 Additionally, if the region is active, evaluate the region.
 Unlike `eval-last-sexp', the point doesn't need to be at the end of the
 expression, but can be at the beginning (on the parenthesis) or
@@ -465,6 +483,7 @@ somewhere inside."
         (message "Evaluated region"))
     (eval-expression (kam-current-elisp-sexp))))
 
+;;;###autoload
 (defun kam-insert-quote (&optional arg)
   "Enclose following ARG sexps in quotes."
   (interactive "P")
@@ -477,17 +496,17 @@ somewhere inside."
       (indent-region (line-beginning-position) (line-end-position)))
     (setq deactivate-mark deactivate)))
 
+;;;###autoload
 (defun kam-yank-undo (&optional arg)
   "Undo the yank you just did.
-
 Reverses the direction you are going in the kill ring.
 With optional ARG, repeat the undos that many times."
   (interactive "p")
   (yank-pop (- arg)))
 
+;;;###autoload
 (defun kam-query-replace-dwim ()
   "Query replace, DWIM.
-
 If the region is active, query replace the thing in the region.
 Else, use the symbol at point."
   (interactive)
@@ -514,6 +533,7 @@ Else, use the symbol at point."
    (t
     (keyboard-escape-quit))))
 
+;;;###autoload
 (defun kam-keyboard-escape-quit-dwim ()
   "A better keyboard quit."
   (interactive)
@@ -529,15 +549,16 @@ Else, use the symbol at point."
    (t
     (keyboard-escape-quit))))
 
-(defun kam-keyboard-escape-quit (orig-fn &rest args)
+(defun kam-keyboard-escape-quit-advice (orig-fn &rest args)
   "Perform `keyboard-escape-quit' without disturbing the window configuration."
   (let ((buffer-quit-function (or buffer-quit-function
                                   #'ignore)))
-    (apply orig-fn args)))
+    (apply orig-fn args)
+    (message "%s" "Quit")))
 
+;;;###autoload
 (defun kam-kill-current-buffer (&optional arg)
   "Kill the current buffer, without prompting the user.
-
 With optional prefix ARG (\\[universal-argument]), delete the buffer's
 window as well. This command works similarly to
 `kam-delete-window-dwim', just in reverse."

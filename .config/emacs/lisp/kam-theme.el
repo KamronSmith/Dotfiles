@@ -34,11 +34,13 @@
     ef-day)
   "A list of themes that I like.")
 
+;;;###autoload
 (defun kam-standard-themes-reload-theme ()
   "Reload the current Standard theme."
   (interactive)
   (standard-themes-load-theme (modus-themes-get-current-theme)))
 
+;;;###autoload
 (defun kam-load-theme ()
   "Load a theme that I like.
 See `kam-favorite-themes'."
@@ -71,6 +73,7 @@ See `kam-theme-update-custom-faces'.")
     ("JetBrains Mono" . 140))
   "List of my favorite fonts and their font sizes.")
 
+;;;###autoload
 (defun kam-load-font (font)
   "Choose a font from `kam-favorite-fonts'."
   (interactive (list (completing-read
@@ -190,6 +193,7 @@ The intended effect is a much less colorful typing and programming experience."
                  (- (string-to-number default))
                  'kam-text-scale-adjust-history)))
 
+;;;###autoload
 (defun kam-text-scale-adjust (increment)
   "Adjust the text scale.
 INCREMENT should be a number."

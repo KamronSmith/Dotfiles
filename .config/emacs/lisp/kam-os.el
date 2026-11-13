@@ -110,13 +110,11 @@ And the way I want to use a computer.")
 
 (defun kam-os--installed-packages-explicitly ()
   "Return all explicitly installed packages as a list of strings.
-
 This does not include foreign installed packages, such as the packages installed from the AUR."
   (split-string (shell-command-to-string "pacman -Qneq | awk '{print $1}'")))
 
 (defun kam-os--installed-foreign-packages-explicitly ()
   "Return all explicitly installed foreign packages as a list of strings.
-
 This includes packages from the AUR."
   (split-string (shell-command-to-string "pacman -Qqme | awk '{print $1}'")))
 
@@ -224,6 +222,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
   (interactive)
   (find-file "/var/log/pacman.log"))
 
+;;;###autoload
 (defun kam-arch-wiki-search (topic)
   "Search the Arch wiki for a topic using EWW."
   (interactive "sTopic to search for: ")
@@ -232,21 +231,25 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
     "https://wiki.archlinux.org/title/" topic)))
 
 ;;; Power
+;;;###autoload
 (defun kam-os-reboot ()
   "Restarts the computer."
   (interactive)
   (async-shell-command "reboot"))
 
+;;;###autoload
 (defun kam-os-shutdown ()
   "Shuts down the computer."
   (interactive)
   (async-shell-command "systemctl poweroff"))
 
+;;;###autoload
 (defun kam-os-stop-emacs ()
   "Stop the Emacsclient server using Systemd."
   (interactive)
   (kam-os-stop-service "emacs"))
 
+;;;###autoload
 (defun kam-os-restart-emacs ()
   "Restart Emacs under a variety of operating system conditions."
   (interactive)
@@ -288,6 +291,7 @@ See `kam-os-restart-service' and `kam-os-stop-service'."
      'kam-os-service-history
      default)))
 
+;;;###autoload
 (defun kam-os-restart-service (service)
   "Restart running service SERVICE.
 SERVICE should be a string that corresponds to a service."
@@ -299,6 +303,7 @@ SERVICE should be a string that corresponds to a service."
     (async-shell-command (concat "systemctl --user restart " service)))
   (message "Restarted service %s " service))
 
+;;;###autoload
 (defun kam-os-stop-service (service)
   "Stop running service SERVICE.
 SERVICE should be a string that corresponds to a service."
@@ -316,6 +321,7 @@ SERVICE should be a string that corresponds to a service."
   (message "Stopped service %s " service))
 
 ;;; Utilities
+;;;###autoload
 (defun kam-os-screenshot ()
   "Take a screenshot."
   (interactive)
@@ -324,6 +330,7 @@ SERVICE should be a string that corresponds to a service."
     (async-shell-command (concat "grim -g \"$(slurp)\" " (shell-quote-argument name) ".jpg"))))
 
 ;;; Hard drive space
+;;;###autoload
 (defun kam-os-drive-space ()
   "List all available drive space."
   (interactive)
@@ -333,6 +340,7 @@ SERVICE should be a string that corresponds to a service."
     (with-current-buffer buf
       (view-mode))))
 
+;;;###autoload
 (defun kam-os-lsblk ()
   "Run lsblk."
   (interactive)
@@ -343,6 +351,7 @@ SERVICE should be a string that corresponds to a service."
       (pop-to-buffer buf)
       (view-mode))))
 
+;;;###autoload
 (defun kam-os-list-fonts ()
   "List all of the currently installed fonts on the system."
   (interactive)
@@ -352,6 +361,7 @@ SERVICE should be a string that corresponds to a service."
     (with-current-buffer buf-name
       (view-mode))))
 
+;;;###autoload
 (defun kam-os-file-size ()
   "List all of the files in the current directory and how much space they take up.
 Filter out small files."
@@ -377,6 +387,7 @@ Filter out small files."
      'kam-wallpapers-history
      default)))
 
+;;;###autoload
 (defun kam-os-change-wallpaper (wallpaper)
   "Change the default wallpaper to WALLPAPER.
 WALLPAPER should be a fully qualified path to an image file."
@@ -403,12 +414,13 @@ WALLPAPER should be a fully qualified path to an image file."
   (dired kam-media-directory))
 
 ;;; VPN
-
+;;;###autoload
 (defun kam-vpn-connect ()
   "Connect to the VPN."
   (interactive)
   (shell-command "mullvad connect"))
 
+;;;###autoload
 (defun kam-vpn-disconnect ()
   "Disconnect from the VPN."
   (interactive)

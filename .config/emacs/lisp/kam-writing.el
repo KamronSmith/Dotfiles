@@ -25,6 +25,7 @@
     (kam-standard-themes-reload-theme)
     (hl-line-mode 1)))
 
+;;;###autoload
 (defun kam-org-insert-notes-drawer ()
   "Generate or open a NOTES drawer under the current heading.
 If a drawer exists for this section, a new line is created at the end of

@@ -47,6 +47,7 @@ Occur search to include."
          (bufname (format "*keywords in <%s>*" (buffer-name))))
     (occur-1 kam-search-todo-keywords num (list (current-buffer)) bufname)))
 
+;;;###autoload
 (defun kam-project-grep (command-args)
   "Perform a `grep' search for COMMAND-ARGS starting from the project root directory."
   (interactive (progn
@@ -66,6 +67,7 @@ Occur search to include."
          (default-directory proj-root))
     (grep command-args)))
 
+;;;###autoload
 (defun kam-compile-goto-error ()
   "Like `compile-goto-error' but does not split the window."
   (interactive)
@@ -73,6 +75,7 @@ Occur search to include."
         (display-buffer-overriding-action '(kam-display-buffer-in-mru-window)))
     (compile-goto-error)))
 
+;;;###autoload
 (defun kam-next-error-no-select (&optional n)
   "Like `next-error-no-select' but will not split the window.
 Additionally, it will also always only use the currently selected window."
@@ -81,6 +84,7 @@ Additionally, it will also always only use the currently selected window."
         (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
     (next-error-no-select n)))
 
+;;;###autoload
 (defun kam-previous-error-no-select (&optional n)
   "Like `previous-error-no-select' but will not split the window.
 Additionally, it will always only use the currently selected window."
