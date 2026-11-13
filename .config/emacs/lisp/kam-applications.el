@@ -116,7 +116,7 @@
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up))
   :custom
-  (browse-url-browser-function 'browse-url-firefox)
+  (browse-url-browser-function 'browse-url-default-browser)
   (browse-url-secondary-browser-function 'eww-browse-url)
   (eww-auto-rename-buffer 'title)
   (eww-header-line-format nil)
