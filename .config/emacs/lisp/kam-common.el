@@ -438,7 +438,22 @@ bound to \\[yank-pop])."
     (indent-for-tab-command)
     (deactivate-mark)))
 
+
+(defun kam-get-buffers-matching-mode (mode)
+  "Returns a list of the buffers where their major-mode is equal to MODE."
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (eq mode major-mode)
+          (push buf buffer-mode-matches))))
+    buffer-mode-matches))
+
+(defun kam-multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with the current buffer's major-mode."
   (interactive)
+  (multi-occur
+   (kam-get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
 
 ;;;###autoload
 (defun kam-narrow-or-widen-dwim (p)
