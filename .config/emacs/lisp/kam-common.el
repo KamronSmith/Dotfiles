@@ -438,17 +438,7 @@ bound to \\[yank-pop])."
     (indent-for-tab-command)
     (deactivate-mark)))
 
-(defun kam-end-of-string ()
   (interactive)
-  (while (in-string-p)
-    (forward-char 1))
-  (point))
-
-(defun kam-beginning-of-string ()
-  (interactive)
-  (while (in-string-p)
-    (forward-char -1))
-  (point))
 
 ;;;###autoload
 (defun kam-narrow-or-widen-dwim (p)
