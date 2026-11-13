@@ -4069,14 +4069,7 @@ the file is not under version control."
   :defer t
   :hook (python-mode . eglot-ensure)
   :custom
-  (python-indent-guess-indent-offset-verbose nil)
-  :config
-  (add-to-list 'display-buffer-alist
-               '((major-mode . inferior-python-mode)
-                 (display-buffer-in-tab)
-                 (dedicated . t)
-                 (tab-name . " python"))
-               t))
+  (python-indent-guess-indent-offset-verbose nil))
 
 (use-package asm-mode
   :hook (asm-mode . kam-asm-mode-setup)
