@@ -4054,15 +4054,15 @@ the file is not under version control."
 (use-package c-ts-mode
   :ensure nil
   :hook ((c-ts-mode . kam-c-ts-mode-setup)
-         (c-ts-mode . eglot-ensure))
+         (c-ts-mode . eglot-ensure)
+         (c-ts-mode . hs-minor-mode)
+         (c-ts-mode . treesit-fold-mode))
   :custom
   (c-ts-mode-indent-style 'k&r)
   (c-ts-mode-indent-offset 4)
   :config
   (defun kam-c-ts-mode-setup ()
     "Setup function for `c-ts-mode'."
-    (hs-minor-mode)
-    (treesit-fold-mode)
     (c-ts-mode-toggle-comment-style -1)))
 
 (use-package python
