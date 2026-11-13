@@ -577,6 +577,7 @@ Only split if there is no split, and only split into left and right windows."
 
 (use-package centered-cursor-mode
   :hook ((minibuffer-setup . kam-centered-cursor-mode-disable)
+         (centered-cursor-mode . kam-centered-cursor-mode-remove-hook)
          (after-init . global-centered-cursor-mode))
   :bind
   (:map ccm-map
