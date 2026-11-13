@@ -78,6 +78,7 @@ Enable that mode to its keybindings take over those of the major mode.")
     :keymap kam-override-mode-map)
   
   :hook ((after-init . kam-initial-setup)
+         (after-save . executable-make-buffer-file-executable-if-script-p)
          (visual-line-mode . visual-wrap-prefix-mode))
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
@@ -347,6 +348,7 @@ To be used attached to `after-init-hook'."
   :ensure nil
   :hook ((minibuffer-setup . cursor-intangible-mode)
          (minibuffer-setup . kam-minibuffer-mode-setup)
+         (minibuffer-setup . minibuffer-regexp-mode)
          (minibuffer-setup . minibuffer-nonselected-mode)
          (minibuffer-exit . kam-minibuffer-exit))
   :bind
@@ -480,8 +482,8 @@ To be used attached to `after-init-hook'."
   ("C-l" . recenter-top-bottom)
   ("C-x 0" . kam-delete-window-dwim)
   ("C-x C-0" . kam-delete-window-dwim)
-  ("C-x 1" . delete-other-windows)
-  ("C-x C-1" . delete-other-windows)
+  ("C-x 1" . kam-toggle-delete-other-windows)
+  ("C-x C-1" . kam-toggle-delete-other-windows)
   ("C-x 3" . kam-split-window-right)
   ("C-x C-3" . kam-split-window-right)
   ("C-<next>" . scroll-other-window)
@@ -499,7 +501,7 @@ To be used attached to `after-init-hook'."
   (even-window-sizes t)
   (cursor-in-non-selected-windows nil)
   (next-error-recenter '(4))
-  (window-combination-resize nil)
+  (window-combination-resize t)
   (switch-to-buffer-in-dedicated-window 'pop)
   (switch-to-buffer-obey-display-actions t)
   (switch-to-buffer-preserve-window-point t)
@@ -570,7 +572,15 @@ Only split if there is no split, and only split into left and right windows."
            (= (length (window-list)) 1))
           (with-selected-window window
             (split-window-right))
-        nil))))
+        nil)))
+
+  (defun kam-toggle-delete-other-windows ()
+    "Delete other windows in the frame if any, or restore previous window config."
+    (interactive)
+    (if (and winner-mode
+             (equal (selected-window) (next-window)))
+        (winner-undo)
+      (delete-other-windows))))
 
 (use-package lin
   :custom
@@ -2335,7 +2345,12 @@ project directory."
   (save-place-limit 10000)
   (save-place-autosave-interval 50)
   :config
-  (save-place-mode))
+  (save-place-mode)
+
+  (advice-add 'save-place-find-file-hook :after
+              (lambda (&rest _)
+                (when buffer-file-name
+                  (ignore-errors (recenter))))))
 
 (use-package subword
   :ensure nil
@@ -2390,6 +2405,8 @@ project directory."
 
 (use-package ffap
   :ensure nil
+  :custom
+  (ffap-machine-p-known 'reject)
   :bind
   ("M-g M-." . ffap))
 
@@ -4369,6 +4386,12 @@ the file is not under version control."
   (:map sly-mrepl-mode-map
         ("RET" . newline)
         ("C-<return>" . sly-mrepl-return)))
+
+(use-package super-save
+  :hook (after-init . super-save-mode)
+  :custom
+  (super-save-silent t)
+  (auto-save-default nil))
 
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.config/emacs/lisp/yt-dlp.el")
