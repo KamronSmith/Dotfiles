@@ -312,3 +312,7 @@ With optional ARG, go to the previous song that many times."
 
 (provide 'kam-applications)
 ;;; kam-applications.el ends here
+
+;; Local Variables:
+;; no-byte-compile: t
+;; End:

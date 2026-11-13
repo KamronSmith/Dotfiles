@@ -205,3 +205,7 @@
 
 (provide 'kam-notes)
 ;;; kam-notes.el ends here
+
+;; Local Variables:
+;; no-byte-compile: t
+;; End:
