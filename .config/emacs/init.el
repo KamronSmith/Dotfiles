@@ -62,7 +62,7 @@
 
 (use-package emacs
   :ensure nil
-  :preface
+  :init
   (defvar-keymap kam-repeat-map
     :doc "General repeat map"
     :repeat t)
