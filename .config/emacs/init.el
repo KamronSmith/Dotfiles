@@ -4364,7 +4364,7 @@ the file is not under version control."
                       :weight 'bold))
 
 (use-package visible-mark
-  :preface
+  :init
   (defface kam-visible-mark-face
     `((t nil))
     "Visible mark")
