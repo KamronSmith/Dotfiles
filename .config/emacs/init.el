@@ -1097,7 +1097,7 @@ Duplicates are not saved."
 
   (add-to-list 'display-buffer-alist
                '((major-mode . help-mode)
-                 (display-buffer-reuse-mode-window)
+                 (display-buffer-reuse-mode-window display-buffer-use-least-recent-window)
                  (mode help-mode)))
 
   ;; (add-to-list 'display-buffer-alist
@@ -1167,18 +1167,14 @@ Duplicates are not saved."
         ("<next>" . scroll-down-line)
         ("<prior>" . scroll-up-line))
   :config
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*Info\\*"
-  ;;                (display-buffer-reuse-window
-  ;;                 ;; display-buffer-use-least-recent-window
-  ;;                 ;; display-buffer-in-direction
-  ;;                 )
-  ;;                ;; (direction . right)
-  ;;                ;; (inhibit-same-window . t)
-  ;;                ))
+  (add-to-list 'display-buffer-alist
+               '("\\*Info\\*"
+                 (display-buffer-reuse-mode-window
+                  display-buffer-use-least-recent-window)
+                 (mode Info-mode)))
 
-  (add-to-list 'switch-to-prev-buffer-skip-regexp
-               "^\\*Info\\*" t)
+  ;; (add-to-list 'switch-to-prev-buffer-skip-regexp
+  ;;              "^\\*Info\\*" t)
 
   ;; (with-eval-after-load 'consult
   ;;  (add-to-list 'consult-buffer-filter
@@ -1195,14 +1191,10 @@ Duplicates are not saved."
   :custom
   (Man-notify-method 'aggressive)
   :config
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*Man "
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . right)
-  ;;                (window-width . 0.5)
-  ;;                (mode . Man-mode)
-  ;;                (window-parameters . ((mode-line-format . none)
-  ;;                                      (no-delete-other-windows . t)))))
+  (add-to-list 'display-buffer-alist
+               '("\\*Man "
+                 (display-buffer-reuse-mode-window display-buffer-use-least-recent-window)
+                 (mode . Man-mode)))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "^\\*Man " t)
