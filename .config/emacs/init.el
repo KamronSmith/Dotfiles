@@ -4175,12 +4175,12 @@ the file is not under version control."
 
 (use-package markdown-ts-mode
   :ensure nil
-  :hook (markdown-ts-mode . kam-markdown-ts-setup)
+  :hook (markdown-ts-mode . kam-markdown-ts-mode-setup)
   :custom
   (markdown-ts-hide-markup nil)
   :config
   (require 'markdown-ts-mode-x)
-  (defun kam-markdown-ts-setup ()
+  (defun kam-markdown-ts-mode-setup ()
     "Setup function for `markdown-ts-mode'."
     (setq-local treesit-font-lock-level 4)))
 
