@@ -28,11 +28,24 @@
   :group 'kam-os)
 
 ;;;###autoload
-(defun kam-dotfiles-stow ()
-  "Run stow in the dotfiles directory."
-  (interactive)
+(defun kam-dotfiles-restow (&optional arg)
+  "Run stow -R in `kam-dotfiles-directory'.
+With optional ARG, force update Emacs byte-compiled files."
+  (interactive "p")
   (let ((default-directory kam-dotfiles-directory))
-    (shell-command "stow .")))
+    (shell-command "stow -R ."))
+  (when arg
+    (prepare-user-lisp nil nil t)))
+
+;;;###autoload
+(defun kam-dotfiles-stow (&optional arg)
+  "Run stow in `kam-dotfiles-directory'.
+With optional ARG, force update Emacs byte-compiled files."
+  (interactive "p")
+  (let ((default-directory kam-dotfiles-directory))
+    (shell-command "stow ."))
+  (when arg
+    (prepare-user-lisp nil nil t)))
 
 (provide 'kam-dotfiles)
 ;;; kam-dotfiles.el ends here
