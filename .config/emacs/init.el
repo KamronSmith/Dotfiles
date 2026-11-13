@@ -2420,9 +2420,9 @@ project directory."
   (defvar-keymap kam-org-map
     :doc "Keymap for Org-related commands."
     :prefix t)
-  :hook ((org-mode . variable-pitch-mode)
-         (org-mode . visual-line-mode)
-         (org-mode . kam-org-syntax-table-modify)
+  
+  :hook ((org-mode . visual-line-mode)
+         (org-mode . kam-org-mode-setup)
          (org-mode . kam-org-set-custom-faces))
   :bind
   (("C-c o" . kam-org-map)
@@ -2499,12 +2499,12 @@ project directory."
   (org-log-done 'time)
   (org-log-into-drawer t)
   :config
-  (defun kam-org-syntax-table-modify ()
-    "Modify `org-mode-syntax-table' for the current Org buffer.
-This stops the mismatch parenthesis bug in Org source blocks."
+  (defun kam-org-mode-setup ()
+    "Setup function for `org-mode'."
+    (visual-wrap-prefix-mode -1)
     (modify-syntax-entry ?< "." org-mode-syntax-table)
     (modify-syntax-entry ?> "." org-mode-syntax-table))
-
+  
   (with-eval-after-load 'pulsar
     (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
       (add-hook hook #'pulsar-recenter-center)
