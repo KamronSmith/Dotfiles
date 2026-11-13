@@ -150,6 +150,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-x C-u" . nil)
   ("C-x C-z" . nil)
   ("C-c <tab>" . indent-relative)
+  ("C-c j" . link-menu-open)
   ("C-c q" . insert-char)
   ("C-M-<left>" . indent-rigidly-left)
   ("C-M-<right>" . indent-rigidly-right)
@@ -1053,6 +1054,7 @@ Duplicates are not saved."
         ("n" . forward-paragraph)
         ("j" . forward-button)
         ("k" . backward-button)
+        ("m" . link-menu-open)
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up)
         ("<mouse-9>" . help-go-back)
@@ -1149,6 +1151,7 @@ Duplicates are not saved."
         ("M-]" . Info-history-forward)
         ("P" . Info-prev)
         ("N" . Info-next)
+        ("m" . link-menu-open)
         ("j" . Info-next-reference)
         ("k" . Info-prev-reference)
         ("<next>" . scroll-down-line)
@@ -1177,6 +1180,8 @@ Duplicates are not saved."
   :hook (Man-mode . lin-mode)
   :bind
   ("M-s M-m" . man)
+  (:map Man-mode-map
+        ("m" . link-menu-open))
   :custom
   (Man-notify-method 'aggressive)
   :config
@@ -1517,6 +1522,7 @@ surrounded by actual boundaries."
             ;;                     (vertico-sort-function . nil))
             ;; (consult-ripgrep buffer)
             (consult-buffer (vertico-sort-function . nil))
+            (link-menu-open (vertico-sort-function . nil))
             ;; (project-find-file ,@kam-vertico-multiform-minimal)
             ))
 
@@ -4394,4 +4400,5 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-tasks)
 (require 'kam-eshell)
 (require 'kam-expreg)
+(require 'kam-link-menu)
 ;;; init.el ends here
