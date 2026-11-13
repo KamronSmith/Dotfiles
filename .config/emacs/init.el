@@ -1445,8 +1445,8 @@ surrounded by actual boundaries."
         ("<next>" . vertico-scroll-up)
         ("<prior>" . vertico-scroll-down)
         ("M-<return>" . vertico-exit-input)
-        ("M-n" . vertico-next-group)
-        ("M-p" . vertico-previous-group)
+        ("C-c C-n" . vertico-next-group)
+        ("C-c C-p" . vertico-previous-group)
         ("M-w" . vertico-save)
         ("M-<" . vertico-first)
         ("M->" . vertico-last)
@@ -1454,6 +1454,9 @@ surrounded by actual boundaries."
         ("<down>" . nil)
         ("C-<return>" . minibuffer-force-complete-and-exit)
         ("C-g" . kam-keyboard-escape-quit-dwim))
+  (:repeat-map kam-repeat-map
+               ("C-n" . vertico-next-group)
+               ("C-p" . vertio-previous-group))
   :custom
   (vertico-resize nil)
   (vertico-cycle t)
