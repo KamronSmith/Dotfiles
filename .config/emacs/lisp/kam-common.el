@@ -510,20 +510,6 @@ Else, use the symbol at point."
     (deactivate-mark)
     (query-replace sym to-string)))
 
-(defun kam-keyboard-escape-quit-dwim ()
-  "A better keyboard quit."
-  (interactive)
-  (cond
-   ((region-active-p)
-    (keyboard-quit))
-   ((derived-mode-p 'completion-list-mode)
-    (delete-completion-window))
-   ((> (minibuffer-depth) 0)
-    (abort-recursive-edit))
-   ((identity defining-kbd-macro)
-    (kmacro-keyboard-quit))
-   (t
-    (keyboard-escape-quit))))
 
 ;;;###autoload
 (defun kam-keyboard-escape-quit-dwim ()
