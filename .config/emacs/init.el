@@ -2014,25 +2014,26 @@ This source is only enabled when the current buffer belongs to a project.")
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
 
 (use-package ace-window
+  :commands (kam-ace-window ace-window)
+  :init
+  (setq aw-dispatch-always t)
+  (setq aw-keys '(?d ?n ?r ?e ?t ?a))
+  (setq aw-dispatch-alist
+        '((?s aw-swap-window "Swap Windows")
+          (?m aw-move-window "Move Window")
+          (?c aw-copy-window "Copy Window")
+          (?v aw-split-window-vert "Split Vert Window")
+          (?h aw-split-window-horz "Split Horz Window")
+          (?b kam-aw-consult-buffer "Select Buffer")
+          (?o kam-aw-one-command "Run command")
+          (?x kam-aw-execute-extended-command "Run an interactive command")
+          (?1 delete-other-windows "Delete Other Windows")
+          (?0 kam-aw-delete-window-dwim "Delete Window")
+          (?q kam-aw-delete-window-dwim "Delete Window")
+          (?? aw-show-dispatch-help)))
   :bind
   (:map kam-override-mode-map
-        ("M-o" . kam-ace-window))
-  :custom
-  (aw-dispatch-always t)
-  (aw-keys '(?d ?n ?r ?e ?t ?a))
-  (aw-dispatch-alist
-   '((?m aw-swap-window "Swap Windows")
-     (?M aw-move-window "Move Window")
-     (?c aw-copy-window "Copy Window")
-     (?v aw-split-window-vert "Split Vert Window")
-     (?h aw-split-window-horz "Split Horz Window")
-     (?b kam-aw-consult-buffer "Select Buffer")
-     (?o kam-aw-one-command "Run command")
-     (?x kam-aw-execute-extended-command "Run an interactive command")
-     (?1 delete-other-windows "Delete Other Windows")
-     (?0 kam-aw-delete-window-dwim "Delete Window")
-     (?q kam-aw-delete-window-dwim "Delete Window")
-     (?? aw-show-dispatch-help))))
+        ("M-o" . kam-ace-window)))
 
 (use-package popper
   :after (org consult)
