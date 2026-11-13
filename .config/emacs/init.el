@@ -3694,6 +3694,18 @@ the file is not under version control."
                (ediff-backup (buffer-file-name)))
            (apply #'signal errdata)))))))
 
+(use-package git-commit
+  :ensure nil
+  :hook (git-commit-setup . kam-git-commit-mode-setup)
+  :custom
+  (git-commit-summary-max-length 50)
+  :config
+  (defun kam-git-commit-mode-setup ()
+    "Setup function for `git-commit-mode'."
+    (setopt-local fill-column 72)
+    (indent-tabs-mode -1)
+    (visual-line-mode -1)))
+
 ;; (use-package flymake
 ;;   :after (consult)
 ;;   :ensure nil
