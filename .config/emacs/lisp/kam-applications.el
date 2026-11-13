@@ -67,6 +67,10 @@
           ("https://protesilaos.com/codelog.xml" :title "Protesilaos" emacs linux)
           ("https://protesilaos.com/interpretations.xml" :title "Protesilaos" art philosophy)))
 
+  (defun kam-elfeed-show-mode-setup ()
+    "Setup function for `elfeed-show-mode'."
+    (setopt-local browse-url-browser-function browse-url-eww))
+
   (defun kam-elfeed-show-next ()
     "Show the next entry in the same window. Do not split."
     (interactive)

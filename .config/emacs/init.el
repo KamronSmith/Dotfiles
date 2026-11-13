@@ -298,7 +298,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (setenv "GPG_AGENT_INFO" nil)
 
   (defun kam-initial-setup ()
-    "Set up basic OS settings and if in the terminal.
+    "Setup basic OS settings and if in the terminal.
 To be used attached to `after-init-hook'."
     (cond
      ((eq system-type 'gnu/linux)
@@ -345,7 +345,7 @@ To be used attached to `after-init-hook'."
 (use-package minibuffer
   :ensure nil
   :hook ((minibuffer-setup . cursor-intangible-mode)
-         (minibuffer-setup . kam-minibuffer-setup)
+         (minibuffer-setup . kam-minibuffer-mode-setup)
          (minibuffer-setup . minibuffer-nonselected-mode)
          (minibuffer-exit . kam-minibuffer-exit))
   :bind
@@ -361,8 +361,8 @@ To be used attached to `after-init-hook'."
   (minibuffer-visible-completions 'up-down)
   (crm-prompt (format "%s %%p" (propertize "[%d]" 'face 'shadow)))
   :config
-  (defun kam-minibuffer-setup ()
-    "Function for settings as the minibuffer starts."
+  (defun kam-minibuffer-mode-setup ()
+    "Setup function for `minibuffer-mode'."
     (setopt gc-cons-threshold most-positive-fixnum)
     (setopt-local truncate-lines t)
     ;; (setopt-local line-spacing '(1 . 1))
@@ -640,7 +640,7 @@ Only split if there is no split, and only split into left and right windows."
 (use-package dired
   :ensure nil
   :hook ((dired-mode . dired-hide-details-mode)
-         (dired-mode . kam-dired-setup)
+         (dired-mode . kam-dired-mode-setup)
          (dired-after-readin . kam-dired-directory-add-to-history)
          ;; (dired-mode . kam-wdired-mode-setup)
          )
@@ -804,7 +804,8 @@ double prefix argument, remove all inserted subdirectories."
      (buffer-substring-no-properties (+ (line-beginning-position) 2)
                                      (1- (line-end-position)))))
 
-  (defun kam-dired-setup ()
+  (defun kam-dired-mode-setup ()
+    "Setup function for `dired-mode'."
     (if hide-cursor-mode
         (hide-cursor-mode -1)
       (hide-cursor-mode 1))
@@ -813,10 +814,10 @@ double prefix argument, remove all inserted subdirectories."
       (hl-line-mode 1))
     ;; (hide-cursor-mode)
     ;; (hl-line-mode)
-    (kam-dired-setup-imenu))
+    (kam-dired-imenu-setup))
 
-  (defun kam-dired-setup-imenu ()
-    "Configure `Imenu' for the current Dired buffer."
+  (defun kam-dired-imenu-setup ()
+    "Setup `imenu' for the current `dired-mode' buffer."
     (set (make-local-variable 'imenu-prev-index-position-function)
          'kam-dired--imenu-prev-index-position)
     (set (make-local-variable 'imenu-extract-index-name-function)
@@ -893,15 +894,14 @@ Duplicates are not saved."
   (wdired-allow-to-change-permissions t)
   (wdired-create-parent-directories t)
   :config
-
   (defun kam-wdired-mode-setup ()
+    "Setup function for `wdired-mode'."
     (if hide-cursor-mode
         (hide-cursor-mode -1)
       (hide-cursor-mode 1))
     (if hl-line-mode
         (hl-line-mode -1)
-      (hl-line-mode 1)))
-  )
+      (hl-line-mode 1))))
 
 (use-package dired-subtree
   :after (dired)
@@ -1408,6 +1408,7 @@ surrounded by actual boundaries."
   :ensure nil
   :config
   (defun kam-font-faces-setup ()
+    "Setup for the font faces."
     (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
     (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular))
@@ -1898,14 +1899,14 @@ This source is only enabled when the current buffer belongs to a project.")
   (completion-at-point-functions '(cape-dabbrev cape-file))   ; global values
   :config
   (defun kam-cape-text-mode-setup ()
-    "Set up `cape' for text."
+    "Setup `cape' for text."
     (setopt-local completion-at-point-functions
                   '(cape-dict
                     cape-dabbrev
                     cape-emoji)))
 
   (defun kam-cape-prog-mode-setup ()
-    "Set up `cape' for programming."
+    "Setup `cape' for programming."
     (setopt-local completion-at-point-functions
                   '(cape-file
                     cape-keyword
@@ -2267,7 +2268,7 @@ Used in `isearch-mode-end-hook'."
                  ;; (inhibit-same-window . t)
                  (body-function . select-window)))
 
-  (defun kam-grep-setup ()
+  (defun kam-grep-mode-setup ()
     "Setup function for `grep-mode'."
     (hide-cursor-mode)
     (hl-line-mode))
@@ -2284,7 +2285,7 @@ project directory."
                                   default-directory)))
       (grep command)))
 
-  (defun kam-grep-edit-setup ()
+  (defun kam-grep-edit-mode-setup ()
     "Setup function for `grep-edit-mode'."
     (hide-cursor-mode -1))
 
@@ -2402,7 +2403,7 @@ project directory."
                ("&" . expreg-expand))
   :config
   (defun kam-expreg-text-mode-setup ()
-    "Set up text mode for expreg."
+    "Setup `text-mode' for `expreg'."
     (add-to-list 'expreg-functions #'expreg--sentence)
     (when (eq major-mode 'org-mode)
       (add-to-list 'expreg-functions #'kam-expreg--org-heading t)
@@ -3020,6 +3021,7 @@ choose arguments."
     "Where the history file for Z-shell is stored.")
 
   (defun kam-shell-mode-setup ()
+    "Setup function for `shell-mode'."
     (setq-local comint-process-echoes t
                 comint-input-ring-file-name kam-shell-history-file
                 comint-input-ring-size 100000
@@ -3198,6 +3200,7 @@ The shell is renamed to make opening multiple shells easier."
   (eshell-input-filter #'kam-eshell-input-filter)
   :config
   (defun kam-eshell-mode-setup ()
+    "Setup function for `eshell-mode'."
     (setenv "TERM" "xterm-256-color")
     (setq-local completion-styles '(basic partial-completion)
                 completion-at-point-functions '(pcomplete-completions-at-point cape-file cape-history)
@@ -3544,7 +3547,7 @@ The shell is renamed to make opening multiple shells easier."
   ;;       ("RET" . newline))
   :config
   (defun kam-prog-mode-setup ()
-    "Set up `prog-mode'."
+    "Setup function for `prog-mode'."
     (setopt-local truncate-lines t)
     (setopt-local comment-auto-fill-only-comments t)
     (indent-tabs-mode -1)))
@@ -3580,7 +3583,7 @@ The shell is renamed to make opening multiple shells easier."
                  "\\*Pp Eval Output\\*"))
 
   (defun kam-elisp-mode-setup ()
-    "Setup `emacs-lisp-mode'."
+    "Setup function for `emacs-lisp-mode'."
     (setq-local completion-at-point-functions
                 '(cape-file
                   cape-elisp-block
@@ -3737,8 +3740,8 @@ the file is not under version control."
   (eglot-documentation-renderer #'markdown-ts-view-mode)
   (eglot-extend-to-xref t)
   :config
-  (defun kam-eglot-setup ()
-    "Function for loading Eglot settings."
+  (defun kam-eglot-mode-setup ()
+    "Setup function for `eglot-mode'."
     (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
     (add-to-list 'eglot-ignored-server-capabilities :documentHighlightProvider)
     (add-to-list 'eglot-ignored-server-capabilities :documentOnTypeFormattingProvider)
@@ -3997,12 +4000,13 @@ the file is not under version control."
   :ensure nil
   :hook ((prog-mode . whitespace-mode)
          (text-mode . whitespace-mode)
-         (whitespace-mode . kam-whitespace-setup))
+         (whitespace-mode . kam-whitespace-mode-setup))
   :custom
   (whitespace-display-mappings '((tab-mark ?\t [187 ?\t] [62 ?\t])))
   (whitespace-style '(face tabs indentation tab-mark))
   :config
-  (defun kam-whitespace-setup ()
+  (defun kam-whitespace-mode-setup ()
+    "Setup function for `whitespace-mode'."
     ;; (add-to-list 'write-file-functions 'delete-trailing-whitespace)
     (kill-ring-deindent-mode)))
 
@@ -4065,7 +4069,7 @@ the file is not under version control."
   :hook (asm-mode . kam-asm-mode-setup)
   :config
   (defun kam-asm-mode-setup ()
-    "Setup for `asm-mode'."
+    "Setup function for `asm-mode'."
     (electric-indent-local-mode -1)
     (setq tab-stop-list (number-sequence 4 80 4))))
 
@@ -4136,7 +4140,7 @@ the file is not under version control."
   :config
   (require 'markdown-ts-mode-x)
   (defun kam-markdown-ts-setup ()
-    "Setup for `markdown-ts-mode'."
+    "Setup function for `markdown-ts-mode'."
     (setq-local treesit-font-lock-level 4)))
 
 (use-package yaml-ts-mode
@@ -4214,9 +4218,9 @@ the file is not under version control."
   :config
   ;; (ghostel-compile-global-mode)
 
-  (defun kam-ghostel-setup ()
-    "Setup for `ghostel-mode'."
-    (visual-fill-column-mode -1))
+  (defun kam-ghostel-mode-setup ()
+    "Setup function for `ghostel-mode'."
+    (visual-line-mode -1))
 
   (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
 
@@ -4281,13 +4285,14 @@ the file is not under version control."
 
 (use-package outline
   :ensure nil
-  :hook ((outline-minor-mode . kam-outline-setup)
+  :hook ((outline-minor-mode . kam-outline-mode-setup)
          (emacs-lisp-mode . outline-minor-mode)
          (conf-mode . outline-minor-mode)
          (markdown-mode . outline-minor-mode)
          (diff-mode . outline-minor-mode))
   :config
-  (defun kam-outline-setup ()
+  (defun kam-outline-mode-setup ()
+    "Setup function for `outline-mode'."
     (let* ((display-table (or buffer-display-table (make-display-table)))
            (face-offset (* (face-id 'shadow) (ash 1 22)))
            (value (vconcat (mapcar (lambda (c) (+ face-offset c)) " ⌄"))))
