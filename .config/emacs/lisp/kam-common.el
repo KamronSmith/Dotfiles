@@ -169,10 +169,11 @@ MODE is a symbol that represents an active minor mode. See
       (completing-read "Backup version: " backup-files nil t)
     (user-error "No backup files available for file %s" (buffer-file-name))))
 
-(defun kam-rename-file (name)
+;;;###autoload
+(defun kam-rename-file-and-buffer (name)
   "Apply NAME to the current file and rename its buffer."
   (interactive
-   (list (read-string "Rename current file: " (file-relative-name (buffer-file-name)))))
+   (list (read-file-name "Rename current file: " (file-relative-name (buffer-file-name)))))
   (let ((file (buffer-file-name)))
     (if (vc-registered file)
         (vc-rename-file file name))
