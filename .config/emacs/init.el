@@ -1204,12 +1204,6 @@ Duplicates are not saved."
   ;;                "^\\*Man " t))
   )
 
-(use-package emacs-news-mode
-  :ensure nil
-  :hook (emacs-news-mode . (lambda () (when visual-fill-column-mode
-                                   (visual-fill-column-mode -1)))))
-
-
 (use-package re-builder
   :ensure nil
   :bind
@@ -3468,7 +3462,8 @@ The shell is renamed to make opening multiple shells easier."
   :hook ((visual-line-mode . visual-fill-column-for-vline)
          (image-mode . kam-visual-fill-column-disable)
          (transient-setup-buffer . kam-visual-fill-column-disable)
-         (prog-mode . kam-visual-fill-column-disable))
+         (prog-mode . kam-visual-fill-column-disable)
+         (emacs-news-mode . kam-visual-fill-column-disable))
   :config
   (defun kam-visual-fill-column-disable ()
     "Turn off `visual-fill-column-mode'."
