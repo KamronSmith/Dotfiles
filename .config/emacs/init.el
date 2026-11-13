@@ -4209,7 +4209,7 @@ the file is not under version control."
   :hook ((after-init . ghostel-compile-global-mode)
          (after-init . ghostel-shell-command-global-mode)
          (after-init . ghostel-comint-global-mode)
-         (ghostel-mode . kam-ghostel-setup))
+         (ghostel-mode . kam-ghostel-mode-setup))
   :bind
   ("C-x t" . ghostel)
   (:map ghostel-semi-char-mode-map
