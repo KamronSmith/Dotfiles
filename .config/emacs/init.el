@@ -77,7 +77,7 @@ Enable that mode to its keybindings take over those of the major mode.")
     :global t
     :keymap kam-override-mode-map)
   
-  :hook ((after-init . kam-initial-setup)
+  :hook ((after-init . kam-emacs-setup)
          (after-save . executable-make-buffer-file-executable-if-script-p)
          (visual-line-mode . visual-wrap-prefix-mode))
   :bind
@@ -300,9 +300,9 @@ Enable that mode to its keybindings take over those of the major mode.")
   
   (setenv "GPG_AGENT_INFO" nil)
 
-  (defun kam-initial-setup ()
-    "Setup basic OS settings and if in the terminal.
-To be used attached to `after-init-hook'."
+  (defun kam-emacs-setup ()
+    "Setup function for Emacs.
+Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
     (cond
      ((eq system-type 'gnu/linux)
       (setopt x-meta-keysym 'meta))
