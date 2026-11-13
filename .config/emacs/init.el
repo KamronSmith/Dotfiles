@@ -532,9 +532,9 @@ To be used attached to `after-init-hook'."
       (window . root)
       (window-height . 0.35)
       (window-parameters . ((mode-line-format . none))))
-     ("^\\*Warnings\\*$"
-      (display-buffer-no-window)
-      (allow-no-window . t))
+     ;; ("^\\*Warnings\\*$"
+     ;;  (display-buffer-no-window)
+     ;;  (allow-no-window . t))
      ;; ("^\\*Messages\\*$"
      ;;  (display-buffer-reuse-window display-buffer-in-side-window)
      ;;  (side . bottom)
