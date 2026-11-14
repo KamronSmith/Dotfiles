@@ -2333,10 +2333,8 @@ project directory."
   (defvar-keymap kam-org-map
     :doc "Keymap for Org-related commands."
     :prefix t)
-  
   :hook ((org-mode . visual-line-mode)
-         (org-mode . kam-org-mode-setup)
-         (org-mode . kam-org-set-custom-faces))
+         (org-mode . kam-org-mode-setup))
   :bind
   (("C-c o" . kam-org-map)
    :map org-mode-map
@@ -2423,19 +2421,6 @@ project directory."
       (add-hook hook #'pulsar-recenter-center)
       (add-hook hook #'pulsar-reveal-entry)))
 
-  (defun kam-org-set-custom-faces ()
-    "Set Org colors using `standard-themes'."
-    (standard-themes-with-colors
-      (custom-set-faces
-       `(org-special-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-meta-line ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-document-title ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-document-info ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-document-info-keyword ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-drawer ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-property-value ((,c :inherit fixed-pitch :height .8 :foreground ,fg-dim)))
-       `(org-ellipsis ((,c :height 1.0 :foreground ,fg-dim)))
-       `(org-block-end-line ((,c :background ,bg-prose-block-delimiter))))))
 
   (declare-function org-map-entries "org"))
 
@@ -3184,6 +3169,7 @@ The shell is renamed to make opening multiple shells easier."
       (fg-heading-2 rainbow-1)
       (docstring string))
     "Custom overrides for Standard-Themes Dark.")
+  :after (kam-theme)
   :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
   :init
   (standard-themes-take-over-modus-themes-mode 1)
@@ -3211,20 +3197,6 @@ The shell is renamed to make opening multiple shells easier."
                                      (section-other . (bold 1))
                                      (commit-summary . (bold 1))
                                      (t . (bold 1))))
-  (defun kam-standard-themes-custom-faces-setup ()
-    "Set faces across the configuration with `standard-themes'.
- Uses the colors set in either `kam-standard-themes-palette-dark-overrides' or
-`kam-standard-themes-palette-light-overrides'."
-    (standard-themes-with-colors
-      (custom-set-faces
-       ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
-       `(region ((,c :extend t)))
-       `(fringe ((,c :background ,bg-main)))
-       `(cursor ((,c :foreground ,fg-main :background ,cursor)))
-       `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
-       `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
-       `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
-       `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular))))))
   
   (standard-themes-load-theme 'standard-dark))
 
@@ -3239,11 +3211,7 @@ The shell is renamed to make opening multiple shells easier."
   (olivetti-minimum-body-width 80)
   (olivetti-recall-visual-line-mode-state t)
   :config
-  (defun kam-olivetti-update-fringe-color ()
-    "Update Olivetti mode's fringe color to the main background color."
-    (standard-themes-with-colors
-      (custom-set-faces
-       `(olivetti-fringe ((,c :background ,bg-main)))))))
+  )
 
 
 (use-package spacious-padding
@@ -3291,13 +3259,7 @@ The shell is renamed to make opening multiple shells easier."
   (hl-line-sticky-flag nil)
   (global-hl-line-sticky-flag 'window)
   :config
-  (defun kam-hl-line-set-custom-faces ()
-    "Update `hl-line-mode' color depending on the currently loaded theme."
-    (with-eval-after-load 'standard-themes
-      (standard-themes-with-colors
-        (custom-set-faces
-         `(hl-line ((,c :background ,bg-dim)))
-         `(hl-line-nonselected ((,c :background ,bg-main))))))))
+  )
 
 (use-package lin
   :custom

@@ -26,31 +26,19 @@
             (add-to-list 'denote-known-keywords keyword)))
         (kam-denote-first-history-keyword)))
 
-(defun kam-notes-set-custom-faces ()
-  "Set custom faces for Denote."
-  (standard-themes-with-colors
-    (custom-set-faces
-     `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
-     ;; `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
-     `(denote-faces-year ((,c :foreground ,blue-intense)))
-     `(denote-faces-month ((,c :foreground ,blue-faint)))
-     `(denote-faces-day ((,c :foreground ,blue-faint)))
-     `(denote-faces-time ((,c :foreground ,fg-dim)))
-     `(denote-faces-hour ((,c :foreground ,fg-dim)))
-     `(denote-faces-minute ((,c :foreground ,fg-dim)))
-     `(denote-faces-second ((,c :foreground ,fg-dim))))))
-
 (defun kam-denote-open-or-create ()
   "Like"
   (interactive)
   (let ((denote-prompts '(title keywords subdirectory)))
     (denote-open-or-create)))
 
+;;;###autoload
 (defun kam-notes-set-processed-property ()
   "Set the property PROCESSED to no on an org-mode heading."
   (interactive)
   (org-set-property "PROCESSED" "no"))
 
+;;;###autoload
 (defun kam-denote-sequence-dired-with-clone ()
   "Clone existing Dired buffer and run `denote-sequence-dired'."
   (interactive)
@@ -95,6 +83,7 @@
 * Quotes"
   "Template to insert when creating a literature note for fiction media.")
 
+;;;###autoload
 (defun kam-notes-insert-nonfiction-template ()
   "Insert `kam-notes-nonfiction-template'."
   (interactive)
@@ -102,6 +91,7 @@
   (newline)
   (insert kam-notes-nonfiction-template))
 
+;;;###autoload
 (defun kam-notes-insert-fiction-template ()
   "Insert `kam-notes-fiction-template'."
   (interactive)
@@ -109,15 +99,18 @@
   (newline)
   (insert kam-notes-fiction-template))
 
+;;;###autoload
 (defun kam-notes-insert-index-template ()
   "Insert a template for the index note."
   (interactive)
   (insert "* Indices\n\n* Other\n\n* References"))
 
+;;;###autoload
 (defun kam-notes-insert-literature-note-template (template)
   "Insert TEMPLATE for creating a literature note, enhanced with `completing-read'."
   (interactive))
 
+;;;###autoload
 (defun kam-notes-insert-quote-block (title)
   "Insert a quote block with an org mode heading superior."
   (interactive (list (read-string "Enter a title: ")))

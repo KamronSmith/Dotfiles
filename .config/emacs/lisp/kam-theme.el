@@ -5,10 +5,11 @@
 ;;; Commentary:
 
 ;;; Code:
-
 (require 'kam-common)
 (require 'spacious-padding)
 (require 'standard-themes)
+(require 'org)
+(require 'denote)
 
 ;;; Spacious-padding extensions
 (define-minor-mode kam-spacious-padding-subtle-mode-line-mode
@@ -51,11 +52,11 @@ See `kam-favorite-themes'."
             kam-favorite-themes))))
 
 (defvar kam-theme-face-change-functions
-  '(kam-notes-set-custom-faces
+  '(kam-denote-custom-faces-setup
     kam-standard-themes-custom-faces-setup
-    kam-org-set-custom-faces
-    kam-olivetti-update-fringe-color
-    kam-hl-line-set-custom-faces)
+    kam-olivetti-custom-faces-setup
+    kam-hl-line-custom-faces-setup
+    kam-org-custom-faces-setup)
   "List of functions that update faces across the configuration.
 See `kam-theme-update-custom-faces'.")
 
@@ -66,6 +67,62 @@ See `kam-theme-update-custom-faces'.")
   (when kam-decolorify-mode
     (kam-decolorify--turn-off-colors)))
 
+(defun kam-standard-themes-custom-faces-setup ()
+  "Set up custom faces with `standard-themes'."
+  (standard-themes-with-colors
+    (custom-set-faces
+     ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
+     `(region ((,c :extend t)))
+     `(fringe ((,c :background ,bg-main)))
+     `(cursor ((,c :foreground ,fg-main :background ,cursor)))
+     `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
+     `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
+     `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
+     `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular))))))
+
+(defun kam-denote-custom-faces-setup ()
+  "Set up custom `denote' faces with `standard-themes'."
+  (standard-themes-with-colors
+    (custom-set-faces
+     `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
+     ;; `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
+     `(denote-faces-year ((,c :foreground ,blue-intense)))
+     `(denote-faces-month ((,c :foreground ,blue-faint)))
+     `(denote-faces-day ((,c :foreground ,blue-faint)))
+     `(denote-faces-time ((,c :foreground ,fg-dim)))
+     `(denote-faces-hour ((,c :foreground ,fg-dim)))
+     `(denote-faces-minute ((,c :foreground ,fg-dim)))
+     `(denote-faces-second ((,c :foreground ,fg-dim))))))
+
+(defun kam-olivetti-custom-faces-setup ()
+  "Set up custom `olivetti' faces with `standard-themes'."
+  (standard-themes-with-colors
+    (custom-set-faces
+     `(olivetti-fringe ((,c :background ,bg-main))))))
+
+(defun kam-hl-line-custom-faces-setup ()
+  "Set up custom `hl-line-mode' faces with `standard-themes'."
+  (standard-themes-with-colors
+    (custom-set-faces
+     `(hl-line ((,c :background ,bg-dim)))
+     `(hl-line-nonselected ((,c :background ,bg-main))))))
+
+(defun kam-org-custom-faces-setup ()
+  "Set up custom `org-mode' faces with `standard-themes'."
+  (standard-themes-with-colors
+    (custom-set-faces
+     `(org-meta-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-special-keyword ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-meta-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-document-title ((,c :inherit nil :height 1.0 :foreground ,fg-dim)))
+     `(org-document-info ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-document-info-keyword ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-drawer ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-property-value ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-ellipsis ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-block-end-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim))))))
+
+;;; fonts
 (defvar kam-favorite-fonts
   '(("Aporetic Sans Mono" . 150)
     ("Iosevka" . 160)
