@@ -4521,18 +4521,7 @@ With optional ARG, go to the previous song that many times."
                       :key gptel-api-key))
   (setq gptel-highlight-methods '(face))
 
-  (gptel-highlight-mode)
-
-  (defun chatgpt ()
-    "Get a ChatGPT buffer."
-    (interactive)
-    (gptel "*ChatGPT*")
-    (pop-to-buffer "*ChatGPT*"))
-
-  (defun claude ()
-    "Get a Claude buffer."
-    (interactive)
-    (pop-to-buffer (gptel "*Claude*"))))
+  (gptel-highlight-mode))
 
 (use-package denote
   :demand t
@@ -4623,4 +4612,5 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-link-menu)
 (require 'kam-elfeed)
 (require 'kam-emms)
+(require 'kam-gptel)
 ;;; init.el ends here
