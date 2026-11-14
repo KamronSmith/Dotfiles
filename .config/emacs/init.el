@@ -3153,28 +3153,12 @@ The shell is renamed to make opening multiple shells easier."
   :hook (eshell-mode . eshell-syntax-highlighting-mode))
 
 (use-package standard-themes
-  :init
-  (defvar kam-standard-themes-palette-light-overrides
-    '((cursor "#000000"))
-    "Custom overrides for Standard-Themes Light.")
-
-  (defvar kam-standard-themes-palette-dark-overrides
-    '((fg-prompt cyan)
-      ;; (bg-main "#181818") ;;   tsoding
-      (bg-prompt unspecified)
-      (bg-prose-block-delimiter "#312f34")
-      (bg-prose-block-contents "#29272c")
-      (cursor "#f9d82b")
-      (fg-heading-1 rainbow-2)
-      (fg-heading-2 rainbow-1)
-      (docstring string))
-    "Custom overrides for Standard-Themes Dark.")
   :after (kam-theme)
   :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
   :init
   (standard-themes-take-over-modus-themes-mode 1)
   :config
-  (setopt standard-themes-dark-palette-overrides
+  (setopt standard-dark-palette-overrides
           '((fg-prompt cyan)
             ;; (bg-main "#181818") ;;   tsoding
             (bg-prompt unspecified)
@@ -3184,7 +3168,7 @@ The shell is renamed to make opening multiple shells easier."
             (fg-heading-1 rainbow-2)
             (fg-heading-2 rainbow-1)
             (docstring string)))
-  (setopt stadard-themes-light-palette-overrides
+  (setopt stadard-light-palette-overrides
           '((cursor "#000000")))
   (setopt standard-themes-to-toggle '(standard-dark
                                       standard-light))
