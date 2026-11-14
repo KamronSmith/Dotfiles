@@ -4525,6 +4525,7 @@ With optional ARG, go to the previous song that many times."
 
 (use-package denote
   :demand t
+  :after (kam-notes kam-os)
   :hook ((dired-mode . denote-dired-mode)
          (after-init . denote-rename-buffer-mode)
          ;; (after-init . kam-notes-set-custom-faces)
@@ -4541,14 +4542,13 @@ With optional ARG, go to the previous song that many times."
   (:map dired-mode-map
         ("r" . denote-dired-rename-files))
   :custom
+  (denote-directory kam-zettelkasten-directory)
+  (denote-known-keywords (kam-denote-keywords))
   (denote-buffer-name-prefix "")
   (denote-sort-keywords t)
   (denote-prompts '(title keywords))
   (denote-rename-confirmations nil)
-  (denote-date-prompt-use-org-read-date t)
-  :config
-  (with-eval-after-load 'kam-os
-    (setq denote-directory kam-zettelkasten-directory)))
+  (denote-date-prompt-use-org-read-date t))
 
 (use-package denote-sequence
   :bind

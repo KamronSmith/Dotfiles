@@ -13,17 +13,14 @@
 
 (defun kam-denote-keywords ()
   "Return a list of keywords based on `denote-keyword-history'."
-  (let* ((list))
-    (dolist (keywords denote-keyword-history)
-      (let* ((split-keywords (split-string keywords ",")))
-        (mapc (lambda (keyword) (push keyword list)) split-keywords)))
-    list))
+  (delete-dups (denote-infer-keywords-from-files)))
 
 (defun kam-denote-add-known-keyword ()
   "Add the most recent created keywords to `denote-known-keywords'."
   (mapc (lambda (keyword)
           (when (or (not (member keyword denote-keyword-history))
-                    (not (member keyword denote-known-keywords)))
+                    (not (member keyword denote-known-keywords))
+                    (not (member keyword (kam-denote-keywords))))
             (add-to-list 'denote-known-keywords keyword)))
         (kam-denote-first-history-keyword)))
 
@@ -40,8 +37,6 @@
      `(denote-faces-hour ((,c :foreground ,fg-dim)))
      `(denote-faces-minute ((,c :foreground ,fg-dim)))
      `(denote-faces-second ((,c :foreground ,fg-dim))))))
-
-(setq denote-known-keywords (delete-dups (kam-denote-keywords)))
 
 (defun kam-denote-open-or-create ()
   "Like"
