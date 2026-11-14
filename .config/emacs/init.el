@@ -3533,7 +3533,7 @@ The shell is renamed to make opening multiple shells easier."
         ("P" . magit-push-current)
         ("F" . magit-pull-branch))
   :custom
-  (magit-display-buffer-function 'magit-display-buffer-traditional)
+  (magit-display-buffer-function 'magit-display-buffer-fullframe-status-v1)
   (magit-bury-buffer-function 'magit-restore-window-configuration)
   (magit-commit-show-diff t)
   (magit-format-file-function #'magit-format-file-nerd-icons)
