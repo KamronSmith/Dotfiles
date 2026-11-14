@@ -4070,10 +4070,7 @@ the file is not under version control."
 
 (use-package sgml-mode
   :ensure nil
-  :hook ((html-mode mthml-mode mhtml-ts-mode) . sgml-electric-tag-pair-mode)
-  :bind
-  (:map mhtml-ts-mode-map
-        ("M-o" . kam-ace-window)))
+  :hook ((html-mode mthml-mode mhtml-ts-mode) . sgml-electric-tag-pair-mode))
 
 (use-package transient
   :ensure nil
