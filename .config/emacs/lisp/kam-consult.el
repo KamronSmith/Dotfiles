@@ -187,5 +187,127 @@ PROMPT is the prompt of `consult-imenu'."
                        nil t))))
   (consult-info manual))
 
+(defun kam-consult--get-projects ()
+  "Return an alist of project names and their corresponding directories."
+  (let ((dirs))
+    (dolist (dir (consult--project-known-roots))
+      (push (cons (file-name-base (directory-file-name dir)) dir)
+            dirs))
+    dirs))
+
+(defun kam-consult--project-dirs (list)
+  "Return a list of project directories from LIST.
+This function is intended to be used with `kam-consult--get-projects'."
+  (let ((dirs))
+    (dolist (dir list)
+      (push (cdr dir) dirs))
+    dirs))
+
+(defvar kam-consult-search-ignored-dirs
+  '("SCCS"
+    "RCS"
+    "CVS"
+    "MCVS"
+    ".src"
+    ".svn"
+    ".jj"
+    ".git"
+    ".hg"
+    ".bzr"
+    "_MTN"
+    "_darcs"
+    "{arch}"
+    "node_modules"
+    "build"
+    "dist")
+  "A list of directories to ignore when performing searches using Consult.")
+
+(defvar kam-consult-source-project
+  `( :name "Project"
+     :narrow ?p
+     :category project-file
+     :face consult-file
+     :history file-name-history
+     ;; :annotation ,#'marginalia-annotate-project-file
+     ;; TODO 2026-07-18: When enabled this fucks up switching tabs
+     ;; :state ,#'consult--file-state
+     :action
+     ,(lambda (proj)
+        (project-switch-project proj))
+     :items
+     ,(lambda () (kam-consult--project-dirs (kam-consult--get-projects))))
+  "Source for listing projects and their roots.")
+
+(defvar kam-consult-source-bookmark
+  `( :name     "Bookmark"
+     :hidden   t
+     :narrow   ?m
+     :category bookmark
+     :face     consult-bookmark
+     :history  bookmark-history
+     :items    ,#'bookmark-all-names
+     :state    ,#'consult--bookmark-state)
+  "Bookmark source for `consult-buffer'.
+Hidden by default.")
+
+(defvar kam-consult-source-recent-file
+  `( :name     "Recent Files"
+     ;; :hidden   t
+     :narrow   ?r
+     :category file
+     :face     consult-file
+     :history  file-name-history
+     :state    ,#'consult--file-state
+     :new      ,#'consult--file-action
+     :enabled  ,(lambda () recentf-mode)
+     :items
+     ,(lambda ()
+        (let ((ht (consult--buffer-file-hash))
+              items)
+          (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 25))
+            (unless (eq (aref file 0) ?/)
+              (let (file-name-handler-alist) ;; No Tramp slowdown please.
+                (setq file (expand-file-name file))))
+            (unless (gethash file ht)
+              (push (consult--fast-abbreviate-file-name file) items))))))
+  "Recent file source for `consult-buffer'.
+Copied from the Consult code but adjusted to only take the top 25 candidates.")
+
+(defvar kam-consult-source-project-files
+  `(:name "Project Files"
+          :narrow ?f
+          :hidden t
+          :category file
+          :face consult-file
+          :history kam-consult-source-project-files-history
+          ;; :state ,#'consult--file-state     creates new files before the action is completed
+          :new ,#'consult--file-action
+          :enabled ,(lambda () (kam-buffer-has-project-p (current-buffer)))
+          :action ,(lambda (file)
+                     (find-file (expand-file-name file (project-root (project-current nil)))))
+          :items ,#'kam-project-files)
+  "Project file source for `consult-buffer'.
+This source is only enabled when the current buffer belongs to a project.")
+
+(defvar kam-consult-source-project-files-history nil
+  "Minibuffer history for `kam-consult-source-project-files'.")
+
+(defvar kam-consult-source-dired-history
+  `(:name "Dired History"
+          :narrow ?d
+          :category file
+          :face consult-file
+          :history kam-dired-directory-history
+          :state ,#'consult--file-state
+          :items (lambda () (mapcar #'identity kam-dired-directory-history))))
+
+;;;###autoload
+(defun kam-consult-project-imenu ()
+  "Run `consult-imenu' for either the buffer or project."
+  (interactive)
+  (if (kam-buffer-has-project-p (current-buffer))
+      (consult-imenu-multi)
+    (consult-imenu)))
+
 (provide 'kam-consult)
 ;;; kam-consult.el ends here

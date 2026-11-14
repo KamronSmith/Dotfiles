@@ -1573,25 +1573,6 @@ surrounded by actual boundaries."
   (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
   (add-to-list 'consult-preview-allowed-hooks 'buffer-face-mode)
 
-  (defvar kam-consult-search-ignored-dirs
-    '("SCCS"
-      "RCS"
-      "CVS"
-      "MCVS"
-      ".src"
-      ".svn"
-      ".jj"
-      ".git"
-      ".hg"
-      ".bzr"
-      "_MTN"
-      "_darcs"
-      "{arch}"
-      "node_modules"
-      "build"
-      "dist")
-    "A list of directories to ignore when performing searches using Consult.")
-
   (add-to-list 'consult-buffer-filter
                "-shell\\*$")
   (add-to-list 'consult-buffer-filter
@@ -1616,69 +1597,6 @@ surrounded by actual boundaries."
             ;; kam-consult-source-dired-history
             consult-source-hidden-buffer
             ))
-
-  (defvar kam-consult-source-bookmark
-    `( :name     "Bookmark"
-       :hidden   t
-       :narrow   ?m
-       :category bookmark
-       :face     consult-bookmark
-       :history  bookmark-history
-       :items    ,#'bookmark-all-names
-       :state    ,#'consult--bookmark-state)
-    "Bookmark source for `consult-buffer'.
-Hidden by default.")
-
-  (defvar kam-consult-source-recent-file
-    `( :name     "Recent Files"
-       ;; :hidden   t
-       :narrow   ?r
-       :category file
-       :face     consult-file
-       :history  file-name-history
-       :state    ,#'consult--file-state
-       :new      ,#'consult--file-action
-       :enabled  ,(lambda () recentf-mode)
-       :items
-       ,(lambda ()
-          (let ((ht (consult--buffer-file-hash))
-                items)
-            (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 25))
-              (unless (eq (aref file 0) ?/)
-                (let (file-name-handler-alist) ;; No Tramp slowdown please.
-                  (setq file (expand-file-name file))))
-              (unless (gethash file ht)
-                (push (consult--fast-abbreviate-file-name file) items))))))
-    "Recent file source for `consult-buffer'.
-Copied from the Consult code but adjusted to only take the top 25 candidates.")
-
-  (defvar kam-consult-source-project-files
-    `(:name "Project Files"
-            :narrow ?f
-            :hidden t
-            :category file
-            :face consult-file
-            :history kam-consult-source-project-files-history
-            ;; :state ,#'consult--file-state     creates new files before the action is completed
-            :new ,#'consult--file-action
-            :enabled ,(lambda () (kam-buffer-has-project-p (current-buffer)))
-            :action ,(lambda (file)
-                       (find-file (expand-file-name file (project-root (project-current nil)))))
-            :items ,#'kam-project-files)
-    "Project file source for `consult-buffer'.
-This source is only enabled when the current buffer belongs to a project.")
-
-  (defvar kam-consult-source-project-files-history nil
-    "Minibuffer history for `kam-consult-source-project-files'.")
-
-  (defvar kam-consult-source-dired-history
-    `(:name "Dired History"
-            :narrow ?d
-            :category file
-            :face consult-file
-            :history kam-dired-directory-history
-            :state ,#'consult--file-state
-            :items (lambda () (mapcar #'identity kam-dired-directory-history))))
 
   (consult-customize consult-buffer :preview-key nil)
   (consult-customize consult-imenu :preview-key nil)
