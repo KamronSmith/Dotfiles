@@ -4423,7 +4423,7 @@ With optional ARG, open browser in EWW."
 
 ;;; EMMS
 (use-package emms
-  :demand t
+  :when (eq system-type 'gnu/linux)
   :bind
   ("C-c m m" . emms-browser)
   ("C-c m s" . kam-emms-play-pause)
@@ -4457,14 +4457,15 @@ With optional ARG, open browser in EWW."
   (with-eval-after-load 'consult
     (add-to-list 'consult-buffer-filter "^Browsing by: " t)
 
-  ;; (setq emms-player-vlc-player (executable-find "vlc")
-  ;;       emms-info-functions '(emms-info-native))
-  ;; (add-to-list 'emms-player-list 'emms-player-vlc)
+    ;; (setq emms-player-vlc-player (executable-find "vlc")
+    ;;       emms-info-functions '(emms-info-native))
+    ;; (add-to-list 'emms-player-list 'emms-player-vlc)
 
-  ))
+    ))
 
 (use-package emms-browser
   :ensure nil
+  :when (eq system-type 'gnu/linux)
   :after (emms)
   :bind
   (:map emms-browser-mode-map
@@ -4481,6 +4482,7 @@ With optional ARG, open browser in EWW."
 (use-package emms-playlist-mode
   :ensure nil
   :after (emms)
+  :when (eq system-type 'gnu/linux)
   :hook (emms-playlist-mode . hide-cursor-mode)
   :bind
   (:map emms-playlist-mode-map
