@@ -2627,9 +2627,12 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
 (use-package org-modern
   :after (org)
+  :custom
+  (org-modern-star 'replace)
+  :custom-face
+  (org-modern-label ((t (:height 1.0))))
+  (org-modern-symbol ((t (:family "SF Mono"))))
   :config
-  (setq org-modern-star 'replace)
-  (set-face-attribute 'org-modern-symbol nil :family "SF Mono")
   (global-org-modern-mode))
 
 (use-package org-anki
