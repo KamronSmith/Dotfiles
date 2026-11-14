@@ -2205,9 +2205,8 @@ project directory."
   )
 
 (use-package link-hint
-  ;; :bind
-  ;; ("C-M-j" . link-hint-open-link)
-  )
+  :bind
+  ("C-c j" . link-hint-open-link))
 
 (use-package smartparens
   :bind
