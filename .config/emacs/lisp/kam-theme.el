@@ -52,7 +52,7 @@ See `kam-favorite-themes'."
 
 (defvar kam-theme-face-change-functions
   '(kam-notes-set-custom-faces
-    kam-set-custom-faces
+    kam-standard-themes-custom-faces-setup
     kam-org-set-custom-faces
     kam-olivetti-update-fringe-color
     kam-hl-line-set-custom-faces)

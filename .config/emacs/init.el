@@ -3184,7 +3184,7 @@ The shell is renamed to make opening multiple shells easier."
 (advice-add 'kam-sudo-shell-command :after 'kam-clear-echo-area)
 
 (use-package standard-themes
-  :preface
+  :init
   (defvar kam-standard-themes-palette-light-overrides
     '((cursor "#000000"))
     "Custom overrides for Standard-Themes Light.")
@@ -3204,24 +3204,33 @@ The shell is renamed to make opening multiple shells easier."
   :init
   (standard-themes-take-over-modus-themes-mode 1)
   :config
+  (setopt standard-themes-dark-palette-overrides
+          '((fg-prompt cyan)
+            ;; (bg-main "#181818") ;;   tsoding
+            (bg-prompt unspecified)
+            (bg-prose-block-delimiter "#312f34")
+            (bg-prose-block-contents "#29272c")
+            (cursor "#f9d82b")
+            (fg-heading-1 rainbow-2)
+            (fg-heading-2 rainbow-1)
+            (docstring string)))
+  (setopt stadard-themes-light-palette-overrides
+          '((cursor "#000000")))
   (setopt standard-themes-to-toggle '(standard-dark
                                       standard-light))
   (setopt standard-themes-disable-other-themes t)
   (setopt standard-themes-variable-pitch-ui nil)
-  (setopt standard-themes-italic-constructs nil)
+  (setopt standard-themes-italic-constructs t)
   (setopt standard-themes-bold-constructs t)
   (setopt standard-themes-mixed-fonts nil)
-  (setopt standard-themes-headings '((section-minibuffer . (bold 1.1))
-                                     (section-other . (bold 1.1))
-                                     (commit-summary . (bold 1.1))
+  (setopt standard-themes-headings '((section-minibuffer . (bold 1))
+                                     (section-other . (bold 1))
+                                     (commit-summary . (bold 1))
                                      (t . (bold 1))))
-  (defun kam-set-custom-faces ()
+  (defun kam-standard-themes-custom-faces-setup ()
     "Set faces across the configuration with `standard-themes'.
  Uses the colors set in either `kam-standard-themes-palette-dark-overrides' or
 `kam-standard-themes-palette-light-overrides'."
-    (if (eq (modus-themes-get-current-theme) 'standard-dark)
-        (setq standard-themes-common-palette-overrides kam-standard-themes-palette-dark-overrides)
-      (setq standard-themes-common-palette-overrides kam-standard-themes-palette-light-overrides))
     (standard-themes-with-colors
       (custom-set-faces
        ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
