@@ -3644,6 +3644,7 @@ the file is not under version control."
          (after-init . global-flycheck-annotate-mode))
   :custom
   (flycheck-emacs-lisp-load-path 'inherit)
+  (flycheck-emacs-lisp-package-user-dir package-user-dir)
   :config
   (global-flycheck-eglot-mode 1))
 
