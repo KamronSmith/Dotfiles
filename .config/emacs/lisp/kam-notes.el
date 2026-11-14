@@ -15,12 +15,14 @@
   "Return a list of keywords based on `denote-keyword-history'."
   (delete-dups (denote-infer-keywords-from-files)))
 
+(defun kam-denote-first-history-keyword ()
+  "Return the most recent `denote-keyword-history' element as a list of strings."
+  (string-split (car denote-keyword-history) ","))
+
 (defun kam-denote-add-known-keyword ()
   "Add the most recent created keywords to `denote-known-keywords'."
   (mapc (lambda (keyword)
-          (when (or (not (member keyword denote-keyword-history))
-                    (not (member keyword denote-known-keywords))
-                    (not (member keyword (kam-denote-keywords))))
+          (when (not (member keyword denote-known-keywords))
             (add-to-list 'denote-known-keywords keyword)))
         (kam-denote-first-history-keyword)))
 
@@ -48,10 +50,6 @@
   "Set the property PROCESSED to no on an org-mode heading."
   (interactive)
   (org-set-property "PROCESSED" "no"))
-
-(defun kam-denote-first-history-keyword ()
-  "Return the most recent `denote-keyword-history' element as a list of strings."
-  (string-split (car denote-keyword-history) ","))
 
 (defun kam-denote-sequence-dired-with-clone ()
   "Clone existing Dired buffer and run `denote-sequence-dired'."
