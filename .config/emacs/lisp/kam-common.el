@@ -189,7 +189,6 @@ MODE is a symbol that represents an active minor mode. See
 ;;;###autoload
 (defun kam-mark-line (&optional arg allow-extend)
   "Put mark at the beginning of the next line, point at the beginning.
-
 With argument ARG, put mark at the end of a following line, so that the
 number of lines is equal to 1 + ARG. This is so that with relative line
 numbers the user can easily judge how many lines they would like to
@@ -275,7 +274,6 @@ it marks the next ARG lines after the ones already marked."
 ;;;###autoload
 (defun kam-kill-dwim (&optional n)
   "A DWIM command for killing.
-
 If the region is active, kill the region. Else, kill the current line.
 When called interactively without a prefix numeric argument, N is 1,
 which controls how many lines will be cut."
@@ -290,7 +288,6 @@ which controls how many lines will be cut."
 ;;;###autoload
 (defun kam-kill-ring-save-dwim (&optional n)
   "A DWIM command for copying.
-
 If the region is active, copy the region. Else, copy the line. When
 called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
@@ -304,7 +301,6 @@ called interactively without a prefix numeric argument, N is 1."
 ;;;###autoload
 (defun kam-yank ()
   "Custom yank function.
-
 `kam-yank' emulates the pasting functionality in Vim. If the most
 current kill contains a newline character, create a new line below the
 point and insert the string to be yanked there. Else, just insert the
@@ -438,7 +434,6 @@ bound to \\[yank-pop])."
     (indent-for-tab-command)
     (deactivate-mark)))
 
-
 (defun kam-get-buffers-matching-mode (mode)
   "Returns a list of the buffers where their major-mode is equal to MODE."
   (let ((buffer-mode-matches '()))
@@ -521,10 +516,9 @@ Else, use the symbol at point."
                     (buffer-substring-no-properties
                      (region-beginning) (region-end)))
                   (thing-at-point 'symbol)))
-         (to-string (read-string (format "Query replace %s with: " sym))))
+         (to-string (read-regexp (format "Query replace %s with: " sym))))
     (deactivate-mark)
-    (query-replace sym to-string)))
-
+    (query-replace-regexp sym to-string)))
 
 ;;;###autoload
 (defun kam-keyboard-escape-quit-dwim ()
