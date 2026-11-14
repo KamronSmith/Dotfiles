@@ -22,18 +22,12 @@ tags
 [._]*.un~
 
 ### Macos ###
-# General
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
 Icon
-
 # Thumbnails
 ._*
-
-# Files that might appear in the root of a volume
 .DocumentRevisions-V100
 .fsevensd
 .Spotlight-V100
@@ -41,16 +35,11 @@ Icon
 .Trashes
 .VolumeIcon.icns
 .com.apple.timemachine.donotrepresent
-
-# Directories potentially created on a remote AFP share
 .AppleDB
 .AppleDesktop
 Network Trash Folder
 Temporary Items
 .apdisk
-
-### Macos Patch ###
-# iCloud generated files
 *.icloud
 
 # Editor and IDE folders
@@ -64,3 +53,6 @@ flycheck_*
 .env*
 venv/
 node_modules/
+
+# Patches
+*.patch
