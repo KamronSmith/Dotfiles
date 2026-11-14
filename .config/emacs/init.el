@@ -2414,12 +2414,11 @@ project directory."
     (visual-wrap-prefix-mode -1)
     (modify-syntax-entry ?< "." org-mode-syntax-table)
     (modify-syntax-entry ?> "." org-mode-syntax-table))
-  
+
   (with-eval-after-load 'pulsar
     (dolist (hook '(org-agenda-after-show-hook org-follow-link-hook))
       (add-hook hook #'pulsar-recenter-center)
       (add-hook hook #'pulsar-reveal-entry)))
-
 
   (declare-function org-map-entries "org"))
 
@@ -2614,6 +2613,9 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
     (interactive "p")
     (kam-org-metaup)
     (org-cycle)))
+
+(use-package ox-latex
+  :ensure nil)
 
 (use-package ox-gfm
   :after (org))
