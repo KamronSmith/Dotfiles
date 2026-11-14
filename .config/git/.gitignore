@@ -1,3 +1,4 @@
+# -*- mode: Conf -*-
 ### Vim ###
 # Swap
 [._]*.s[a-v][a-z]
@@ -51,3 +52,15 @@ Temporary Items
 ### Macos Patch ###
 # iCloud generated files
 *.icloud
+
+# Editor and IDE folders
+.vscode/
+.idea/
+*~
+flycheck_*
+
+# Local environment & logs
+*.log
+.env*
+venv/
+node_modules/
