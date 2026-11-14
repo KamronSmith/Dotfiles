@@ -3166,22 +3166,6 @@ The shell is renamed to make opening multiple shells easier."
   :after (eshell)
   :ensure t
   :hook (eshell-mode . eshell-syntax-highlighting-mode))
-
-;; (use-package vterm
-;;   :ensure nil
-;;   :if (eq system-type 'gnu/linux)
-;;   :custom
-;;   (vterm-shell (executable-find "zsh"))
-;;   :config
-;;   (defun kam-project-vterm ()
-;;     "Create a Vterm terminal in the project root."
-;;     (interactive)
-;;     (let ((default-directory (project-root (project-current t))))
-;;       (vterm))))
-
-
-
-(advice-add 'kam-sudo-shell-command :after 'kam-clear-echo-area)
 
 (use-package standard-themes
   :init
