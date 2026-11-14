@@ -8,138 +8,71 @@
 ;; (require 'org)
 (require 'standard-themes)
 (require 'kam-os)
+(require 'denote)
+(require 'denote-sequence)
 
-(use-package denote
-  :hook ((dired-mode . denote-dired-mode)
-         (after-init . denote-rename-buffer-mode)
-         (after-init . kam-notes-set-custom-faces)
-         (denote-after-rename-file . kam-denote-add-known-keyword)
-         (denote-after-new-note . kam-denote-add-known-keyword))
-  :bind
-  ("C-c n h" . kam-notes-visit-home-note)
-  ("C-c n w" . kam-notes-visit-workbench-note)
-  ("C-c n d" . denote-open-or-create)
-  ("C-c n b" . denote-backlinks)
-  ("C-c n c" . denote-link-or-create)
-  ("C-c n p" . kam-notes-set-processed-property)
-  ("C-c n r" . denote-rename-file)
-  (:map dired-mode-map
-        ("r" . denote-dired-rename-files))
-  :custom
-  (denote-buffer-name-prefix "")
-  (denote-sort-keywords t)
-  (denote-prompts '(title keywords))
-  (denote-rename-confirmations nil)
-  (denote-date-prompt-use-org-read-date t)
-  :config
-  (defvar kam-notes-directory
-    (expand-file-name "Notes/" kam-documents-directory)
-    "Directory where all of my notes live.")
+(defun kam-denote-keywords ()
+  "Return a list of keywords based on `denote-keyword-history'."
+  (let* ((list))
+    (dolist (keywords denote-keyword-history)
+      (let* ((split-keywords (split-string keywords ",")))
+        (mapc (lambda (keyword) (push keyword list)) split-keywords)))
+    list))
 
-  (defvar kam-zettelkasten-directory
-    (expand-file-name "Zettelkasten/" kam-documents-directory)
-    "Directory where my Zettelkasten lives.")
+(defun kam-denote-add-known-keyword ()
+  "Add the most recent created keywords to `denote-known-keywords'."
+  (mapc (lambda (keyword)
+          (when (or (not (member keyword denote-keyword-history))
+                    (not (member keyword denote-known-keywords)))
+            (add-to-list 'denote-known-keywords keyword)))
+        (kam-denote-first-history-keyword)))
 
-  (declare-function kam-denote-first-history-keyword "kam-notes.el")
-  (declare-function kam-denote-keywords "kam-notes.el")
+(defun kam-notes-set-custom-faces ()
+  "Set custom faces for Denote."
+  (standard-themes-with-colors
+    (custom-set-faces
+     `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
+     ;; `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
+     `(denote-faces-year ((,c :foreground ,blue-intense)))
+     `(denote-faces-month ((,c :foreground ,blue-faint)))
+     `(denote-faces-day ((,c :foreground ,blue-faint)))
+     `(denote-faces-time ((,c :foreground ,fg-dim)))
+     `(denote-faces-hour ((,c :foreground ,fg-dim)))
+     `(denote-faces-minute ((,c :foreground ,fg-dim)))
+     `(denote-faces-second ((,c :foreground ,fg-dim))))))
 
-  (setq denote-directory kam-zettelkasten-directory)
+(setq denote-known-keywords (delete-dups (kam-denote-keywords)))
 
-  (defun kam-denote-keywords ()
-    "Return a list of keywords based on `denote-keyword-history'."
-    (let* ((list))
-      (dolist (keywords denote-keyword-history)
-        (let* ((split-keywords (split-string keywords ",")))
-          (mapc (lambda (keyword) (push keyword list)) split-keywords)))
-      list))
+(defun kam-denote-open-or-create ()
+  "Like"
+  (interactive)
+  (let ((denote-prompts '(title keywords subdirectory)))
+    (denote-open-or-create)))
 
-  (setq denote-known-keywords (delete-dups (kam-denote-keywords)))
-  
-  (defun kam-denote-open-or-create ()
-    "Like"
-    (interactive)
-    (let ((denote-prompts '(title keywords subdirectory)))
-      (denote-open-or-create)))
+(defun kam-notes-set-processed-property ()
+  "Set the property PROCESSED to no on an org-mode heading."
+  (interactive)
+  (org-set-property "PROCESSED" "no"))
 
-  (defun kam-notes-set-processed-property ()
-    "Set the property PROCESSED to no on an org-mode heading."
-    (interactive)
-    (org-set-property "PROCESSED" "no"))
+(defun kam-denote-first-history-keyword ()
+  "Return the most recent `denote-keyword-history' element as a list of strings."
+  (string-split (car denote-keyword-history) ","))
 
-  (defun kam-denote-first-history-keyword ()
-    "Return the most recent `denote-keyword-history' element as a list of strings."
-    (string-split (car denote-keyword-history) ","))
-
-  (defun kam-denote-add-known-keyword ()
-    "Add the most recent created keywords to `denote-known-keywords'."
-    (mapc (lambda (keyword)
-            (when (or (not (member keyword denote-keyword-history))
-                      (not (member keyword denote-known-keywords)))
-              (add-to-list 'denote-known-keywords keyword)))
-          (kam-denote-first-history-keyword)))
-
-  (defun kam-notes-set-custom-faces ()
-    "Set custom faces for Denote."
-    (standard-themes-with-colors
-      (custom-set-faces
-       `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
-       ;; `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
-       `(denote-faces-year ((,c :foreground ,blue-intense)))
-       `(denote-faces-month ((,c :foreground ,blue-faint)))
-       `(denote-faces-day ((,c :foreground ,blue-faint)))
-       `(denote-faces-time ((,c :foreground ,fg-dim)))
-       `(denote-faces-hour ((,c :foreground ,fg-dim)))
-       `(denote-faces-minute ((,c :foreground ,fg-dim)))
-       `(denote-faces-second ((,c :foreground ,fg-dim))))))
-
-  (add-to-list 'display-buffer-alist
-               '((derived-mode . denote-query-mode)
-                 (display-buffer-in-side-window)
-                 (side . bottom)
-                 (window . root)
-                 (window-height . 0.35)
-                 (window-parameters . ((mode-line-format . none))))))
-
-(use-package denote-sequence
-  :bind
-  ("C-c n s s" . denote-sequence)
-  ("C-c n s f" . denote-sequence-find)
-  ("C-c n l"   . denote-sequence-link)
-  ("C-c n s d" . denote-sequence-dired)
-  ("C-c n s r" . denote-sequence-reparent)
-  ("C-c n s c" . denote-sequence-convert)
-  :config
-  (defun kam-denote-sequence-dired-with-clone ()
-    "Clone existing Dired buffer and run `denote-sequence-dired'."
-    (interactive)
-    (when (not (derived-mode-p 'dired-mode))
-      (user-error "Not in a dired-mode buffer"))
-    (let* ((prev-subdir-alist dired-subdir-alist)
-           (buf (current-buffer)))
-      ;; (with-current-buffer buf
-      ;;   (clone-indirect-buffer "DIRED-SEQUENCE-CLONE-TEST" t)
-      ;;   (setq dired-subdir-alist prev-subdir-alist)
-      ;;   (denote-sequence-dired))
-      (clone-indirect-buffer "TESTTEST" t)
-      (with-current-buffer buf
-        (setq dired-subdir-alist prev-subdir-alist)
-        (denote-sequence-dired)))))
-
-(use-package consult-denote
-  :custom
-  (consult-denote-find-command #'consult-fd)
-  (consult-denote-grep-command #'consult-ripgrep)
-  :bind
-  ("C-c n g" . consult-denote-grep)
-  ("C-c n f" . consult-denote-find)
-  :config
-  (consult-denote-mode))
-
-(use-package denote-org
-  :config
-  (setq denote-org-store-link-to-heading 'id))
-
-(use-package denote-explore)
+(defun kam-denote-sequence-dired-with-clone ()
+  "Clone existing Dired buffer and run `denote-sequence-dired'."
+  (interactive)
+  (when (not (derived-mode-p 'dired-mode))
+    (user-error "Not in a dired-mode buffer"))
+  (let* ((prev-subdir-alist dired-subdir-alist)
+         (buf (current-buffer)))
+    ;; (with-current-buffer buf
+    ;;   (clone-indirect-buffer "DIRED-SEQUENCE-CLONE-TEST" t)
+    ;;   (setq dired-subdir-alist prev-subdir-alist)
+    ;;   (denote-sequence-dired))
+    (clone-indirect-buffer "TESTTEST" t)
+    (with-current-buffer buf
+      (setq dired-subdir-alist prev-subdir-alist)
+      (denote-sequence-dired))))
 
 (defvar kam-notes-nonfiction-template
   "* Questions to ask
@@ -205,7 +138,3 @@
 
 (provide 'kam-notes)
 ;;; kam-notes.el ends here
-
-;; Local Variables:
-;; no-byte-compile: t
-;; End:

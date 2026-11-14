@@ -4534,6 +4534,52 @@ With optional ARG, go to the previous song that many times."
     (interactive)
     (pop-to-buffer (gptel "*Claude*"))))
 
+(use-package denote
+  :demand t
+  :hook ((dired-mode . denote-dired-mode)
+         (after-init . denote-rename-buffer-mode)
+         ;; (after-init . kam-notes-set-custom-faces)
+         (denote-after-rename-file . kam-denote-add-known-keyword)
+         (denote-after-new-note . kam-denote-add-known-keyword))
+  :bind
+  ("C-c n h" . kam-notes-visit-home-note)
+  ("C-c n w" . kam-notes-visit-workbench-note)
+  ("C-c n d" . denote-open-or-create)
+  ("C-c n b" . denote-backlinks)
+  ("C-c n c" . denote-link-or-create)
+  ("C-c n p" . kam-notes-set-processed-property)
+  ("C-c n r" . denote-rename-file)
+  (:map dired-mode-map
+        ("r" . denote-dired-rename-files))
+  :custom
+  (denote-buffer-name-prefix "")
+  (denote-sort-keywords t)
+  (denote-prompts '(title keywords))
+  (denote-rename-confirmations nil)
+  (denote-date-prompt-use-org-read-date t)
+  :config
+  (with-eval-after-load 'kam-os
+    (setq denote-directory kam-zettelkasten-directory)))
+
+(use-package denote-sequence
+  :bind
+  ("C-c n s s" . denote-sequence)
+  ("C-c n s f" . denote-sequence-find)
+  ("C-c n l"   . denote-sequence-link)
+  ("C-c n s d" . denote-sequence-dired)
+  ("C-c n s r" . denote-sequence-reparent)
+  ("C-c n s c" . denote-sequence-convert))
+
+(use-package consult-denote
+  :custom
+  (consult-denote-find-command #'consult-fd)
+  (consult-denote-grep-command #'consult-ripgrep)
+  :bind
+  ("C-c n g" . consult-denote-grep)
+  ("C-c n f" . consult-denote-find)
+  :config
+  (consult-denote-mode))
+
 (use-package sly
   :bind
   (:map sly-mrepl-mode-map

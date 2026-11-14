@@ -78,6 +78,14 @@ And the way I want to use a computer.")
   :type 'string
   :group 'kam-os)
 
+(defvar kam-notes-directory
+  (expand-file-name "Notes/" kam-documents-directory)
+  "Directory where all of my notes live.")
+
+(defvar kam-zettelkasten-directory
+  (expand-file-name "Zettelkasten/" kam-documents-directory)
+  "Directory where my Zettelkasten lives.")
+
 (defvar kam-os-package-managers
   '((arch . pacman)
     (darwin . brew)
