@@ -3134,7 +3134,7 @@ The shell is renamed to make opening multiple shells easier."
 (use-package ef-themes)
 
 (use-package olivetti
-  :hook (olivetti-mode . kam-olivetti-update-fringe-color)
+  :hook (olivetti-mode . kam-olivetti-custom-faces-setup)
   :custom
   (olivetti-style 'fancy)
   (olivetti-margin-width 5)
