@@ -534,13 +534,13 @@ use the symbol at point."
    ((identity defining-kbd-macro)
     (kmacro-keyboard-quit))
    (t
-    (keyboard-escape-quit))))
+    (kam-keyboard-escape-quit))))
 
-(defun kam-keyboard-escape-quit-advice (orig-fn &rest args)
+(defun kam-keyboard-escape-quit ()
   "Perform `keyboard-escape-quit' without disturbing the window configuration."
   (let ((buffer-quit-function (or buffer-quit-function
                                   #'ignore)))
-    (apply orig-fn args)
+    (keyboard-escape-quit)
     (message "%s" "Quit")))
 
 ;;;###autoload

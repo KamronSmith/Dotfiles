@@ -330,9 +330,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 
   (put 'narrow-to-region 'disabled nil)
 
-  ;; Overrides
-  (advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit-advice)
-
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
   (keymap-global-set "M-\"" 'kam-insert-quote)
