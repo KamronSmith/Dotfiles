@@ -318,6 +318,25 @@ instead."
          (yank))
         (t (yank))))
 
+(defun kam-duplicate-dwim (&optional arg)
+  "Duplicate line or region.
+With optional prefix numeric ARG \\([universal-argument]), duplicate
+ARGth line from point."
+  (interactive "P")
+  (cond (arg
+         (let ((text))
+           (save-excursion
+             (forward-line (prefix-numeric-value arg))
+             (setq text (string-trim-whitespace (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+           (kam-push-mark-no-activate)
+           (insert text)
+           (setq this-command 'copy-from-above-command)))
+        ((region-active-p)
+         (duplicate-dwim)
+         (deactivate-mark t)
+         (setq this-command 'duplicate-dwim))
+        (t (duplicate-line))))
+
 ;;;###autoload
 (defun kam-delete-pair-dwim ()
   "Delete pair following or preceding point."

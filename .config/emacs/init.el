@@ -191,7 +191,7 @@ Enable that mode to its keybindings take over those of the major mode.")
         ("g" . kam-revert-buffer))
   (:map kam-override-mode-map
         ("C-M-i" . kam-indent-dwim)
-        ("M-r" . duplicate-dwim))
+        ("M-r" . kam-duplicate-dwim))
   (:repeat-map kam-repeat-map
                ;; ("n" . next-error-no-select)
                ;; ("p" . previous-error-no-select)
