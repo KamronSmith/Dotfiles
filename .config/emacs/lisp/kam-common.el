@@ -456,8 +456,8 @@ If the region is active, indent the region."
         (mark-defun))
        ((derived-mode-p 'text-mode)
         (mark-paragraph)))
-      (indent-for-tab-command)
-      (deactivate-mark))))
+      (indent-region (region-beginning) (region-end))
+      (deactivate-mark t))))
 
 ;;;###autoload
 (defun kam-narrow-or-widen-dwim (&optional p)
