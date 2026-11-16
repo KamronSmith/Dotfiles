@@ -70,15 +70,24 @@ See `kam-theme-update-custom-faces'.")
 (defun kam-standard-themes-custom-faces-setup ()
   "Set up custom faces with `standard-themes'."
   (standard-themes-with-colors
-    (custom-set-faces
-     ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
-     `(region ((,c :extend t)))
-     `(fringe ((,c :background ,bg-main)))
-     `(cursor ((,c :foreground ,fg-main :background ,cursor)))
-     `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
-     `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
-     `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
-     `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular))))))
+    (cond ((eq (modus-themes-get-current-theme) 'standard-dark)
+           (custom-set-faces
+            ;; `(mode-line ((,c :background "#003c53" :foreground ,fg-main)))
+            `(region ((,c :extend t)))
+            `(fringe ((,c :background ,bg-main)))
+            `(cursor ((,c :foreground ,fg-main :background ,cursor)))
+            `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
+            `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
+            `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
+            `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
+            `(modus-themes-completion-selected ((,c :background ,bg-dim :extend t)))))
+          ((eq (modus-themes-get-current-theme) 'standard-light)
+           `(region ((,c :extend t)))
+           `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
+           `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
+           `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
+           `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
+           `(modus-themes-completion-selected ((,c :background ,bg-dim :extend t)))))))
 
 (defun kam-denote-custom-faces-setup ()
   "Set up custom `denote' faces with `standard-themes'."

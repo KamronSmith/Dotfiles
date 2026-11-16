@@ -1575,8 +1575,8 @@ surrounded by actual boundaries."
             consult-source-hidden-buffer
             ))
 
-  (consult-customize consult-buffer :preview-key nil)
-  (consult-customize consult-imenu :preview-key nil)
+  (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
+    (advice-add cmd :before (lambda (&rest _) (push-mark (point) t nil))))
 
   (defun kam-consult-project-imenu ()
     (interactive)
@@ -2734,7 +2734,16 @@ to directory DIR."
     (when-let* ((project (project-current nil))
                 (find-program "fd --follow --hidden --color=never --type file")
                 (project-files-relative-names t))
-      (project-files project))))
+      (project-files project)))
+
+  (defun kam-project-prefixed-buffer-name-override (mode)
+    (concat ": "
+            (if-let* ((proj (project-current nil)))
+                (project-name proj)
+              (file-name-nondirectory
+               (directory-file-name default-directory)))
+            "*")))
+
 
 (use-package comint
   :ensure nil
@@ -4020,6 +4029,11 @@ the file is not under version control."
                   display-buffer-same-window)
                  (mode ghostel-mode)))
 
+  (defun kam-ghostel--project-buffer-name (root)
+    ""
+    (let ((name (kam-project-prefixed-buffer-name-override
+                 (string-trim ghostel-buffer-name "*" "*"))))))
+
   ;; (add-to-list 'display-buffer-alist
   ;;              '("-Ghostel\\*$"         ; Matches `ghostel-project' buffer regex
   ;;                (display-buffer-reuse-window display-buffer-in-side-window)
@@ -4425,6 +4439,8 @@ With optional ARG, go to the previous song that many times."
   (denote-rename-confirmations nil)
   (denote-date-prompt-use-org-read-date t)
   :config
+  (setopt denote-known-keywords (kam-denote-keywords))
+  
   (add-to-list 'savehist-additional-variables 'denote-known-keywords))
 
 (use-package denote-sequence
