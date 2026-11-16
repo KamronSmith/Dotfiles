@@ -4464,10 +4464,13 @@ With optional ARG, go to the previous song that many times."
   (consult-denote-mode))
 
 (use-package sly
+  :commands (sly)
   :bind
   (:map sly-mrepl-mode-map
         ("RET" . newline)
-        ("C-<return>" . sly-mrepl-return)))
+        ("C-<return>" . sly-mrepl-return))
+  :custom
+  (inferior-lisp-program (executable-find "sbcl")))
 
 ;; (use-package super-save
 ;;   :hook (after-init . super-save-mode)
