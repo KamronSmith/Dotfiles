@@ -158,9 +158,9 @@ MODE is a symbol that represents an active minor mode. See
     (if (> beg end)
         (progn
           (goto-char beg)
-          (push-mark end nil t))
+          (push-mark end t t))
       (goto-char beg)
-      (push-mark end nil t))))
+      (push-mark end t t))))
 
 (defun kam-read-backup-file-name (file)
   (if-let* ((backup-files (file-backup-file-names file)))
