@@ -426,16 +426,19 @@ bound to \\[yank-pop])."
 
 ;;;###autoload
 (defun kam-indent-dwim ()
-  "Indent the current defun in `prog-mode' or paragraph in `text-mode'."
+  "Indent the current defun in `prog-mode' or paragraph in `text-mode'.
+If the region is active, indent the region."
   (interactive)
-  (save-excursion
-    (cond
-     ((derived-mode-p 'prog-mode)
-      (mark-defun))
-     ((derived-mode-p 'text-mode)
-      (mark-paragraph)))
-    (indent-for-tab-command)
-    (deactivate-mark)))
+  (if (region-active-p)
+      (indent-region (region-beginning) (region-end))
+    (save-excursion
+      (cond
+       ((derived-mode-p 'prog-mode)
+        (mark-defun))
+       ((derived-mode-p 'text-mode)
+        (mark-paragraph)))
+      (indent-for-tab-command)
+      (deactivate-mark))))
 
 ;;;###autoload
 (defun kam-narrow-or-widen-dwim (p)
