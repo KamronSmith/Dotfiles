@@ -32,6 +32,7 @@
   :ensure nil
   :custom
   (native-comp-async-report-warnings-errors 'silent)
+  (native-comp-async-on-battery-power nil)
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Compile-Log\\*"
