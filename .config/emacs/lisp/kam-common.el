@@ -141,13 +141,15 @@ MODE is a symbol that represents an active minor mode. See
   (call-interactively mode)
   (call-interactively mode))
 
-(defun kam-ignore-temp-buffer-marks (orig-fn &optional location nomsg activate)
-  "Prevent `push-mark' from adding temp buffer markers to `global-mark-ring'."
-  (let ((global-mark-ring-max
-         (if (string-prefix-p " " (buffer-name))
-             0
-           global-mark-ring-max)))
-    (funcall orig-fn location nomsg activate)))
+(defun kam-push-mark-no-activate ()
+  "Push the mark at point, but don't activate it."
+  (interactive)
+  (push-mark (point) t nil))
+
+(defun kam-push-mark-no-message ()
+  "Push the mark at point, but don't display a message."
+  (interactive)
+  (push-mark (point) t t))
 
 (defun kam-mark (bounds)
   "Mark between BOUNDS as a cons cell of beginning and end positions."
