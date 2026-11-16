@@ -3122,7 +3122,7 @@ The shell is renamed to make opening multiple shells easier."
                                      (commit-summary . (bold 1))
                                      (t . (bold 1))))
   
-  (standard-themes-load-theme 'standard-dark))
+  (standard-themes-load-theme 'standard-light))
 
 (use-package ef-themes)
 
