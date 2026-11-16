@@ -9,6 +9,8 @@
 (require 'replace)
 (require 'grep)
 (require 'kam-window)
+(require 'project)
+(require 'hide-cursor-mode)
 
 (defgroup kam-search ()
   "Extensions and functions related to searching."
@@ -117,6 +119,20 @@ Occur search to include."
          (proj-root (project-root proj))
          (default-directory proj-root))
     (grep command-args)))
+
+(defun kam-grep-list-of-strings (regexp &optional grep-args directory)
+  "Return a list of grep results as a list of strings using REGEXP.
+GREP-ARGS is a string to pass to ripgrep, and DIRECTORY is the directory
+where to run the command."
+  (let* ((default-directory (if directory directory default-directory))
+         (output (shell-command-to-string (concat
+                                           "rg"
+                                           " "
+                                           grep-args
+                                           " "
+                                           regexp)))
+         (strings (split-string output "\n" t)))
+    strings))
 
 ;;;###autoload
 (defun kam-compile-goto-error ()

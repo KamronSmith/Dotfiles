@@ -160,18 +160,6 @@ MODE is a symbol that represents an active minor mode. See
       (goto-char beg)
       (push-mark end nil t))))
 
-(defun kam-grep-list-of-strings (regexp &optional grep-args directory)
-  "Return a list of grep results as a list of strings using REGEXP."
-  (let* ((default-directory (if directory directory default-directory))
-         (output (shell-command-to-string (concat
-                                           "rg"
-                                           " "
-                                           grep-args
-                                           " "
-                                           regexp)))
-         (strings (split-string output "\n" t)))
-    strings))
-
 (defun kam-read-backup-file-name (file)
   (if-let* ((backup-files (file-backup-file-names file)))
       (completing-read "Backup version: " backup-files nil t)
