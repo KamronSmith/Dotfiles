@@ -41,5 +41,11 @@
     (goto-char (point-max))
     (insert (kam-elisp-footer))))
 
+;;;###autoload
+(defun kam-elisp-insert-autoload-cookie ()
+  "Insert an autoload cookie at point."
+  (interactive)
+  (insert ";;;###autoload"))
+
 (provide 'kam-elisp)
 ;;; kam-elisp.el ends here
