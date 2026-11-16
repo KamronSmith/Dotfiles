@@ -63,8 +63,7 @@ BOUNDARIES is a cons cell representing buffer positions."
   (unless (consp boundaries)
     (error "`%s' is not a cons cell" boundaries))
   (let ((beg (car boundaries))
-        (end
-         (cdr boundaries)))
+        (end (cdr boundaries)))
     (goto-char end)
     (newline)
     (insert (buffer-substring-no-properties beg end))))
@@ -152,7 +151,9 @@ MODE is a symbol that represents an active minor mode. See
   (push-mark (point) t t))
 
 (defun kam-mark (bounds)
-  "Mark between BOUNDS as a cons cell of beginning and end positions."
+  "Mark between BOUNDS as a cons cell of beginning and end positions.
+Point is set at whichever position is lower, and the mark is set at
+whichever position is higher."
   (let ((beg (car bounds))
         (end (cdr bounds)))
     (if (> beg end)
@@ -186,7 +187,7 @@ MODE is a symbol that represents an active minor mode. See
 
 ;;;###autoload
 (defun kam-mark-line (&optional arg allow-extend)
-  "Put mark at the beginning of the next line, point at the beginning.
+  "Set mark ARG lines from point or move point one line.
 With argument ARG, put mark at the end of a following line, so that the
 number of lines is equal to 1 + ARG. This is so that with relative line
 numbers the user can easily judge how many lines they would like to
@@ -345,7 +346,7 @@ When called interactively without a prefix numeric argument, N is 1."
       (forward-line (- n))
       (kam-insert-new-line-below n))))
 
-
+;;;###autoload
 (defun kam-join-line-dwim (n)
   "Join lines.
 When called interactively without a prefix numeric argument, N is 1."
@@ -379,8 +380,7 @@ bound to \\[yank-pop])."
       (delete-region (region-beginning) (region-end))
     (delete-region (line-beginning-position) (line-end-position)))
   (yank)
-  (setq this-command 'yank)
-  (kam-indent-dwim))
+  (setq this-command 'yank))
 
 ;;;###autoload
 (defun kam-kill-from-point-to-beginning-of-line ()
@@ -446,7 +446,7 @@ Intelligently means: region, subtree, or defun, whichever applies first."
         (t (narrow-to-defun))))
 
 (defun kam-current-elisp-sexp ()
-  "Returns the current Elisp expression based on the position of the point."
+  "Returns the current Elisp expression based on the position of point."
   (cond
    ((looking-at "(") (sexp-at-point))
    ((looking-back ")" 1) (elisp--preceding-sexp))
@@ -474,13 +474,6 @@ somewhere inside."
   (interactive "P")
   (insert-pair arg ?\" ?\"))
 
-(defun kam-indent-region-advice (&rest ignored)
-  (let ((deactivate deactivate-mark))
-    (if (region-active-p)
-        (indent-region (region-beginning) (region-end))
-      (indent-region (line-beginning-position) (line-end-position)))
-    (setq deactivate-mark deactivate)))
-
 ;;;###autoload
 (defun kam-yank-undo (&optional arg)
   "Undo the yank you just did.
@@ -505,7 +498,7 @@ Else, use the symbol at point."
 
 ;;;###autoload
 (defun kam-keyboard-escape-quit-dwim ()
-  "A better keyboard quit."
+  "A better `keyboard-escape-quit'."
   (interactive)
   (cond
    ((region-active-p)
