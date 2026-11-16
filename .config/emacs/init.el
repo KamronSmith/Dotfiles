@@ -516,35 +516,14 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (next-screen-context-lines 20)
   (display-buffer-base-action '((display-buffer-reuse-window
                                  display-buffer-pop-up-window
-                                 display-buffer-use-least-recent-window)))
+                                 display-buffer-same-window)))
   (display-buffer-alist
-   `(;; ("\\*Async Shell Command\\*"
-     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
-     ;;  (side . bottom)
-     ;;  (window . root)
-     ;;  (window-height . 0.45)
-     ;;  (window-parameters . ((mode-line-format . none))))
-     ;; ("Output\\*$"
-     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
-     ;;  (side . bottom)
-     ;;  (window . root)
-     ;;  (window-height . 0.45)
-     ;;  (window-parameters . ((mode-line-format . none))))
-     ("\\*Backtrace\\*"
+   `(("\\*Backtrace\\*"
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
       (window . root)
       (window-height . 0.35)
       (window-parameters . ((mode-line-format . none))))
-     ;; ("^\\*Warnings\\*$"
-     ;;  (display-buffer-no-window)
-     ;;  (allow-no-window . t))
-     ;; ("^\\*Messages\\*$"
-     ;;  (display-buffer-reuse-window display-buffer-in-side-window)
-     ;;  (side . bottom)
-     ;;  (window . root)
-     ;;  (window-height . 0.35)
-     ;;  (window-parameters . ((mode-line-format . none))))
      ("^\\*Occur\\*"
       (display-buffer-reuse-mode-window
        display-buffer-pop-up-window
@@ -1028,11 +1007,10 @@ Duplicates are not saved."
 
   (add-to-list 'display-buffer-alist
                '("\\*Edit Macro\\*"    ;; Edit keyboard macro interface
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . bottom)
-                 (mode . edmacro-mode)
-                 (window-height . 0.35)
-                 (window-parameters . ((mode-line-format . none))))))
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
+                 (mode . edmacro-mode))))
 
 (use-package imenu
   :ensure nil
@@ -1097,7 +1075,9 @@ Duplicates are not saved."
 
   (add-to-list 'display-buffer-alist
                '((major-mode . help-mode)
-                 (display-buffer-reuse-mode-window display-buffer-use-least-recent-window)
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
                  (mode help-mode)))
 
   ;; (add-to-list 'display-buffer-alist
@@ -1170,7 +1150,8 @@ Duplicates are not saved."
   (add-to-list 'display-buffer-alist
                '("\\*Info\\*"
                  (display-buffer-reuse-mode-window
-                  display-buffer-use-least-recent-window)
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
                  (mode Info-mode)))
 
   ;; (add-to-list 'switch-to-prev-buffer-skip-regexp
@@ -1193,7 +1174,9 @@ Duplicates are not saved."
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Man "
-                 (display-buffer-reuse-mode-window display-buffer-use-least-recent-window)
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
                  (mode . Man-mode)))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
@@ -3037,34 +3020,19 @@ The shell is renamed to make opening multiple shells easier."
     (let ((default-directory (getenv "HOME")))
       (shell)))
 
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("-shell\\*$" ;; matches title for `project-shell'
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . bottom)
-  ;;                (window . root)
-  ;;                (window-height . 0.35)
-  ;;                (mode shell-mode)
-  ;;                (window-parameters . ((mode-line-format . none)))))
-
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
-                 (display-buffer-reuse-window)
-                 ;; (side . bottom)
-                 ;; (window . root)
-                 ;; (inhibit-same-window . t)
-                 ;; (window-height . 0.35)
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
                  (mode shell-mode)
-                 (body-function . select-window)
-                 ;; (window-parameters . ((mode-line-format . none))
-                 ))
-
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '((major-mode . shell-command-mode)
-  ;;                (display-buffer-reuse-window display-buffer-in-direction)
-  ;;                (direction . right)
-  ;;                (window . root)
-  ;;                (inhibit-same-window . t)))
-  )
+                 (body-function . select-window)))
+  
+  (add-to-list 'display-buffer-alist
+               `(,shell-command-buffer-name
+                 (display-buffer-pop-up-window
+                  display-buffer-use-least-recent-window)
+                 (body-function . view-mode))))
 
 (use-package readline-completion
   :after (shell)
@@ -3756,13 +3724,6 @@ the file is not under version control."
                  (window-height . 4)
                  (window-parameters . ((mode-line-format . none)))))
 
-  (add-to-list 'display-buffer-alist
-               '("\\*eldoc\\*"
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (window-parameters . ((mode-line-format . none)))))
-
   ;; (add-to-list 'display-buffer-alist
   ;;              '("\\*eldoc\\*"
   ;;                (display-buffer-no-window)
@@ -3849,19 +3810,10 @@ the file is not under version control."
   :config
   (add-to-list 'display-buffer-alist
                '("\\*compilation\\*"
-                 (display-buffer-reuse-window
-                  ;; kam-display-buffer-in-mru-window
-                  ;; display-buffer-use-least-recent-window
-                  ;; display-buffer-in-direction
-                  )
-                 ;; (direction . right)
-                 ;; (window-width . 0.50)
-                 ;; (inhibit-same-window . t)
-                 ;; (window-height . 0.35)
-                 (body-function . select-window)
-                 ;; (window-parameters . ((mode-line-format . none)
-                 ;;                       (no-delete-other-windows . t)))
-                 ))
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-use-least-recent-window)
+                 (body-function . select-window)))
 
   (add-to-list
    'switch-to-prev-buffer-skip-regexp
@@ -4092,6 +4044,13 @@ the file is not under version control."
   (add-to-list 'project-switch-commands '(ghostel-project "Terminal" "t"))
 
   (keymap-set global-map "C-x t" 'ghostel)
+
+  (add-to-list 'display-buffer-alist
+               `(,ghostel-buffer-name
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
+                 (mode ghostel-mode)))
 
   ;; (add-to-list 'display-buffer-alist
   ;;              '("-Ghostel\\*$"         ; Matches `ghostel-project' buffer regex
@@ -4442,11 +4401,6 @@ With optional ARG, open browser in EWW."
   ;; (emms-playlist-buffer-name "*Playlist*")
   (emms-playlist-mode-open-playlists t)
   :config
-  (add-to-list 'display-buffer-alist
-               '((derived-mode . emms-playlist-mode)
-                 (display-buffer-reuse-mode-window display-buffer-use-least-recent-window)
-                 (window-parameters . ((mode-line-format . none)))))
-
   (defun kam-emms-next ()
     "Start playing the next track in the EMMS playlist and move the cursor as well.
 With optional ARG, go to the next song that many times."
