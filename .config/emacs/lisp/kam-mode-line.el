@@ -338,6 +338,12 @@ Specific to the current window's mode-line.")
       ""))
   "Mode line construct for displaying if the mark is active.")
 
+(defvar kam-mode-line-buffer-icon-alist
+  '(("*Warnings*" . (nerd-icons-faicon "nf-fa-warning" nerd-icons-red))
+    ("*scratch*" . (nerd-icons-mdicon "nf-md-test_tube" nerd-icons-green))
+    ("*Shell Command*" . (nerd-icons-sucicon "nf-seti-shell" nerd-icons-blue))
+    ("*Claude*" . (nerd-icons-codicon "nf-cod-claude" nerd-icons-blue))))
+
 (defun kam-mode-line--string-truncate-p (str)
   "Return non-nil if STR should be truncated.
 Please see `kam-mode-line-string-truncate-length'."
@@ -450,14 +456,9 @@ See `kam-mode-line-string-cut-middle'."
   "Return capitalized `major-mode' without the -mode suffix."
   (concat
    (cond
-    ((derived-mode-p 'dired-mode)
-     (nerd-icons-sucicon "nf-custom-folder_oct"))
-    ((derived-mode-p 'emureader-mode)
-     (nerd-icons-faicon "nf-fa-file_pdf"))
-    ((derived-mode-p 'ghostel-mode)
-     (nerd-icons-devicon "nf-dev-terminal"))
-    ((derived-mode-p 'shell-mode)
-     (nerd-icons-devicon "nf-dev-bash"))
+    ((assoc (buffer-name) kam-mode-line-buffer-icon-alist)
+     (let* ((icon (cdr (assoc (buffer-name) kam-mode-line-buffer-icon-alist))))
+       (propertize (apply (car icon) (cdr icon)) 'face (cddr icon))))
     (t
      (nerd-icons-icon-for-mode major-mode)))
    " "
