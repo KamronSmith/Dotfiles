@@ -273,6 +273,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (duplicate-region-final-position -1)
   (duplicate-line-final-position -1)
   (exchange-point-and-mark-highlight-region nil)
+  (x-underline-at-descent-line t)
   :config
   (menu-bar-mode -1)
   (tool-bar-mode -1)
