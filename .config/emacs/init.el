@@ -79,7 +79,9 @@ Enable that mode to its keybindings take over those of the major mode.")
   
   :hook ((after-init . kam-emacs-setup)
          (after-save . executable-make-buffer-file-executable-if-script-p)
-         (visual-line-mode . visual-wrap-prefix-mode))
+         (visual-line-mode . visual-wrap-prefix-mode)
+         (occur-mode . kam-occur-mode-setup)
+         (occur-edit-mode . kam-occur-edit-setup))
   :bind
   ([remap revert-buffer] . kam-revert-buffer)
   ("TAB" . nil)
@@ -177,9 +179,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-c w" . kam-writing-mode)
   ("<kam-i>" . indent-for-tab-command)
   (:map search-map
-        ("M-g" . grep))
-  (:map emacs-lisp-mode-map
-        ("C-M-q" . kam-kill-inner-sexp))
+        ("M-o" . occur))
   (:map occur-mode-map
         ("w" . occur-edit-mode))
   (:map goto-map
@@ -545,11 +545,10 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
      ;;  (window-height . 0.35)
      ;;  (window-parameters . ((mode-line-format . none))))
      ("^\\*Occur\\*"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . bottom)
-      (window . root)
-      (window-height . 0.45)
-      (window-parameters . ((mode-line-format . none))))
+      (display-buffer-reuse-mode-window
+       display-buffer-pop-up-window
+       display-buffer-use-least-recent-window)
+      (mode occur-mode))
      ("\\*Pp Eval Output\\*"
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
@@ -3291,7 +3290,9 @@ The shell is renamed to make opening multiple shells easier."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(embark-collect-mode nerd-icons-codicon "nf-cod-collection" :face nerd-icons-blue))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(git-rebase-mode nerd-icons-mdicon "nf-md-git" :face nerd-icons-green)))
+               '(git-rebase-mode nerd-icons-mdicon "nf-md-git" :face nerd-icons-green))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(occur-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue))
 
 (use-package nerd-icons-dired
   :hook

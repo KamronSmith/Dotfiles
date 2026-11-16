@@ -28,6 +28,33 @@ To be used by `kam-occur-outline'."
   :type 'string
   :group 'kam-search)
 
+(defun kam-occur-mode-setup ()
+  "Setup function for `occur-mode'."
+  (hide-cursor-mode 1)
+  (hl-line-mode 1))
+
+(defun kam-occur-edit-mode-setup ()
+  "Setup function for `occur-edit-mode'."
+  (hide-cursor-mode -1)
+  (hl-line-mode -1))
+
+(defun kam-get-buffers-matching-mode (mode)
+  "Returns a list of the buffers where their major-mode is equal to MODE."
+  (let ((buffer-mode-matches '()))
+    (dolist (buf (buffer-list))
+      (with-current-buffer buf
+        (when (eq mode major-mode)
+          (push buf buffer-mode-matches))))
+    buffer-mode-matches))
+
+;;;###autoload
+(defun kam-multi-occur-in-this-mode ()
+  "Show all lines matching REGEXP in buffers with the current buffer's major-mode."
+  (interactive)
+  (multi-occur
+   (kam-get-buffers-matching-mode major-mode)
+   (car (occur-read-primary-args))))
+
 (defun kam-consult-line-comment-keywords ()
   "Start a `consult-line' session with `kam-comment-keywords'."
   (interactive)
