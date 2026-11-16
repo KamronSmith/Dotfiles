@@ -2110,24 +2110,22 @@ Used in `isearch-mode-end-hook'."
 
 (use-package grep
   :ensure nil
-  :hook ((grep-mode . kam-grep-setup)
-         (grep-edit-mode . kam-grep-edit-setup))
+  :hook ((grep-mode . kam-grep-mode-setup)
+         (grep-edit-mode . kam-grep-edit-mode-setup))
   :bind
-  (
-   ;; ("M-s g" . grep)
-   :map grep-mode-map
-   ("C-c C-p" . compilation-previous-file)
-   ("C-c C-n" . compilation-next-file)
-   ("w" . grep-change-to-grep-edit-mode)
-   ("n" . compilation-next-error)
-   ("p" . compilation-previous-error)
-   ("M-g M-n" . next-error-no-select)
-   ("M-g M-p" . previous-error-no-select)
-   ("<return>" . kam-compile-goto-error)
-   ("}" . compilation-next-file)
-   ("{" . compilation-previous-file)
-   :map grep-edit-mode-map
-   ("C-c C-c" . grep-edit-save-changes))
+  (:map grep-mode-map
+        ("C-c C-p" . compilation-previous-file)
+        ("C-c C-n" . compilation-next-file)
+        ("w" . grep-change-to-grep-edit-mode)
+        ;; ("n" . compilation-next-error)
+        ;; ("p" . compilation-previous-error)
+        ("n" . kam-next-error-no-select)
+        ("p" . kam-previous-error-no-select)
+        ("<return>" . kam-compile-goto-error)
+        ("}" . compilation-next-file)
+        ("{" . compilation-previous-file))
+  (:map grep-edit-mode-map
+        ("C-c C-c" . grep-edit-save-changes))
   :custom
   (grep-program "ripgrep")
   ;; (grep-command "rg -nS --follow --context=3 --no-heading --color=always ")
@@ -2154,33 +2152,10 @@ Used in `isearch-mode-end-hook'."
   :config
   (add-to-list 'display-buffer-alist
                '("\\*grep\\*"
-                 (display-buffer-reuse-window 
-                  ;; display-buffer-use-least-recent-window
-                  )
-                 (direction . right)
-                 ;; (inhibit-same-window . t)
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
                  (body-function . select-window)))
-
-  (defun kam-grep-mode-setup ()
-    "Setup function for `grep-mode'."
-    (hide-cursor-mode)
-    (hl-line-mode))
-
-  (defun kam-grep-symbol-at-point ()
-    "Start a `grep' search for the symbol at point.
-If the current buffer belongs to a project, run the grep command in the
-project directory."
-    (interactive)
-    (let* ((sym (thing-at-point 'symbol t))
-           (command (concat grep-command sym))
-           (default-directory (or (when (kam-buffer-has-project-p (current-buffer))
-                                    (project-root (project-current)))
-                                  default-directory)))
-      (grep command)))
-
-  (defun kam-grep-edit-mode-setup ()
-    "Setup function for `grep-edit-mode'."
-    (hide-cursor-mode -1))
 
   ;; (with-eval-after-load 'consult
   ;;   (add-to-list 'consult-buffer-filter
@@ -3262,6 +3237,8 @@ The shell is renamed to make opening multiple shells easier."
                '(git-rebase-mode nerd-icons-mdicon "nf-md-git" :face nerd-icons-green))
   (add-to-list 'nerd-icons-mode-icon-alist
                '(occur-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(grep-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue)))
 
 (use-package nerd-icons-dired
   :hook

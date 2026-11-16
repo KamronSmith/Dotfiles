@@ -28,6 +28,16 @@ To be used by `kam-occur-outline'."
   :type 'string
   :group 'kam-search)
 
+(defun kam-grep-mode-setup ()
+  "Setup function for `grep-mode'."
+  (hide-cursor-mode 1)
+  (hl-line-mode 1))
+
+(defun kam-grep-edit-mode-setup ()
+  "Setup function for `grep-edit-mode'."
+  (hide-cursor-mode -1)
+  (hl-line-mode -1))
+
 (defun kam-occur-mode-setup ()
   "Setup function for `occur-mode'."
   (hide-cursor-mode 1)
@@ -55,13 +65,27 @@ To be used by `kam-occur-outline'."
    (kam-get-buffers-matching-mode major-mode)
    (car (occur-read-primary-args))))
 
+;;;###autoload
+(defun kam-grep-symbol-at-point ()
+  "Start a `grep' search for the symbol at point.
+If the current buffer belongs to a project, run the grep command in the
+project directory."
+  (interactive)
+  (let* ((sym (thing-at-point 'symbol t))
+         (command (concat grep-command sym))
+         (default-directory (or (when (kam-buffer-has-project-p (current-buffer))
+                                  (project-root (project-current)))
+                                default-directory)))
+    (grep command)))
+
+;;;###autoload
 (defun kam-consult-line-comment-keywords ()
   "Start a `consult-line' session with `kam-comment-keywords'."
   (interactive)
   (consult-line kam-search-comment-keywords))
 
 ;;;###autoload
-(defun kam-search-occur-buffer-todo-keywords (&optional context)
+(defun kam-occur-todo-keywords (&optional context)
   "Produce Occur buffer with `kam-search-todo-keywords'.
 With optional CONTEXT, specify how many lines of context you want the
 Occur search to include."
