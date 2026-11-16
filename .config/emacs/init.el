@@ -3686,7 +3686,7 @@ the file is not under version control."
   (eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
   (eldoc-idle-delay 0)
   (eldoc-echo-area-use-multiline-p t)
-  (eldoc-help-at-pt nil)
+  (eldoc-help-at-pt t)
   (eldoc-echo-area-prefer-doc-buffer 'maybe)
   :config
   (add-to-list 'display-buffer-alist
