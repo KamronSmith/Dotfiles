@@ -3166,7 +3166,8 @@ The shell is renamed to make opening multiple shells easier."
   
   (setq spacious-padding-subtle-frame-lines nil)
 
-  (spacious-padding-mode))
+  ;; (spacious-padding-mode)
+  )
 
 (use-package logos
   :config
