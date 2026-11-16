@@ -4119,6 +4119,7 @@ the file is not under version control."
                       :weight 'bold))
 
 (use-package visible-mark
+  :after (kam-theme standard-themes)
   :init
   (defface kam-visible-mark-face
     `((t nil))
