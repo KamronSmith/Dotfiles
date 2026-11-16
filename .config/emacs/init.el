@@ -184,8 +184,8 @@ Enable that mode to its keybindings take over those of the major mode.")
         ("w" . occur-edit-mode))
   (:map goto-map
         ("M-c" . goto-char)
-        ("M-n" . next-error-no-select)
-        ("M-p" . previous-error-no-select))
+        ("M-n" . next-error)
+        ("M-p" . previous-error))
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
   (:map kam-override-mode-map
@@ -3761,8 +3761,6 @@ the file is not under version control."
         ("p" . compilation-previous-error)
         ("C-c C-p" . compilation-previous-file)
         ("C-c C-n" . compilation-next-file)
-        ;; ("n" . kam-next-error-no-select)
-        ;; ("p" . kam-previous-error-no-select)
         ("<return>" . kam-compile-goto-error)
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up)
@@ -3772,11 +3770,6 @@ the file is not under version control."
         ("<next>" . kam-scroll-down)
         ("M-@" . recompile)
         ("C-g" . quit-window))
-  (:repeat-map next-error-repeat-map
-               ("M-n" . next-error-no-select)
-               ("M-p" . previous-error-no-select)
-               ("C-p" . compilation-previous-file)
-               ("C-n" . compilation-next-file))
   :custom
   (compilation-always-kill t)
   (compilation-ask-about-save nil)
