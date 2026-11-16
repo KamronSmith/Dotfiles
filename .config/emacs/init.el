@@ -336,6 +336,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
     (cl-letf (((symbol-function 'switch-to-buffer)
                #'pop-to-buffer))
       (apply pgm)))
+  (advice-add #'push-mark :around #'kam-ignore-temp-buffer-marks)
 
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
