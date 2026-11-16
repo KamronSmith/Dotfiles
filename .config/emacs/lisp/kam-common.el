@@ -263,7 +263,8 @@ it marks the next ARG lines after the ones already marked."
 
 ;;;###autoload
 (defun kam-kill-line (&optional n)
-  "Kill the current line, regardless of where the point is on the line."
+  "Kill the current line, regardless of where the point is on the line.
+When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (kam-mark-line n)
   (kill-region nil nil t)
