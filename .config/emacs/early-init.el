@@ -37,7 +37,9 @@
               (when (display-graphic-p)
                 (define-key input-decode-map (kbd "C-i") [kam-i])
                 (define-key input-decode-map (kbd "C-m") [kam-m])
-                (define-key input-decode-map (kbd "C-[") [kam-lsb])))))
+                (define-key input-decode-map (kbd "C-[") [kam-lsb])
+                (define-key input-decode-map (kbd "<escape>") [kam-escape])
+                (define-key input-decode-map (kbd "M-<escape>") [kam-m-escape])))))
 
 (defvar kam-parrotos (when (string-equal "parrot" (system-name))
                        t)
