@@ -315,19 +315,11 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (setopt mac-command-modifier 'meta)
       (setopt mac-option-modifier 'meta)
       (setopt insert-directory-program (executable-find "gls"))
-      (menu-bar-mode)
+      (menu-bar-mode 1)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-
-      (defun kam-mac-copy-config-to-config-folder ()
-        "Copy the init.el from the .dotfiles folder to the .config/emacs folder."
-        (interactive)
-        (copy-file
-         (expand-file-name ".config/emacs/init.el" kam-dotfiles-directory)
-         "/Users/kamronsmith/.config/emacs/init.el"
-         t)
-        (message "Copied config to emacs directory")))))
-
+      (require 'kam-mac))))
+  
   (put 'narrow-to-region 'disabled nil)
 
   (keymap-global-set "C-M-(" 'insert-parentheses)
