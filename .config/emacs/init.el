@@ -3552,7 +3552,7 @@ the file is not under version control."
 
 (use-package eglot
   :ensure nil
-  :hook (eglot-managed-mode . kam-eglot-setup)
+  :hook (eglot-managed-mode . kam-eglot-mode-setup)
   :custom
   (eglot-autoshutdown t)
   (eglot-sync-connect nil)
