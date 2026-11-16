@@ -299,14 +299,18 @@ called interactively without a prefix numeric argument, N is 1."
          (setq this-command 'kill-ring-save))))
 
 ;;;###autoload
-(defun kam-yank ()
-  "Custom yank function.
-`kam-yank' emulates the pasting functionality in Vim. If the most
-current kill contains a newline character, create a new line below the
-point and insert the string to be yanked there. Else, just insert the
-yank."
-  (interactive)
-  (cond ((or (bolp)
+(defun kam-yank (&optional arg)
+  "Yank function that emulates the pasting functionality in Vim.
+If the most current kill contains a newline character, create a new
+line below the point and insert the string to be yanked there. Else,
+just insert the yank.
+
+With optional prefix ARG, call `kam-yank-replace-line-or-region'
+instead."
+  (interactive "P")
+  (cond (arg
+         (kam-yank-replace-line-or-region))
+        ((or (bolp)
              (kam-line-empty-before-point-p))
          (yank))
         ((string-search "\n" (current-kill 0 t))
