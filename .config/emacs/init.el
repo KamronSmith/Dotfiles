@@ -1896,6 +1896,7 @@ surrounded by actual boundaries."
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
 
 (use-package ace-window
+  :after (emacs kam-window)
   :commands (kam-ace-window ace-window)
   :init
   (setq aw-dispatch-always t)
