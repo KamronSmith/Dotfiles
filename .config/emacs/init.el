@@ -3376,6 +3376,8 @@ The shell is renamed to make opening multiple shells easier."
   :bind
   (:map lisp-interaction-mode-map
         ("C-j" . kam-join-line-dwim))
+  (:map emacs-lisp-mode-map
+        ("C-M-q" . kam-kill-inner-sexp))
   :custom
   (elisp-fontify-semantically nil)
   :config
