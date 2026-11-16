@@ -125,8 +125,8 @@ Use this as advice :after a noisy function."
 
 (defun kam-filter-lines-in-string (input-string regexp &optional keep-matching)
   "Filter lines in INPUT-STRING that match REGEXP.
-If KEEP-MATCHING is non-nil, keep lines that match; otherwise, remove them.
-Returns the filtered string."
+If KEEP-MATCHING is non-nil, keep lines that match; otherwise, remove
+them. Returns the filtered string."
   (let* ((lines (split-string input-string "\\n" nil ""))
          (filtered-lines (if keep-matching
                              (cl-remove-if-not (lambda (line) (string-match-p regexp line)) lines)
@@ -264,7 +264,7 @@ it marks the next ARG lines after the ones already marked."
 
 ;;;###autoload
 (defun kam-kill-line (&optional n)
-  "Kill the current line, regardless of where the point is on the line.
+  "Kill N lines, regardless of where the point is on the line.
 When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (kam-mark-line n)
@@ -274,9 +274,8 @@ When called interactively without a prefix numeric argument, N is 1."
 ;;;###autoload
 (defun kam-kill-dwim (&optional n)
   "A DWIM command for killing.
-If the region is active, kill the region. Else, kill the current line.
-When called interactively without a prefix numeric argument, N is 1,
-which controls how many lines will be cut."
+If the region is active, kill the region. Else, kill N lines.
+When called interactively without a prefix numeric argument, N is 1."
   (interactive "p")
   (cond ((region-active-p)
          (kill-region nil nil t)
@@ -288,8 +287,9 @@ which controls how many lines will be cut."
 ;;;###autoload
 (defun kam-kill-ring-save-dwim (&optional n)
   "A DWIM command for copying.
-If the region is active, copy the region. Else, copy the line. When
-called interactively without a prefix numeric argument, N is 1."
+If the region is active, copy the region. Else, copy N lines to the kill
+ring. When called interactively without a prefix numeric argument, N is
+1."
   (interactive "p")
   (cond ((region-active-p)
          (kill-ring-save nil nil t)
@@ -305,7 +305,7 @@ If the most current kill contains a newline character, create a new
 line below the point and insert the string to be yanked there. Else,
 just insert the yank.
 
-With optional prefix ARG, call `kam-yank-replace-line-or-region'
+With optional prefix ARG (\\[universal-argument]), call `kam-yank-replace-line-or-region'
 instead."
   (interactive "P")
   (cond (arg
@@ -460,7 +460,7 @@ If the region is active, indent the region."
       (deactivate-mark))))
 
 ;;;###autoload
-(defun kam-narrow-or-widen-dwim (p)
+(defun kam-narrow-or-widen-dwim (&optional p)
   "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
 Intelligently means: region, subtree, or defun, whichever applies first."
   (interactive "P")
@@ -472,7 +472,7 @@ Intelligently means: region, subtree, or defun, whichever applies first."
         (t (narrow-to-defun))))
 
 (defun kam-current-elisp-sexp ()
-  "Returns the current Elisp expression based on the position of point."
+  "Return the current Elisp expression based on the position of point."
   (cond
    ((looking-at "(") (sexp-at-point))
    ((looking-back ")" 1) (elisp--preceding-sexp))
@@ -482,16 +482,14 @@ Intelligently means: region, subtree, or defun, whichever applies first."
 
 ;;;###autoload
 (defun kam-eval-current-sexp ()
-  "Evaluates the current sexp at point.
-Additionally, if the region is active, evaluate the region.
-Unlike `eval-last-sexp', the point doesn't need to be at the end of the
+  "Evaluate the current sexp at point.
+Additionally, if the region is active, evaluate the region. Unlike
+`eval-last-sexp', the point doesn't need to be at the end of the
 expression, but can be at the beginning (on the parenthesis) or
 somewhere inside."
   (interactive)
   (if (region-active-p)
-      (progn
-        (eval-region (region-beginning) (region-end))
-        (message "Evaluated region"))
+      (eval-region (region-beginning) (region-end))
     (eval-expression (kam-current-elisp-sexp))))
 
 ;;;###autoload
@@ -503,16 +501,16 @@ somewhere inside."
 ;;;###autoload
 (defun kam-yank-undo (&optional arg)
   "Undo the yank you just did.
-Reverses the direction you are going in the kill ring.
-With optional ARG, repeat the undos that many times."
+Reverses the direction you are going in the kill ring. With optional
+prefix ARG (\\[universal-argument]), repeat the undos that many times."
   (interactive "p")
   (yank-pop (- arg)))
 
 ;;;###autoload
 (defun kam-query-replace-dwim ()
   "Query replace, DWIM.
-If the region is active, query replace the thing in the region.
-Else, use the symbol at point."
+If the region is active, query replace the thing in the region. Else,
+use the symbol at point."
   (interactive)
   (let* ((sym (or (when (region-active-p)
                     (buffer-substring-no-properties
