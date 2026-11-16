@@ -315,7 +315,7 @@ point and insert the string to be yanked there. Else, just insert the
 yank."
   (interactive)
   (cond ((or (bolp)
-             (kam-line-regexp-p 'empty))
+             (kam-line-empty-before-point-p))
          (yank))
         ((string-search "\n" (current-kill 0 t))
          (kam-insert-new-line-below 1)
