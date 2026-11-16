@@ -3302,7 +3302,7 @@ The shell is renamed to make opening multiple shells easier."
                 kam-mode-line-decolorify
                 " "
                 mode-line-format-right-align
-                kam-mode-line-vc-branch
+                ;; kam-mode-line-vc-branch
                 "   "
                 kam-mode-line-display-time
                 ))
