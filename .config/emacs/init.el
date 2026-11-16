@@ -330,13 +330,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 
   ;; Overrides
   (advice-add #'keyboard-escape-quit :around #'kam-keyboard-escape-quit-advice)
-  
-  (define-advice pop-global-mark (:around (pgm) use-display-buffer)
-    "Make `pop-to-buffer' jump buffers via `display-buffer'."
-    (cl-letf (((symbol-function 'switch-to-buffer)
-               #'pop-to-buffer))
-      (apply pgm)))
-  (advice-add #'push-mark :around #'kam-ignore-temp-buffer-marks)
 
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
