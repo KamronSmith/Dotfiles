@@ -1896,16 +1896,17 @@ surrounded by actual boundaries."
   (global-subword-mode))
 
 (use-package dumb-jump
-  :init
+  :custom
+  (dumb-jump-aggressive nil)
+  (dumb-jump-max-find-time 3)
+  (dumb-jump-selector 'completing-read)
+  :config
   (with-eval-after-load 'xref
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 80))
-  (setq dumb-jump-aggressive nil)
-  (setq dumb-jump-max-find-time 3)
-  (setq dumb-jump-selector 'completing-read)
-  :config
+  
   (when (executable-find "rg")
-    (setq dumb-jump-force-searcher 'rg
-          dumb-jump-prefer-searcher 'rg)))
+    (setopt dumb-jump-force-searcher 'rg)
+    (setopt dumb-jump-prefer-searcher 'rg)))
 
 (use-package electric
   :ensure nil
