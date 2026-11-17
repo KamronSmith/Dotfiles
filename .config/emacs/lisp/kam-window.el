@@ -174,47 +174,39 @@ With universal prefix ARG, run in the next window."
 
 ;;;###autoload
 (defun kam-switch-to-alternate-buffer ()
-  "Switch to the last window used."
+  "Switch to the last buffer used."
   (interactive)
   (let* ((alt-buffer (kam-get-alternate-buffer)))
     (switch-to-buffer alt-buffer)))
 
 ;;;###autoload
 (defun kam-clone-buffer-and-narrow ()
+  "Clone the current buffer and narrow it."
   (interactive)
   (clone-indirect-buffer-other-window nil 'pop-to-buffer)
-  (cond ((region-active-p)
-         (narrow-to-region (region-beginning) (region-end)))
-        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
-        (t (narrow-to-defun))))
-
-(defun kam-display-buffer-in-mru-window (buffer alist)
-  "Display BUFFER in the most recently used window."
-  (let ((mru-win (get-mru-window t nil t)))
-    (when mru-win
-      (window--display-buffer buffer mru-win 'reuse alist))))
+  (kam-narrow-or-widen-dwim))
 
 (defun kam-no-split-window ()
   "Use in `split-window-preferred-function' to disable window splitting."
   nil)
 
 (defun kam-aw-consult-buffer (window)
-  "Perform `consult-buffer' in AW selected window."
+  "Perform `consult-buffer' in AW selected WINDOW."
   (aw-switch-to-window window)
   (consult-buffer))
 
 (defun kam-aw-delete-window-dwim (window)
-  "Perform `kam-delete-window-dwim' in the AW-selected window."
+  "Perform `kam-delete-window-dwim' in the AW-selected WINDOW."
   (aw-switch-to-window window)
   (kam-delete-window-dwim))
 
 (defun kam-aw-execute-extended-command (window)
-  "Perform `execute-extended-command' in the AW-selected window."
+  "Perform `execute-extended-command' in the AW-selected WINDOW."
   (aw-switch-to-window window)
   (call-interactively 'execute-extended-command))
 
 (defun kam-aw-one-command (window)
-  "Run a command in the AW-selected window."
+  "Run a command in the AW-selected WINDOW."
   (aw-switch-to-window window)
   (with-selected-window window
     (let* ((command (key-binding
