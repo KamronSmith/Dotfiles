@@ -526,6 +526,8 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (window-height . 0.45)
       (window-parameters . ((mode-line-format . none))))))
   :config
+  (winner-mode 1)
+  
   (defun kam-split-window-conservatively (&optional window)
     "Split WINDOW only if absolutely necessary.
 Only split if there is no split, and only split into left and right windows."
