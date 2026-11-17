@@ -165,6 +165,27 @@ With universal prefix ARG, run in the next window."
                                             display-buffer-same-window)))
     (apply orig-fn args)))
 
+(defun kam-split-window-conservatively (&optional window)
+  "Split WINDOW only if absolutely necessary.
+Only split if there is no split, and only split into left and right windows."
+  (interactive)
+  (let ((window (or window (selected-window))))
+    (if (and
+         (window-splittable-p window t)
+         (= (length (window-list)) 1))
+        (with-selected-window window
+          (split-window-right))
+      nil)))
+
+;;;###autoload
+(defun kam-toggle-delete-other-windows ()
+  "Delete other windows in the frame if any, or restore previous window config."
+  (interactive)
+  (if (and winner-mode
+           (equal (selected-window) (next-window)))
+      (winner-undo)
+    (delete-other-windows)))
+
 ;;;###autoload
 (defun kam-clone-buffer-and-narrow ()
   "Clone the current buffer and narrow it."
