@@ -15,12 +15,6 @@
   "Extensions for `consult'."
   :group 'consult)
 
-(defcustom kam-consult-ripgrep-or-line-limit 300000
-  "Buffer size threshold for `kam-consult-ripgrep-or-line'.
-When the number of characters in a buffer exceeds this threshold,
-`consult-ripgrep' will be used instead of `consult-line'."
-  :type 'integer)
-
 (defvar kam-consult-source-neighbor-file
   `(:name     "File in current directory"
               :narrow   ?.
@@ -153,8 +147,7 @@ PROMPT is the prompt of `consult-imenu'."
 (defun kam-consult-ripgrep-symbol-at-point ()
   "Start a `consult-ripgrep' search with the symbol at point."
   (interactive)
-  (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
-    (consult-ripgrep nil (thing-at-point 'symbol))))
+  (consult-ripgrep nil (thing-at-point 'symbol)))
 
 ;;;###autoload
 (defun kam-consult-search-emacs-info-pages ()

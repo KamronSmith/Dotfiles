@@ -1485,6 +1485,7 @@ surrounded by actual boundaries."
          ("M-u" . consult-focus-lines)
          ;; ("M-l" . consult-line)
          ("M-p" . kam-consult-line-symbol-at-point)
+         ("M-r" . kam-consult-ripgrep-symbol-at-point)
          ("M-d" . consult-line)
          :map goto-map
          ("M-e" . consult-compile-error)
