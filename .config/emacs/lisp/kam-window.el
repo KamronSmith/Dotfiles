@@ -109,27 +109,6 @@ Additionally, select the newly formed window."
                  (mapcar #'car (window-prev-buffers window)))
      nil t)))
 
-(defun kam-window-delete-popup-frame (&rest _)
-  "Kill selected frame if it has the parameter `kam-window-popup-frame'.
-Use this function via a hook."
-  (when (frame-parameter nil 'kam-window-popup-frame)
-    (delete-frame)))
-
-(defmacro kam-window-define-with-popup-frame (command)
-  "Define interactive function which calls COMMAND in a new frame.
-Make the new frame have the `kam-window-popup-frame-parameter'."
-  `(defun ,(intern (format "kam-window-popup-%s" command)) ()
-     ,(format "Run `%s' in a popup frame with `kam-window-popup-frame' parameter.
-Also see `kam-window-delete-popup-frame'." command)
-     (interactive)
-     (let ((frame (make-frame '((kam-window-popup-frame . t)))))
-       (select-frame frame)
-       (switch-to-buffer " kam-window-hidden-buffer-for-popup-frame")
-       (condition-case nil
-           (call-interactively ',command)
-         ((quit error user-error)
-          (delete-frame frame))))))
-
 ;;;###autoload
 (defun kam-ace-window ()
   "Like the normal `ace-window' command, but splits the window if there is only one window."
