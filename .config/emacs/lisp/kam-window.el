@@ -138,6 +138,8 @@ Also see `kam-window-delete-popup-frame'." command)
       (kam-split-window-right)
     (call-interactively 'ace-window)))
 
+(defun kam-recenter-advice (&ignore _)
+  (recenter))
 ;;;###autoload
 (defun kam-next-buffer (&optional arg)
   "Switch to the next ARGth buffer.

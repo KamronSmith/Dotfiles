@@ -569,37 +569,20 @@ Only split if there is no split, and only split into left and right windows."
   (defun kam-centered-cursor-mode-remove-hook ()
     "Remove `ccm-vpos-recenter' from hooks."
     (when (seq-contains-p window-configuration-change-hook 'ccm-vpos-recenter)
-      (remove-hook 'window-configuration-change-hook 'ccm-vpos-recenter)))
-  
-  
+      (remove-hook 'window-configuration-change-hook 'ccm-vpos-recenter t)))
+
+  (defun kam-centered-cursor-mode-advice (orig-fn &rest args)
+    "Call ORIG-FN with ARGS while temporarily disabling `centered-cursor-mode'."
+    (when (bound-and-true-p centered-cursor-mode)
+      (centered-cursor-mode -1)
+      (apply orig-fn args)
+      (centered-cursor-mode 1)))
+
   (add-to-list 'ccm-ignored-commands
                'ultra-scroll)
 
   (add-to-list 'ccm-ignored-commands
-               'kam-keyboard-escape-quit-dwim)
-  ;; (add-to-list 'ccm-ignored-commands
-  ;;              'vertico-exit)
-  ;; (add-to-list 'ccm-ignored-commands
-  ;;              'kam-quit-window)
-  ;; (add-to-list 'ccm-ignored-commands
-  ;;              'quit-window)
-
-  ;; (defun kam-ccm-ignored-modes-p ()
-  ;;   "Check if mode is listed under `kam-ccm-ignored-modes'."
-  ;;   (and (eq major-mode (or 'minibuffer-mode
-  ;;                           ;; 'minibuffer-inactive-mode
-  ;;                           ))
-  ;;        (cl-intersection (kam-active-minor-modes)
-  ;;                         '(vertico-mode completion-list-mode))))
-
-  ;; (add-to-list 'ccm-inhibit-centering-when 'kam-ccm-ignored-modes-p)
-  ;; 
-  ;; (defvar kam-ccm-ignored-modes '(minibuffer-mode
-  ;;                                 minibuffer-inactive-mode
-  ;;                                 vertico-mode
-  ;;                                 completion-list-mode)
-  ;;   "Modes where recentering should be ignored.")
-  )
+               'kam-keyboard-escape-quit-dwim))
 
 (use-package pixel-scroll
   :ensure nil
@@ -1539,6 +1522,12 @@ surrounded by actual boundaries."
   (add-to-list 'consult-preview-allowed-hooks 'olivetti-mode)
   (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
   (add-to-list 'consult-preview-allowed-hooks 'buffer-face-mode)
+  
+  (advice-add 'consult--jump :around 'kam-centered-cursor-mode-advice)
+  (advice-add 'consult-buffer :after (lambda (&rest _) (recenter)))
+  
+  (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
+    (advice-add cmd :before (lambda (&rest _) (push-mark (point) t nil))))
 
   (add-to-list 'consult-buffer-filter
                "-shell\\*$")
@@ -1546,9 +1535,7 @@ surrounded by actual boundaries."
                "\\*Customize ")
   (add-to-list 'consult-buffer-filter
                "-eshell\\*$")
-  (add-to-list 'consult-buffer-filter
-               "^\\*Backtrace\\*$" t)
-
+  
   ;; (advice-add 'consult-yank-pop :after 'kam-indent-region-advice)
 
   (setopt consult-buffer-sources
@@ -1564,9 +1551,6 @@ surrounded by actual boundaries."
             ;; kam-consult-source-dired-history
             consult-source-hidden-buffer
             ))
-
-  (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
-    (advice-add cmd :before (lambda (&rest _) (push-mark (point) t nil))))
 
   (defun kam-consult-project-imenu ()
     (interactive)
