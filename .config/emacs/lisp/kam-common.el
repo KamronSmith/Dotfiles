@@ -268,9 +268,8 @@ When called interactively without a numeric prefix argument, ARG is 1."
   "Kill ARG lines, regardless of where the point is on the line.
 When called interactively without a prefix numeric argument, ARG is 1."
   (interactive "p")
-  (kam-mark-line n)
-  (kill-region nil nil t)
-  (deactivate-mark t))
+  (kam-mark-line arg)
+  (kill-region (region-beginning) (region-end)))
 
 ;;;###autoload
 (defun kam-kill-dwim (&optional arg)
