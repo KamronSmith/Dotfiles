@@ -517,6 +517,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
       (window . root)
+      (body-function . view-mode)
       (window-height . 0.35))
      ("^\\*Pacman: "
       (display-buffer-reuse-window display-buffer-in-side-window)
