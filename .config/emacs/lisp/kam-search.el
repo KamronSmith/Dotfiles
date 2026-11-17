@@ -160,5 +160,33 @@ Additionally, it will always only use the currently selected window."
         (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
     (previous-error-no-select n)))
 
+(defun kam-isearch-removed-failed-or-last-char ()
+  "Remove failed part of search string, or last char if successful.
+Do nothing if search string is empty to start with."
+  (interactive)
+  (if (string-equal isearch-string "")
+      (isearch-update)
+    (if isearch-success
+        (isearch-delete-char)
+      (while (isearch-fail-pos) (isearch-pop-state)))
+    (isearch-update)))
+
+;;;###autoload
+(defun kam-isearch-quit ()
+  "Cancel the current Isearch."
+  (interactive)
+  (setq isearch-success nil)
+  (isearch-cancel))
+
+(defun kam-isearch-goto-match-beginning ()
+  "Go to the start of current Isearch match.
+Used in `isearch-mode-end-hook'."
+  (when (and (not (eq this-command 'isearch-exit))
+             isearch-forward
+             (number-or-marker-p isearch-other-end)
+             (not mark-active)
+             (not isearch-mode-end-hook-quit))
+    (goto-char isearch-other-end)))
+
 (provide 'kam-search)
 ;;; kam-search.el ends here

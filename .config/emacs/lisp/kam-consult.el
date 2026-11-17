@@ -325,5 +325,12 @@ Please see `kam-consult-excluded-preview-buffer-names' and
         (with-current-buffer buf
           (derived-mode-p kam-consult-excluded-preview-buffer-modes)))))
 
+;;;###autoload
+(defun kam-consult-project-imenu ()
+  (interactive)
+  (if (kam-buffer-has-project-p (current-buffer))
+      (consult-imenu-multi)
+    (consult-imenu)))
+
 (provide 'kam-consult)
 ;;; kam-consult.el ends here

@@ -5,6 +5,24 @@
 ;;; Commentary:
 
 ;;; Code:
+(defun kam-missing-executable-p (exe)
+  "Determine if executable EXE is missing from PATH.
+EXE should be a string that corresponds to an executable."
+  (unless (executable-find exe)
+    t))
+
+(defvar kam-required-programs
+  `("rg"
+    "fd"
+    "zsh"
+    ,(when (eq system-type 'darwin) "gls")
+    )
+  "Programs that this configuration of Emacs depends on.")
+
+(dolist (exe kam-required-programs)
+  (when (kam-missing-executable-p exe)
+    (user-error "%s is missing from your PATH. Please install it or add it to your PATH" exe)))
+
 (defvar kam-emacs-cache-directory
   (concat user-emacs-directory "cache/")
   "Directory containing temporary files for Emacs.")
@@ -107,7 +125,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-SPC" . set-mark-command)
   ("C-<left>" . kam-prev-buffer)
   ("C-<right>" . kam-next-buffer)
-  ("C-<return>" . kam-insert-new-line-below)
+  ("C-<return>" . comment-indent-new-line)
   ("C-<backspace>" . kam-control-backspace)
   ("C-_" . nil)
   ("C-:" . pp-eval-expression)
@@ -119,7 +137,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-~" . nil)
   ("C-%" . kam-query-replace-dwim)
   ("M-c" . capitalize-dwim)
-  ("M-i" . kam-insert-new-line-below)
+  ("M-i" . kam-indent-dwim)
   ("M-l" . downcase-dwim)
   ("M-m" . kam-mark-line)
   ("M-n" . forward-paragraph)
@@ -133,29 +151,22 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("M-!" . async-shell-command)
   ("M-;" . comment-dwim)
   ("M-:" . pp-eval-expression)
-  ("M-&" . kam-jump-to-mark)
   ("M-<return>" . kam-insert-new-line-above)
   ("M-SPC" . mark-word)
   ("M-DEL" . kam-control-backspace)
   ("C-h c" . describe-char)
-  ;; ("C-x 0" . nil)
-  ;; ("C-x 1" . nil)
   ("C-x 3" . nil)
   ("C-x <left>" . kam-prev-buffer)
   ("C-x <right>" . kam-next-buffer)
   ("C-x k" . kam-kill-current-buffer)
   ("C-x n" . kam-narrow-or-widen-dwim)
-  ;; ("C-x u" . undo)
-  ;; ("C-x z" . undo-redo)
   ("C-x C-c" . kam-os-restart-emacs)
   ("C-x <kam-m>" . count-words)
   ("C-x C-n" . nil)
   ("C-x C-e" . kam-eval-current-sexp)
-  ("C-x C-v" . mark-paragraph)
   ("C-x C-u" . nil)
   ("C-x C-z" . nil)
   ("C-c <tab>" . indent-relative)
-  ("C-c j" . link-hint-open-link)
   ("C-c q" . insert-char)
   ("C-M-<left>" . indent-rigidly-left)
   ("C-M-<right>" . indent-rigidly-right)
@@ -164,10 +175,8 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-M-SPC" . mark-sexp)
   ("C-M-(" . insert-parenthesis)
   ("C-M-=" . indent-region)
-  ;; ("C-M-a" . sp-beginning-of-sexp)
   ("C-M-b" . backward-sexp)
   ("C-M-d" . down-list)
-  ;; ("C-M-e" . sp-end-of-sexp)
   ("C-M-f" . forward-sexp)
   ("C-M-k" . kill-sexp)
   ("C-M-j" . raise-sexp)
@@ -175,7 +184,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-M-p" . backward-list)
   ("C-M-t" . transpose-sexps)
   ("C-M-u" . backward-up-list)
-  ("C-M-y" . kam-yank-replace-line-or-region)
+  ("C-M-y" . kam-yank-undo)
   ("C-M-z" . kam-delete-pair-dwim)
   ("C-c w" . kam-writing-mode)
   ("<kam-i>" . indent-for-tab-command)
@@ -190,7 +199,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
   (:map kam-override-mode-map
-        ("C-M-i" . kam-indent-dwim)
         ("M-r" . kam-duplicate-dwim))
   (:repeat-map kam-repeat-map
                ;; ("n" . next-error-no-select)
@@ -271,11 +279,12 @@ Enable that mode to its keybindings take over those of the major mode.")
   (comment-multi-line t)
   (comment-style 'multi-line)
   (view-read-only t)
-  (duplicate-region-final-position -1)
+  (duplicate-region-final-position 1)
   (duplicate-line-final-position -1)
   (exchange-point-and-mark-highlight-region nil)
-  (x-underline-at-descent-line t)
   :config
+  (require 'kam-common)
+  
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
@@ -322,10 +331,12 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   
   (put 'narrow-to-region 'disabled nil)
 
+  (add-to-list 'find-file-not-found-functions #'kam-find-file-auto-create-missing-dirs)
+
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
   (keymap-global-set "M-\"" 'kam-insert-quote)
-
+  
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory))))
 
@@ -413,11 +424,8 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (custom-set-faces
        `(completion-preview-exact ((,c :foreground ,fg-dim))))))
 
-  (defun kam-detect-org-table ()
-    "Return true if point in Org table."
-    (and (derived-mode-p 'org-mode) (org-at-table-p)))
   (add-hook 'completion-preview-inhibit-functions
-            #'kam-detect-org-table))
+            #'kam-org-at-table-p))
 
 (use-package ibuffer
   :ensure nil
@@ -477,6 +485,9 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (:repeat-map kam-repeat-map
                ("<left>" . kam-prev-buffer)
                ("<right>" . kam-next-buffer))
+  :bind
+  (:map window-prefix-map
+        ("u" . winner-undo))
   :custom
   ;; (window-sides-slots '(0 0 1 1))
   (split-window-preferred-direction 'horizontal)
@@ -526,6 +537,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (window-height . 0.45)
       (window-parameters . ((mode-line-format . none))))))
   :config
+  (require 'kam-window)
   (winner-mode 1)
   
   (defun kam-split-window-conservatively (&optional window)
@@ -638,6 +650,7 @@ Only split if there is no split, and only split into left and right windows."
      ("\\.\\(png\\|jpe?g\\|tiff\\)" "xdg-open")
      (".*" "xdg-open")))
   :config
+  (require 'kam-dired)
   (put 'dired-find-alternate-file 'disabled nil))
 
 (use-package dired-x
@@ -864,7 +877,7 @@ Only split if there is no split, and only split into left and right windows."
                '((major-mode . help-mode)
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
-                  display-buffer-same-window)
+                  display-buffer-use-least-recent-window)
                  (mode help-mode)))
 
   ;; (add-to-list 'display-buffer-alist
@@ -905,16 +918,16 @@ Only split if there is no split, and only split into left and right windows."
   (apropos-compact-layout nil)
   (apropos-do-all nil)
   :config
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*Apropos\\*"
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . right)
-  ;;                (window-width . 0.5)
-  ;;                (mode apropos-mode)
-  ;;                (window-parameters . ((mode-line-format . none)
-  ;;                                      (no-delete-other-windows . t)))))
-  (add-to-list 'consult-buffer-filter
-               "\\*Apropos\\*"))
+  
+  (add-to-list 'display-buffer-alist
+               '("\\*Apropos\\*"
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-use-least-recent-window)
+                 (mode apropos-mode)))
+  ;; (add-to-list 'consult-buffer-filter
+  ;;              "\\*Apropos\\*")
+  )
 
 (use-package info
   :ensure nil
@@ -938,7 +951,7 @@ Only split if there is no split, and only split into left and right windows."
                '("\\*Info\\*"
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
-                  display-buffer-same-window)
+                  display-buffer-use-least-recent-window)
                  (mode Info-mode)))
 
   ;; (add-to-list 'switch-to-prev-buffer-skip-regexp
@@ -963,7 +976,7 @@ Only split if there is no split, and only split into left and right windows."
                '("\\*Man "
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
-                  display-buffer-same-window)
+                  display-buffer-use-least-recent-window)
                  (mode . Man-mode)))
 
   (add-to-list 'switch-to-prev-buffer-skip-regexp
@@ -1063,13 +1076,6 @@ surrounded by actual boundaries."
    '(:application tramp :protocol "scp")
    'remote-direct-async-process))
 
-(defun kam-find-file-auto-create-missing-dirs ()
-  (let ((target-dir (file-name-directory buffer-file-name)))
-    (unless (file-exists-p target-dir)
-      (make-directory target-dir t))))
-
-(add-to-list 'find-file-not-found-functions #'kam-find-file-auto-create-missing-dirs)
-
 (use-package recentf
   :ensure nil
   :hook (after-init . recentf-mode)
@@ -1133,7 +1139,7 @@ surrounded by actual boundaries."
 (use-package proced
   :ensure nil
   ;;   :commands (proced)
-  :hook (proced-mode . kam-proced-settings)
+  :hook (proced-mode . kam-proced-mode-setup)
   :bind
   ("C-c p" . proced)
   :custom
@@ -1143,7 +1149,8 @@ surrounded by actual boundaries."
   (proced-descend t)
   (proced-filter 'user)
   :config
-  (defun kam-proced-settings ()
+  (defun kam-proced-mode-setup ()
+    "Setup function for `proced-mode'."
     (proced-toggle-auto-update 1)))
 
 (use-package rectangular-region-mode
@@ -1339,11 +1346,9 @@ surrounded by actual boundaries."
    "rg --null --follow --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip --hidden --glob=!.git ")
   (consult-fd-args "fd --follow --hidden --full-path --color=never ")
   :config
+  (require 'kam-consult)
   (advice-add #'register-preview :override #'consult-register-window)
   (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
-  (add-to-list 'consult-preview-allowed-hooks 'olivetti-mode)
-  (add-to-list 'consult-preview-allowed-hooks 'variable-pitch-mode)
-  (add-to-list 'consult-preview-allowed-hooks 'buffer-face-mode)
   
   (advice-add 'consult--jump :around 'kam-centered-cursor-mode-advice)
   (advice-add 'consult-buffer :after (lambda (&rest _) (recenter)))
@@ -1358,8 +1363,6 @@ surrounded by actual boundaries."
   (add-to-list 'consult-buffer-filter
                "-eshell\\*$")
   
-  ;; (advice-add 'consult-yank-pop :after 'kam-indent-region-advice)
-
   (setopt consult-buffer-sources
           '(
             ;; kam-consult-source-tab
@@ -1372,13 +1375,7 @@ surrounded by actual boundaries."
             kam-consult-source-recent-file
             ;; kam-consult-source-dired-history
             consult-source-hidden-buffer
-            ))
-
-  (defun kam-consult-project-imenu ()
-    (interactive)
-    (if (kam-buffer-has-project-p (current-buffer))
-        (consult-imenu-multi)
-      (consult-imenu))))
+            )))
 
 (use-package consult-dir
   :bind
@@ -1744,7 +1741,7 @@ surrounded by actual boundaries."
     (propertize
      (concat (funcall tab-bar-tab-group-function tab))
      'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
-
+  
   ;; (tab-bar-mode 1)
   :custom
   (tab-bar-show nil)
@@ -1757,7 +1754,6 @@ surrounded by actual boundaries."
   ;; tab-bar-format-tabs
   ;; tab-bar-separator)
   (tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
-
   :config
   (keymap-set ctl-x-map "t" nil)
   (defun kam-tab-bar-group-from-project ()
@@ -1793,38 +1789,7 @@ surrounded by actual boundaries."
   (isearch-regexp-lax-whitespace t)
   (isearch-allow-scroll 'unlimited)
   (search-ring-max 1000)
-  (regexp-search-ring-max 1000)
-  :config
-  (defun kam-isearch-removed-failed-or-last-char ()
-    "Remove failed part of search string, or last char if successful.
-Do nothing if search string is empty to start with."
-    (interactive)
-    (if (string-equal isearch-string "")
-        (isearch-update)
-      (if isearch-success
-          (isearch-delete-char)
-        (while (isearch-fail-pos) (isearch-pop-state)))
-      (isearch-update)))
-
-  (defun kam-isearch-quit ()
-    "Cancel the current Isearch."
-    (interactive)
-    (setq isearch-success nil)
-    (isearch-cancel))
-
-  (defun kam-isearch-goto-match-beginning ()
-    "Go to the start of current Isearch match.
-Used in `isearch-mode-end-hook'."
-    (when (and (not (eq this-command 'isearch-exit))
-               isearch-forward
-               (number-or-marker-p isearch-other-end)
-               (not mark-active)
-               (not isearch-mode-end-hook-quit))
-      (goto-char isearch-other-end)))
-
-  (defun kam-isearch-yank-symbol ()
-    (interactive)
-    (isearch-yank-string (thing-at-point 'symbol t))))
+  (regexp-search-ring-max 1000))
 
 (use-package drag-stuff
   :bind
@@ -1891,13 +1856,16 @@ Used in `isearch-mode-end-hook'."
 
 (use-package smartparens
   :bind
-  ("C-M-o" . sp-up-sexp)
-  ("C-M-DEL" . sp-backward-kill-sexp))
+  (:map smartparens-mode-map
+        ("C-M-o" . sp-up-sexp)
+        ("C-M-DEL" . sp-backward-kill-sexp)))
+
+(use-package paredit)
 
 (use-package paren
   :ensure nil
   :custom
-  (show-paren-context-when-offscreen 'child-frame)
+  (show-paren-context-when-offscreen t)
   (show-paren-delay 0)
   (show-paren-style 'parenthesis))
 
@@ -1941,9 +1909,7 @@ Used in `isearch-mode-end-hook'."
 (use-package electric
   :ensure nil
   :hook ((org-mode . electric-indent-local-mode)
-         (prog-mode . electric-indent-local-mode)
-         ;; (text-mode . electric-quote-mode)
-         )
+         (prog-mode . electric-indent-local-mode))
   :custom
   (electric-indent-actions '(yank))
   :config
@@ -2000,6 +1966,8 @@ Used in `isearch-mode-end-hook'."
   (:repeat-map expreg-repeat-map
                ("&" . expreg-expand))
   :config
+  (require 'kam-expreg)
+  
   (defun kam-expreg-text-mode-setup ()
     "Setup `text-mode' for `expreg'."
     (add-to-list 'expreg-functions #'expreg--sentence)
@@ -2034,7 +2002,7 @@ Used in `isearch-mode-end-hook'."
    ("C-j" . kam-join-line-dwim)
    ("C-'" . org-edit-src-code)
    ("M-m" . kam-mark-line)
-   ("M-i" . kam-org-insert-new-line-below)
+   ("M-i" . kam-indent-dwim)
    ("M-h" . mark-paragraph)
    ("C-M-<up>" . kam-org-control-metaup)
    ("C-M-<down>" . kam-org-control-metadown)
@@ -2060,8 +2028,7 @@ Used in `isearch-mode-end-hook'."
    ("n" . kam-org-insert-notes-drawer)
    :repeat-map kam-org-repeat-map
    ("C-p" . org-previous-visible-heading)
-   ("C-n" . org-next-visible-heading))
-  
+   ("C-n" . org-next-visible-heading))  
   :custom
   (org-auto-align-tags nil)
   (org-M-RET-may-split-line nil)
@@ -2089,6 +2056,8 @@ Used in `isearch-mode-end-hook'."
   (org-log-done 'time)
   (org-log-into-drawer t)
   :config
+  (require 'kam-org)
+  
   (defun kam-org-mode-setup ()
     "Setup function for `org-mode'."
     (visual-line-mode 1)
@@ -2164,11 +2133,10 @@ Used in `isearch-mode-end-hook'."
   :config
   (add-to-list 'display-buffer-alist
                '("\\*Org Agenda\\*"
-                 (display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.5)
-                 (mode . Org-agenda-mode)
-                 (window-parameters . ((mode-line-format . none)))))
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-use-least-recent-window)
+                 (mode . Org-agenda-mode)))
 
   (add-to-list 'display-buffer-alist
                '("\\*Agenda Commands\\*"
@@ -2255,45 +2223,10 @@ Used in `isearch-mode-end-hook'."
                                 (not "NOTES"))))
 
 (use-package org-id
-  :ensure nil
-  :config
-  (defun kam-org--id-get ()
-    "Get the CUSTOM_ID of the current entry.
-If the entry has a CUSTOM_ID, return it as is, else create a new one."
-    (let* ((pos (point))
-           (id (org-entry-get pos "CUSTOM_ID")))
-      (if (and id (stringp id) (string-match-p "\\S-" id))
-          id
-        (setq id (org-id-new "h"))
-        (org-entry-put pos "CUSTOM_ID" id)
-        id)))
-
-  (defun kam-org-id-headlines ()
-    "Add missing CUSTOM_ID to all headlines in the current file."
-    (interactive)
-    (org-map-entries
-     (lambda () (kam-org--id-get))))
-
-  (defun kam-org-id-headline ()
-    "Add missing CUSTOM_ID to headline at point."
-    (interactive)
-    (kam-org--id-get)))
+  :ensure nil)
 
 (use-package org-cycle
-  :ensure nil
-  :config
-  (defun kam-org-cycle-subheadings ()
-    "Folds all of the Org subheadings from the current heading."
-    (org-map-entries
-     (org-fold-heading)
-     nil
-     'tree))
-
-  (defun kam-org-up-and-cycle-heading (&optional arg)
-    "Cycles the nearest heading at point."
-    (interactive "p")
-    (kam-org-metaup)
-    (org-cycle)))
+  :ensure nil)
 
 (use-package ox-latex
   :ensure nil)
@@ -2354,6 +2287,8 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
 
   ;; (project-prompter 'kam-project--read-project-by-name)
   :config
+  (require 'kam-project)
+  
   (defvar kam-project-switch-commands-to-remove
     '((project-find-dir "Dired" "d")
       (project-find-dir "Find directory")
@@ -2371,106 +2306,9 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (add-to-list 'project-switch-commands '(project-dired "Dired" "d"))
   (add-to-list 'project-switch-commands '(project-dired "Grep" "g"))
   (add-to-list 'project-switch-commands '(kam-keyboard-escape-quit-dwim "Quit" "C-g") t)
+  (add-to-list 'project-switch-commands '(magit-project-status "Git" "v"))
 
-  (defun kam-project-switch-project (dir)
-    "\"Switch\" to another project by running an Emacs command.
-The available commands are presented as a dispatch menu
-made from `project-switch-commands'.
-
-When called in a program, it will use the project corresponding
-to directory DIR."
-    (interactive (list (funcall project-prompter)))
-    (let ((command (if (symbolp project-switch-commands)
-                       project-switch-commands
-                     (project--switch-project-command dir)))
-          (buffer (current-buffer)))
-      (unwind-protect
-          (progn
-            (setq-local project-current-directory-override dir)
-            (call-interactively command))
-        (with-current-buffer buffer
-          (kill-local-variable 'project-current-directory-override)))))
-
-  (add-to-list 'project-switch-commands '(project-find-dir "Dired" "d"))
-
-  (defvar kam-project-name-history nil)
-
-  (defun kam-project-new ()
-    "Create a project in the `kam-projects-directory'."
-    (interactive)
-    (let* ((default-directory kam-projects-directory)
-           (project-name (read-directory-name "Project to create: "))
-           (response (y-or-n-p "Do you want to initialize the project with a Git repository?")))
-      (make-directory project-name)
-      (if response
-          (progn
-            (async-shell-command (concat "git init " project-name))
-            (make-empty-file (concat project-name "/project.txt")))
-        (make-empty-file (concat project-name "/.project")))))
-
-  (advice-add 'kam-project-new :after #'kam-project-remember-advice)
-
-  (defun kam-project-delete (proj)
-    "Delete a project."
-    (interactive (list (project-prompt-project-name)))
-    (let* ((default-directory kam-projects-directory))
-      (project-forget-project proj)
-      (delete-directory proj t t)))
-
-  (defun kam-project-root-command (command)
-    "Run COMMAND in the project's root directory."
-    (when (kam-buffer-has-project-p (current-buffer))
-      (let* ((default-directory (or (project-root (project-current))
-                                    default-directory)))
-        (call-interactively command))))
-
-  (defun kam-project-compile-maybe ()
-    "Run `compile' in the project root directory if the buffer belongs to a project."
-    (interactive)
-    (if (kam-buffer-has-project-p (current-buffer))
-        (kam-project-root-command 'compile)
-      (call-interactively 'compile)))
-
-  (defun kam-project-grep ()
-    "Run `grep' in the project's root directory."
-    (interactive)
-    (kam-project-root-command 'grep))
-
-  (defun kam-buffer-has-project-p (buf)
-    "Return t if BUF belongs to a project, nil otherwise."
-    (not (null (project-current nil (buffer-local-value 'default-directory buf)))))
-
-  (defun kam-project-dired ()
-    "Dired in the project root directory."
-    (interactive)
-    (dired (project-root (project-current))))
-
-  (defun kam-project-remember-advice ()
-    "Remember projects after creation."
-    (project-remember-projects-under kam-projects-directory t)
-    (kam-clear-echo-area))
-
-  (defun kam-project-update-list ()
-    "Update the project list when deleting/adding projects."
-    (interactive)
-    (project-forget-zombie-projects)
-    (project-remember-projects-under kam-projects-directory)
-    (project-remember-projects-under kam-software-directory))
-
-  (defun kam-project-files ()
-    "Return a list of all the project files in the current project."
-    (when-let* ((project (project-current nil))
-                (find-program "fd --follow --hidden --color=never --type file")
-                (project-files-relative-names t))
-      (project-files project)))
-
-  (defun kam-project-prefixed-buffer-name-override (mode)
-    (concat ": "
-            (if-let* ((proj (project-current nil)))
-                (project-name proj)
-              (file-name-nondirectory
-               (directory-file-name default-directory)))
-            "*")))
+  (advice-add 'kam-project-new :after #'kam-project-remember-advice))
 
 
 (use-package comint
@@ -2483,104 +2321,7 @@ to directory DIR."
   (comint-input-ignoredups t)
   (ansi-color-for-comint-mode t)
   :config
-  (defun kam-comint--beginning-of-prompt-p ()
-    "Return non-nil if the point is at the beginning of a Comint prompt."
-    (if comint-use-prompt-regexp
-        (looking-back comint-prompt-regexp
-                      (line-beginning-position))
-      (eq (point) (comint-line-beginning-position))))
-
-  (defun kam-comint--insert-and-send (&rest args)
-    "Insert and execute ARGs in the last Comint prompt.
-ARGS is a list of strings."
-    (if (kam-comint--beginning-of-prompt-p)
-        (progn
-          (insert (mapconcat #'identity args " "))
-          (comint-send-input))
-      (user-error "Not at the beginning of prompt; won't insert: %s" args)))
-
-  (defun kam-comint--insert (&rest args)
-    "Insert ARGS in the last Comint prompt.
-ARGS is a list of strings."
-    (if (kam-comint--beginning-of-prompt-p)
-        (insert (mapconcat #'identity args " "))
-      (user-error "Not at the beginning of prompt; won't insert: %s" args)))
-
-  (defun kam-comint--last-input ()
-    "Return the last input as a string."
-    (buffer-substring-no-properties
-     comint-last-input-start
-     comint-last-input-end))
-
-  (defun kam-comint--history-to-list ()
-    "Returns the current Comint buffer's history as a list."
-    (when (and (ring-p comint-input-ring)
-               (not (ring-empty-p comint-input-ring)))
-      (let (history)
-        (dotimes (index (ring-length comint-input-ring))
-          (push (ring-ref comint-input-ring index) history))
-        (delete-dups history)
-        (setq history (nreverse history))
-        history)))
-
-  (defvar kam-comint--input-history-prompt nil
-    "Minibuffer history of `kam-comint--input-history-prompt'.
-Not to be confused with the shell input history, which is stored in the
-`comint-input-ring' (see `kam-comint--history-to-list').")
-
-  (defun kam-comint--presorted-completion-table (completions)
-    "Completion table for `kam-comint--input-history-prompt' with no sorting."
-    (lambda (string pred action)
-      (if (eq action 'metadata)
-          `(metadata (display-sort-function . ,#'identity))
-        (complete-with-action action completions string pred))))
-
-  (defun kam-comint--input-history-prompt ()
-    "Prompt for completion against `kam-comint--history-to-list'."
-    (let* ((history (kam-comint--history-to-list))
-           (default (car history)))
-      (completing-read
-       (format-prompt "Insert command from history: " default)
-       (kam-comint--presorted-completion-table history))))
-
-  (defun kam-comint-input-from-history ()
-    "Insert command from the Comint input history."
-    (declare (interactive-only t))
-    (interactive)
-    (kam-comint--insert-and-send
-     (kam-comint--input-history-prompt)))
-
-  (defun kam-comint--get-args (command)
-    "Gets the arguments from a given COMMAND, where COMMAND is a string."
-    (let ((args (comint-arguments command 1 nil)))
-      (split-string args)))
-
-  (defun kam-comint-insert-arguments-from-command (&optional arg)
-    "Insert any number of arguments from a previously run command.
-If there is a numerical argument, the arguments are selected from the
-ARGth run command."
-    (interactive "p")
-    (kam-comint--insert
-     (kam-comint--get-args-prompt arg)))
-
-  (defun kam-comint--get-args-prompt (&optional arg)
-    "Select an argument from a previously run command.
-Numerical argument ARG determines the command being selected from to
-choose arguments."
-    (interactive "p")
-    (let* ((command-index (or (- 1 arg) 1))
-           (command (nth command-index (kam-comint--history-to-list)))
-           (args (kam-comint--get-args command))
-           (default (car args)))
-      (completing-read
-       (format-prompt "Select Arg: " default)
-       args
-       nil
-       t
-       nil
-       nil
-       default
-       nil))))
+  (require 'kam-comint))
 
 (use-package shell
   :ensure nil
@@ -2614,6 +2355,8 @@ choose arguments."
      ("^[^ \t\n]+:.*" . font-lock-string-face)
      ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
   :config
+  (require 'kam-shell)
+  
   (defvar kam-shell-history-file "~/.config/zsh/zhistory"
     "Where the history file for Z-shell is stored.")
 
@@ -2631,101 +2374,6 @@ choose arguments."
     (hl-line-mode -1)
     (comint-read-input-ring t)
     (shell-dirtrack-mode 1))
-
-  (defun kam-shell-command--prompt ()
-    (read-shell-command
-     (format-prompt "Shell command in '%s'" nil (abbreviate-file-name default-directory))
-     nil
-     nil
-     (let ((filename
-            (cond
-             (buffer-file-name)
-             ((eq major-mode 'dired-mode)
-              (dired-get-filename nil t)))))
-       (and filename (file-relative-name filename)))))
-
-  (defun kam-shell-command (cmd)
-    (interactive (list (kam-shell-command--prompt)))
-    (let* ((buf (get-buffer-create shell-command-buffer-name)))
-      (shell-command cmd buf buf)
-      (with-current-buffer buf
-        (view-mode)
-        (display-buffer buf))))
-
-  (defvar kam-shell-cd--directories nil
-    "List of accumulated `shell-last-dir'.")
-
-  (with-eval-after-load 'savehist
-    (add-to-list 'savehist-additional-variables 'kam-shell-cd--directories))
-
-  (defun kam-shell--track-cd (&rest _)
-    "Track shell input of cd commands.
-Push `shell-last-dir' to `kam-shell-cd--directories'."
-    (when-let* ((input (kam-comint--last-input))
-                ((string-match-p "cd " input)))
-      (push shell-last-dir kam-shell-cd--directories)))
-
-  (defvar kam-shell-cd--history nil
-    "Minibuffer history for `kam-shell-cd'.")
-
-  (defun kam-shell-cd--prompt ()
-    "Prompt for a directory among `kam-shell-cd--directories'."
-    (if-let* ((history kam-shell-cd--directories)
-              (dirs (cons default-directory history))
-              (def (if (listp dirs) (car dirs) shell-last-dir)))
-        (completing-read
-         (format-prompt "Select directory: " def)
-         dirs
-         nil
-         nil
-         nil
-         'kam-shell--cd-history)
-      (user-error "No directories have been tracked")))
-
-  (defun kam-shell-cd ()
-    "Navigate to directory in `shell-mode', with `consult-dir'."
-    (declare (interactive-only t))
-    (interactive)
-    (let ((shell-dirs (delete-dups
-                       (mapcar 'abbreviate-file-name
-                               (remove nil
-                                       kam-shell-cd--directories)))))
-      (cond
-       ((featurep 'consult-dir)
-        (let* ((consult-dir--source-shell `(:name "Shell"
-                                                  :narrow ?s
-                                                  :category file
-                                                  :face consult-file
-                                                  :items ,shell-dirs))
-               (consult-dir-sources (cons consult-dir--source-shell
-                                          consult-dir-sources)))
-          (kam-comint--insert-and-send "cd"
-                                       (substring-no-properties
-                                        (consult-dir--pick "Switch directory: "))))))))
-
-  (defun kam-shell-here ()
-    "Open a shell in the directory associated with the current buffer's file.
-The shell is renamed to match that directory to make multiple shell
-windows easier."
-    (interactive)
-    (let* ((parent (if (buffer-file-name)
-                       (file-name-directory (buffer-file-name))
-                     default-directory))
-           (name (car (last (split-string parent "/" t)))))
-      (shell)
-      (rename-buffer (concat "*shell: " name "*"))))
-
-  (defun kam-shell-up-directory ()
-    "Navigate a directory higher in the directory tree."
-    (interactive)
-    (kam-comint--insert-and-send "cd .."))
-
-  (defun kam-shell-home-directory ()
-    "Open a shell in the home directory.
-The shell is renamed to make opening multiple shells easier."
-    (interactive)
-    (let ((default-directory (getenv "HOME")))
-      (shell)))
 
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
@@ -2766,6 +2414,7 @@ The shell is renamed to make opening multiple shells easier."
   ;;       ("M-r" . consult-history)
   ;;       ("C-c C-l" . eshell-clear))
   :custom
+  (eshell-prompt-function kam-eshell-prompt-function)
   (eshell-history-file-name (expand-file-name "eshell/history" kam-emacs-cache-directory))
   (eshell-last-dir-ring-file-name (expand-file-name "eshell/lastdir" kam-emacs-cache-directory))
   (eshell-banner-message "")
@@ -2781,6 +2430,8 @@ The shell is renamed to make opening multiple shells easier."
   (eshell-highlight-prompt nil)
   (eshell-input-filter #'kam-eshell-input-filter)
   :config
+  (require 'kam-eshell)
+  
   (defun kam-eshell-mode-setup ()
     "Setup function for `eshell-mode'."
     (setenv "TERM" "xterm-256-color")
@@ -2837,6 +2488,8 @@ The shell is renamed to make opening multiple shells easier."
   :init
   (standard-themes-take-over-modus-themes-mode 1)
   :config
+  (require 'kam-theme)
+  
   (setopt standard-dark-palette-overrides
           '((fg-prompt cyan)
             ;; (bg-main "#181818") ;;   tsoding
@@ -2872,10 +2525,7 @@ The shell is renamed to make opening multiple shells easier."
   (olivetti-margin-width 5)
   ;; (olivetti-body-width .3)
   (olivetti-minimum-body-width 80)
-  (olivetti-recall-visual-line-mode-state t)
-  :config
-  )
-
+  (olivetti-recall-visual-line-mode-state t))
 
 (use-package spacious-padding
   :after (standard-themes)
@@ -2918,12 +2568,9 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package hl-line
   :ensure nil
-  ;; :hook (text-mode . hl-line-mode)
   :custom
   (hl-line-sticky-flag nil)
-  (global-hl-line-sticky-flag 'window)
-  :config
-  )
+  (global-hl-line-sticky-flag 'window))
 
 (use-package lin
   :custom
@@ -2933,9 +2580,8 @@ The shell is renamed to make opening multiple shells easier."
 
 (use-package pulsar
   :hook ((next-error . pulsar-pulse-line)
-         ;; (consult-after-jump . pulsar-recenter-center)
          (consult-after-jump . pulsar-reveal-entry)
-         ;; (imenu-after-jump . pulsar-recenter-center)
+         (imenu-after-jump . pulsar-recenter-center)
          (imenu-after-jump . pulsar-reveal-entry))
   :custom
   (pulsar-delay 0.05)
@@ -2946,9 +2592,6 @@ The shell is renamed to make opening multiple shells easier."
   (pulsar-pulse-on-window-change nil)
   (pulsar-pulse-region-functions '(kam-kill-line kill-ring-save))
   :config
-  ;; (add-to-list 'pulsar-pulse-functions 'recenter)
-  ;; (advice-add 'isearch-forward :after 'pulsar-recenter-center)
-  ;; (advice-add 'isearch-backward :after 'pulsar-recenter-center)
   (pulsar-global-mode))
 
 (use-package nerd-icons
@@ -3186,8 +2829,6 @@ The shell is renamed to make opening multiple shells easier."
   (add-to-list 'same-window-regexps "^magit: .*$")
   (add-to-list 'same-window-regexps "^magit-status: .*$")
 
-  (add-to-list 'project-switch-commands '(magit-project-status "Git" "v"))
-
   (defun kam-git-clone ()
     "Run git clone using `magit' in `kam-projects-directory'."
     (interactive)
@@ -3250,26 +2891,6 @@ the file is not under version control."
     (indent-tabs-mode -1)
     (visual-line-mode -1)))
 
-;; (use-package flymake
-;;   :after (consult)
-;;   :ensure nil
-;;   :hook (after-init . flymake-mode)
-;;   :bind
-;;   (:map prog-mode-map
-;;         ("M-g M-b" . flymake-goto-prev-error)
-;;         ("M-g M-f" . flymake-goto-next-error))
-;;   :custom
-;;   (flymake-inline-diagnostics nil)
-;;   (flymake-margin-indicators-string
-;;    '((error "!»" compilation-error)
-;;      (warning "»" compilation-warning)
-;;      (note "»" compilation-info)))
-;;   :config
-;;   (add-to-list 'consult-buffer-filter
-;;                "\\*Flymake diagnostics for ")
-;;   (add-to-list 'switch-to-prev-buffer-skip-regexp
-;;                "\\*Flymake diagnostics for "))
-
 (use-package flycheck
   :ensure t
   :hook ((after-init . global-flycheck-mode)
@@ -3305,7 +2926,8 @@ the file is not under version control."
     (add-to-list 'eglot-ignored-server-capabilities :semanticTokensProvider)
     (eglot-semantic-tokens-mode -1)
     (eglot-inlay-hints-mode -1)
-    (remove-hook 'eldoc-documentation-functions #'flymake-eldoc-function t))
+    ;; (remove-hook 'eldoc-documentation-functions #'flymake-eldoc-function t)
+    )
 
   (advice-add 'eglot-completion-at-point :around #'cape-wrap-buster)
 
@@ -3436,16 +3058,6 @@ the file is not under version control."
                  (window-height . 4)
                  (window-parameters . ((mode-line-format . none)))))
 
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*eldoc\\*"
-  ;;                (display-buffer-no-window)
-  ;;                (allow-no-window . t)))
-
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*eldoc for "
-  ;;                (display-buffer-no-window)
-  ;;                (allow-no-window . t)))
-
   (add-to-list 'switch-to-prev-buffer-skip-regexp
                "\\*eldoc\\*" t)
   (add-to-list 'switch-to-prev-buffer-skip-regexp
@@ -3522,13 +3134,7 @@ the file is not under version control."
 
   (add-to-list
    'switch-to-prev-buffer-skip-regexp
-   "\\*compilation\\*")
-
-  ;; (with-eval-after-load 'consult
-  ;;   (add-to-list 'consult-buffer-filter
-  ;;                "\\*compilation\\*" t))
-  )
-;; (advice-add #'compile :before (ad-set-argument 1 t))
+   "\\*compilation\\*"))
 
 (use-package whitespace
   :ensure nil
@@ -3544,14 +3150,14 @@ the file is not under version control."
     ;; (add-to-list 'write-file-functions 'delete-trailing-whitespace)
     (kill-ring-deindent-mode)))
 
-;; (use-package x
-;;   :ensure nil
-;;   :custom
-;;   (x-gtk-use-system-tooltips nil)
-;;   (x-select-enable-clipboard t)
-;;   (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-;;   (x-underline-at-descent-line nil)
-;;   (x-stretch-cursor nil))
+(use-package x
+  :ensure nil
+  :custom
+  (x-gtk-use-system-tooltips nil)
+  (x-select-enable-clipboard t)
+  (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+  (x-underline-at-descent-line t)
+  (x-stretch-cursor nil))
 
 (use-package epa
   :ensure nil
@@ -3760,18 +3366,7 @@ the file is not under version control."
   (defun kam-ghostel--project-buffer-name (root)
     ""
     (let ((name (kam-project-prefixed-buffer-name-override
-                 (string-trim ghostel-buffer-name "*" "*"))))))
-
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("-Ghostel\\*$"         ; Matches `ghostel-project' buffer regex
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . bottom)
-  ;;                (window . root)
-  ;;                ;; (inhibit-same-window . t)
-  ;;                (window-height . 0.35)
-  ;;                (mode ghostel-mode)
-  ;;                (window-parameters . ((mode-line-format . none)))))
-  )
+                 (string-trim ghostel-buffer-name "*" "*")))))))
 
 (use-package ghostel-compile
   :ensure nil
@@ -3909,6 +3504,7 @@ the file is not under version control."
   (elfeed-show-unique-buffers nil)
   (elfeed-use-libxml t)
   :config
+  (require 'kam-elfeed)
   (setq elfeed-feeds
         '(("https://www.artofmanliness.com/feed/" :title "The Art Of Manliness" culture manhood)
           ("https://xkcd.com/rss.xml" science comics)
@@ -3944,15 +3540,7 @@ the file is not under version control."
 
   (defun kam-elfeed-show-mode-setup ()
     "Setup function for `elfeed-show-mode'."
-    (setopt-local browse-url-browser-function browse-url-eww))
-
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("\\*elfeed-search\\*"
-  ;;                (display-buffer-in-tab)
-  ;;                (dedicated . t)
-  ;;                (tab-name . " elfeed")
-  ;;                (window-parameters . ((no-delete-other-windows . t)))))
-  )
+    (setopt-local browse-url-browser-function browse-url-eww)))
 
 (use-package elfeed-tube
   :after (elfeed)
@@ -4063,6 +3651,7 @@ With optional ARG, open browser in EWW."
   :config
   (require 'emms-setup)
   (require 'emms-mpris)
+  (require 'kam-emms)
   (emms-all)
   (emms-mpris-enable)
 
@@ -4133,6 +3722,7 @@ With optional ARG, go to the previous song that many times."
 ;;; LLM Client
 (use-package gptel
   :config
+  (require 'kam-gptel)
   (setq gptel-default-mode 'org-mode)
   (setq gptel-model (gptel-make-anthropic "Claude"
                       :stream t
@@ -4167,6 +3757,7 @@ With optional ARG, go to the previous song that many times."
   (denote-rename-confirmations nil)
   (denote-date-prompt-use-org-read-date t)
   :config
+  (require 'kam-notes)
   (setopt denote-known-keywords (kam-denote-keywords))
   
   (add-to-list 'savehist-additional-variables 'denote-known-keywords))
@@ -4192,18 +3783,18 @@ With optional ARG, go to the previous song that many times."
 
 (use-package sly
   :commands (sly)
-  :bind
-  (:map sly-mrepl-mode-map
-        ("RET" . newline)
-        ("C-<return>" . sly-mrepl-return))
+  ;; :bind
+  ;; (:map sly-mrepl-mode-map
+  ;;       ("RET" . newline)
+  ;;       ("C-<return>" . sly-mrepl-return))
   :custom
   (inferior-lisp-program (executable-find "sbcl")))
 
-;; (use-package super-save
-;;   :hook (after-init . super-save-mode)
-;;   :custom
-;;   (super-save-silent t)
-;;   (auto-save-default nil))
+(use-package super-save
+  :hook (after-init . super-save-mode)
+  :custom
+  (super-save-silent t)
+  (auto-save-default nil))
 
 (defvar kam-custom-lisp-files
   `(,(concat (getenv "HOME") "/.dotfiles/.config/emacs/lisp/yt-dlp.el")
@@ -4218,24 +3809,12 @@ Each string should be a full path to a Lisp file.")
 
 ;; (add-to-list 'load-path (locate-user-emacs-file "lisp/"))
 
-(require 'kam-common)
 (require 'kam-os)
 (require 'kam-mode-line)
 (require 'kam-dotfiles)
-(require 'kam-notes)
-(require 'kam-theme)
 (require 'kam-search)
 (require 'kam-comment)
-(require 'kam-window)
-(require 'kam-dired)
-(require 'kam-consult)
-(require 'kam-org)
 (require 'kam-writing)
 (require 'kam-tasks)
-(require 'kam-eshell)
-(require 'kam-expreg)
 (require 'kam-link-menu)
-(require 'kam-elfeed)
-(require 'kam-emms)
-(require 'kam-gptel)
 ;;; init.el ends here

@@ -12,6 +12,18 @@
   "A group of functions intended to be used throughout the configuration."
   :group 'editing)
 
+;;;###autoload
+(defun kam-find-init-file ()
+  "Open `user-init-file'."
+  (interactive)
+  (find-file user-init-file))
+
+(defun kam-find-file-auto-create-missing-dirs ()
+  "Auto-create missing directories in `find-file' if not found."
+  (let ((target-dir (file-name-directory buffer-file-name)))
+    (unless (file-exists-p target-dir)
+      (make-directory target-dir t))))
+
 (defvar kam--line-regexp-alist
   '((empty . "[\s\t]*$")
     (indent . "^[[:blank:]]+")
@@ -260,7 +272,7 @@ If ARG is negative, the mark is put at the beginning of previous lines."
 When called interactively without a numeric prefix argument, ARG is 1."
   (interactive "p")
   (save-excursion
-    (kam-mark-line n)
+    (kam-mark-line arg)
     (kill-ring-save nil nil t)))
 
 ;;;###autoload
@@ -295,7 +307,7 @@ argument, ARG is 1."
          (kill-ring-save nil nil t)
          (setq this-command 'kill-ring-save))
         (t
-         (kam-copy-line-as-kill n)
+         (kam-copy-line-as-kill arg)
          (setq this-command 'kill-ring-save))))
 
 ;;;###autoload
@@ -318,7 +330,7 @@ instead."
          (yank))
         (t (yank))))
 
-(defun kam-duplicate-dwim (&optional arg)  
+(defun kam-duplicate-dwim (&optional arg)
   "Duplicate line or region.
 With optional numeric prefix ARG, duplicate ARGth line from point. When
 optional prefix argument (\\[universal-prefix-argument]) ARG

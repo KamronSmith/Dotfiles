@@ -154,6 +154,7 @@ When called interactively without a prefix argument, N is 1."
 
 ;;;###autoload
 (defun kam-org-insert-date-range ()
+  "Insert a range of dates using `org-mode' syntax."
   (interactive)
   (org-time-stamp nil)
   (insert "--")
@@ -261,6 +262,52 @@ With prefix arg C-u, copy region instead of killing it."
         (user-error "No links to insert")
       (setq l (pop links))
       (org-insert-link nil (car l) (read-from-minibuffer "Link Text: ")))))
+
+(defun kam-org-at-table-p ()
+  "Return t if point is in an `org-mode' table.
+Also checks if the current `major-mode' is `org-mode', so it can be run
+outside of Org buffers."
+  (and (derived-mode-p 'org-mode) (org-at-table-p)))
+
+(defun kam-org-id--get ()
+  "Get the CUSTOM_ID of the current entry.
+If the entry has a CUSTOM_ID, return it as is, else create a new one."
+  (let* ((pos (point))
+         (id (org-entry-get pos "CUSTOM_ID")))
+    (if (and id (stringp id) (string-match-p "\\S-" id))
+        id
+      (setq id (org-id-new "h"))
+      (org-entry-put pos "CUSTOM_ID" id)
+      id)))
+
+;;;###autoload
+(defun kam-org-id-headlines ()
+  "Add missing CUSTOM_ID to all headlines in the current file."
+  (interactive)
+  (org-map-entries
+   (lambda () (kam-org-id--get))))
+
+;;;###autoload
+(defun kam-org-id-headline ()
+  "Add missing CUSTOM_ID to headline at point."
+  (interactive)
+  (kam-org-id--get))
+
+;;;###autoload
+(defun kam-org-cycle-subheadings ()
+  "Cycle all of the Org subheadings from the current heading."
+  (interactive)
+  (org-map-entries
+   (org-fold-heading)
+   nil
+   'tree))
+
+;;;###autoload
+(defun kam-org-up-and-cycle-heading ()
+  "Cycle the nearest heading at point."
+  (interactive)
+  (kam-org-metaup)
+  (org-cycle))
 
 (provide 'kam-org)
 ;;; kam-org.el ends here
