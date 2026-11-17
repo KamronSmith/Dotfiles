@@ -7,6 +7,21 @@
 (require 'eshell)
 (require 'em-hist)
 (require 'consult)
+(require 'standard-themes)
+
+(defun kam-eshell-prompt-function ()
+  "Function for `eshell-prompt-function'."
+  (standard-themes-with-colors
+    (concat
+     (propertize "[" 'face `(:foreground ,fg-main :background ,bg-main))
+     (propertize (user-login-name) 'face `(:foreground ,fg-main :background ,bg-main))
+     (propertize "@" 'face `(:foreground ,fg-main :background ,bg-main))
+     (propertize (system-name) 'face `(:foreground ,pink :background ,bg-main))
+     (propertize "]" 'face `(:foreground ,fg-main :background ,bg-main))
+     (propertize " — " 'face `(:foreground ,fg-main :background ,bg-main))
+     (propertize (car (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
+     ;; (propertize (cadr (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
+     (propertize " $ " 'face `(:weight bold :background ,bg-main main)))))
 
 (defvar kam-eshell-prompt-regexp "\\[[[:punct:][:alnum:]]+ — [[:punct:][:alnum:]]+ \\$ "
   "Regular expression that matches `eshell-prompt-function' used in Eshell buffers.")

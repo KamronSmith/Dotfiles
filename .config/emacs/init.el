@@ -2452,19 +2452,6 @@ surrounded by actual boundaries."
                 eshell-prompt-regexp kam-eshell-prompt-regexp)
     (eshell-prompt-mode))
 
-  (setq eshell-prompt-function
-        (lambda ()
-          (standard-themes-with-colors
-            (concat
-             (propertize "[" 'face `(:foreground ,fg-main :background ,bg-main))
-             (propertize (user-login-name) 'face `(:foreground ,fg-main :background ,bg-main))
-             (propertize "@" 'face `(:foreground ,fg-main :background ,bg-main))
-             (propertize (system-name) 'face `(:foreground ,pink :background ,bg-main))
-             (propertize "]" 'face `(:foreground ,fg-main :background ,bg-main))
-             (propertize " — " 'face `(:foreground ,fg-main :background ,bg-main))
-             (propertize (car (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
-             ;; (propertize (cadr (kam-eshell--directory-prompt)) 'face `(:foreground ,pink :weight bold))
-             (propertize " $ " 'face `(:weight bold :background ,bg-main main))))))
 
   (add-to-list 'display-buffer-alist
                '("\\*eshell[\\*\\:]" ; matches title for reg eshell and `kam-eshell-here'
