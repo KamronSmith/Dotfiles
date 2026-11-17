@@ -1979,10 +1979,7 @@ surrounded by actual boundaries."
 
 (use-package org
   :ensure nil
-  :init
-  (defvar-keymap kam-org-map
-    :doc "Keymap for Org-related commands."
-    :prefix t)
+  :mode "\\.org\\'"
   :hook (org-mode . kam-org-mode-setup)
   :bind
   (("C-c o" . kam-org-map)
@@ -2060,6 +2057,10 @@ surrounded by actual boundaries."
   :config
   (require 'kam-org)
   
+  (defvar-keymap kam-org-map
+    :doc "Keymap for Org-related commands."
+    :prefix t)
+  
   (defun kam-org-mode-setup ()
     "Setup function for `org-mode'."
     (visual-line-mode 1)
@@ -2075,6 +2076,7 @@ surrounded by actual boundaries."
   (declare-function org-map-entries "org"))
 
 (use-package org-capture
+  :after (org)
   :ensure nil
   :bind
   ("C-c c" . org-capture)
@@ -2104,6 +2106,7 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-agenda
+  :after (org)
   :ensure nil
   :hook ((org-agenda . lin-mode)
          (org-agenda-after-show . visual-line-mode))
@@ -2148,6 +2151,7 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-refile
+  :after (org)
   :ensure nil
   :bind
   ("C-c o o" . kam-org-refile-region)
@@ -2158,6 +2162,7 @@ surrounded by actual boundaries."
   (org-refile-targets '((org-agenda-files :maxlevel . 9))))
 
 (use-package ol   ;; org-links
+  :after (org)
   :ensure nil
   :bind
   ("C-c l" . org-store-link)
@@ -2178,6 +2183,7 @@ surrounded by actual boundaries."
   )
 
 (use-package ob ;; org babel
+  :after (org)
   :ensure nil
   :custom
   (org-confirm-babel-evaluate nil)
@@ -2191,13 +2197,11 @@ surrounded by actual boundaries."
   (org-babel-do-load-languages
    'org-babel-load-languages
    '((C . t)
-     (emacs-lisp . t)))
-
-  )
+     (emacs-lisp . t))))
 
 (use-package org-tempo
   :ensure nil
-  :after (org standard-themes)
+  :after (org)
   :config
   (setq org-structure-template-alist
         '(("c" . "comment")
@@ -2214,6 +2218,7 @@ surrounded by actual boundaries."
           ("q" . "quote"))))
 
 (use-package ox ;; org export
+  :after (org)
   :ensure nil
   :custom
   (org-export-with-toc nil)
@@ -2225,13 +2230,18 @@ surrounded by actual boundaries."
                                 (not "NOTES"))))
 
 (use-package org-id
+  :after (org)
   :ensure nil)
 
 (use-package org-cycle
+  :after (org)
   :ensure nil)
 
 (use-package ox-latex
-  :ensure nil)
+  :after (org)
+  :ensure nil
+  :config
+  )
 
 (use-package ox-gfm
   :after (org))
