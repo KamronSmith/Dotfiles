@@ -3122,6 +3122,7 @@ the file is not under version control."
     (kill-ring-deindent-mode)))
 
 (use-package x
+  :if (eq system-type 'gnu/linux)
   :ensure nil
   :custom
   (x-gtk-use-system-tooltips nil)
