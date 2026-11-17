@@ -158,6 +158,13 @@ With universal prefix ARG, run in the next window."
   (let* ((alt-buffer (kam-get-alternate-buffer)))
     (switch-to-buffer alt-buffer)))
 
+(defun kam-display-command-same-window (orig-fn &rest args)
+  "Call ORIG-FN with ARGS while displaying everything in the same window."
+  (let ((switch-to-buffer-obey-display-actions t)
+        (display-buffer-overriding-action '(display-buffer-reuse-window
+                                            display-buffer-same-window)))
+    (apply orig-fn args)))
+
 ;;;###autoload
 (defun kam-clone-buffer-and-narrow ()
   "Clone the current buffer and narrow it."

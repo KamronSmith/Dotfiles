@@ -561,6 +561,8 @@ Only split if there is no split, and only split into left and right windows."
         (winner-undo)
       (delete-other-windows))))
 
+  (advice-add 'switch-to-buffer :around 'kam-display-command-same-window))
+
 (use-package lin
   :custom
   (lin-face 'lin-yellow))
