@@ -279,6 +279,7 @@ When called interactively without a numeric prefix argument, ARG is 1."
   (interactive "p")
   (cond ((region-active-p)
          (kill-region nil nil t)
+         (deactivate-mark t)
          (setq this-command 'kill-region))
         (t
          (kam-kill-line n)
