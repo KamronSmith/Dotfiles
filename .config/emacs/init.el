@@ -2452,22 +2452,12 @@ surrounded by actual boundaries."
                 eshell-prompt-regexp kam-eshell-prompt-regexp)
     (eshell-prompt-mode))
 
-
   (add-to-list 'display-buffer-alist
                '("\\*eshell[\\*\\:]" ; matches title for reg eshell and `kam-eshell-here'
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (inhibit-same-window . t)
-                 (window-width . 0.5)
-                 (mode . eshell-mode)
-                 (window-parameters . ((mode-line-format . none)))))
-
-  (add-to-list 'display-buffer-alist
-               '("-eshell\\*$" ;; matches title for `project-eshell'
-                 (display-buffer-reuse-window display-buffer-in-side-window)
-                 (side . right)
-                 (window-width . 0.50)
-                 (window-parameters . ((mode-line-format . none))))))
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-use-least-recent-window)
+                 (mode . eshell-mode))))
 
 (use-package em-smart
   :ensure nil
