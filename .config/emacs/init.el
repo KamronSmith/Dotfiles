@@ -5,23 +5,6 @@
 ;;; Commentary:
 
 ;;; Code:
-(defun kam-missing-executable-p (exe)
-  "Determine if executable EXE is missing from PATH.
-EXE should be a string that corresponds to an executable."
-  (unless (executable-find exe)
-    t))
-
-(defvar kam-required-programs
-  `("rg"
-    "fd"
-    "zsh"
-    ,(when (eq system-type 'darwin) "gls")
-    )
-  "Programs that this configuration of Emacs depends on.")
-
-(dolist (exe kam-required-programs)
-  (when (kam-missing-executable-p exe)
-    (user-error "%s is missing from your PATH. Please install it or add it to your PATH" exe)))
 
 (defvar kam-emacs-cache-directory
   (concat user-emacs-directory "cache/")
@@ -78,6 +61,24 @@ EXE should be a string that corresponds to an executable."
                                            "XDG_CONFIG_HOME"
                                            "HYPRLAND_INSTANCE_SIGNATURE"))
   (exec-path-from-shell-initialize))
+
+(defun kam-missing-executable-p (exe)
+  "Determine if executable EXE is missing from PATH.
+EXE should be a string that corresponds to an executable."
+  (unless (executable-find exe)
+    t))
+
+(defvar kam-required-programs
+  `("rg"
+    "fd"
+    "zsh"
+    ,(when (eq system-type 'darwin) "gls")
+    )
+  "Programs that this configuration of Emacs depends on.")
+
+(dolist (exe kam-required-programs)
+  (when (kam-missing-executable-p exe)
+    (user-error "%s is missing from your PATH. Please install it or add it to your PATH" exe)))
 
 (use-package emacs
   :ensure nil
