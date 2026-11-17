@@ -635,6 +635,8 @@ Only split if there is no split, and only split into left and right windows."
      ("\\.\\(png\\|jpe?g\\|tiff\\)" "xdg-open")
      (".*" "xdg-open")))
   :config
+  (put 'dired-find-alternate-file 'disabled nil)
+  
   (defvar kam-automount-directory (format "/run/media/%s" user-login-name)
     "Directory under which drives are mounted.")
 
