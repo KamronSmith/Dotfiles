@@ -2260,8 +2260,7 @@ Used in `isearch-mode-end-hook'."
   (defvar-keymap kam-org-map
     :doc "Keymap for Org-related commands."
     :prefix t)
-  :hook ((org-mode . visual-line-mode)
-         (org-mode . kam-org-mode-setup))
+  :hook (org-mode . kam-org-mode-setup)
   :bind
   (("C-c o" . kam-org-map)
    :map org-mode-map
@@ -2339,6 +2338,7 @@ Used in `isearch-mode-end-hook'."
   :config
   (defun kam-org-mode-setup ()
     "Setup function for `org-mode'."
+    (visual-line-mode 1)
     (visual-wrap-prefix-mode -1)
     (modify-syntax-entry ?< "." org-mode-syntax-table)
     (modify-syntax-entry ?> "." org-mode-syntax-table))
