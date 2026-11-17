@@ -164,6 +164,7 @@ whichever position is higher."
       (push-mark end t t))))
 
 (defun kam-read-backup-file-name (file)
+  "Read backup file name FILE."
   (if-let* ((backup-files (file-backup-file-names file)))
       (completing-read "Backup version: " backup-files nil t)
     (user-error "No backup files available for file %s" (buffer-file-name))))
@@ -188,13 +189,12 @@ whichever position is higher."
 ;;;###autoload
 (defun kam-mark-line (&optional arg allow-extend)
   "Set mark ARG lines from point or move point one line.
-With argument ARG, put mark at the end of a following line, so that the
-number of lines is equal to 1 + ARG. This is so that with relative line
-numbers the user can easily judge how many lines they would like to
-mark.
+With numeric prefix argument ARG, put mark on the end of a following
+line, so that the number of marked lines is equal to 1 + ARG. This is so
+that with `display-line-numbers' set to relative, the user can easily
+judge how many lines they would like to mark.
 
-If ARG is negative, point is put at end of this line, mark is put
-it marks the next ARG lines after the ones already marked."
+If ARG is negative, the mark is put at the beginning of previous lines."
   (interactive "P\np")
   (cond ((and allow-extend
               (or (and (eq last-command this-command)
@@ -279,18 +279,17 @@ When called interactively without a numeric prefix argument, ARG is 1."
   (interactive "p")
   (cond ((region-active-p)
          (kill-region nil nil t)
-         (deactivate-mark t)
          (setq this-command 'kill-region))
         (t
-         (kam-kill-line n)
+         (kam-kill-line arg)
          (setq this-command 'kill-region))))
 
 ;;;###autoload
 (defun kam-kill-ring-save-dwim (&optional arg)
   "A DWIM command for copying.
-If the region is active, copy the region. Else, copy ARG lines to the kill
-ring. When called interactively without a numeric prefix argument, ARG is
-1."
+If the region is active, copy the region. Else, copy ARG lines to the
+`kill-ring'. When called interactively without a numeric prefix
+argument, ARG is 1."
   (interactive "p")
   (cond ((region-active-p)
          (kill-ring-save nil nil t)
@@ -319,11 +318,11 @@ instead."
          (yank))
         (t (yank))))
 
-(defun kam-duplicate-dwim (&optional arg)
+(defun kam-duplicate-dwim (&optional arg)  
   "Duplicate line or region.
 With optional numeric prefix ARG, duplicate ARGth line from point. When
-plain universal prefix argument \\([universal-prefix-argument]) is given, duplicate the line immediately
-above point."
+optional prefix argument (\\[universal-prefix-argument]) ARG
+is given, duplicate the line immediately above point."
   (interactive "P")
   (cond ((consp arg)
          (let ((text))
@@ -364,7 +363,7 @@ above point."
 When called interactively without a prefix numeric argument, ARG is 1."
   (interactive "p")
   (goto-char (line-end-position))
-  (dotimes (_ n) (newline-and-indent)))
+  (dotimes (_ arg) (newline-and-indent)))
 
 ;;;###autoload
 (defun kam-insert-new-line-above (&optional arg)
@@ -377,34 +376,32 @@ When called interactively without a prefix numeric argument, ARG is 1."
             (eq (line-number-at-pos point-min) 1))
         (progn
           (goto-char (line-beginning-position))
-          (forward-line (- n))
-          (dotimes (_ n) (kam-insert-new-line-below n)))
-      (forward-line (- n))
-      (kam-insert-new-line-below n))))
+          (forward-line (- arg))
+          (dotimes (_ arg) (kam-insert-new-line-below arg)))
+      (forward-line (- arg))
+      (kam-insert-new-line-below arg))))
 
 ;;;###autoload
 (defun kam-join-line-dwim (&optional arg)
   "Join ARG lines.
 When called interactively without a prefix numeric argument, ARG is 1."
-  (interactive "P")
-  (let ((numeric-arg (prefix-numeric-value n)))
-    (save-excursion
-      (set-mark (point))
-      (forward-line numeric-arg)
-      (join-line nil (region-beginning) (region-end)))
-    (indent-according-to-mode)))
+  (interactive "p")
+  (save-excursion
+    (set-mark (point))
+    (forward-line arg)
+    (join-line nil (region-beginning) (region-end)))
+  (indent-according-to-mode))
 
 ;;;###autoload
 (defun kam-open-line-dwim (&optional arg)
   "Open ARG lines and indent them to the proper place.
 When called interactively without a prefix numeric argument, ARG is 1."
-  (interactive "P")
-  (let ((arg (prefix-numeric-value n)))
-    (save-excursion
-      (open-line arg)
-      (forward-line arg)
-      (indent-according-to-mode))
-    (indent-according-to-mode)))
+  (interactive "p")
+  (save-excursion
+    (open-line arg)
+    (forward-line arg)
+    (indent-according-to-mode))
+  (indent-according-to-mode))
 
 ;;;###autoload
 (defun kam-yank-replace-line-or-region ()
