@@ -302,5 +302,28 @@ This source is only enabled when the current buffer belongs to a project.")
       (consult-imenu-multi)
     (consult-imenu)))
 
+(defvar kam-consult-excluded-preview-buffer-names
+  '("\\*Backtrace\\*"
+    "\\*Agenda Commands\\*"
+    "\\*Pp Eval Output\\*"
+    "\\*Pacman: ")
+  "A list of strings of buffer names that should be excluded from Consult preview.
+Each entry should be a regular expression that corresponds to the name of a buffer.")
+
+(defvar kam-consult-excluded-preview-buffer-modes nil
+  "A list of major modes that should not be previewed by Consult.
+Each entry should be a symbol that corresponds to a major mode.")
+
+(defun kam-consult-preview-excluded-buffer-p (buf)
+  "Return t is BUF should not be previewed by Consult.
+Please see `kam-consult-excluded-preview-buffer-names' and
+`kam-consult-excluded-preview-buffer-modes'."
+  (let ((name (buffer-name buf)))
+    (or (cl-some (lambda (regex)
+                   (string-match-p regex name))
+                 kam-consult-excluded-preview-buffer-names)
+        (with-current-buffer buf
+          (derived-mode-p kam-consult-excluded-preview-buffer-modes)))))
+
 (provide 'kam-consult)
 ;;; kam-consult.el ends here

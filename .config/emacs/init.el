@@ -1330,7 +1330,8 @@ surrounded by actual boundaries."
   (consult-narrow-key ">")
   (consult-async-min-input 3)
   (consult-buffer-list-function #'buffer-list)
-  (consult-preview-key nil)
+  (consult-preview-key 'any)
+  (consult-preview-excluded-buffers 'kam-consult-preview-excluded-buffer-p)
   (consult-ripgrep-args
    "rg --null --follow --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip --hidden --glob=!.git ")
   (consult-fd-args "fd --follow --hidden --full-path --color=never ")
