@@ -324,11 +324,22 @@ With optional numeric prefix ARG, duplicate ARGth line from point. When
 plain universal prefix argument \\([universal-prefix-argument]) is given, duplicate the line immediately
 above point."
   (interactive "P")
-  (cond (arg
+  (cond ((consp arg)
          (let ((text))
            (save-excursion
-             (forward-line (prefix-numeric-value arg))
-             (setq text (string-trim-whitespace (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+             (forward-line -1)
+             (setq text (string-trim
+                         (buffer-substring-no-properties (line-beginning-position) (line-end-position)))))
+           (kam-insert-new-line-above 1)
+           (kam-push-mark-no-activate)
+           (insert text)
+           (setq this-command 'copy-from-above-command)))
+        ((integerp arg)
+         (let ((text))
+           (save-excursion
+             (forward-line (- arg))
+             (setq text (string-trim
+                         (buffer-substring-no-properties (line-beginning-position) (line-end-position)) t t)))
            (kam-push-mark-no-activate)
            (insert text)
            (setq this-command 'copy-from-above-command)))
