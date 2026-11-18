@@ -282,6 +282,16 @@ This source is only enabled when the current buffer belongs to a project.")
       (consult-imenu-multi)
     (consult-imenu)))
 
+(defun kam-consult-outline ()
+  "Run either `consult-org-heading' or `consult-outline'."
+  (interactive)
+  (if (derived-mode-p 'org-mode)
+      (progn
+        (consult-org-heading)
+        (setq this-command 'consult-org-heading))
+    (consult-outline)
+    (setq this-command 'consult-outline)))
+
 (defvar kam-consult-excluded-preview-buffer-names
   '("\\*Backtrace\\*"
     "\\*Agenda Commands\\*"

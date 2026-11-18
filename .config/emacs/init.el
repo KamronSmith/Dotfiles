@@ -1310,7 +1310,7 @@ surrounded by actual boundaries."
          ("M-d" . consult-line)
          :map goto-map
          ("M-e" . consult-compile-error)
-         ("M-o" . consult-org-heading)
+         ("M-o" . kam-consult-outline)
          ("M-i" . imenu)
          ("M-m" . consult-mark)
          ("M-k" . consult-global-mark)
