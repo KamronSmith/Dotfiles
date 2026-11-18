@@ -3653,8 +3653,7 @@ With optional ARG, open browser in EWW."
 
 (use-package emms-browser
   :ensure nil
-  :when (eq system-type 'gnu/linux)
-  :after (emms)
+  :requires (emms)
   :bind
   (:map emms-browser-mode-map
         ("SPC" . kam-scroll-down)
@@ -3669,8 +3668,7 @@ With optional ARG, open browser in EWW."
 
 (use-package emms-playlist-mode
   :ensure nil
-  :after (emms)
-  :when (eq system-type 'gnu/linux)
+  :requires (emms)
   :hook (emms-playlist-mode . hide-cursor-mode)
   :bind
   (:map emms-playlist-mode-map
