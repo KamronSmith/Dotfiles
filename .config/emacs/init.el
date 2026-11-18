@@ -1455,9 +1455,11 @@ surrounded by actual boundaries."
         ("b" . consult-buffer)
         ("d" . consult-dir)
         ("l" . consult-locate)
+        ("p" . project-find-file)
         ("C-b" . consult-buffer)
         ("C-f" . find-file)
         ("C-d" . consult-dir)
+        ("C-p" . project-find-file)
         ("C-l" . consult-locate))
   (:map embark-become-help-map
         ("u" . apropos-user-option)
