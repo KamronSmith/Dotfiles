@@ -1,9 +1,9 @@
-;;; kam-link-menu.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; link-menu.el --- -*- lexical-binding: t; -*-
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
-;;; Code: 
+;;; Code:
 (require 'link-hint)
 
 (defun link-menu--bounds-of-buffer ()
@@ -76,5 +76,5 @@
          (link (link-menu--return-link-from-menu chosen links)))
     (link-hint--action :open link)))
 
-(provide 'kam-link-menu)
-;;; kam-link-menu.el ends here
+(provide 'link-menu)
+;;; link-menu.el ends here

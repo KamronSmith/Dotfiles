@@ -825,7 +825,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
         ("n" . forward-paragraph)
         ("j" . forward-button)
         ("k" . backward-button)
-        ("m" . link-menu-open)
         ("SPC" . kam-scroll-down)
         ("<backspace>" . kam-scroll-up)
         ("<mouse-9>" . help-go-back)
@@ -924,7 +923,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
         ("M-]" . Info-history-forward)
         ("P" . Info-prev)
         ("N" . Info-next)
-        ("m" . link-menu-open)
         ("j" . Info-next-reference)
         ("k" . Info-prev-reference)
         ("<next>" . scroll-down-line)
@@ -950,8 +948,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   :hook (Man-mode . lin-mode)
   :bind
   ("M-s M-m" . man)
-  (:map Man-mode-map
-        ("m" . link-menu-open))
   :custom
   (Man-notify-method 'aggressive)
   :config
@@ -1836,6 +1832,17 @@ surrounded by actual boundaries."
 (use-package link-hint
   :bind
   ("C-c j" . link-hint-open-link))
+
+(use-package link-menu
+  :ensure nil
+  :requires (link-hint)
+  :bind
+  (:map help-mode-map
+        ("m" . link-menu-open))
+  (:map Info-mode-map
+        ("m" . link-menu-open))
+  (:map Man-mode-map
+        ("m" . link-menu-open)))
 
 (use-package smartparens
   :bind
@@ -3786,5 +3793,4 @@ Each string should be a full path to a Lisp file.")
 (require 'kam-comment)
 (require 'kam-writing)
 (require 'kam-tasks)
-(require 'kam-link-menu)
 ;;; init.el ends here
