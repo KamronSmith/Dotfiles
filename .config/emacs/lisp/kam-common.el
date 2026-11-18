@@ -69,6 +69,11 @@ regular expression. With optional N, search in the Nth line from point."
                          (file-remote-p file 'host) ":" (file-remote-p file 'localname))
                (concat "/sudo:root@localhost:" file))))
 
+(defun kam-erase-buffer-force ()
+  "Erase the buffer, even if `read-only' is t."
+  (let ((inhibit-read-only t))
+    (erase-buffer)))
+
 (defun kam--duplicate-buffer-substring (boundaries)
   "Duplicate buffer substring between BOUNDARIES.
 BOUNDARIES is a cons cell representing buffer positions."
