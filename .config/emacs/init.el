@@ -1834,7 +1834,7 @@ surrounded by actual boundaries."
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
                   display-buffer-same-window)
-                 (body-function . select-window)))
+                 (body-function . select-window))))
 
 (use-package kam-search
   :ensure nil)
