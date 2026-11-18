@@ -315,6 +315,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
      ((eq system-type 'gnu/linux)
       (setopt x-meta-keysym 'meta))
      ((eq system-type 'darwin)
+      (global-text-scale-adjust 1)
       (setopt mac-option-key-is-meta t)
       (setopt mac-command-key-is-meta t)
       (setopt mac-control-modifier 'control)
@@ -2753,9 +2754,7 @@ surrounded by actual boundaries."
     "Setup function for `text-mode'."
     (auto-fill-mode -1)
     (indent-tabs-mode -1)
-    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)
-    (when (eq system-type 'darwin)
-      (text-scale-set 1))))
+    (setopt-local fill-paragraph-function #'fill-region-as-paragraph-semlf)))
 
 (use-package prog-mode
   :ensure nil
@@ -2770,9 +2769,7 @@ surrounded by actual boundaries."
     "Setup function for `prog-mode'."
     (setopt-local truncate-lines t)
     (setopt-local comment-auto-fill-only-comments t)
-    (indent-tabs-mode -1)
-    (when (eq system-type 'darwin)
-      (text-scale-set 1))))
+    (indent-tabs-mode -1)))
 
 (use-package conf-mode
   :ensure nil
