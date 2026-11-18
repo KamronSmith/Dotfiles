@@ -8,6 +8,10 @@
 (require 'comint)
 (require 'kam-comint)
 
+(defgroup kam-shell nil
+  "Extensions for `shell-mode'."
+  :group 'shell)
+
 (defun kam-shell-command--prompt ()
   (read-shell-command
    (format-prompt "Shell command in '%s'" nil (abbreviate-file-name default-directory))

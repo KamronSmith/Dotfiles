@@ -9,7 +9,7 @@
 (require 'org)
 
 (defgroup kam-common ()
-  "A group of functions intended to be used throughout the configuration."
+  "Common commands intended to be used throughout the configuration."
   :group 'editing)
 
 ;;;###autoload
@@ -330,6 +330,7 @@ instead."
          (yank))
         (t (yank))))
 
+;;;###autoload
 (defun kam-duplicate-dwim (&optional arg)
   "Duplicate line or region.
 With optional numeric prefix ARG, duplicate ARGth line from point. When

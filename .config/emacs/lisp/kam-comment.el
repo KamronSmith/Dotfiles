@@ -5,10 +5,9 @@
 ;;; Commentary:
 
 ;;; Code:
-
 (require 'kam-common)
 
-(defgroup kam-comment ()
+(defgroup kam-comment nil
   "Extensions for commenting commands."
   :group 'comment)
 

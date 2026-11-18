@@ -5,7 +5,7 @@
 ;;; Commentary:
 
 ;;; Code:
-(defgroup kam-dotfiles ()
+(defgroup kam-dotfiles nil
   "Extensions for Emacs to manage my dotfiles."
   :group 'kam-os)
 
@@ -19,13 +19,13 @@
   (expand-file-name "packages/arch_system_packages.txt" kam-dotfiles-directory)
   "A file listing all of the explicitly installed packages on the system."
   :type 'string
-  :group 'kam-os)
+  :group 'kam-dotfiles)
 
 (defcustom kam-dotfiles-installed-foreign-packages-file
   (expand-file-name "packages/arch_foreign_packages.txt" kam-dotfiles-directory)
   "A file listing all of the explicitly installed foreign packages on the system."
   :type 'string
-  :group 'kam-os)
+  :group 'kam-dotfiles)
 
 ;;;###autoload
 (defun kam-dotfiles-restow (&optional arg)

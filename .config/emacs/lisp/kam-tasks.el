@@ -9,12 +9,6 @@
 (require 'kam-os)
 (require 'org)
 
-(defvar kam-inbox-directory (expand-file-name "Inbox/" kam-home-directory)
-  "Directory where the inbox is stored.")
-
-(defvar kam-todo-file (expand-file-name "todo.org" kam-inbox-directory)
-  "File where all of the todo  information is stored.")
-
 (setq org-agenda-files `(,kam-todo-file))
 
 (defvar kam-todo-regex

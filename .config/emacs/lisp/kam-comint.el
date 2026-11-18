@@ -6,6 +6,10 @@
 ;;; Code:
 (require 'comint)
 
+(defgroup kam-comint nil
+  "Extensions for `comint-mode'."
+  :group 'comint)
+
 (defun kam-comint--beginning-of-prompt-p ()
   "Return non-nil if the point is at the beginning of a Comint prompt."
   (if comint-use-prompt-regexp

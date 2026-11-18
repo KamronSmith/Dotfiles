@@ -6,6 +6,7 @@
 ;;; Code: 
 (defvar-local hide-cursor--original nil)
 
+;;;###autoload
 (define-minor-mode hide-cursor-mode
   "Hide or show the cursor."
   :global nil
