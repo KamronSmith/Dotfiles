@@ -221,9 +221,8 @@ This function is intended to be used with `kam-consult--get-projects'."
      :category project-file
      :face consult-file
      :history file-name-history
-     ;; :annotation ,#'marginalia-annotate-project-file
-     ;; TODO 2026-07-18: When enabled this fucks up switching tabs
-     ;; :state ,#'consult--file-state
+     :annotation ,#'marginalia-annotate-project-file
+     :state ,#'consult--file-state
      :action
      ,(lambda (proj)
         (project-switch-project proj))
@@ -257,23 +256,23 @@ Hidden by default.")
      ,(lambda ()
         (let ((ht (consult--buffer-file-hash))
               items)
-          (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 25))
+          (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 50))
             (unless (eq (aref file 0) ?/)
               (let (file-name-handler-alist) ;; No Tramp slowdown please.
                 (setq file (expand-file-name file))))
             (unless (gethash file ht)
               (push (consult--fast-abbreviate-file-name file) items))))))
   "Recent file source for `consult-buffer'.
-Copied from the Consult code but adjusted to only take the top 25 candidates.")
+Copied from the Consult code but adjusted to only take the top 50 candidates.")
 
 (defvar kam-consult-source-project-files
   `(:name "Project Files"
           :narrow ?f
-          :hidden t
+          :hidden nil
           :category file
           :face consult-file
           :history kam-consult-source-project-files-history
-          ;; :state ,#'consult--file-state     creates new files before the action is completed
+          :state ,#'consult--file-state     ; creates new files before the action is completed
           :new ,#'consult--file-action
           :enabled ,(lambda () (kam-buffer-has-project-p (current-buffer)))
           :action ,(lambda (file)
