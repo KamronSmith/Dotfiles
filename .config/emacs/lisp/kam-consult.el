@@ -315,13 +315,6 @@ Please see `kam-consult-excluded-preview-buffer-names' and
         (with-current-buffer buf
           (derived-mode-p kam-consult-excluded-preview-buffer-modes)))))
 
-;;;###autoload
-(defun kam-consult-project-imenu ()
-  (interactive)
-  (if (kam-buffer-has-project-p (current-buffer))
-      (consult-imenu-multi)
-    (consult-imenu)))
-
 (defun kam-consult--no-prompt-preview ()
   (when (and (bound-and-true-p vertico-mode)
              consult--preview-function)
