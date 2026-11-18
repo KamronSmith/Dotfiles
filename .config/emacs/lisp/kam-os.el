@@ -86,6 +86,22 @@ And the way I want to use a computer.")
   (expand-file-name "Zettelkasten/" kam-documents-directory)
   "Directory where my Zettelkasten lives.")
 
+(defvar kam-os-required-programs
+  `("rg"
+    "fd"
+    "zsh"
+    ,(when (eq system-type 'darwin) "gls")
+    )
+  "Programs that this configuration of Emacs depends on.")
+
+(defvar kam-os-required-fonts
+  '("Aporetic Sans Mono"
+    "Iosevka"
+    "JetBrains Mono"
+    "IBM Plex Mono"
+    "Symbols Nerd Font Mono")
+  "Fonts that this configuration of Emacs depends on.")
+
 (defvar kam-os-package-managers
   '((arch . pacman)
     (darwin . brew)
@@ -363,10 +379,46 @@ SERVICE should be a string that corresponds to a service."
   "List all of the currently installed fonts on the system."
   (interactive)
   (let* ((buf-name "*List Fonts*")
-         (shell-command-buffer-name buf-name))
-    (shell-command "fc-list" buf-name buf-name)
-    (with-current-buffer buf-name
-      (view-mode))))
+         (buf (get-buffer-create buf-name))
+         (fonts (kam-os--list-fonts)))
+    (with-current-buffer buf
+      (kam-erase-buffer-force)
+      (dolist (font fonts)
+        (insert (concat font "\n")))
+      (pager-mode 1)
+      (pop-to-buffer buf))))
+
+(defun kam-os--list-fonts ()
+  "Return a list of all the fonts on the system."
+  (if (and (fboundp 'x-list-fonts)
+           (fboundp 'fontset-list))
+      (nconc (butlast (fontset-list))
+             (x-list-fonts "*"))))
+
+(defun kam-font-missing-p (font)
+  "Return t is font FONT cannot be found."
+  (let ((fonts (kam-os--list-fonts)))
+    (when (not (seq-some (lambda (x) (string-match-p font x))
+                         fonts))
+      t)))
+
+(defun kam-check-missing-fonts ()
+  "Check for missing fonts in `kam-os-required-fonts'."
+  (dolist (font kam-os-required-fonts)
+    (when (kam-font-missing-p font)
+      (display-warning 'configuration (format "Font %s was not found. This configuration of Emacs depends on %s" font font)))))
+
+(defun kam-missing-executable-p (exe)
+  "Determine if executable EXE is missing from PATH.
+EXE should be a string that corresponds to an executable."
+  (unless (executable-find exe)
+    t))
+
+(defun kam-check-missing-executables ()
+  "Check for missing executables in `kam-os-required-programs'."
+  (dolist (exe kam-os-required-programs)
+    (when (kam-missing-executable-p exe)
+      (display-warning 'configuration (format "Executable %s was not found in your PATH. This configuation of Emacs depends on %s" exe exe)))))
 
 ;;;###autoload
 (defun kam-os-file-size ()

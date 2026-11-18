@@ -64,24 +64,6 @@
                                            "HYPRLAND_INSTANCE_SIGNATURE"))
   (exec-path-from-shell-initialize))
 
-(defun kam-missing-executable-p (exe)
-  "Determine if executable EXE is missing from PATH.
-EXE should be a string that corresponds to an executable."
-  (unless (executable-find exe)
-    t))
-
-(defvar kam-required-programs
-  `("rg"
-    "fd"
-    "zsh"
-    ,(when (eq system-type 'darwin) "gls")
-    )
-  "Programs that this configuration of Emacs depends on.")
-
-(dolist (exe kam-required-programs)
-  (when (kam-missing-executable-p exe)
-    (display-warning 'emacs (format "Executable %s is missing from your PATH. This configuration of Emacs depends on %s" exe exe))))
-
 (use-package emacs
   :ensure nil
   :init
