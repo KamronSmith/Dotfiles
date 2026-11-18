@@ -9,7 +9,8 @@
 (require 'kam-os)
 (require 'org)
 
-(setq org-agenda-files `(,kam-todo-file))
+(defvar kam-todo-file
+  (expand-file-name "Inbox/todo.org" kam-home-directory))
 
 (defvar kam-todo-regex
   `(seq
