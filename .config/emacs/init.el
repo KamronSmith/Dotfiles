@@ -3756,17 +3756,6 @@ With optional ARG, open browser in EWW."
   (super-save-silent t)
   (auto-save-default nil))
 
-(defvar kam-custom-lisp-files
-  `(,(concat (getenv "HOME") "/.dotfiles/.config/emacs/lisp/yt-dlp.el")
-    ,(concat (getenv "HOME") "/.dotfiles/.config/emacs/lisp/hide-cursor-mode.el"))
-  "List of strings detailing custom Lisp to be loaded.
-Each string should be a full path to a Lisp file.")
-
-(mapc (lambda (file)
-        (when (file-exists-p file)
-          (load-file file)))
-      kam-custom-lisp-files)
-
 (require 'kam-writing)
 (require 'kam-tasks)
 ;;; init.el ends here
