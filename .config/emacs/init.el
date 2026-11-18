@@ -2013,8 +2013,7 @@ surrounded by actual boundaries."
     "Setup `text-mode' for `expreg'."
     (add-to-list 'expreg-functions #'expreg--sentence)
     (when (eq major-mode 'org-mode)
-      (add-to-list 'expreg-functions #'kam-expreg--org-heading t)
-      (add-to-list 'expreg-functions #'kam-expreg--org-element t))))
+      (add-to-list 'expreg-functions #'kam-expreg--org-elements t))))
 
 (use-package org
   :ensure nil

@@ -61,25 +61,31 @@ With optional N, do it that many times."
   (dotimes (_ n)
     (goto-char (car (kam-expreg--sexp)))))
 
-(defun kam-expreg--org-heading ()
-  "Return a list of regions containing surrounding `org-mode' headings."
-  (ignore-errors
-    (let (beg end)
-      (org-previous-visible-heading 1)
-      (setq beg (point))
-      (org-next-visible-heading 1)
-      (setq end (point))
-      `((heading . ,(cons beg end))))))
+(defun kam-expreg--org-elements ()
+  "Return a list of regions containing `org-mode' elements."
+  (when (derived-mode-p 'org-mode)
+    (let ((node (org-element-context))
+          regions)
+      (while node
+        (let ((beg (org-element-property :begin node))
+              (end (org-element-property :end node))
+              (cbeg (org-element-property :contents-begin node))
+              (cend (org-element-property :contents-end node)))
+          ;; Add the full element/object bounds (excluding org-data root)
+          (when (and beg end
+                     (not (eq (org-element-type node) 'org-data)))
+            (push `(,(org-element-type node) ,beg . ,end) regions))
+          ;; Also add inner contents bounds (e.g., link description, bold text, block body)
+          (when (and cbeg cend)
+            (push `(,(org-element-type node) ,cbeg . ,cend) regions)))
+        (setq node (org-element-property :parent node)))
+      regions)))
 
 (defun kam-expreg--org-element ()
-  "Return a list of regions containing org items."
-  (ignore-errors
-    (let (beg end)
-      (org-backward-element)
-      (setq beg (point))
-      (org-forward-element)
-      (setq end (point))
-      `((element . ,(cons beg end))))))
+  (let* ((dim (nth 1 (expreg--sort-regions (kam-expreg--org-elements))))
+         (beg (car (cdr dim)))
+         (end (cdr (cdr dim))))
+    (cons beg end)))
 
 (provide 'kam-expreg)
 ;;; kam-expreg.el ends here
