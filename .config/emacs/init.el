@@ -1346,6 +1346,8 @@ surrounded by actual boundaries."
   (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
     (advice-add cmd :before (lambda (&rest _) (push-mark (point) t nil))))
 
+  (add-hook 'minibuffer-setup-hook #'kam-consult--no-prompt-preview 90)
+
   (add-to-list 'consult-buffer-filter
                "-shell\\*$")
   (add-to-list 'consult-buffer-filter

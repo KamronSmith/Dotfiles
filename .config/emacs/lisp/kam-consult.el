@@ -332,5 +332,15 @@ Please see `kam-consult-excluded-preview-buffer-names' and
       (consult-imenu-multi)
     (consult-imenu)))
 
+(defun kam-consult--no-prompt-preview ()
+  (when (and (bound-and-true-p vertico-mode)
+             consult--preview-function)
+    (let ((orig consult--preview-function))
+      (setq-local consult--preview-function
+                  (lambda ()
+                    (when (and (boundp 'vertico--index)
+                               (>= vertico--index 0))
+                      (funcall orig)))))))
+
 (provide 'kam-consult)
 ;;; kam-consult.el ends here
