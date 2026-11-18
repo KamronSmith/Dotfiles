@@ -589,5 +589,15 @@ window as well. This command works similarly to
         (kill-buffer-and-window)
       (kill-buffer))))
 
+(define-minor-mode pager-mode
+  "Minor mode for paging documents."
+  :global nil
+  (if pager-mode
+      (progn
+        (view-mode 1)
+        (hide-cursor-mode 1))
+    (view-mode -1)
+    (hide-cursor-mode -1)))
+
 (provide 'kam-common)
 ;;; kam-common.el ends here
