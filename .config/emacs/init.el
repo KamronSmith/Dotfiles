@@ -3165,6 +3165,7 @@ the file is not under version control."
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
                   display-buffer-use-least-recent-window)
+                 (mode compilation-mode)
                  (body-function . select-window)))
 
   (add-to-list
