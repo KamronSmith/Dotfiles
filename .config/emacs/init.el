@@ -1448,23 +1448,58 @@ surrounded by actual boundaries."
   (:map embark-file-map
         ("s" . kam-sudo-find-file)
         ("S" . make-symbolic-link))
+  (:map embark-become-file+buffer-map
+        ("b" . consult-buffer)
+        ("d" . consult-dir)
+        ("l" . consult-locate)
+        ("C-b" . consult-buffer)
+        ("C-f" . find-file)
+        ("C-d" . consult-dir)
+        ("C-l" . consult-locate))
+  (:map embark-become-help-map
+        ("u" . apropos-user-option)
+        ("y" . describe-keymap)
+        ("F" . apropos-function)
+        ("C-f" . describe-function)
+        ("C-p" . describe-package)
+        ("C-s" . describe-symbol)
+        ("C-v" . describe-variable)
+        ("C-y" . describe-keymap))
+  (:map embark-become-match-map
+        ("r" . consult-ripgrep)
+        ("f" . consult-fd)
+        ("o" . occur)
+        ("d" . consult-line)
+        ("i" . kam-consult-project-imenu)
+        ("k" . consult-keep-lines)
+        ("C-r" . consult-ripgrep)
+        ("C-f" . consult-fd)
+        ("C-d" . consult-line)
+        ("C-o" . occur)
+        ("C-k" . consult-keep-lines)
+        ("<kam-i>" . kam-consult-project-imenu))
   :custom
   (embark-quit-after-action nil)
   (prefix-help-command #'embark-prefix-help-command)
   (embark-prompter #'embark-keymap-prompter)
   (embark-indicators '(embark-highlight-indicator
-                       embark-isearch-highlight-indicator))
-  :config
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '("^\\*Embark Export:"
-  ;;                (display-buffer-reuse-window display-buffer-in-side-window)
-  ;;                (side . right)
-  ;;                (window-width . 0.5)
-  ;;                (mode apropos-mode)
-  ;;                (window-parameters . ((mode-line-format . none)))))
-  )
+                       embark-isearch-highlight-indicator)))
 
-(use-package embark-consult)
+(use-package embark-consult
+  :bind
+  (:map embark-consult-async-search-map
+        ("r" . consult-ripgrep)
+        ("f" . consult-fd)
+        ("o" . occur)
+        ("d" . consult-line)
+        ("i" . kam-consult-project-imenu)
+        ("k" . consult-keep-lines)
+        ("C-r" . consult-ripgrep)
+        ("C-f" . consult-fd)
+        ("C-d" . consult-line)
+        ("C-o" . occur)
+        ("C-k" . consult-keep-lines)
+        ("<kam-i>" . kam-consult-project-imenu)))
 
 (use-package orderless
   :custom
