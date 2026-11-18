@@ -294,7 +294,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   (setq-default comment-column 0)
   (setq-default fill-column 100)
   (setq-default line-spacing nil)
-
   (prefer-coding-system 'utf-8)
   (set-language-environment "UTF-8")
   (set-default-coding-systems 'utf-8)
@@ -1837,10 +1836,6 @@ surrounded by actual boundaries."
                   display-buffer-same-window)
                  (body-function . select-window)))
 
-  ;; (with-eval-after-load 'consult
-  ;;   (add-to-list 'consult-buffer-filter
-  ;;                "\\*grep\\*" t))
-  )
 (use-package kam-search
   :ensure nil)
 
@@ -3628,7 +3623,6 @@ With optional ARG, open browser in EWW."
     (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
       (consult-ripgrep calibredb-root-dir))))
 
-;;; EMMS
 (use-package emms
   :when (eq system-type 'gnu/linux)
   :bind
@@ -3654,22 +3648,8 @@ With optional ARG, open browser in EWW."
   (emms-all)
   (emms-mpris-enable)
 
-  ;; (add-to-list 'display-buffer-alist
-  ;;              '((major-mode . emms-browser-mode)
-  ;;                (display-buffer-in-tab)
-  ;;                (ignore-current-tab . t)
-  ;;                (tab-name . " music")
-  ;;                (dedicated . t)
-  ;;                (window-parameters . ((no-delete-other-windows . t)))))
-
   (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter "^Browsing by: " t)
-
-    ;; (setq emms-player-vlc-player (executable-find "vlc")
-    ;;       emms-info-functions '(emms-info-native))
-    ;; (add-to-list 'emms-player-list 'emms-player-vlc)
-
-    ))
+    (add-to-list 'consult-buffer-filter "^Browsing by: " t)))
 
 (use-package emms-browser
   :ensure nil
