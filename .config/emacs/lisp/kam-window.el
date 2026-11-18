@@ -161,8 +161,7 @@ With universal prefix ARG, run in the next window."
 (defun kam-display-command-same-window (orig-fn &rest args)
   "Call ORIG-FN with ARGS while displaying everything in the same window."
   (let ((switch-to-buffer-obey-display-actions t)
-        (display-buffer-overriding-action '(display-buffer-reuse-window
-                                            display-buffer-same-window)))
+        (display-buffer-overriding-action '(display-buffer-same-window)))
     (apply orig-fn args)))
 
 (defun kam-split-window-conservatively (&optional window)
