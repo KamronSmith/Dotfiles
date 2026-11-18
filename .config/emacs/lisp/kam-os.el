@@ -106,7 +106,6 @@ And the way I want to use a computer.")
    (t 'unknown))
   "Determine the operating system this Emacs is currently running on.")
 
-
 ;;; Arch
 (defun kam-os--available-packages ()
   "Return all available packages to install as a list of strings."
