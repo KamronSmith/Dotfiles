@@ -3744,10 +3744,6 @@ With optional ARG, open browser in EWW."
 
 (use-package sly
   :commands (sly)
-  ;; :bind
-  ;; (:map sly-mrepl-mode-map
-  ;;       ("RET" . newline)
-  ;;       ("C-<return>" . sly-mrepl-return))
   :custom
   (inferior-lisp-program (executable-find "sbcl")))
 
