@@ -2112,7 +2112,6 @@ surrounded by actual boundaries."
   (declare-function org-map-entries "org"))
 
 (use-package org-capture
-  :after (org)
   :ensure nil
   :bind
   ("C-c c" . org-capture)
@@ -2142,13 +2141,14 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-agenda
-  :after (org)
+  ;; :after (kam-tasks)
   :ensure nil
   :hook ((org-agenda . lin-mode)
          (org-agenda-after-show . visual-line-mode))
   :bind
   ("C-c a" . org-agenda)
   :custom
+  (org-agenda-files `(,kam-todo-file))
   (org-agenda-hide-tags-regexp ".")
   (org-agenda-custom-commands
    '(("d" "Daily Agenda"
@@ -2187,7 +2187,7 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-refile
-  :after (org)
+  ;; :after (org)
   :ensure nil
   :bind
   ("C-c o o" . kam-org-refile-region)
@@ -2198,7 +2198,7 @@ surrounded by actual boundaries."
   (org-refile-targets '((org-agenda-files :maxlevel . 9))))
 
 (use-package ol   ;; org-links
-  :after (org)
+  ;; :after (org)
   :ensure nil
   :bind
   ("C-c l" . org-store-link)
@@ -2219,7 +2219,7 @@ surrounded by actual boundaries."
   )
 
 (use-package ob ;; org babel
-  :after (org)
+  ;; :after (org)
   :ensure nil
   :custom
   (org-confirm-babel-evaluate nil)
@@ -2237,7 +2237,7 @@ surrounded by actual boundaries."
 
 (use-package org-tempo
   :ensure nil
-  :after (org)
+  ;; :after (org)
   :config
   (setq org-structure-template-alist
         '(("c" . "comment")
@@ -2254,7 +2254,7 @@ surrounded by actual boundaries."
           ("q" . "quote"))))
 
 (use-package ox ;; org export
-  :after (org)
+  ;; :after (org)
   :ensure nil
   :custom
   (org-export-with-toc nil)
@@ -2266,30 +2266,31 @@ surrounded by actual boundaries."
                                 (not "NOTES"))))
 
 (use-package org-id
-  :after (org)
+  ;; :after (org)
   :ensure nil)
 
 (use-package org-cycle
-  :after (org)
+  ;; :after (org)
   :ensure nil)
 
 (use-package ox-latex
-  :after (org)
+  ;; :after (org)
   :ensure nil
   :config
   )
 
 (use-package ox-gfm
-  :after (org))
+  ;; :after (org)
+  )
 
 (use-package org-contrib
-  :after (org)
+  ;; :after (org)
   :config
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines)))
 
 (use-package org-modern
-  :after (org)
+  ;; :after (org)
   :custom
   (org-modern-star 'replace)
   :custom-face
