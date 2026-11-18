@@ -41,14 +41,5 @@
          (default-directory root))
     (kam-todo-grep)))
 
-;;;###autoload
-(defun kam-project-files ()
-  "Return all project files in a given directory, respects .gitignore."
-  (interactive)
-  (let* ((proj (project-current))
-         (root (project-root proj))
-         (default-directory root))
-    (split-string (shell-command-to-string "fd -p -L ."))))
-
 (provide 'kam-tasks)
 ;;; kam-tasks.el ends here
