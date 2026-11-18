@@ -2310,7 +2310,8 @@ surrounded by actual boundaries."
       (project-find-dir "Find directory")
       (project-find-regexp "Find regexp")
       (project-vc-dir "VC-Dir")
-      (project-eshell "Eshell"))
+      (project-eshell "Eshell")
+      (project-find-file "Find file"))
     "List of commands to remove from `project-switch-commands'")
   
   (setq project-switch-commands
@@ -2319,11 +2320,11 @@ surrounded by actual boundaries."
                     project-switch-commands))
 
   (add-to-list 'project-switch-commands '(project-shell "Shell" "s"))
+  (add-to-list 'project-switch-commands '(project-find-file "Find file" "f"))
   (add-to-list 'project-switch-commands '(project-dired "Dired" "d"))
   (add-to-list 'project-switch-commands '(project-dired "Grep" "g"))
-  (add-to-list 'project-switch-commands '(kam-keyboard-escape-quit-dwim "Quit" "C-g") t)
   (add-to-list 'project-switch-commands '(magit-project-status "Git" "v"))
-
+  (add-to-list 'project-switch-commands '(kam-keyboard-escape-quit-dwim "Quit" "C-g") t)
   (advice-add 'kam-project-new :after #'kam-project-remember-advice))
 
 
