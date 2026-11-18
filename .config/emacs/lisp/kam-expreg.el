@@ -1,9 +1,9 @@
 ;;; kam-expreg.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
-;;; Code: 
+;;; Code:
 (require 'expreg)
 (require 'org)
 

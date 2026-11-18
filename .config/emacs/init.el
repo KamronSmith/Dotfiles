@@ -97,7 +97,7 @@ Enable that mode to its keybindings take over those of the major mode.")
     :init-value nil
     :global t
     :keymap kam-override-mode-map)
-  
+
   :hook ((after-init . kam-emacs-setup)
          (after-save . executable-make-buffer-file-executable-if-script-p)
          (visual-line-mode . visual-wrap-prefix-mode)
@@ -281,7 +281,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (exchange-point-and-mark-highlight-region nil)
   :config
   (require 'kam-common)
-  
+
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
@@ -301,10 +301,10 @@ Enable that mode to its keybindings take over those of the major mode.")
   (set-default-coding-systems 'utf-8)
   (set-terminal-coding-system 'utf-8)
   (set-keyboard-coding-system 'utf-8)
-  
+
   (remq 'process-kill-buffer-query-function
         kill-buffer-query-functions)
-  
+
   (setenv "GPG_AGENT_INFO" nil)
 
   (defun kam-emacs-setup ()
@@ -324,7 +324,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
       (require 'kam-mac))))
-  
+
   (put 'narrow-to-region 'disabled nil)
 
   (add-to-list 'find-file-not-found-functions #'kam-find-file-auto-create-missing-dirs)
@@ -332,7 +332,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (keymap-global-set "C-M-(" 'insert-parentheses)
   (keymap-global-set "C-\"" 'kam-insert-quote)
   (keymap-global-set "M-\"" 'kam-insert-quote)
-  
+
   (when (not (file-exists-p (expand-file-name "auto-saves" kam-emacs-cache-directory)))
     (make-directory (expand-file-name "auto-saves" kam-emacs-cache-directory))))
 
@@ -575,7 +575,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (defun kam-centered-cursor-mode-disable ()
     "Disable `centered-cursor-mode'."
     (centered-cursor-mode -1))
-  
+
   (defun kam-centered-cursor-mode-remove-hook ()
     "Remove `ccm-vpos-recenter' from hooks."
     (when (seq-contains-p window-configuration-change-hook 'ccm-vpos-recenter)
@@ -913,7 +913,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (apropos-compact-layout nil)
   (apropos-do-all nil)
   :config
-  
+
   (add-to-list 'display-buffer-alist
                '("\\*Apropos\\*"
                  (display-buffer-reuse-mode-window
@@ -1341,10 +1341,10 @@ surrounded by actual boundaries."
   (require 'kam-consult)
   (advice-add #'register-preview :override #'consult-register-window)
   (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
-  
+
   (advice-add 'consult--jump :around 'kam-centered-cursor-mode-advice)
   (advice-add 'consult-buffer :after (lambda (&rest _) (recenter)))
-  
+
   (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
     (advice-add cmd :before (lambda (&rest _) (push-mark (point) t nil))))
 
@@ -1356,7 +1356,7 @@ surrounded by actual boundaries."
                "\\*Customize ")
   (add-to-list 'consult-buffer-filter
                "-eshell\\*$")
-  
+
   (setopt consult-buffer-sources
           '(
             ;; kam-consult-source-tab
@@ -1770,7 +1770,7 @@ surrounded by actual boundaries."
     (propertize
      (concat (funcall tab-bar-tab-group-function tab))
      'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
-  
+
   ;; (tab-bar-mode 1)
   :custom
   (tab-bar-show nil)
@@ -1940,7 +1940,7 @@ surrounded by actual boundaries."
   :config
   (with-eval-after-load 'xref
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate 80))
-  
+
   (when (executable-find "rg")
     (setopt dumb-jump-force-searcher 'rg)
     (setopt dumb-jump-prefer-searcher 'rg)))
@@ -2006,7 +2006,7 @@ surrounded by actual boundaries."
                ("&" . expreg-expand))
   :config
   (require 'kam-expreg)
-  
+
   (defun kam-expreg-text-mode-setup ()
     "Setup `text-mode' for `expreg'."
     (add-to-list 'expreg-functions #'expreg--sentence)
@@ -2064,7 +2064,7 @@ surrounded by actual boundaries."
    ("n" . kam-org-insert-notes-drawer)
    :repeat-map kam-org-repeat-map
    ("C-p" . org-previous-visible-heading)
-   ("C-n" . org-next-visible-heading))  
+   ("C-n" . org-next-visible-heading))
   :custom
   (org-auto-align-tags nil)
   (org-M-RET-may-split-line nil)
@@ -2093,11 +2093,11 @@ surrounded by actual boundaries."
   (org-log-into-drawer t)
   :config
   (require 'kam-org)
-  
+
   (defvar-keymap kam-org-map
     :doc "Keymap for Org-related commands."
     :prefix t)
-  
+
   (defun kam-org-mode-setup ()
     "Setup function for `org-mode'."
     (visual-line-mode 1)
@@ -2339,7 +2339,7 @@ surrounded by actual boundaries."
   ;; (project-prompter 'kam-project--read-project-by-name)
   :config
   (require 'kam-project)
-  
+
   (defvar kam-project-switch-commands-to-remove
     '((project-find-dir "Dired" "d")
       (project-find-dir "Find directory")
@@ -2348,7 +2348,7 @@ surrounded by actual boundaries."
       (project-eshell "Eshell")
       (project-find-file "Find file"))
     "List of commands to remove from `project-switch-commands'")
-  
+
   (setq project-switch-commands
         (seq-remove (lambda (x)
                       (member x kam-project-switch-commands-to-remove))
@@ -2408,7 +2408,7 @@ surrounded by actual boundaries."
      ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
   :config
   (require 'kam-shell)
-  
+
   (defvar kam-shell-history-file "~/.config/zsh/zhistory"
     "Where the history file for Z-shell is stored.")
 
@@ -2434,7 +2434,7 @@ surrounded by actual boundaries."
                   display-buffer-same-window)
                  (mode shell-mode)
                  (body-function . select-window)))
-  
+
   (add-to-list 'display-buffer-alist
                `(,shell-command-buffer-name
                  (display-buffer-pop-up-window
@@ -2483,7 +2483,7 @@ surrounded by actual boundaries."
   (eshell-input-filter #'kam-eshell-input-filter)
   :config
   (require 'kam-eshell)
-  
+
   (defun kam-eshell-mode-setup ()
     "Setup function for `eshell-mode'."
     (setenv "TERM" "xterm-256-color")
@@ -2518,7 +2518,7 @@ surrounded by actual boundaries."
   (standard-themes-take-over-modus-themes-mode 1)
   :config
   (require 'kam-theme)
-  
+
   (setopt standard-dark-palette-overrides
           '((fg-prompt cyan)
             ;; (bg-main "#181818") ;;   tsoding
@@ -2542,7 +2542,7 @@ surrounded by actual boundaries."
                                      (section-other . (bold 1))
                                      (commit-summary . (bold 1))
                                      (t . (bold 1))))
-  
+
   (standard-themes-load-theme 'standard-light))
 
 (use-package ef-themes)
@@ -2574,7 +2574,7 @@ surrounded by actual boundaries."
            :mode-line-inactive spacious-padding-line-inactive
            :header-line-active spacious-padding-line-active
            :header-line-inactive spacious-padding-line-inactive))
-  
+
   (setq spacious-padding-subtle-frame-lines nil)
 
   (spacious-padding-mode))
@@ -2852,7 +2852,7 @@ surrounded by actual boundaries."
   :config
   (magit-auto-revert-mode)
   (magit-wip-mode)
-  
+
   (when (eq system-type 'darwin)
     (setq magit-git-executable "/opt/homebrew/bin/git"))
 
@@ -2898,7 +2898,7 @@ is not under version control."
                        (buffer-file-name))
                (diff-backup (buffer-file-name)))
            (apply #'signal errdata))))))
-  
+
   (defun kam-vc-ediff (&optional arg)
     "Run Ediff on the current buffer, file, or backup.
 With optional prefix ARG, compare the file with a selected backup when
@@ -3060,7 +3060,7 @@ the file is not under version control."
   (ediff-diff-options "-w")
   (ediff-custom-diff-options "--suppress-common-lines")
   (ediff-ignore-similar-regions t)
-  :config  
+  :config
   (defun kam-ediff-store-layout ()
     "Store current frame window configuration as a frame parameter.
   Add this function to the `ediff-before-setup-hook'."
@@ -3763,7 +3763,7 @@ With optional ARG, open browser in EWW."
   :config
   (require 'kam-notes)
   (setopt denote-known-keywords (kam-denote-keywords))
-  
+
   (add-to-list 'savehist-additional-variables 'denote-known-keywords))
 
 (use-package denote-sequence
