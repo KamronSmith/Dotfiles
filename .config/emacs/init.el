@@ -2284,6 +2284,7 @@ surrounded by actual boundaries."
         ("d" . kam-project-dired)
         ("g" . kam-project-grep)
         ("p" . nil)
+        ("f" . nil)
         ("n" . kam-project-new)
         ("r" . project-recompile))
   :custom
