@@ -181,11 +181,7 @@ Enable that mode to its keybindings take over those of the major mode.")
         ("M-p" . previous-error))
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
-  (:map kam-override-mode-map
-        ("M-o" . kam-ace-window))
   (:repeat-map kam-repeat-map
-               ;; ("n" . next-error-no-select)
-               ;; ("p" . previous-error-no-select)
                ("M-n" . next-error-no-select)
                ("M-p" . previous-error-no-select))
   :custom
@@ -1704,9 +1700,8 @@ surrounded by actual boundaries."
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
 
 (use-package ace-window
-  :after (emacs kam-window)
   :commands (kam-ace-window ace-window)
-  :init
+  :config
   (setq aw-dispatch-always t)
   (setq aw-keys '(?d ?n ?r ?e ?t ?a))
   (setq aw-dispatch-alist
@@ -3354,7 +3349,7 @@ the file is not under version control."
   :bind
   ("C-x t" . ghostel)
   (:map ghostel-semi-char-mode-map
-        ("M-o" . ace-window))
+        ("M-o" . kam-ace-window))
   (:map project-prefix-map
         ("t" . ghostel-project))
   :custom
