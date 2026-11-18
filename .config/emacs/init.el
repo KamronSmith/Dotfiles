@@ -142,6 +142,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("M-n" . forward-paragraph)
   ("M-p" . backward-paragraph)
   ("M-q" . fill-paragraph)
+  ("M-r" . kam-duplicate-dwim)
   ("M-t" . transpose-words)
   ("M-u" . upcase-dwim)
   ("M-v" . undo-redo)
@@ -197,7 +198,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (:map ctl-x-x-map
         ("g" . kam-revert-buffer))
   (:map kam-override-mode-map
-        ("M-r" . kam-duplicate-dwim))
+        ("M-o" . kam-ace-window))
   (:repeat-map kam-repeat-map
                ;; ("n" . next-error-no-select)
                ;; ("p" . previous-error-no-select)
