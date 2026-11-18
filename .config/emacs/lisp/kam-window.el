@@ -67,7 +67,7 @@ With optional ARG, scroll up that many times."
   "Do what I mean to delete the current thing.
 When there is one window, THING is a window.
 When optional prefix ARG (\\[universal-argument]) is provided, kill the buffer that window holds.
-When there is more than one `tab-bar-mode' tabs, THING is a tab."
+When there is more than one `tab-bar-mode' tab, THING is a tab."
   (declare (interactive-only t))
   (interactive "P")
   (cond
