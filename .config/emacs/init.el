@@ -80,7 +80,7 @@ EXE should be a string that corresponds to an executable."
 
 (dolist (exe kam-required-programs)
   (when (kam-missing-executable-p exe)
-    (user-error "%s is missing from your PATH. Please install it or add it to your PATH" exe)))
+    (display-warning 'emacs (format "Executable %s is missing from your PATH. This configuration of Emacs depends on %s" exe exe))))
 
 (use-package emacs
   :ensure nil
