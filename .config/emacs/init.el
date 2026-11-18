@@ -582,8 +582,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
         ("<next>" . kam-scroll-down)))
 
 (use-package ultra-scroll
-  :config
-  (ultra-scroll-mode 1))
+  :hook (after-init . ultra-scroll-mode))
 
 (use-package dired
   :ensure nil
@@ -2625,30 +2624,36 @@ surrounded by actual boundaries."
                '(debugger-mode nerd-icons-octicon "nf-oct-bug" :face nerd-icons-blue)))
 
 (use-package nerd-icons-dired
+  :if (package-installed-p 'nerd-icons)
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
 (use-package nerd-icons-corfu
+  :if (package-installed-p 'nerd-icons)
   :after (corfu)
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-completion
+  :if (package-installed-p 'nerd-icons)
   :config
   (nerd-icons-completion-mode))
 
 (use-package nerd-icons-ibuffer
+  :if (package-installed-p 'nerd-icons)
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
 (use-package nerd-icons-xref
-  :init
+  :if (package-installed-p 'nerd-icons)
+  :config
   (nerd-icons-xref-mode))
 
 (use-package nerd-icons-grep
-  :init
-  (nerd-icons-grep-mode)
+  :if (package-installed-p 'nerd-icons)
   :custom
-  (grep-use-headings t))
+  (grep-use-headings t)
+  :custom
+  (nerd-icons-grep-mode))
 
 (use-package visual-fill-column
   :hook ((visual-line-mode . visual-fill-column-for-vline)
