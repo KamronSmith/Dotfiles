@@ -843,6 +843,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
         ("<prior>" . scroll-up-line))
   (:map help-map
         ("p" . describe-package)
+        ("y" . describe-keymap)
         ("C-k" . find-function-on-key))
   :custom
   (help-window-select t)
