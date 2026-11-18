@@ -86,25 +86,6 @@ PROMPT is the prompt of `consult-imenu'."
     (kam-consult-org-heading--action (org-store-link nil t)))
   (kam-org-insert-last-stored-link-with-prompt))
 
-(defun kam-consult-vertico--update-choose (&rest _)
-  "Pick the nearest candidate rather than the first after updating candidates."
-  (when (and kam-consult--previous-point
-             (memq current-minibuffer-command
-                   '(consult-org-heading consult-outline)))
-    (setq vertico--index
-          (max 0
-               (1- (or (seq-position
-                        vertico--candidates
-                        kam-consult--previous-point
-                        (lambda (cand point-pos)
-                          (> (cl-case current-minibuffer-command
-                               (consult-outline
-                                (car (consult--get-location cand)))
-                               (consult-org-heading
-                                (get-text-property 0 'consult--candidate cand)))
-                             point-pos)))
-                       (length vertico--candidates)))))))
-
 ;;;###autoload
 (defun kam-consult-ripgrep-or-line ()
   "Call `consult-line' for small buffers and `consult-ripgrep' for large files."
