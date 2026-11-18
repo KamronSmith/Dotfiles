@@ -47,7 +47,8 @@
   )
 
 (use-package exec-path-from-shell
-  :init
+  :demand t
+  :config
   (setopt exec-path-from-shell-shell-name (executable-find "zsh"))
   (setopt exec-path-from-shell-variables '("PATH"
                                            "MANPATH"
