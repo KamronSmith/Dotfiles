@@ -483,6 +483,12 @@ If the region is active, indent the region."
       (deactivate-mark t))))
 
 ;;;###autoload
+(defun kam-indent-line ()
+  "Indent the line using `indent-line-function'."
+  (interactive)
+  (funcall indent-line-function))
+
+;;;###autoload
 (defun kam-narrow-or-widen-dwim (&optional p)
   "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
 Intelligently means: region, subtree, or defun, whichever applies first."
