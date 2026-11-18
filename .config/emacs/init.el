@@ -126,11 +126,9 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-SPC" . set-mark-command)
   ("C-<left>" . kam-prev-buffer)
   ("C-<right>" . kam-next-buffer)
-  ("C-<return>" . comment-indent-new-line)
   ("C-<backspace>" . kam-control-backspace)
   ("C-_" . nil)
   ("C-:" . pp-eval-expression)
-  ("C-;" . kam-comment-dwim)
   ("C-|" . nil)
   ("C-`" . nil)
   ("C-(" . insert-parentheses)
@@ -172,7 +170,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-M-<left>" . indent-rigidly-left)
   ("C-M-<right>" . indent-rigidly-right)
   ("C-M-," . nil)
-  ("C-M-;" . kam-comment-todo)
   ("C-M-SPC" . mark-sexp)
   ("C-M-(" . insert-parenthesis)
   ("C-M-=" . indent-region)
@@ -276,9 +273,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   (find-ls-options '("-exec ls -ldh {} +" . "-ldh"))
   (redisplay-skip-fontification-on-input t)
   (yank-transform-functions '(string-trim-left string-trim-right string-chop-newline))
-  (comment-empty-lines t)
-  (comment-multi-line t)
-  (comment-style 'multi-line)
   (view-read-only t)
   (duplicate-region-final-position 1)
   (duplicate-line-final-position -1)
@@ -542,6 +536,23 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (winner-mode 1)
 
   (advice-add 'switch-to-buffer :around 'kam-display-command-same-window))
+
+(use-package kam-comment
+  :ensure nil
+  :bind
+  ("C-<return>" . comment-indent-new-line)
+  ("C-M-;" . kam-comment-todo)
+  :custom
+  (comment-empty-lines t)
+  (comment-multi-line t)
+  (comment-style 'multi-line))
+
+(use-package kam-os
+  :ensure nil)
+
+(use-package kam-dotfiles
+  :ensure nil
+  :requires (kam-os))
 
 (use-package lin
   :custom
@@ -1828,6 +1839,8 @@ surrounded by actual boundaries."
   ;;   (add-to-list 'consult-buffer-filter
   ;;                "\\*grep\\*" t))
   )
+(use-package kam-search
+  :ensure nil)
 
 (use-package link-hint
   :bind
@@ -2632,62 +2645,64 @@ surrounded by actual boundaries."
     (visual-fill-column-mode -1))
 
   (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust))
-
 
-(setq mode-line-compact nil
-      mode-line-right-align-edge 'right-fringe)
+(use-package kam-mode-line
+  :ensure nil
+  :config
+  (setopt mode-line-compact nil)
+  (setopt mode-line-right-align-edge 'right-fringe)
 
-(setq-default mode-line-format
-              '("%e"
-                kam-mode-line-logo
-                kam-mode-line-kbd-macro
-                kam-mode-line-narrow
-                kam-mode-line-rectangle-mark
-                kam-mode-line-mark-active
-                kam-mode-line-recursive-edit
-                " "
-                kam-mode-line-buffer-modified
-                kam-mode-line-buffer-remote-file
-                "  "
-                kam-mode-line-buffer-identification
-                " "
-                kam-mode-line-major-mode
-                kam-mode-line-compile
-                kam-mode-line-text-scale
-                "   "
-                kam-mode-line-buffer-stats-var
-                "  "
-                kam-mode-line-process
-                kam-mode-line-eglot
-                kam-mode-line-decolorify
-                " "
-                mode-line-format-right-align
-                ;; kam-mode-line-vc-branch
-                "   "
-                kam-mode-line-display-time
-                ))
+  (dolist (construct '(kam-mode-line-kbd-macro
+                       kam-mode-line-mark-active
+                       kam-mode-line-rectangle-mark
+                       kam-mode-line-narrow
+                       kam-mode-line-recursive-edit
+                       kam-mode-line-buffer-modified
+                       kam-mode-line-buffer-status
+                       kam-mode-line-buffer-identification
+                       kam-mode-line-major-mode
+                       kam-mode-line-text-scale
+                       kam-mode-line-buffer-stats-var
+                       kam-mode-line-process
+                       kam-mode-line-nix
+                       kam-mode-line-logo
+                       kam-mode-line-compile
+                       kam-mode-line-vc-branch
+                       kam-mode-line-eglot
+                       kam-mode-line-decolorify
+                       kam-mode-line-display-time))
+    (put construct 'risky-local-variable t))
 
-
-(dolist (construct '(kam-mode-line-kbd-macro
-                     kam-mode-line-mark-active
-                     kam-mode-line-rectangle-mark
-                     kam-mode-line-narrow
-                     kam-mode-line-recursive-edit
-                     kam-mode-line-buffer-modified
-                     kam-mode-line-buffer-status
-                     kam-mode-line-buffer-identification
-                     kam-mode-line-major-mode
-                     kam-mode-line-text-scale
-                     kam-mode-line-buffer-stats-var
-                     kam-mode-line-process
-                     kam-mode-line-nix
-                     kam-mode-line-logo
-                     kam-mode-line-compile
-                     kam-mode-line-vc-branch
-                     kam-mode-line-eglot
-                     kam-mode-line-decolorify
-                     kam-mode-line-display-time))
-  (put construct 'risky-local-variable t))
+  (setq-default mode-line-format
+                '("%e"
+                  kam-mode-line-logo
+                  kam-mode-line-kbd-macro
+                  kam-mode-line-narrow
+                  kam-mode-line-rectangle-mark
+                  kam-mode-line-mark-active
+                  kam-mode-line-recursive-edit
+                  " "
+                  kam-mode-line-buffer-modified
+                  kam-mode-line-buffer-remote-file
+                  "  "
+                  kam-mode-line-buffer-identification
+                  " "
+                  kam-mode-line-major-mode
+                  kam-mode-line-compile
+                  kam-mode-line-text-scale
+                  "   "
+                  kam-mode-line-buffer-stats-var
+                  "  "
+                  kam-mode-line-process
+                  kam-mode-line-eglot
+                  kam-mode-line-decolorify
+                  " "
+                  mode-line-format-right-align
+                  ;; kam-mode-line-vc-branch
+                  "   "
+                  kam-mode-line-display-time
+                  ))
+  )
 
 (use-package text-mode
   :ensure nil
@@ -3786,11 +3801,6 @@ Each string should be a full path to a Lisp file.")
           (load-file file)))
       kam-custom-lisp-files)
 
-(require 'kam-os)
-(require 'kam-mode-line)
-(require 'kam-dotfiles)
-(require 'kam-search)
-(require 'kam-comment)
 (require 'kam-writing)
 (require 'kam-tasks)
 ;;; init.el ends here
