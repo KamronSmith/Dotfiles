@@ -3660,7 +3660,8 @@ With optional ARG, open browser in EWW."
         ("<backspace>" . kam-scroll-up))
   :hook ((emms-browser-mode . hide-cursor-mode)
          (emms-browser-mode . lin-mode))
-  ;; (emms-browser-buffer-name "*Music*")
+  :custom
+  (emms-browser-buffer-name "*Music*")
   :config
   (emms-browser-make-filter "All" 'ignore)
   (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory)))
@@ -3675,26 +3676,8 @@ With optional ARG, open browser in EWW."
         ("p" . kam-emms-previous)
         ("n" . kam-emms-next))
   :custom
-  ;; (emms-playlist-buffer-name "*Playlist*")
-  (emms-playlist-mode-open-playlists t)
-  :config
-  (defun kam-emms-next ()
-    "Start playing the next track in the EMMS playlist and move the cursor as well.
-With optional ARG, go to the next song that many times."
-    (interactive)
-    (emms-next)
-    (forward-line))
-
-  (defun kam-emms-previous ()
-    "Start playing the previous track in the EMMS playlist and move the cursor as well.
-With optional ARG, go to the previous song that many times."
-    (interactive)
-    (emms-previous)
-    (forward-line -1))
-
-  (with-eval-after-load 'popper
-    (add-to-list 'popper-reference-buffers
-                 'emms-playlist-mode t)))
+  (emms-playlist-buffer-name "*Playlist*")
+  (emms-playlist-mode-open-playlists t))
 
 ;;; LLM Client
 (use-package gptel
