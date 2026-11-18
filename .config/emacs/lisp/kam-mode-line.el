@@ -344,6 +344,12 @@ Specific to the current window's mode-line.")
     ("*Shell Command*" . (nerd-icons-sucicon "nf-seti-shell" nerd-icons-blue))
     ("*Claude*" . (nerd-icons-codicon "nf-cod-claude" nerd-icons-blue))))
 
+(cl-defmethod nerd-icons-icon-for-buffer :around (&rest arg-overrides)
+  (if (assoc (buffer-name) kam-mode-line-buffer-icon-alist)
+      (let* ((icon (cdr (assoc (buffer-name) kam-mode-line-buffer-icon-alist))))
+        (propertize (apply (car icon) (cdr icon)) 'face (cddr icon)))
+    (cl-call-next-method)))
+
 (defun kam-mode-line--string-truncate-p (str)
   "Return non-nil if STR should be truncated.
 Please see `kam-mode-line-string-truncate-length'."
