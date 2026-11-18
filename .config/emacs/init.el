@@ -2608,7 +2608,9 @@ surrounded by actual boundaries."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(occur-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(grep-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue)))
+               '(grep-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(debugger-mode nerd-icons-octicon "nf-oct-bug" :face nerd-icons-blue)))
 
 (use-package nerd-icons-dired
   :hook
