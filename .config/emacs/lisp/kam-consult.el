@@ -33,6 +33,73 @@
                        (push (file-name-nondirectory file) items))))))
   "Neighboring file source for `consult-buffer'.")
 
+(defvar kam-consult-source-project
+  `( :name "Project"
+     :narrow ?p
+     :category project-file
+     :face consult-file
+     :history file-name-history
+     :annotation ,#'marginalia-annotate-project-file
+     :state ,#'consult--file-state
+     :action
+     ,(lambda (proj)
+        (project-switch-project proj))
+     :items
+     ,(lambda () (kam-consult--project-dirs (kam-consult--get-projects))))
+  "Source for listing projects and their roots.")
+
+(defvar kam-consult-source-project-files
+  `(:name "Project Files"
+          :narrow ?f
+          :hidden nil
+          :category file
+          :face consult-file
+          :annotation ,#'marginalia-annotate-file
+          :history kam-consult-source-project-files-history
+          :state ,#'consult--file-state     ; creates new files before the action is completed
+          ;; :new ,#'consult--file-action
+          :enabled ,(lambda () (kam-buffer-has-project-p (current-buffer)))
+          :action ,(lambda (file)
+                     (find-file (expand-file-name file (project-root (project-current nil)))))
+          :items ,#'kam-consult-project-files)
+  "Project file source for `consult-buffer'.
+This source is only enabled when the current buffer belongs to a project.")
+
+(defvar kam-consult-source-bookmark
+  `( :name     "Bookmark"
+     :hidden   t
+     :narrow   ?m
+     :category bookmark
+     :face     consult-bookmark
+     :history  bookmark-history
+     :items    ,#'bookmark-all-names
+     :state    ,#'consult--bookmark-state)
+  "Bookmark source for `consult-buffer'.
+Hidden by default.")
+
+(defvar kam-consult-source-recent-file
+  `( :name     "Recent Files"
+     ;; :hidden   t
+     :narrow   ?r
+     :category file
+     :face     consult-file
+     :history  file-name-history
+     :state    ,#'consult--file-state
+     :new      ,#'consult--file-action
+     :enabled  ,(lambda () recentf-mode)
+     :items
+     ,(lambda ()
+        (let ((ht (consult--buffer-file-hash))
+              items)
+          (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 50))
+            (unless (eq (aref file 0) ?/)
+              (let (file-name-handler-alist) ;; No Tramp slowdown please.
+                (setq file (expand-file-name file))))
+            (unless (gethash file ht)
+              (push (consult--fast-abbreviate-file-name file) items))))))
+  "Recent file source for `consult-buffer'.
+Copied from the Consult code but adjusted to only take the top 50 candidates.")
+
 (defun kam-consult-imenu--select (prompt)
   "Return a selection from `consult-imenu'. using PROMPT."
   (let ((items (consult-imenu--items)))
@@ -196,72 +263,6 @@ This function is intended to be used with `kam-consult--get-projects'."
     "dist")
   "A list of directories to ignore when performing searches using Consult.")
 
-(defvar kam-consult-source-project
-  `( :name "Project"
-     :narrow ?p
-     :category project-file
-     :face consult-file
-     :history file-name-history
-     :annotation ,#'marginalia-annotate-project-file
-     :state ,#'consult--file-state
-     :action
-     ,(lambda (proj)
-        (project-switch-project proj))
-     :items
-     ,(lambda () (kam-consult--project-dirs (kam-consult--get-projects))))
-  "Source for listing projects and their roots.")
-
-(defvar kam-consult-source-bookmark
-  `( :name     "Bookmark"
-     :hidden   t
-     :narrow   ?m
-     :category bookmark
-     :face     consult-bookmark
-     :history  bookmark-history
-     :items    ,#'bookmark-all-names
-     :state    ,#'consult--bookmark-state)
-  "Bookmark source for `consult-buffer'.
-Hidden by default.")
-
-(defvar kam-consult-source-recent-file
-  `( :name     "Recent Files"
-     ;; :hidden   t
-     :narrow   ?r
-     :category file
-     :face     consult-file
-     :history  file-name-history
-     :state    ,#'consult--file-state
-     :new      ,#'consult--file-action
-     :enabled  ,(lambda () recentf-mode)
-     :items
-     ,(lambda ()
-        (let ((ht (consult--buffer-file-hash))
-              items)
-          (dolist (file (bound-and-true-p recentf-list) (seq-take (nreverse items) 50))
-            (unless (eq (aref file 0) ?/)
-              (let (file-name-handler-alist) ;; No Tramp slowdown please.
-                (setq file (expand-file-name file))))
-            (unless (gethash file ht)
-              (push (consult--fast-abbreviate-file-name file) items))))))
-  "Recent file source for `consult-buffer'.
-Copied from the Consult code but adjusted to only take the top 50 candidates.")
-
-(defvar kam-consult-source-project-files
-  `(:name "Project Files"
-          :narrow ?f
-          :hidden nil
-          :category file
-          :face consult-file
-          :history kam-consult-source-project-files-history
-          :state ,#'consult--file-state     ; creates new files before the action is completed
-          :new ,#'consult--file-action
-          :enabled ,(lambda () (kam-buffer-has-project-p (current-buffer)))
-          :action ,(lambda (file)
-                     (find-file (expand-file-name file (project-root (project-current nil)))))
-          :items ,#'kam-project-files)
-  "Project file source for `consult-buffer'.
-This source is only enabled when the current buffer belongs to a project.")
-
 (defvar kam-consult-source-project-files-history nil
   "Minibuffer history for `kam-consult-source-project-files'.")
 
@@ -282,6 +283,7 @@ This source is only enabled when the current buffer belongs to a project.")
       (consult-imenu-multi)
     (consult-imenu)))
 
+;;;###autoload
 (defun kam-consult-outline ()
   "Run either `consult-org-heading' or `consult-outline'."
   (interactive)
@@ -324,6 +326,17 @@ Please see `kam-consult-excluded-preview-buffer-names' and
                     (when (and (boundp 'vertico--index)
                                (>= vertico--index 0))
                       (funcall orig)))))))
+
+(defun kam-consult-project-files ()
+  "Return a list of all the files in the current project.
+Similar to `kam-project-files', but makes  "
+  (let ((files (kam-project-files))
+        (project-name (expand-file-name (project-root (project-current nil)))))
+    (dolist (file files)
+      (let ((dir-len (length project-name)))
+        (when (> dir-len 0)
+          (put-text-property 0 dir-len 'invisible t file))))
+    files))
 
 (provide 'kam-consult)
 ;;; kam-consult.el ends here

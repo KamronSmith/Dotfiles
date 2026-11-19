@@ -91,8 +91,7 @@ to directory DIR."
 (defun kam-project-files ()
   "Return a list of all the project files in the current project."
   (when-let* ((project (project-current nil))
-              (find-program "fd")
-              (project-files-relative-names t))
+              (find-program "find"))
     (project-files project)))
 
 (defun kam-project-prefixed-buffer-name-override (mode)
