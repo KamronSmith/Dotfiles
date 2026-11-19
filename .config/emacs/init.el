@@ -1319,6 +1319,9 @@ surrounded by actual boundaries."
   (require 'kam-consult)
   (advice-add #'register-preview :override #'consult-register-window)
   (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
+  (add-to-list 'consult-preview-allowed-hooks 'visual-line-mode)
+  (add-to-list 'consult-preview-allowed-hooks 'kam-decolorify-mode)
+  (add-to-list 'consult-preview-allowed-hooks 'display-line-numbers-mode)
 
   (advice-add 'consult--jump :around 'kam-centered-cursor-mode-advice)
   (advice-add 'consult-buffer :after (lambda (&rest _) (recenter)))
@@ -1997,7 +2000,6 @@ surrounded by actual boundaries."
 
 (use-package org
   :ensure nil
-  :mode "\\.org\\'"
   :hook (org-mode . kam-org-mode-setup)
   :bind
   (("C-c o" . kam-org-map)
