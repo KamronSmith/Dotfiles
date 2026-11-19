@@ -347,7 +347,7 @@ Please see `kam-consult-excluded-preview-buffer-names' and
                       (funcall orig)))))))
 
 (defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
-  (interactive)
+  "Call `find-file' with PROMPT including interactive preview from Consult."
   (let ((default-directory (or dir default-directory))
         (minibuffer-completing-file-name t))
     (substitute-in-file-name
@@ -356,9 +356,13 @@ Please see `kam-consult-excluded-preview-buffer-names' and
                     :prompt prompt
                     :initial (abbreviate-file-name default-directory)
                     :require-match mustmatch
-                    :predicate pred))))
+                    :predicate pred
+                    :sort nil
+                    :category 'file
+                    :history 'file-name-history))))
 
 (defun kam-consult-project-find-file-with-preview (prompt all-files &optional pred hist _mb)
+  "Call `project-find-file' with PROMPT including interactive preview from Consult."
   (let ((prompt (if (and all-files
                          (file-name-absolute-p (car all-files)))
                     prompt

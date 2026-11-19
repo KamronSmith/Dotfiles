@@ -1258,14 +1258,8 @@ surrounded by actual boundaries."
 
   (setopt vertico-multiform-categories
           `((embark-keybinding grid)
-            ;; (consult-location ,@kam-vertico-multiform-maximal)
-            ;; (imenu ,@kam-vertico-multiform-maximal)
-            ;; (unicode-name ,@kam-vertico-multiform-maximal)
-            ;; (multi-category ,@kam-vertico-multiform-maximal)
-            ;; (file ,@kam-vertico-multiform-minimal
-            ;;       (vertico-sort-function . vertico-sort-directories-first)
-            ;;       (:keymap . vertico-directory-map))
-            ))
+            (file (vertico-sort-override-function . vertico-sort-history-alpha)
+                  (:keymap . vertico-directory-map))))
 
   (setopt vertico-multiform-commands
           '((jinx-correct grid (vertico-grid-annotate . 20))
