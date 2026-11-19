@@ -1,5 +1,6 @@
-# standard completions
+### -*- mode: sh; -*-
 
+# standard completions
 complete -A binding bind
 complete -A setopt set
 complete -A shopt shopt
