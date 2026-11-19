@@ -18,7 +18,7 @@
 (defvar kam-consult-source-neighbor-file
   `(:name     "File in current directory"
               :narrow   ?.
-              :category 'file
+              :category file
               :face     consult-file
               :history  file-name-history
               :state    ,#'consult--file-state
@@ -54,7 +54,7 @@
           :hidden nil
           :category file
           :face consult-file
-          :annotation ,#'marginalia-annotate-file
+          ;; :annotation ,#'marginalia-annotate-project-file
           :history kam-consult-source-project-files-history
           :state ,#'consult--file-state     ; creates new files before the action is completed
           ;; :new ,#'consult--file-action
