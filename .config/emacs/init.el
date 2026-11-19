@@ -2098,6 +2098,7 @@ surrounded by actual boundaries."
   (org-pretty-entities t)
   (org-log-done 'time)
   (org-log-into-drawer t)
+  (org-use-sub-superscripts '{})
   :config
   (require 'kam-org)
 
