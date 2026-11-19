@@ -3123,7 +3123,8 @@ surrounded by actual boundaries."
   (defun kam-whitespace-mode-setup ()
     "Setup function for `whitespace-mode'."
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)
-    (kill-ring-deindent-mode)))
+    ;; (kill-ring-deindent-mode)
+    ))
 
 (use-package x
   :if (eq system-type 'gnu/linux)
