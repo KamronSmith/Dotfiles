@@ -3731,6 +3731,13 @@ With optional ARG, open browser in EWW."
   (super-save-silent t)
   (auto-save-default nil))
 
+(use-package timeshift
+  :ensure nil
+  :commands
+  (timeshift-snapshot-list
+   timeshift-snapshot-create
+   timeshift-snapshot-delete))
+
 (require 'kam-writing)
 (require 'kam-tasks)
 ;;; init.el ends here

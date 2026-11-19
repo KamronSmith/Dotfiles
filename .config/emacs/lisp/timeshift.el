@@ -1,26 +1,26 @@
-;;; kam-timeshift.el --- Use Emacs to interact with Timeshift -*- lexical-binding: t; -*-
+;;; timeshift.el --- Use Emacs to interact with Timeshift -*- lexical-binding: t; -*-
 
 ;;; Summary:
 
 ;;; Commentary:
 
 ;;; Code:
-(defgroup kam-timeshift ()
+(defgroup timeshift ()
   "Extensions to interact with Timeshift on my system."
   :group 'kam-os)
 
-(defun kam-timeshift--snapshot-names ()
+(defun timeshift--snapshot-names ()
   "Return the names of all the snapshots on the system as a list of strings."
   (let ((default-directory "/sudo::"))
     (split-string (shell-command-to-string "timeshift --list | grep \">\" | awk '{print $3}'") "\n")))
 
-(defun kam-timeshift--choose-snapshot ()
+(defun timeshift--choose-snapshot ()
   "Choose a snapshot out of a list of all the snapshots on the system."
   (completing-read "Choose a snapshot: "
-                   (kam-timeshift--snapshot-names)))
+                   (timeshift--snapshot-names)))
 
 ;;;###autoload
-(defun kam-timeshift-snapshot-list ()
+(defun timeshift-snapshot-list ()
   "List all snapshots of the system, taken with Timeshift."
   (interactive)
   (let* ((default-directory "/sudo::")
@@ -31,7 +31,7 @@
     (pop-to-buffer bufname)))
 
 ;;;###autoload
-(defun kam-timeshift-snapshot-create ()
+(defun timeshift-snapshot-create ()
   "Create a snapshot of the system using Timeshift.
 If COMMENT, leave a comment on the snapshot."
   (interactive)
@@ -43,20 +43,20 @@ If COMMENT, leave a comment on the snapshot."
       (insert (shell-command-to-string "timeshift --create")))))
 
 ;;;###autoload
-(defun kam-timeshift-snapshot-delete ()
+(defun timeshift-snapshot-delete ()
   "Delete a snapshot of the system."
   (interactive)
   (let ((default-directory "/sudo::")
         (bufname "*timeshift: delete snapshot*")
-        (snapshot (kam-timeshift--choose-snapshot)))
+        (snapshot (timeshift--choose-snapshot)))
     (with-current-buffer (get-buffer-create bufname)
       (erase-buffer)
       (insert (shell-command-to-string
                (concat "timeshift --delete --snapshot " "'" snapshot "'"))))))
 
 ;;;###autoload
-(defun kam-timeshift-snapshot-restore ()
+(defun timeshift-snapshot-restore ()
   "Restore system to snapshot.")
 
-(provide 'kam-timeshift)
-;;; kam-timeshift.el ends here
+(provide 'timeshift)
+;;; timeshift.el ends here

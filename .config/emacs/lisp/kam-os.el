@@ -7,7 +7,6 @@
 ;;; Code:
 (require 'kam-common)
 (require 'kam-dotfiles)
-(require 'kam-timeshift)
 
 (defgroup kam-os ()
   "Extensions to customize Emacs to fit my operating system.
