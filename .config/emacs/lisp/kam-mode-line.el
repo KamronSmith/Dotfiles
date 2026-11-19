@@ -341,7 +341,6 @@ Specific to the current window's mode-line.")
 (defvar kam-mode-line-buffer-icon-alist
   '(("*Warnings*" . (nerd-icons-faicon "nf-fa-warning" nerd-icons-red))
     ("*scratch*" . (nerd-icons-mdicon "nf-md-test_tube" nerd-icons-green))
-    ("*Shell Command*" . (nerd-icons-sucicon "nf-seti-shell" nerd-icons-blue))
     ("*Claude*" . (nerd-icons-codicon "nf-cod-claude" nerd-icons-blue))))
 
 (cl-defmethod nerd-icons-icon-for-buffer :around (&rest arg-overrides)
