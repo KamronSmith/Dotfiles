@@ -1244,15 +1244,10 @@ surrounded by actual boundaries."
             ))
 
   (setopt vertico-multiform-commands
-          `((jinx-correct grid (vertico-grid-annotate . 20))
-            ;; (execute-extended-command ,@kam-vertico-multiform-minimal)
-            ;; (kam-consult-buffer ,@kam-vertico-multiform-minimal
-            ;;                     (vertico-sort-function . nil))
-            ;; (consult-ripgrep buffer)
-            (consult-buffer (vertico-sort-function . nil))
-            (link-menu-open (vertico-sort-function . nil))
-            ;; (project-find-file ,@kam-vertico-multiform-minimal)
-            ))
+          '((jinx-correct grid (vertico-grid-annotate . 20))
+            (consult-buffer (vertico-sort-override-function . nil)
+                            (vertico-sort-function . nil))
+            (link-menu-open (vertico-sort-function . nil))))
 
   (vertico-multiform-mode 1))
 
@@ -1339,9 +1334,7 @@ surrounded by actual boundaries."
                "-eshell\\*$")
 
   (setopt consult-buffer-sources
-          '(
-            ;; kam-consult-source-tab
-            consult-source-buffer
+          '(kam-consult-source-buffer
             ;; consult-source-project-buffer
             kam-consult-source-project-files
             kam-consult-source-project
@@ -1349,8 +1342,7 @@ surrounded by actual boundaries."
             kam-consult-source-bookmark
             kam-consult-source-recent-file
             ;; kam-consult-source-dired-history
-            consult-source-hidden-buffer
-            )))
+            consult-source-hidden-buffer)))
 
 (use-package consult-dir
   :bind

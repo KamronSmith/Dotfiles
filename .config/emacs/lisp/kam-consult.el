@@ -15,6 +15,21 @@
   "Extensions for `consult'."
   :group 'consult)
 
+(defvar kam-consult-source-buffer
+  `( :name     "Buffer"
+     :narrow   ?b
+     :category buffer
+     :face     consult-buffer
+     :history  buffer-name-history
+     :state    ,#'consult--buffer-state
+     :default  t
+     :items
+     ,(lambda () (consult--buffer-query :sort nil
+                                   :as #'consult--buffer-pair)))
+  "Buffer source for `consult-buffer'.
+Copied from `consult-source-buffer' but altered to sort by recency
+instead of visibility.")
+
 (defvar kam-consult-source-neighbor-file
   `(:name     "File in current directory"
               :narrow   ?.
