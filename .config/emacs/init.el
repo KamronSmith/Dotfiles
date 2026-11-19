@@ -2603,6 +2603,7 @@ surrounded by actual boundaries."
 
 (use-package hl-line
   :ensure nil
+  :hook (hl-line-mode . kam-hl-line-custom-faces-setup)
   :custom
   (hl-line-sticky-flag nil)
   (global-hl-line-sticky-flag 'window))
