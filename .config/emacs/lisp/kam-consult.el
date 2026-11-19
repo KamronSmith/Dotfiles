@@ -259,6 +259,18 @@ This function is intended to be used with `kam-consult--get-projects'."
       (push (cdr dir) dirs))
     dirs))
 
+(defun kam-consult-project-files ()
+  "Return a list of all the files in the current project.
+Similar to `kam-project-files', but makes the directories up to the
+project root directory invisible."
+  (let ((files (kam-project-files))
+        (project-name (expand-file-name (project-root (project-current nil)))))
+    (dolist (file files)
+      (let ((dir-len (length project-name)))
+        (when (> dir-len 0)
+          (put-text-property 0 dir-len 'invisible t file))))
+    files))
+
 (defvar kam-consult-search-ignored-dirs
   '("SCCS"
     "RCS"
@@ -280,15 +292,6 @@ This function is intended to be used with `kam-consult--get-projects'."
 
 (defvar kam-consult-source-project-files-history nil
   "Minibuffer history for `kam-consult-source-project-files'.")
-
-(defvar kam-consult-source-dired-history
-  `(:name "Dired History"
-          :narrow ?d
-          :category file
-          :face consult-file
-          :history kam-dired-directory-history
-          :state ,#'consult--file-state
-          :items (lambda () (mapcar #'identity kam-dired-directory-history))))
 
 ;;;###autoload
 (defun kam-consult-project-imenu ()
@@ -333,6 +336,7 @@ Please see `kam-consult-excluded-preview-buffer-names' and
           (derived-mode-p kam-consult-excluded-preview-buffer-modes)))))
 
 (defun kam-consult--no-prompt-preview ()
+  "Disable previewing the first candidate while in the prompt."
   (when (and (bound-and-true-p vertico-mode)
              consult--preview-function)
     (let ((orig consult--preview-function))
@@ -341,17 +345,6 @@ Please see `kam-consult-excluded-preview-buffer-names' and
                     (when (and (boundp 'vertico--index)
                                (>= vertico--index 0))
                       (funcall orig)))))))
-
-(defun kam-consult-project-files ()
-  "Return a list of all the files in the current project.
-Similar to `kam-project-files', but makes  "
-  (let ((files (kam-project-files))
-        (project-name (expand-file-name (project-root (project-current nil)))))
-    (dolist (file files)
-      (let ((dir-len (length project-name)))
-        (when (> dir-len 0)
-          (put-text-property 0 dir-len 'invisible t file))))
-    files))
 
 (provide 'kam-consult)
 ;;; kam-consult.el ends here
