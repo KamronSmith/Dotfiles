@@ -506,7 +506,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
       (window . root)
-      (window-height . 0.45)
+      (window-height . 0.35)
       (window-parameters . ((mode-line-format . none))))))
   :config
   (require 'kam-window)
@@ -2188,7 +2188,8 @@ surrounded by actual boundaries."
                '("\\*Agenda Commands\\*"
                  (display-buffer-in-side-window)
                  (side . bottom)
-                 (window-width . 0.35)
+                 (window . root)
+                 (window-height . 0.35)
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-refile
