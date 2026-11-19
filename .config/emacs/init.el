@@ -1054,7 +1054,7 @@ surrounded by actual boundaries."
   (recentf-autosave-interval 300)
   (recentf-max-saved-items 5000)
   (recentf-max-menu-items 5000)
-  (recentf-auto-cleanup (if (daemonp) 300 'never))
+  ;; (recentf-auto-cleanup (if (daemonp) 300 'never))
   (recentf-exclude '("^/\\(?:ssh\\|su\\|sudo\\)?:"))
   (recentf-save-file (expand-file-name "recentf" kam-emacs-cache-directory))
   (recentf-show-messages nil)
@@ -1070,9 +1070,8 @@ surrounded by actual boundaries."
          "\\/sudoedit:root"
          "~\\'"))
   :config
-  (advice-add #'recentf-cleanup :around #'kam-call-function-quietly)
-  (advice-add #'recentf-save-list :around #'kam-call-function-quietly)
-  (add-hook 'kill-emacs-hook #'recentf-cleanup -90))
+  ;; (add-hook 'kill-emacs-hook #'recentf-cleanup -90)
+  )
 
 (use-package ispell
   :ensure nil
