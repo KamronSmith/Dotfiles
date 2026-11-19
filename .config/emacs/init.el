@@ -1416,6 +1416,7 @@ surrounded by actual boundaries."
   ("C-;" . embark-dwim)
   (:map minibuffer-local-map
         ("C-." . embark-act)
+        ("C-c C-c" . embark-export)
         ("C-c C-b" . embark-become)
         ("C-c C-e" . embark-export))
   (:map embark-general-map
@@ -1433,10 +1434,12 @@ surrounded by actual boundaries."
         ("d" . consult-dir)
         ("l" . consult-locate)
         ("p" . project-find-file)
+        ("r" . consult-recent-file)
         ("C-b" . consult-buffer)
         ("C-f" . find-file)
         ("C-d" . consult-dir)
         ("C-p" . project-find-file)
+        ("C-r" . consult-recent-file)
         ("C-l" . consult-locate))
   (:map embark-become-help-map
         ("u" . apropos-user-option)
