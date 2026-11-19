@@ -1310,6 +1310,8 @@ surrounded by actual boundaries."
   (consult-ripgrep-args
    "rg --null --follow --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip --hidden --glob=!.git ")
   (consult-fd-args "fd --follow --hidden --full-path --color=never ")
+  (read-file-name-function #'kam-consult-find-file-with-preview)
+  (project-read-file-name-function #'kam-consult-project-find-file-with-preview)
   :config
   (require 'kam-consult)
   (advice-add #'register-preview :override #'consult-register-window)

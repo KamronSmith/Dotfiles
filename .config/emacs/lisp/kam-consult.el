@@ -346,5 +346,36 @@ Please see `kam-consult-excluded-preview-buffer-names' and
                                (>= vertico--index 0))
                       (funcall orig)))))))
 
+(defun kam-consult-find-file-with-preview (prompt &optional dir default mustmatch initial pred)
+  (interactive)
+  (let ((default-directory (or dir default-directory))
+        (minibuffer-completing-file-name t))
+    (substitute-in-file-name
+     (consult--read #'read-file-name-internal
+                    :state (consult--file-preview)
+                    :prompt prompt
+                    :initial (abbreviate-file-name default-directory)
+                    :require-match mustmatch
+                    :predicate pred))))
+
+(defun kam-consult-project-find-file-with-preview (prompt all-files &optional pred hist _mb)
+  (let ((prompt (if (and all-files
+                         (file-name-absolute-p (car all-files)))
+                    prompt
+                  (concat prompt
+                          (format " in %s"
+                                  (consult--fast-abbreviate-file-name default-directory)))))
+        (minibuffer-completing-file-name t))
+    (consult--read (mapcar
+                    (lambda (file)
+                      (file-relative-name file))
+                    all-files)
+                   :state (consult--file-preview)
+                   :prompt (concat prompt ": ")
+                   :require-match t
+                   :history hist
+                   :category 'file
+                   :predicate pred)))
+
 (provide 'kam-consult)
 ;;; kam-consult.el ends here
