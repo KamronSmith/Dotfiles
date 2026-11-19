@@ -2812,6 +2812,7 @@ surrounded by actual boundaries."
 (use-package magit
   :init
   (setq magit-define-global-key-bindings nil)
+  :hook (magit-ediff-quit . kam-ediff-cleanup)
   :bind
   ("C-x g" . magit-status)
   (:map vc-prefix-map
@@ -2861,37 +2862,7 @@ surrounded by actual boundaries."
   :custom
   (vc-follow-symlinks t)
   :config
-  (defun kam-vc-diff (&optional arg)
-    "Compare current buffer with its file, or file with backup or revision.
-With prefix ARG, compare the file with a selected backup when the file
-is not under version control."
-    (interactive "P")
-    (if (buffer-modified-p)
-        (diff-buffer-with-file (current-buffer))
-      (condition-case errdata (call-interactively #'vc-diff)
-        (error
-         (if (string-match-p "not under version control" (cadr errdata))
-             (if arg
-                 (diff (my/read-backup-file-name (buffer-file-name))
-                       (buffer-file-name))
-               (diff-backup (buffer-file-name)))
-           (apply #'signal errdata))))))
-
-  (defun kam-vc-ediff (&optional arg)
-    "Run Ediff on the current buffer, file, or backup.
-With optional prefix ARG, compare the file with a selected backup when
-the file is not under version control."
-    (interactive "P")
-    (if (buffer-modified-p)
-        (call-interactively #'ediff-current-file)
-      (condition-case errdata (call-interactively #'vc-ediff)
-        (error
-         (if (string-match-p "not under version control" (cadr errdata))
-             (if arg
-                 (ediff-files (kam-read-backup-file-name (buffer-file-name))
-                              (buffer-file-name))
-               (ediff-backup (buffer-file-name)))
-           (apply #'signal errdata)))))))
+  (require 'kam-vc))
 
 (use-package git-commit
   :ensure nil
@@ -3026,34 +2997,23 @@ the file is not under version control."
 
 (use-package ediff
   :ensure nil
-  :hook ((ediff-before-setup . kam-ediff-store-layout)
-         (ediff-quit . kam-ediff-restore-layout))
   :custom
   (ediff-split-window-function 'split-window-horizontally)
   (ediff-window-setup-function 'ediff-setup-windows-plain)
-  (ediff-keep-variants nil)
+  (ediff-keep-variants t)
   (ediff-show-ancestor nil)
   (ediff-make-buffers-readonly-at-startup nil)
   (ediff-show-clashes-only t)
   (ediff-diff-options "-w")
   (ediff-custom-diff-options "--suppress-common-lines")
-  (ediff-ignore-similar-regions t)
-  :config
-  (defun kam-ediff-store-layout ()
-    "Store current frame window configuration as a frame parameter.
-  Add this function to the `ediff-before-setup-hook'."
-    (let ((frame (selected-frame)))
-      (set-frame-parameter
-       frame
-       'kam-ediff-last-layout
-       (current-window-configuration frame))))
+  (ediff-ignore-similar-regions t))
 
-  (defun kam-ediff-restore-layout ()
-    "Restore the frame's window configuration.
-  Add this function to the `ediff-quit-hook'."
-    (if-let* ((layout (frame-parameter (selected-frame) 'kam-ediff-last-layout)))
-        (set-window-configuration layout)
-      (message "No Ediff window configuration for the current frame"))))
+(use-package kam-ediff
+  :ensure nil
+  :hook ((ediff-before-setup . kam-ediff-store-layout)
+         (ediff-startup . kam-ediff-mode-setup)
+         (ediff-quit . kam-ediff-restore-layout)
+         (ediff-quit . kam-ediff-cleanup)))
 
 (use-package eldoc
   :ensure nil
