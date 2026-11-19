@@ -111,6 +111,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   ("C-<left>" . kam-prev-buffer)
   ("C-<right>" . kam-next-buffer)
   ("C-<backspace>" . kam-control-backspace)
+  ("C-<return>" . kam-insert-new-line-below)
   ("C-_" . nil)
   ("C-:" . pp-eval-expression)
   ("C-|" . nil)
@@ -521,7 +522,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 (use-package kam-comment
   :ensure nil
   :bind
-  ("C-<return>" . comment-indent-new-line)
   ("C-M-;" . kam-comment-todo)
   :custom
   (comment-empty-lines t)
