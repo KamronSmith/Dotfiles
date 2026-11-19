@@ -216,9 +216,10 @@ PRIORITY may be one of the characters ?A, ?B, or ?C."
 
 ;;;###autoload
 (defun kam-consult-org-refile-region (beg end &optional copy)
-  "Refile the active region with minibuffer completion.
-If no region is active, refile the current paragraph.
-With prefix arg C-u, copy region instead of killing it."
+  "Refile region BEG and END with minibuffer completion.
+If no region is active, refile the current paragraph. With optional
+prefix argument (\\[universal-prefix-argument]) COPY, copy the region
+instead of killing it."
   (interactive "r\nP")
   (unless (use-region-p)
     (setq beg (save-excursion
