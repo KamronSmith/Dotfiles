@@ -595,9 +595,11 @@ window as well. This command works similarly to
   (if pager-mode
       (progn
         (view-mode 1)
-        (hide-cursor-mode 1))
+        (hide-cursor-mode 1)
+        (scroll-lock-mode 1))
     (view-mode -1)
-    (hide-cursor-mode -1)))
+    (hide-cursor-mode -1)
+    (scroll-lock-mode -1)))
 
 (provide 'kam-common)
 ;;; kam-common.el ends here
