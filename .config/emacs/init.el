@@ -2357,7 +2357,7 @@ surrounded by actual boundaries."
   :hook (shell-mode . kam-shell-mode-setup)
   :bind
   ("C-x s" . shell)
-  ([remap shell-command] . kam-shell-command)
+  ;; ([remap shell-command] . kam-shell-command)
   ("C-!" . shell-command)
   (:map shell-mode-map
         ("C-^" . kam-shell-up-directory)
@@ -3378,12 +3378,7 @@ the file is not under version control."
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
                   display-buffer-same-window)
-                 (mode ghostel-mode)))
-
-  (defun kam-ghostel--project-buffer-name (root)
-    ""
-    (let ((name (kam-project-prefixed-buffer-name-override
-                 (string-trim ghostel-buffer-name "*" "*")))))))
+                 (mode ghostel-mode))))
 
 (use-package ghostel-compile
   :ensure nil
@@ -3394,6 +3389,8 @@ the file is not under version control."
 (use-package ghostel-shell-command
   :ensure nil
   :hook (after-init . ghostel-shell-command-global-mode)
+  ;; :bind
+  ;; ("C-!" . ghostel-shell-command)
   :custom
   (ghostel-shell-command-buffer-name "*Shell Command*"))
 

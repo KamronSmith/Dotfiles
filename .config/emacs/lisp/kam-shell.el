@@ -1,7 +1,7 @@
 ;;; kam-shell.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
 ;;; Code:
 (require 'shell)
@@ -23,16 +23,6 @@
            ((eq major-mode 'dired-mode)
             (dired-get-filename nil t)))))
      (and filename (file-relative-name filename)))))
-
-;;;###autoload
-(defun kam-shell-command (cmd)
-  "Perform shell command CMD."
-  (interactive (list (kam-shell-command--prompt)))
-  (let* ((buf (get-buffer-create shell-command-buffer-name)))
-    (shell-command cmd buf buf)
-    (with-current-buffer buf
-      (view-mode)
-      (display-buffer buf))))
 
 (defvar kam-shell-cd-directories nil
   "List of accumulated `shell-last-dir'.")
