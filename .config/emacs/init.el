@@ -2645,7 +2645,9 @@ surrounded by actual boundaries."
   (add-to-list 'nerd-icons-mode-icon-alist
                '(grep-mode nerd-icons-faicon "nf-fa-search" :face nerd-icons-blue))
   (add-to-list 'nerd-icons-mode-icon-alist
-               '(debugger-mode nerd-icons-octicon "nf-oct-bug" :face nerd-icons-blue)))
+               '(debugger-mode nerd-icons-octicon "nf-oct-bug" :face nerd-icons-blue))
+  (add-to-list 'nerd-icons-mode-icon-alist
+               '(trashed-mode nerd-icons-faicon "nf-fa-trash_can" :face nerd-icons-red)))
 
 (use-package nerd-icons-dired
   :if (package-installed-p 'nerd-icons)
