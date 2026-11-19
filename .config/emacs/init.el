@@ -2146,7 +2146,7 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-agenda
-  ;; :after (kam-tasks)
+  :after (kam-tasks)
   :ensure nil
   :hook ((org-agenda . lin-mode)
          (org-agenda-after-show . visual-line-mode))
@@ -2182,7 +2182,7 @@ surrounded by actual boundaries."
                  (display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
                   display-buffer-use-least-recent-window)
-                 (mode . Org-agenda-mode)))
+                 (mode . org-agenda-mode)))
 
   (add-to-list 'display-buffer-alist
                '("\\*Agenda Commands\\*"
