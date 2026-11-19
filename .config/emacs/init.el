@@ -490,7 +490,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
                                  display-buffer-pop-up-window
                                  display-buffer-same-window)))
   (display-buffer-alist
-   `(("\\*Backtrace\\*"
+   '(("\\*Backtrace\\*"
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
       (window . root)
@@ -1520,6 +1520,7 @@ surrounded by actual boundaries."
   (:map corfu-map
         ("<return>" . corfu-insert)
         ("<kam-i>" . corfu-insert)
+        ("C-<return>" . corfu-insert)
         ("M-SPC" . corfu-insert-separator)
         ("<next>" . corfu-scroll-up)
         ("<prior>" . corfu-scroll-down)
