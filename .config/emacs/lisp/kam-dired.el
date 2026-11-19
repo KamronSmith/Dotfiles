@@ -1,7 +1,7 @@
 ;;; kam-dired.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
 ;;; Code:
 (defvar kam-automount-directory (format "/run/media/%s" user-login-name)
@@ -165,6 +165,60 @@ Duplicates are not saved."
     (setopt kam-dired-directory-history (delete-dups kam-dired-directory-history))))
 
 ;;;###autoload
+(defun kam-dired-delete-empty-dirs ()
+  "Interactively mark all empty directories in current Dired buffer."
+  (interactive)
+  (when (equal major-mode 'dired-mode)
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (ignore-errors
+          (when (directory-empty-p (dired-get-filename))
+            (delete-directory (dired-get-filename))))
+        (dired-next-line 1)))))
+
+;;;###autoload
+(defun kam-dired-mark-empty-dirs ()
+  "Mark all empty directories in current Dired buffer."
+  (interactive)
+  (when (equal major-mode 'dired-mode)
+    (save-excursion
+      (goto-char (point-min))
+      (while (not (eobp))
+        (ignore-errors
+          (when (directory-empty-p (dired-get-filename))
+            (dired-mark 1)
+            (dired-previous-line 1)))
+        (dired-next-line 1)))))
+
+;;;###autoload
+(defun kam-dired-do-get-size (&optional arg)
+  "Get size of all marked (or next ARG) files."
+  (interactive "p")
+  (let* ((files (dired-get-marked-files))
+         (size (kam-du-size files)))
+    (message
+     (if (= 1 (length files))
+         (format "Size of %s: %s" (file-name-nondirectory (car files)) size)
+       (format "Size of all marked files: %s" size)))))
+
+(defun kam-dired-directory-get-size ()
+  (interactive)
+  (let* ((files (directory-files
+                 default-directory
+                 t directory-files-no-dot-files-regexp))
+         (size (kam-du-size files)))
+    (message "Size of %s: %s" default-directory size)))
+
+(defun kam-dired-directory-get-size-recursively ()
+  (interactive)
+  (let* ((files (directory-files-recursively
+                 default-directory
+                 directory-files-no-dot-files-regexp))
+         (size (kam-du-size files)))
+    (message "Total size of tree %s: %s" default-directory size)))
+
+;;;###autoload
 (define-minor-mode kam-dired-disable-revert-buffer-mode
   "Disable reverting the buffer in `dired-mode' when a file changes."
   :global nil
@@ -173,6 +227,15 @@ Duplicates are not saved."
                     dired-auto-revert-buffer nil)
     (setopt-local dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir)))
                   dired-auto-revert-buffer t)))
+
+;;;###autoload
+(defun kam-dired-do-destroy (&optional arg)
+  "Destroy all marked (or next ARG) files.
+Like `dired-do-delete', but deletes the files with \"rm\" instead of
+moving to the system trash."
+  (interactive "p")
+  (let ((delete-by-moving-to-trash nil))
+    (dired-do-delete arg)))
 
 (provide 'kam-dired)
 ;;; kam-dired.el ends here

@@ -300,6 +300,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (setopt mac-control-modifier 'control)
       (setopt mac-command-modifier 'meta)
       (setopt mac-option-modifier 'meta)
+      (setopt trash-directory (expand-file-name ".Trash" kam-home-directory))
       (setopt insert-directory-program (executable-find "gls"))
       (menu-bar-mode 1)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
@@ -587,10 +588,9 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 (use-package dired
   :ensure nil
   :hook ((dired-mode . dired-hide-details-mode)
+         (dired-mode . dired-async-mode)
          (dired-mode . kam-dired-mode-setup)
-         (dired-after-readin . kam-dired-directory-add-to-history)
-         ;; (dired-mode . kam-wdired-mode-setup)
-         )
+         (dired-after-readin . kam-dired-directory-add-to-history))
   :bind
   (:map dired-mode-map
         ("<mouse-2>" . dired-mouse-find-file)
@@ -599,6 +599,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
         ("i" . kam-dired-insert-subdir)
         ("R" . dired-do-rename)
         ("\\" . dired-create-empty-file)
+        ("X" . kam-dired-do-destroy)
         ("C-w" . dired-do-delete)
         ("M-w" . dired-copy-filename-as-kill)
         ([kam-i] . kam-split-window-right))
@@ -625,7 +626,13 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
      (".*" "xdg-open")))
   :config
   (require 'kam-dired)
-  (put 'dired-find-alternate-file 'disabled nil))
+  (put 'dired-find-alternate-file 'disabled nil)
+  (add-to-list 'display-buffer-alist
+               '((major-mode . dired-mode)
+                 (display-buffer-reuse-mode-window
+                  display-buffer-pop-up-window
+                  display-buffer-same-window)
+                 (mode dired-mode))))
 
 (use-package dired-x
   :ensure nil
@@ -658,6 +665,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   :custom
   (wdired-allow-to-change-permissions t)
   (wdired-create-parent-directories t)
+  (wdired-use-dired-vertical-movement 'sometimes)
   :config
   (defun kam-wdired-mode-setup ()
     "Setup function for `wdired-mode'."
@@ -702,11 +710,24 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   :hook ((trashed-mode . hide-cursor-mode)
          (trashed-mode . lin-mode))
   :bind
-  ("C-c t" . trashed)
+  ("C-c t" . kam-trashed)
   :custom
   (trashed-action-confirmer 'y-or-n-p)
   (trashed-use-header-line t)
-  (trashed-sort-key '("Date deleted" . t)))
+  (trashed-sort-key '("Date deleted" . t))
+  :config
+  (setq trashed-buffer-name "*Trash*")
+  (setq trashed-trash-dir kam-trash-directory)
+  (setq trashed-files-dir kam-trash-directory)
+  (setq trashed-info-dir kam-trash-directory)
+
+  (defun kam-trashed ()
+    "Either run `trashed' or open the system trash can."
+    (interactive)
+    (if (eq system-type 'darwin)
+        (dired kam-trash-directory "-AGFhlt --time-style=long-iso")
+      (call-interactively #'trashed)
+      (setq this-command 'trashed))))
 
 (use-package emureader
   :unless kam-parrotos
@@ -3742,6 +3763,13 @@ With optional ARG, open browser in EWW."
   (timeshift-snapshot-list
    timeshift-snapshot-create
    timeshift-snapshot-delete))
+
+(use-package osx-trash
+  :if (eq system-type 'darwin)
+  :custom
+  (osx-trash-command "trash -F")
+  :config
+  (osx-trash-setup))
 
 (require 'kam-writing)
 (require 'kam-tasks)

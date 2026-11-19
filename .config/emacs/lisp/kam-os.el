@@ -13,57 +13,66 @@
 And the way I want to use a computer.")
 
 (defcustom kam-home-directory (expand-file-name "~/")
-  "My home directory."
+  "Home directory."
   :type 'string
   :group 'kam-os)
 
+(defcustom kam-user-app-data-directory
+  (cond ((eq system-type 'gnu/linux)
+         (expand-file-name ".local/share" kam-home-directory)))
+  "Directory where user-specific application data is stored.")
+
+(defcustom kam-user-bin-directory
+  (expand-file-name ".local/bin" kam-home-directory)
+  "Directory where user applications are stored.")
+
 (defcustom kam-documents-directory (expand-file-name "~/Documents/")
-  "Directory where all of my documents live."
+  "Directory where all of my documents are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-books-directory (expand-file-name "Books/" kam-documents-directory)
-  "Directory where all of my books live."
+  "Directory where all of my books stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-pictures-directory (expand-file-name "Pictures/" kam-home-directory)
-  "Directory where all of my pictures live."
+  "Directory where all of my pictures are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-music-directory (expand-file-name "Music/" kam-home-directory)
-  "Directory where all of my music lives."
+  "Directory where all of my music is stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-wallpapers-directory (expand-file-name "Wallpapers/" kam-pictures-directory)
-  "Directory where all of my wallpapers live."
+  "Directory where all of my wallpapers are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-screenshots-directory (expand-file-name "Screenshots/" kam-pictures-directory)
-  "Directory where all of my screenshots live."
+  "Directory where all of my screenshots are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-videos-directory (expand-file-name "Videos/" kam-home-directory)
-  "Directory where all of my videos live."
+  "Directory where all of my videos are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-projects-directory (expand-file-name "Projects/" kam-home-directory)
-  "Directory where all of my projects live."
+  "Directory where all of my projects are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-archive-directory (expand-file-name "Archive/" kam-home-directory)
-  "Directory where all of my archived projects live."
+  "Directory where all of my archived projects are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-software-directory (expand-file-name "Software/" kam-home-directory)
-  "Directory where all of my downloaded software projects live."
+  "Directory where all of my downloaded software projects are stored."
   :type 'string
   :group 'kam-os)
 
@@ -79,13 +88,28 @@ And the way I want to use a computer.")
 
 (defcustom kam-notes-directory
   (expand-file-name "Notes/" kam-documents-directory)
-  "Directory where all of my notes live."
+  "Directory where all of my notes are stored."
   :type 'string
   :group 'kam-os)
 
 (defcustom kam-zettelkasten-directory
   (expand-file-name "Zettelkasten/" kam-documents-directory)
-  "Directory where my Zettelkasten lives."
+  "Directory where my Zettelkasten is stored."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-trash-directory
+  (cond ((eq system-type 'gnu/linux)
+         (expand-file-name "Trash" kam-user-app-data-directory))
+        ((eq system-type 'darwin)
+         (expand-file-name ".Trash" kam-home-directory)))
+  "Directory where the system trash can is stored."
+  :type 'string
+  :group 'kam-os)
+
+(defcustom kam-du-program
+  (executable-find "du")
+  "String corresponding to the location of du on the system."
   :type 'string
   :group 'kam-os)
 
@@ -94,6 +118,7 @@ And the way I want to use a computer.")
     "fd"
     "zsh"
     ,(when (eq system-type 'darwin) "gls")
+    ,(when (eq system-type 'darwin) "trash")
     )
   "Programs that this configuration of Emacs depends on.")
 
@@ -182,46 +207,46 @@ and `kam-dotfiles-installed-foreign-packages-file'"
   "Install one or multiple system packages using Pacman.
 Additionally, save the updated list of installed packages in `kam-dotfiles-installed-system-packages-file'."
   (interactive)
-  (let* ((default-directory "/sudo::")
-         (chosen-package (kam-os--choose-package (kam-os--available-packages)))
+  (let* ((chosen-package (kam-os--choose-package (kam-os--available-packages)))
          (chosen-packages (string-join chosen-package " "))
          (bufname (concat "*Pacman: Install " chosen-packages "*"))
          (shell-command-buffer-name-async bufname))
-    (async-shell-command
-     (concat "pacman -S " chosen-packages))
-    (kam-os--write-explicitly-installed-packages-to-file)
-    (pop-to-buffer bufname)))
+    (kam-with-directory "/sudo::"
+      (async-shell-command
+       (concat "pacman -S " chosen-packages))
+      (kam-os--write-explicitly-installed-packages-to-file)
+      (pop-to-buffer bufname))))
 
 ;;;###autoload
 (defun kam-os-package-uninstall ()
   "Remove one or more system packages and all of their unused dependencies.
 Additionally, save the updated list of installed packages in `kam-dotfiles-installed-system-packages-file'."
   (interactive)
-  (let* ((default-directory "/sudo::")
-         (chosen-package (kam-os--choose-package (kam-os--installed-packages)))
+  (let* ((chosen-package (kam-os--choose-package (kam-os--installed-packages)))
          (chosen-packages (string-join chosen-package " "))
          (bufname (concat "*Pacman: Uninstall " chosen-packages "*"))
          (shell-command-buffer-name-async bufname))
-    (async-shell-command
-     (concat "pacman -Rs " chosen-packages))
-    (kam-os--write-explicitly-installed-packages-to-file)))
+    (kam-with-directory "/sudo::"
+      (async-shell-command
+       (concat "pacman -Rs " chosen-packages))
+      (kam-os--write-explicitly-installed-packages-to-file))))
 
 ;;;###autoload
 (defun kam-os-uninstall-orphan-packages ()
   "Remove all orphaned packages and their configuration files."
   (interactive)
-  (let ((default-directory "/sudo::")
-        (shell-command-buffer-name-async "*Pacman: Remove Orphan Packages*"))
-    (async-shell-command "pacman -Qdtq | pacman -Rns -")
-    (kam-os--write-explicitly-installed-packages-to-file)))
+  (let ((shell-command-buffer-name-async "*Pacman: Remove Orphan Packages*"))
+    (kam-with-directory "/sudo::"
+      (async-shell-command "pacman -Qdtq | pacman -Rns -")
+      (kam-os--write-explicitly-installed-packages-to-file))))
 
 ;;;###autoload
 (defun kam-os-upgrade-system ()
   "Upgrade all of the packages on the system, and also creates a snapshot of the system before the upgrade."
   (interactive)
-  (let* ((default-directory "/sudo::")
-        (shell-command-buffer-name-async "*Pacman: Upgrade System*"))
-    (async-shell-command "pacman -Syu")))
+  (let* ((shell-command-buffer-name-async "*Pacman: Upgrade System*"))
+    (kam-with-directory "/sudo::"
+      (async-shell-command "pacman -Syu"))))
 
 ;;;###autoload
 (defun kam-os-package-search (package)
@@ -280,13 +305,13 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
   "Restart Emacs under a variety of operating system conditions."
   (interactive)
   (cond
-   ((and (eq system-type 'gnu/linux)
+   ((and (kam-when-system-type 'gnu/linux t)
          (daemonp))
     (kam-os-restart-service "emacs")
     (run-hooks 'kill-emacs-hook))
-   ((eq system-type 'gnu-linux)
+   ((kam-when-system-type 'gnu/linux t)
     (restart-emacs))
-   ((eq system-type 'darwin)
+   ((kam-when-system-type 'darwin t)
     (restart-emacs))))
 
 (defun kam-os--get-services ()
@@ -365,6 +390,13 @@ SERVICE should be a string that corresponds to a service."
     (async-shell-command "df -h")
     (with-current-buffer buf
       (view-mode))))
+
+(defun kam-du-size (files)
+  "Get the combined size of FILES using `kam-du-program'."
+  (with-temp-buffer
+    (apply 'call-process kam-du-program nil t nil "-sch" files)
+    (re-search-backward "\\(^[ 0-9.,]+[A-Za-z]+\\).*total$" nil t)
+    (or (ignore-errors (match-string 1)) 0)))
 
 ;;;###autoload
 (defun kam-os-lsblk ()
@@ -466,14 +498,6 @@ WALLPAPER should be a fully qualified path to an image file."
       (save-buffer)
       (kill-buffer buf))
     (kam-os-restart-service "hyprpaper")))
-
-;;; Media
-(defun kam-os-tab-in-media-directory ()
-  "Make a new tab in `kam-media-directory'."
-  (interactive)
-  (tab-new)
-  (tab-rename "󰿎 media")
-  (dired kam-media-directory))
 
 ;;; VPN
 ;;;###autoload
