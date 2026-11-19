@@ -116,12 +116,8 @@ double prefix argument, remove all inserted subdirectories."
 
 (defun kam-dired-mode-setup ()
   "Setup function for `dired-mode'."
-  (if hide-cursor-mode
-      (hide-cursor-mode -1)
-    (hide-cursor-mode 1))
-  (if hl-line-mode
-      (hl-line-mode -1)
-    (hl-line-mode 1))
+  (hide-cursor-mode 1)
+  (hl-line-mode 1)
   (kam-dired-imenu-setup))
 
 (defun kam-dired-imenu-setup ()

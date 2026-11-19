@@ -674,7 +674,13 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (hide-cursor-mode 1))
     (if hl-line-mode
         (hl-line-mode -1)
-      (hl-line-mode 1))))
+      (hl-line-mode 1)))
+
+  (defun kam-wdired-run-hooks (&rest _)
+    "Run `wdired-mode-hook'."
+    (run-mode-hooks 'wdired-mode-hook))
+
+  (advice-add 'wdired-change-to-dired-mode :after 'kam-wdired-run-hooks))
 
 (use-package dired-subtree
   :after (dired)
