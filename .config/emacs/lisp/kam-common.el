@@ -611,5 +611,12 @@ host. Please see `system-type' for accepted symbols."
   `(when (eq ',system-type ,sys-type)
      ,@body))
 
+(defmacro kam-when-system-name (sys-name &rest body)
+  "Run BODY forms when SYS-NAME is equal to `system-name'.
+SYS-NAME should be a string corresponding to the host name of the
+system."
+  (declare (indent 1) (debug (sexp def-body)))
+  `(when (string-equal ,(system-name) ,sys-name)
+     ,@body))
 (provide 'kam-common)
 ;;; kam-common.el ends here
