@@ -561,6 +561,8 @@ use the symbol at point."
   (cond
    ((region-active-p)
     (keyboard-quit))
+   (current-prefix-arg
+    nil)
    ((derived-mode-p 'completion-list-mode)
     (delete-completion-window))
    ((> (minibuffer-depth) 0)
@@ -575,7 +577,7 @@ use the symbol at point."
   (let ((buffer-quit-function (or buffer-quit-function
                                   #'ignore)))
     (keyboard-escape-quit)
-    (message "%s" "Quit")))
+    (message "Quit")))
 
 ;;;###autoload
 (defun kam-kill-current-buffer (&optional arg)
