@@ -290,10 +290,10 @@ Enable that mode to its keybindings take over those of the major mode.")
   (defun kam-emacs-setup ()
     "Setup function for Emacs.
 Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
-    (cond
-     ((eq system-type 'gnu/linux)
+
+    (kam-when-system-type 'gnu/linux
       (setopt x-meta-keysym 'meta))
-     ((eq system-type 'darwin)
+    (kam-when-system-type 'darwin
       (global-text-scale-adjust 1)
       (setopt mac-option-key-is-meta t)
       (setopt mac-command-key-is-meta t)
@@ -305,7 +305,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (menu-bar-mode 1)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-      (require 'kam-mac))))
+      (require 'kam-mac)))
 
   (put 'narrow-to-region 'disabled nil)
 
@@ -730,13 +730,12 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (defun kam-trashed ()
     "Either run `trashed' or open the system trash can."
     (interactive)
-    (if (eq system-type 'darwin)
+    (if (kam-when-system-type 'darwin t)
         (dired kam-trash-directory "-AGFhlt --time-style=long-iso")
       (call-interactively #'trashed)
       (setq this-command 'trashed))))
 
 (use-package emureader
-  :unless kam-parrotos
   :bind
   (:map emureader-mode-map
         ("SPC" . emureader-next-page)
@@ -2869,7 +2868,7 @@ surrounded by actual boundaries."
   (magit-auto-revert-mode)
   (magit-wip-mode)
 
-  (when (eq system-type 'darwin)
+  (kam-when-system-type 'darwin
     (setq magit-git-executable "/opt/homebrew/bin/git"))
 
   (add-to-list 'consult-buffer-filter

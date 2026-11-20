@@ -603,5 +603,13 @@ window as well. This command works similarly to
     (hide-cursor-mode -1)
     (scroll-lock-mode -1)))
 
+(defmacro kam-when-system-type (sys-type &rest body)
+  "Run BODY forms when SYS-TYPE is equal to `system-type'.
+SYS-TYPE should be a symbol corresponding to the operating system of the
+host. Please see `system-type' for accepted symbols."
+  (declare (indent 1) (debug (sexp def-body)))
+  `(when (eq ',system-type ,sys-type)
+     ,@body))
+
 (provide 'kam-common)
 ;;; kam-common.el ends here

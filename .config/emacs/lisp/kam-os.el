@@ -99,9 +99,9 @@ And the way I want to use a computer.")
   :group 'kam-os)
 
 (defcustom kam-trash-directory
-  (cond ((eq system-type 'gnu/linux)
+  (cond ((kam-when-system-type 'gnu/linux t)
          (expand-file-name "Trash" kam-user-app-data-directory))
-        ((eq system-type 'darwin)
+        ((kam-when-system-type 'darwin t)
          (expand-file-name ".Trash" kam-home-directory)))
   "Directory where the system trash can is stored."
   :type 'string
@@ -117,8 +117,8 @@ And the way I want to use a computer.")
   `("rg"
     "fd"
     "zsh"
-    ,(when (eq system-type 'darwin) "gls")
-    ,(when (eq system-type 'darwin) "trash")
+    ,(kam-when-system-type 'darwin "gls")
+    ,(kam-when-system-type 'darwin "trash")
     )
   "Programs that this configuration of Emacs depends on.")
 
