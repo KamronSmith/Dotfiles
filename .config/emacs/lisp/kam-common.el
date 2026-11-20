@@ -204,6 +204,17 @@ whichever position is higher."
   (message "Reverted buffer `%s'" (buffer-name (current-buffer))))
 
 ;;;###autoload
+(defun kam-smart-beginning-of-line ()
+  "Move point to first non-whitespace character or beginning-of-line.
+If point was already at that position, move point to beginning of
+line."
+  (interactive)
+  (let ((oldpos (point)))
+    (back-to-indentation)
+    (and (= oldpos (point))
+         (beginning-of-line))))
+
+;;;###autoload
 (defun kam-mark-line (&optional arg allow-extend)
   "Set mark ARG lines from point or move point one line.
 With numeric prefix argument ARG, put mark on the end of a following
