@@ -2521,19 +2521,22 @@ surrounded by actual boundaries."
   (standard-themes-take-over-modus-themes-mode 1)
   :config
   (require 'kam-theme)
+  (setopt standard-themes-common-palette-overrides
+          '((bg-completion bg-dim)
+            (fg-heading-1 rainbow-2)
+            (fg-heading-2 rainbow-1)
+            (docstring string)))
 
   (setopt standard-dark-palette-overrides
           '((fg-prompt cyan)
             ;; (bg-main "#181818") ;;   tsoding
-            (bg-prompt unspecified)
-            (bg-prose-block-delimiter "#312f34")
-            (bg-prose-block-contents "#29272c")
-            (cursor "#f9d82b")
-            (fg-heading-1 rainbow-2)
-            (fg-heading-2 rainbow-1)
-            (docstring string)))
-  (setopt stadard-light-palette-overrides
-          '((cursor "#000000")))
+            ;; (bg-prose-block-delimiter "#312f34")
+            ;; (bg-prose-block-contents "#29272c")
+            (cursor "#f9d82b")))
+
+  (setopt standard-light-palette-overrides
+          '((cursor fg-main)))
+
   (setopt standard-themes-to-toggle '(standard-dark
                                       standard-light))
   (setopt standard-themes-disable-other-themes t)
