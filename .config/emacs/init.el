@@ -502,12 +502,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
        display-buffer-pop-up-window
        display-buffer-use-least-recent-window)
       (mode occur-mode))
-     ("\\*Pp Eval Output\\*"
-      (display-buffer-reuse-window display-buffer-in-side-window)
-      (side . bottom)
-      (window . root)
-      (body-function . view-mode)
-      (window-height . 0.35))
      ("^\\*Pacman: "
       (display-buffer-reuse-window display-buffer-in-side-window)
       (side . bottom)
@@ -2815,9 +2809,27 @@ surrounded by actual boundaries."
   :config
   (set-default-toplevel-value 'lexical-binding t)
 
-  (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter
-                 "\\*Pp Eval Output\\*"))
+  ;; (with-eval-after-load 'consult
+  ;;   (add-to-list 'consult-buffer-filter
+  ;;                "\\*Pp Eval Output\\*"))
+
+  (add-to-list 'display-buffer-alist
+               '("\\*Pp Eval Output\\*"
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . bottom)
+                 (window . root)
+                 (body-function . view-mode)
+                 (window-height . 0.35)
+                 (window-parameters . ((mode-line-format . none)))))
+
+  (add-to-list 'display-buffer-alist
+               '("\\*Pp Macroexpand Output\\*"
+                 (display-buffer-reuse-window display-buffer-in-side-window)
+                 (side . bottom)
+                 (window . root)
+                 (body-function . view-mode)
+                 (window-height . 0.35)
+                 (window-parameters . ((mode-line-format . none)))))
 
   (defun kam-elisp-mode-setup ()
     "Setup function for `emacs-lisp-mode'."
