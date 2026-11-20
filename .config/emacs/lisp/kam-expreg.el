@@ -31,6 +31,16 @@ Does not include the delimiters."
         (cons beg end))))))
 
 ;;;###autoload
+(defun kam-forward-out-sexp (&optional arg)
+  "Move forward out of one level of delimiters.
+With optional numeric prefix argument ARG, do it that many times."
+  (interactive "p")
+  (dotimes (_ arg)
+    (let* ((dim (kam-expreg--sexp))
+           (out (cdr dim)))
+      (goto-char (1+ out)))))
+
+;;;###autoload
 (defun kam-mark-inner-sexp ()
   "Mark the inside of a pair of delimiters at point.
 Respects comments and strings. Powered by `kam-expreg--sexp'."

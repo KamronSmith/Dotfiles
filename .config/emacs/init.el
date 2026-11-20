@@ -2000,12 +2000,19 @@ surrounded by actual boundaries."
   (mc/list-file (expand-file-name "mc-lists.el" kam-emacs-cache-directory)))
 
 (use-package expreg
+  :commands
+  (kam-forward-out-sexp
+   kam-mark-inner-sexp
+   kam-kill-inner-sexp
+   kam-expreg-end-of-sexp
+   kam-expreg-beginning-of-sexp)
   :hook
   (text-mode . kam-expreg-text-mode-setup)
   :bind
   ("C-&" . expreg-expand)
   ("C-M-m" . kam-mark-inner-sexp)
   ("C-M-q" . kam-kill-inner-sexp)
+  ("C-M-o" . kam-forward-out-sexp)
   (:map prog-mode-map
         ("C-M-q" . kam-kill-inner-sexp))
   (:repeat-map expreg-repeat-map
