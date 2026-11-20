@@ -565,9 +565,9 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (defun kam-centered-cursor-mode-advice (orig-fn &rest args)
     "Call ORIG-FN with ARGS while temporarily disabling `centered-cursor-mode'."
     (when (bound-and-true-p centered-cursor-mode)
-      (centered-cursor-mode -1)
+      (setopt-local centered-cursor-mode nil)
       (apply orig-fn args)
-      (centered-cursor-mode 1)))
+      (setopt-local centered-cursor-mode t)))
 
   (add-to-list 'ccm-ignored-commands
                'ultra-scroll)
