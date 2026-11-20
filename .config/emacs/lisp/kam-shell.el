@@ -97,7 +97,7 @@ windows easier."
   "Open a shell in the home directory.
 The shell is renamed to make opening multiple shells easier."
   (interactive)
-  (let ((default-directory (getenv "HOME")))
+  (kam-with-directory kam-home-directory
     (shell)))
 
 (provide 'kam-shell)

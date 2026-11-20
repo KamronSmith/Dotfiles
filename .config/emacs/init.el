@@ -2883,7 +2883,7 @@ surrounded by actual boundaries."
   (defun kam-git-clone ()
     "Run git clone using `magit' in `kam-projects-directory'."
     (interactive)
-    (let ((default-directory kam-projects-directory))
+    (kam-with-directory kam-projects-directory
       (call-interactively 'magit-clone))
     (kam-project-update-list)))
 

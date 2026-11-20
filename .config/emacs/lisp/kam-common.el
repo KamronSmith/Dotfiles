@@ -618,5 +618,12 @@ system."
   (declare (indent 1) (debug (sexp def-body)))
   `(when (string-equal ,(system-name) ,sys-name)
      ,@body))
+
+(defmacro kam-with-directory (directory &rest body)
+  "Run BODY forms in DIRECTORY."
+  (declare (indent 1) (debug (sexp def-body)))
+  `(let ((default-directory ,directory))
+     ,@body))
+
 (provide 'kam-common)
 ;;; kam-common.el ends here

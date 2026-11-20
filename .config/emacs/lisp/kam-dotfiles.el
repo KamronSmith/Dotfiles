@@ -32,7 +32,7 @@
   "Run stow -R in `kam-dotfiles-directory'.
 With optional ARG, force update Emacs byte-compiled files."
   (interactive "p")
-  (let ((default-directory kam-dotfiles-directory))
+  (kam-with-directory kam-dotfiles-directory
     (shell-command "stow -R ."))
   (when arg
     (prepare-user-lisp nil nil t)))
