@@ -623,10 +623,11 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (put 'dired-find-alternate-file 'disabled nil)
   (add-to-list 'display-buffer-alist
                '((major-mode . dired-mode)
-                 (display-buffer-reuse-mode-window
+                 (;; display-buffer-reuse-mode-window
                   display-buffer-pop-up-window
                   display-buffer-same-window)
-                 (mode dired-mode))))
+                 ;; (mode dired-mode)
+                 )))
 
 (use-package dired-x
   :ensure nil
