@@ -614,6 +614,22 @@ window as well. This command works similarly to
     (hide-cursor-mode -1)
     (scroll-lock-mode -1)))
 
+(defun kam-read-feature (prompt &optional loaded-p)
+  "Read feature name from the minibuffer, prompting with string PROMPT.
+If optional second arg LOADED-P is non-nil, the feature must be loaded
+from a file."
+  (interactive (list
+                "Feature: "))
+  (intern (completing-read
+           prompt
+           (mapcar #'symbol-name
+                   (if loaded-p
+                       (delq nil
+                             (mapcar
+                              (lambda (x) (and (feature-file x) x))
+                              features))
+                     features)))))
+
 (defmacro kam-when-system-type (sys-type &rest body)
   "Run BODY forms when SYS-TYPE is equal to `system-type'.
 SYS-TYPE should be a symbol corresponding to the operating system of the
