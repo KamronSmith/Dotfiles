@@ -110,6 +110,7 @@ qt5-wayland
 qt6-wayland
 raylib
 rofi
+sbcl
 sddm
 shellcheck
 slurp
