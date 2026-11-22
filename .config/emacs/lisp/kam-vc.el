@@ -4,6 +4,7 @@
 (require 'vc)
 (require 'ediff)
 (require 'diff)
+(require 'kam-common)
 
 ;;;###autoload
 (defun kam-vc-diff (&optional arg)
@@ -17,7 +18,7 @@ is not under version control."
       (error
        (if (string-match-p "not under version control" (cadr errdata))
            (if arg
-               (diff (my/read-backup-file-name (buffer-file-name))
+               (diff (kam-read-backup-file-name (buffer-file-name))
                      (buffer-file-name))
              (diff-backup (buffer-file-name)))
          (apply #'signal errdata))))))
