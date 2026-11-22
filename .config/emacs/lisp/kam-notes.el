@@ -34,7 +34,7 @@
 
 ;;;###autoload
 (defun kam-notes-set-processed-property ()
-  "Set the property PROCESSED to no on an org-mode heading."
+  "Set the property PROCESSED to no on an `org-mode' heading."
   (interactive)
   (org-set-property "PROCESSED" "no"))
 
