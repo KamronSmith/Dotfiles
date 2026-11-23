@@ -6,6 +6,9 @@
 
 ;;; Code:
 (require 'ace-window)
+(require 'consult)
+(require 'kam-common)
+(require 'winner)
 
 (defgroup kam-window ()
   "Extensions for the windowing system in Emacs."
@@ -113,7 +116,7 @@ Additionally, select the newly formed window."
 (defun kam-ace-window ()
   "Like the normal `ace-window' command, but splits the window if there is only one window."
   (interactive)
-  (if (one-window-p) 
+  (if (one-window-p)
       (kam-split-window-right)
     (call-interactively 'ace-window)))
 
