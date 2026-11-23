@@ -201,6 +201,11 @@ Only split if there is no split, and only split into left and right windows."
   (aw-switch-to-window window)
   (consult-buffer))
 
+(defun kam-aw-find-file (window)
+  "Perform `find-file' in AW selected WINDOW."
+  (aw-switch-to-window window)
+  (call-interactively #'find-file))
+
 (defun kam-aw-delete-window-dwim (window)
   "Perform `kam-delete-window-dwim' in the AW-selected WINDOW."
   (aw-switch-to-window window)

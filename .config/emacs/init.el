@@ -1733,6 +1733,7 @@ surrounded by actual boundaries."
           (?v aw-split-window-vert "Split Vert Window")
           (?h aw-split-window-horz "Split Horz Window")
           (?b kam-aw-consult-buffer "Select Buffer")
+          (?f kam-aw-find-file "Find File")
           (?o kam-aw-one-command "Run command")
           (?x kam-aw-execute-extended-command "Run an interactive command")
           (?1 delete-other-windows "Delete Other Windows")
