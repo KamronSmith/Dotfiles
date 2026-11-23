@@ -301,11 +301,11 @@ Enable that mode to its keybindings take over those of the major mode.")
   (defun kam-emacs-setup ()
     "Setup function for Emacs.
 Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
-
+    (kam-font-faces-setup)
     (kam-when-system-type 'gnu/linux
       (setopt x-meta-keysym 'meta))
     (kam-when-system-type 'darwin
-      (global-text-scale-adjust 1)
+      (global-text-scale-adjust 2)
       (setopt mac-option-key-is-meta t)
       (setopt mac-command-key-is-meta t)
       (setopt mac-control-modifier 'control)
@@ -313,12 +313,10 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (setopt mac-option-modifier 'meta)
       (setopt trash-directory (expand-file-name ".Trash" kam-home-directory))
       (setopt insert-directory-program (executable-find "gls"))
-      (setopt mac-system-move-file-to-trash-use-finder t)
-      (menu-bar-mode 1)
+      (menu-bar-mode)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-      (require 'kam-mac))
-    (kam-font-faces-setup))
+      (require 'kam-mac)))
 
   (put 'narrow-to-region 'disabled nil)
 
