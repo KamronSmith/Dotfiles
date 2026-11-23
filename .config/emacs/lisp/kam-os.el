@@ -213,7 +213,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
          (shell-command-buffer-name-async bufname))
     (kam-with-directory "/sudo::"
       (async-shell-command
-       (concat "pacman -S " chosen-packages))
+       (concat "pacman -S " chosen-packages "--noconfirm"))
       (kam-os--write-explicitly-installed-packages-to-file)
       (pop-to-buffer bufname))))
 
@@ -228,7 +228,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
          (shell-command-buffer-name-async bufname))
     (kam-with-directory "/sudo::"
       (async-shell-command
-       (concat "pacman -Rs " chosen-packages))
+       (concat "pacman -Rs " chosen-packages "--noconfirm"))
       (kam-os--write-explicitly-installed-packages-to-file))))
 
 ;;;###autoload
@@ -246,7 +246,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
   (interactive)
   (let* ((shell-command-buffer-name-async "*Pacman: Upgrade System*"))
     (kam-with-directory "/sudo::"
-      (async-shell-command "pacman -Syu"))))
+      (async-shell-command "pacman -Syu --noconfirm"))))
 
 ;;;###autoload
 (defun kam-os-package-search (package)
