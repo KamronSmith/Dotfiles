@@ -24,7 +24,7 @@
 (setopt use-package-enable-imenu-support t)
 (setopt use-package-always-demand nil)
 (setopt use-package-always-defer t)
-(setopt use-package-always-ensure t)
+(setopt use-package-always-ensure nil)
 
 (defun kam-control-keys-setup (frame)
   "Set up the control keys for FRAME that are normally taken by terminal Emacs."
@@ -47,7 +47,7 @@
 (when init-file-debug
   (setopt use-package-verbose t)
   (setopt use-package-expand-minimally nil)
-  ;; (setopt use-package-compute-statistics t)
+  (setopt use-package-compute-statistics t)
   (setopt debug-on-error t))
 
 (provide 'early-init)

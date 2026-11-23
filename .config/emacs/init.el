@@ -534,13 +534,15 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 
 (use-package kam-dotfiles
   :ensure nil
-  :requires (kam-os))
+  :after (kam-os))
 
 (use-package lin
+  :ensure t
   :custom
   (lin-face 'lin-yellow))
 
 (use-package centered-cursor-mode
+  :ensure t
   :hook ((minibuffer-setup . kam-centered-cursor-mode-disable)
          (centered-cursor-mode . kam-centered-cursor-mode-remove-hook)
          (after-init . global-centered-cursor-mode))
@@ -583,6 +585,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
         ("<next>" . kam-scroll-down)))
 
 (use-package ultra-scroll
+  :ensure t
   :hook (after-init . ultra-scroll-mode))
 
 (use-package dired
@@ -652,9 +655,11 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (dired-compress-file-default-suffix ".zip")
   (dired-compress-directory-default-suffix ".zip"))
 
-(use-package dired-open)
+(use-package dired-open
+  :ensure t)
 
-(use-package dired-rainbow)
+(use-package dired-rainbow
+  :ensure t)
 
 (use-package wdired
   :ensure nil
@@ -684,6 +689,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 
 (use-package dired-subtree
   :after (dired)
+  :ensure t
   :bind
   (:map dired-mode-map
         ("<tab>" . dired-subtree-toggle)
@@ -712,6 +718,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (image-dired-thumbs-per-row 4))
 
 (use-package trashed
+  :ensure t
   :commands (trashed)
   :hook ((trashed-mode . hide-cursor-mode)
          (trashed-mode . lin-mode))
@@ -742,6 +749,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (setq this-command 'trashed))))
 
 (use-package emureader
+  :ensure t
   :bind
   (:map emureader-mode-map
         ("SPC" . emureader-next-page)
@@ -1194,6 +1202,7 @@ surrounded by actual boundaries."
     (run-hooks 'standard-themes-after-load-theme-hook)))
 
 (use-package ligature
+  :ensure t
   :config
   ;; default configuration for Iosevka font
   (ligature-set-ligatures 'prog-mode '("<---" "<--"  "<<-" "<-" "->" "-->" "--->" "<->" "<-->" "<--->" "<---->" "<!--"
@@ -1203,10 +1212,12 @@ surrounded by actual boundaries."
   (global-ligature-mode t))
 
 (use-package unicode-fonts
+  :ensure t
   :config
   (unicode-fonts-setup))
 
 (use-package vertico
+  :ensure t
   :hook (after-init . vertico-mode)
   :bind
   (:map vertico-map
@@ -1245,8 +1256,8 @@ surrounded by actual boundaries."
   (vertico-quick2 "columq"))
 
 (use-package vertico-directory
-  :ensure nil
   :after (vertico)
+  :ensure nil
   :hook (rfn-eshadow-update-overlay . vertico-directory-tidy)
   :bind
   (:map vertico-map
@@ -1254,6 +1265,7 @@ surrounded by actual boundaries."
         ("C-<backspace>" . vertico-directory-delete-word)))
 
 (use-package vertico-multiform
+  :after (vertico)
   :ensure nil
   :hook (after-init . vertico-multiform-mode)
   :config
@@ -1282,10 +1294,11 @@ surrounded by actual boundaries."
   (vertico-multiform-mode 1))
 
 (use-package vertico-sort
-  :ensure nil
-  :after (vertico))
+  :after (vertico)
+  :ensure nil)
 
 (use-package consult
+  :ensure t
   :bind
   (:map global-map
         (([remap Info-search] . consult-info)
@@ -1345,7 +1358,7 @@ surrounded by actual boundaries."
   :config
   (require 'kam-consult)
   (advice-add #'register-preview :override #'consult-register-window)
-  (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
+  ;; (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
   (add-to-list 'consult-preview-allowed-hooks 'visual-line-mode)
   (add-to-list 'consult-preview-allowed-hooks 'kam-decolorify-mode)
   (add-to-list 'consult-preview-allowed-hooks 'display-line-numbers-mode)
@@ -1378,6 +1391,7 @@ surrounded by actual boundaries."
             consult-source-hidden-buffer)))
 
 (use-package consult-dir
+  :ensure t
   :bind
   (("C-x C-d" . consult-dir)
    :map minibuffer-local-map
@@ -1423,11 +1437,14 @@ surrounded by actual boundaries."
             )))
 
 ;; (use-package consult-flycheck
+;;   :after (consult flycheck)
+;;   :ensure t
 ;;   :bind
 ;;   (:map goto-map
 ;;         ("M-l" . consult-flycheck)))
 
 (use-package marginalia
+  :ensure t
   :hook (after-init . marginalia-mode)
   :custom
   (marginalia-field-width 100)
@@ -1436,6 +1453,7 @@ surrounded by actual boundaries."
 
 (use-package embark
   :after (vertico)  ;; load after vertico to avoid vertico-map is void error
+  :ensure t
   :bind
   ([remap describe-bindings] . embark-bindings)
   ("C-." . embark-act)
@@ -1499,6 +1517,8 @@ surrounded by actual boundaries."
                        embark-isearch-highlight-indicator)))
 
 (use-package embark-consult
+  :after (embark consult)
+  :ensure t
   :bind
   (:map embark-consult-async-search-map
         ("r" . consult-ripgrep)
@@ -1516,6 +1536,7 @@ surrounded by actual boundaries."
 
 (use-package orderless
   :demand t
+  :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -1551,6 +1572,8 @@ surrounded by actual boundaries."
       `(orderless-regexp . ,(concat "\\." (substring word 1) (kam-orderless--consult-suffix)))))))
 
 (use-package corfu
+  :ensure t
+  :hook (after-init-mode . global-corfu-mode)
   :bind
   (:map corfu-map
         ("<return>" . corfu-insert)
@@ -1560,8 +1583,6 @@ surrounded by actual boundaries."
         ("<next>" . corfu-scroll-up)
         ("<prior>" . corfu-scroll-down)
         ("C-g" . corfu-quit))
-  :init
-  (global-corfu-mode)
   :custom
   ;; (corfu-separator ?\s)
   ;; (corfu-min-width corfu-max-width)
@@ -1599,8 +1620,7 @@ surrounded by actual boundaries."
 (use-package corfu-history
   :ensure nil
   :after (corfu)
-  :init
-  (corfu-history-mode)
+  :hook (corfu-mode . corfu-history-mode)
   :config
   (with-eval-after-load 'save-hist
     (add-to-list 'savehist-additional-variables 'corfu-history)))
@@ -1608,10 +1628,10 @@ surrounded by actual boundaries."
 (use-package corfu-popupinfo
   :ensure nil
   :after (corfu)
-  :config
-  (corfu-popupinfo-mode))
+  :hook (corfu-mode . corfu-popupinfo-mode))
 
 (use-package cape
+  :ensure t
   :bind
   ("C-c h h" . cape-history)
   ("C-c h f" . cape-file)
@@ -1637,6 +1657,7 @@ surrounded by actual boundaries."
                     t))))
 
 (use-package avy
+  :ensure t
   :bind
   ("M-j" . avy-goto-char-timer)
   (:map isearch-mode-map
@@ -1732,6 +1753,7 @@ surrounded by actual boundaries."
   (setf (alist-get ?q avy-dispatch-alist) 'kam-avy-action-kill-inner-sexp))
 
 (use-package ace-window
+  :ensure t
   :commands (kam-ace-window ace-window)
   :config
   (setq aw-dispatch-always t)
@@ -1755,6 +1777,7 @@ surrounded by actual boundaries."
         ("M-o" . kam-ace-window)))
 
 (use-package goto-chg
+  :ensure t
   :bind
   ("C-M-<" . goto-last-change)
   ("C-M->" . goto-last-change-reverse))
@@ -1769,54 +1792,55 @@ surrounded by actual boundaries."
 ;;       (this-command command))
 ;;     (call-interactively command)))
 
-(use-package tab-bar
-  :ensure nil
-  :defer t
-  ;; :bind (:map tab-bar-mode-map
-  ;;             ("C-x t n" . tab-next)
-  ;;             ("C-x t p" . tab-previous)
-  ;;             ("C-x t +" . tab-close)
-  ;;             ("C-\\" . kam-consult-tab)
-  ;;             ("C-<tab>" . nil)
-  ;;             ("C-S-<tab>" . nil))
-  :init
-  (defun tab-bar-tab-group-format-default (tab _i &optional current-p)
-    (propertize
-     (concat (funcall tab-bar-tab-group-function tab))
-     'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
-
-  ;; (tab-bar-mode 1)
-  :custom
-  (tab-bar-show nil)
-  (tab-bar-close-button-show nil)
-  (tab-bar-new-button nil)
-  (tab-bar-tab-hints t)
-  (tab-bar-auto-width nil)
-  (tab-bar-separator " ")
-  ;; (tab-bar-format '(tab-bar-format-tabs-groups
-  ;; tab-bar-format-tabs
-  ;; tab-bar-separator)
-  (tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
-  :config
-  (keymap-set ctl-x-map "t" nil)
-  (defun kam-tab-bar-group-from-project ()
-    "Call `tab-group' with the current project name as the group."
-    (interactive)
-    (when-let* ((proj (project-current))
-                (name (file-name-nondirectory
-                       (directory-file-name (project-root proj)))))
-      (tab-group (format "%s" name))))
-
-  (defun kam-tab-bar-show ()
-    "Toggle the visibility of the tab bar."
-    (interactive)
-    (if tab-bar-show
-        (setopt tab-bar-show nil)
-      (setopt tab-bar-show t))))
+;; (use-package tab-bar
+;;   :ensure nil
+;;   :defer t
+;;   :bind (:map tab-bar-mode-map
+;;               ("C-x t n" . tab-next)
+;;               ("C-x t p" . tab-previous)
+;;               ("C-x t +" . tab-close)
+;;               ("C-\\" . kam-consult-tab)
+;;               ("C-<tab>" . nil)
+;;               ("C-S-<tab>" . nil))
+;;   :init
+;;   (defun tab-bar-tab-group-format-default (tab _i &optional current-p)
+;;     (propertize
+;;      (concat (funcall tab-bar-tab-group-function tab))
+;;      'face (if current-p 'tab-bar-tab-group-current 'tab-bar-tab-group-inactive)))
+;;
+;;   (tab-bar-mode 1)
+;;   :custom
+;;   (tab-bar-show nil)
+;;   (tab-bar-close-button-show nil)
+;;   (tab-bar-new-button nil)
+;;   (tab-bar-tab-hints t)
+;;   (tab-bar-auto-width nil)
+;;   (tab-bar-separator " ")
+;;   (tab-bar-format '(tab-bar-format-tabs-groups
+;;                     tab-bar-format-tabs
+;;                     tab-bar-separator))
+;;   (tab-bar-format '(tab-bar-format-history tab-bar-format-tabs tab-bar-separator))
+;;   :config
+;;   (keymap-set ctl-x-map "t" nil)
+;;   (defun kam-tab-bar-group-from-project ()
+;;     "Call `tab-group' with the current project name as the group."
+;;     (interactive)
+;;     (when-let* ((proj (project-current))
+;;                 (name (file-name-nondirectory
+;;                        (directory-file-name (project-root proj)))))
+;;       (tab-group (format "%s" name))))
+;;
+;;   (defun kam-tab-bar-show ()
+;;     "Toggle the visibility of the tab bar."
+;;     (interactive)
+;;     (if tab-bar-show
+;;         (setopt tab-bar-show nil)
+;;       (setopt tab-bar-show t))))
 
 ;;; Isearch
 (use-package isearch
   :ensure nil
+  :after (kam-search)
   :hook (isearch-update-post . kam-isearch-goto-match-beginning)
   :bind
   (:map isearch-mode-map
@@ -1835,6 +1859,7 @@ surrounded by actual boundaries."
   (regexp-search-ring-max 1000))
 
 (use-package drag-stuff
+  :ensure t
   :bind
   (("M-<up>" . drag-stuff-up)
    ("M-<down>" . drag-stuff-down)))
@@ -1892,12 +1917,13 @@ surrounded by actual boundaries."
   :ensure nil)
 
 (use-package link-hint
+  :ensure t
   :bind
   ("C-c j" . link-hint-open-link))
 
 (use-package link-menu
   :ensure nil
-  :requires (link-hint)
+  :after (link-hint)
   :bind
   (:map help-mode-map
         ("m" . link-menu-open))
@@ -1907,12 +1933,13 @@ surrounded by actual boundaries."
         ("m" . link-menu-open)))
 
 (use-package smartparens
+  :ensure t
   :bind
   (:map smartparens-mode-map
-        ("C-M-o" . sp-up-sexp)
         ("C-M-DEL" . sp-backward-kill-sexp)))
 
-(use-package paredit)
+(use-package paredit
+  :ensure t)
 
 (use-package paren
   :ensure nil
@@ -1947,6 +1974,7 @@ surrounded by actual boundaries."
   (global-subword-mode))
 
 (use-package dumb-jump
+  :ensure t
   :custom
   (dumb-jump-aggressive nil)
   (dumb-jump-max-find-time 3)
@@ -1961,7 +1989,7 @@ surrounded by actual boundaries."
 
 (use-package electric
   :ensure nil
-  :hook ((org-mode . electric-indent-local-mode)
+  :hook (;; (org-mode . electric-indent-local-mode)
          (prog-mode . electric-indent-local-mode))
   :custom
   (electric-indent-actions '(yank))
@@ -1976,9 +2004,11 @@ surrounded by actual boundaries."
   )
 
 (use-package aggressive-indent
+  :ensure t
   :hook (emacs-lisp-mode . aggressive-indent-mode))
 
 (use-package vundo
+  :ensure t
   :bind
   (:map vundo-mode-map
         ("<escape>" . vundo-quit)))
@@ -1999,6 +2029,7 @@ surrounded by actual boundaries."
   ("M-g M-." . ffap))
 
 (use-package multiple-cursors
+  :ensure t
   :bind
   (("C->" . mc/mark-next-like-this)
    ("C-<" . mc/mark-previous-like-this))
@@ -2008,6 +2039,7 @@ surrounded by actual boundaries."
   (mc/list-file (expand-file-name "mc-lists.el" kam-emacs-cache-directory)))
 
 (use-package expreg
+  :ensure t
   :commands
   (kam-forward-out-sexp
    kam-mark-inner-sexp
@@ -2031,57 +2063,59 @@ surrounded by actual boundaries."
   (defun kam-expreg-text-mode-setup ()
     "Setup `text-mode' for `expreg'."
     (add-to-list 'expreg-functions #'expreg--sentence)
-    (when (eq major-mode 'org-mode)
-      (add-to-list 'expreg-functions #'kam-expreg--org-elements t))))
+    ;; (when (eq major-mode 'org-mode)
+    ;;   (add-to-list 'expreg-functions #'kam-expreg--org-elements t))
+    ))
 
 (use-package org
   :ensure nil
+  :mode ("\\.org\\'")
   :hook (org-mode . kam-org-mode-setup)
-  :bind
-  (("C-c o" . kam-org-map)
-   :map org-mode-map
-   ("<prior>" . kam-scroll-down)
-   ("<next>" . kam-scroll-up)
-   ("C-<return>" . org-metaup)
-   ("C-<up>" . org-previous-visible-heading)
-   ("C-<down>" . org-next-visible-heading)
-   ("C-<left>" . kam-prev-buffer)
-   ("C-<right>" . kam-next-buffer)
-   ("M-<up>" . kam-org-metaup)
-   ("M-<down>" . kam-org-metadown)
-   ("M-<return>" . org-meta-return)
-   ("C-<backspace>" . kam-control-backspace)
-   ;; ("C-<tab>" . kam-org-up-and-fold-heading)
-   ;; ("C-M-<return>" . org-insert-subheading)
-   ("<return>" . org-return)
-   ("C-j" . kam-join-line-dwim)
-   ("C-'" . org-edit-src-code)
-   ("M-m" . kam-mark-line)
-   ("M-i" . kam-indent-dwim)
-   ("M-h" . mark-paragraph)
-   ("C-M-<up>" . kam-org-control-metaup)
-   ("C-M-<down>" . kam-org-control-metadown)
-   ("C-M-<left>" . org-do-promote)
-   ("C-M-<right>" . org-do-demote)
-   ("C-M-<return>" . org-meta-return)
-   ("C-M-h" . org-mark-subtree)
-   ("C-M-m" . kam-mark-point-to-end-of-line)
-   ("C-x C-v" . org-mark-element)
-   ("C-x k" . kam-kill-current-buffer)
-   ("C-x n" . kam-narrow-or-widen-dwim)
-   ("C-c C-x C-b" . org-tree-to-indirect-buffer)
-   ("C-c <kam-i>" . org-toggle-item)
-   :map org-src-mode-map
-   ("C-'" . org-edit-src-exit)
-   ("C-<backspace>" . kam-control-backspace)
-   :map kam-org-map
-   ("l" . kam-consult-org-heading-link)
-   ("i" . org-toggle-item)
-   ("p" . org-set-property)
-   ("n" . kam-org-insert-notes-drawer)
-   :repeat-map kam-org-repeat-map
-   ("C-p" . org-previous-visible-heading)
-   ("C-n" . org-next-visible-heading))
+  ;; :bind
+  ;; (("C-c o" . kam-org-map)
+  ;;  :map org-mode-map
+  ;;  ("<prior>" . kam-scroll-down)
+  ;;  ("<next>" . kam-scroll-up)
+  ;;  ("C-<return>" . org-metaup)
+  ;;  ("C-<up>" . org-previous-visible-heading)
+  ;;  ("C-<down>" . org-next-visible-heading)
+  ;;  ("C-<left>" . kam-prev-buffer)
+  ;;  ("C-<right>" . kam-next-buffer)
+  ;;  ("M-<up>" . kam-org-metaup)
+  ;;  ("M-<down>" . kam-org-metadown)
+  ;;  ("M-<return>" . org-meta-return)
+  ;;  ("C-<backspace>" . kam-control-backspace)
+  ;;  ;; ("C-<tab>" . kam-org-up-and-fold-heading)
+  ;;  ;; ("C-M-<return>" . org-insert-subheading)
+  ;;  ("<return>" . org-return)
+  ;;  ("C-j" . kam-join-line-dwim)
+  ;;  ("C-'" . org-edit-src-code)
+  ;;  ("M-m" . kam-mark-line)
+  ;;  ("M-i" . kam-indent-dwim)
+  ;;  ("M-h" . mark-paragraph)
+  ;;  ("C-M-<up>" . kam-org-control-metaup)
+  ;;  ("C-M-<down>" . kam-org-control-metadown)
+  ;;  ("C-M-<left>" . org-do-promote)
+  ;;  ("C-M-<right>" . org-do-demote)
+  ;;  ("C-M-<return>" . org-meta-return)
+  ;;  ("C-M-h" . org-mark-subtree)
+  ;;  ("C-M-m" . kam-mark-point-to-end-of-line)
+  ;;  ("C-x C-v" . org-mark-element)
+  ;;  ("C-x k" . kam-kill-current-buffer)
+  ;;  ("C-x n" . kam-narrow-or-widen-dwim)
+  ;;  ("C-c C-x C-b" . org-tree-to-indirect-buffer)
+  ;;  ("C-c <kam-i>" . org-toggle-item)
+  ;;  :map org-src-mode-map
+  ;;  ("C-'" . org-edit-src-exit)
+  ;;  ("C-<backspace>" . kam-control-backspace)
+  ;;  :map kam-org-map
+  ;;  ("l" . kam-consult-org-heading-link)
+  ;;  ("i" . org-toggle-item)
+  ;;  ("p" . org-set-property)
+  ;;  ("n" . kam-org-insert-notes-drawer)
+  ;;  :repeat-map kam-org-repeat-map
+  ;;  ("C-p" . org-previous-visible-heading)
+  ;;  ("C-n" . org-next-visible-heading))
   :custom
   (org-auto-align-tags nil)
   (org-M-RET-may-split-line nil)
@@ -2132,6 +2166,7 @@ surrounded by actual boundaries."
 
 (use-package org-capture
   :ensure nil
+  :after (org)
   :bind
   ("C-c c" . org-capture)
   :custom
@@ -2160,8 +2195,8 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-agenda
-  :after (kam-tasks)
   :ensure nil
+  :after (kam-tasks org)
   :hook ((org-agenda . lin-mode)
          (org-agenda-after-show . visual-line-mode))
   :bind
@@ -2207,8 +2242,8 @@ surrounded by actual boundaries."
                  (window-parameters . ((mode-line-format . none))))))
 
 (use-package org-refile
-  ;; :after (org)
   :ensure nil
+  :after (org)
   :bind
   ("C-c o o" . kam-org-refile-region)
   ("C-c o w" . kam-org-refile-to-current-file)
@@ -2218,8 +2253,8 @@ surrounded by actual boundaries."
   (org-refile-targets '((org-agenda-files :maxlevel . 9))))
 
 (use-package ol   ;; org-links
-  ;; :after (org)
   :ensure nil
+  :after (org)
   :bind
   ("C-c l" . org-store-link)
   :custom
@@ -2239,8 +2274,8 @@ surrounded by actual boundaries."
   )
 
 (use-package ob ;; org babel
-  ;; :after (org)
   :ensure nil
+  :after (org)
   :custom
   (org-confirm-babel-evaluate nil)
   (org-src-window-setup 'current-window)
@@ -2257,7 +2292,7 @@ surrounded by actual boundaries."
 
 (use-package org-tempo
   :ensure nil
-  ;; :after (org)
+  :after (org)
   :config
   (setq org-structure-template-alist
         '(("c" . "comment")
@@ -2274,8 +2309,8 @@ surrounded by actual boundaries."
           ("q" . "quote"))))
 
 (use-package ox ;; org export
-  ;; :after (org)
   :ensure nil
+  :after (org)
   :custom
   (org-export-with-toc nil)
   (org-export-with-date nil)
@@ -2286,40 +2321,41 @@ surrounded by actual boundaries."
                                 (not "NOTES"))))
 
 (use-package org-id
-  ;; :after (org)
-  :ensure nil)
+  :ensure nil
+  :after (org))
 
 (use-package org-cycle
-  ;; :after (org)
-  :ensure nil)
+  :ensure nil
+  :after (org))
 
 (use-package ox-latex
-  ;; :after (org)
   :ensure nil
-  :config
-  )
+  :after (org))
 
 (use-package ox-gfm
-  ;; :after (org)
-  )
+  :ensure t
+  :after (org))
 
 (use-package org-contrib
-  ;; :after (org)
+  :after (org)
+  :ensure t
   :config
   (require 'ox-extra)
   (ox-extras-activate '(ignore-headlines)))
 
 (use-package org-modern
-  ;; :after (org)
+  :after (org)
+  :ensure t
+  :hook (org-mode . org-modern-mode)
   :custom
   (org-modern-star 'replace)
   :custom-face
   (org-modern-label ((t (:height 1.0))))
-  (org-modern-symbol ((t (:family "SF Mono"))))
-  :config
-  (global-org-modern-mode))
+  (org-modern-symbol ((t (:family "SF Mono")))))
 
 (use-package org-anki
+  :after (org)
+  :ensure t
   :bind
   ;; ("C-c n s" . org-anki-sync-entry)
   :custom
@@ -2329,6 +2365,7 @@ surrounded by actual boundaries."
         org-anki-default-deck "get that main main"))
 
 (use-package auctex
+  :ensure t
   :custom
   (TeX-auto-save t)
   (TeX-parse-self t)
@@ -2462,6 +2499,7 @@ surrounded by actual boundaries."
 
 (use-package readline-completion
   :after (shell)
+  :ensure t
   :config
   (add-hook 'shell-dynamic-complete-functions #'readline-completion-at-point))
 
@@ -2532,6 +2570,7 @@ surrounded by actual boundaries."
 
 (use-package standard-themes
   :after (kam-theme)
+  :ensure t
   :hook (standard-themes-after-load-theme . kam-theme-update-custom-faces)
   :init
   (standard-themes-take-over-modus-themes-mode 1)
@@ -2567,9 +2606,11 @@ surrounded by actual boundaries."
 
   (standard-themes-load-theme 'standard-light))
 
-(use-package ef-themes)
+(use-package ef-themes
+  :ensure t)
 
 (use-package olivetti
+  :ensure t
   :hook (olivetti-mode . kam-olivetti-custom-faces-setup)
   :custom
   (olivetti-style 'fancy)
@@ -2580,6 +2621,7 @@ surrounded by actual boundaries."
 
 (use-package spacious-padding
   :after (standard-themes)
+  :ensure t
   :custom
   (spacious-padding-subtle-mode-line nil)
   (spacious-padding-widths
@@ -2602,6 +2644,7 @@ surrounded by actual boundaries."
   (spacious-padding-mode))
 
 (use-package logos
+  :ensure t
   :config
   (setq-default logos-hide-mode-line t
                 logos-hide-header-line t
@@ -2624,12 +2667,15 @@ surrounded by actual boundaries."
   (global-hl-line-sticky-flag 'window))
 
 (use-package lin
+  :ensure t
   :custom
   (lin-face 'lin-yellow))
 
-(use-package rainbow-mode)
+(use-package rainbow-mode
+  :ensure t)
 
 (use-package pulsar
+  :ensure t
   :hook ((next-error . pulsar-pulse-line)
          (consult-after-jump . pulsar-reveal-entry)
          (imenu-after-jump . pulsar-recenter-center)
@@ -2646,6 +2692,7 @@ surrounded by actual boundaries."
   (pulsar-global-mode))
 
 (use-package nerd-icons
+  :ensure t
   :config
   (set-fontset-font "fontset-default" nil "Symbols Nerd Font Mono" nil 'append)
   (add-to-list 'nerd-icons-mode-icon-alist
@@ -2679,36 +2726,45 @@ surrounded by actual boundaries."
 
 (use-package nerd-icons-dired
   :if (package-installed-p 'nerd-icons)
+  :after (nerd-icons)
+  :ensure t
   :hook
   (dired-mode . nerd-icons-dired-mode))
 
 (use-package nerd-icons-corfu
   :if (package-installed-p 'nerd-icons)
-  :after (corfu)
+  :after (corfu nerd-icons)
+  :ensure t
   :config
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-completion
   :if (package-installed-p 'nerd-icons)
+  :after (nerd-icons)
+  :ensure t
   :hook (after-init . nerd-icons-completion-mode)
   :config
   (nerd-icons-completion-mode))
 
 (use-package nerd-icons-ibuffer
   :if (package-installed-p 'nerd-icons)
+  :ensure t
   :hook (ibuffer-mode . nerd-icons-ibuffer-mode))
 
 (use-package nerd-icons-xref
   :if (package-installed-p 'nerd-icons)
+  :ensure t
   :hook (after-init . nerd-icons-xref-mode))
 
 (use-package nerd-icons-grep
   :if (package-installed-p 'nerd-icons)
+  :ensure t
   :hook (grep-mode . nerd-icons-grep-mode)
   :custom
   (grep-use-headings t))
 
 (use-package visual-fill-column
+  :ensure t
   :hook ((visual-line-mode . visual-fill-column-for-vline)
          (image-mode . kam-visual-fill-column-disable)
          (transient-setup-buffer . kam-visual-fill-column-disable)
@@ -2883,6 +2939,7 @@ surrounded by actual boundaries."
 ;;                '("zshrc\\'" . sh-mode)))
 
 (use-package magit
+  :ensure t
   :init
   (setq magit-define-global-key-bindings nil)
   :hook (magit-ediff-quit . kam-ediff-cleanup)
@@ -2925,7 +2982,8 @@ surrounded by actual boundaries."
     (kam-project-update-list)))
 
 (use-package forge
-  :after (magit))
+  :after (magit)
+  :ensure t)
 
 (use-package vc
   :ensure nil
@@ -2960,6 +3018,8 @@ surrounded by actual boundaries."
   (global-flycheck-eglot-mode 1))
 
 (use-package consult-flycheck
+  :after (consult flycheck)
+  :ensure t
   :bind
   (:map goto-map
         ("M-l" . consult-flycheck)))
@@ -3125,6 +3185,7 @@ surrounded by actual boundaries."
   (treesit-auto-install-grammar t))
 
 (use-package direnv
+  :ensure t
   :custom
   (direnv-always-show-summary nil)
   :demand t
@@ -3142,6 +3203,7 @@ surrounded by actual boundaries."
                "^\\*envrc\\*" t))
 
 (use-package envrc
+  :ensure t
   :hook (after-init . envrc-global-mode))
 
 (use-package compile
@@ -3234,6 +3296,7 @@ surrounded by actual boundaries."
 
 (use-package python
   :defer t
+  :ensure nil
   :hook (python-mode . eglot-ensure)
   :custom
   (python-indent-guess-indent-offset-verbose nil))
@@ -3336,6 +3399,7 @@ surrounded by actual boundaries."
   (transient-values-file (expand-file-name "transient/values.el" kam-emacs-cache-directory)))
 
 (use-package diff-hl
+  :ensure t
   :hook ((magit-post-refresh . diff-hl-magit-post-refresh)
          (prog-mode . diff-hl-mode))
   :bind
@@ -3354,6 +3418,7 @@ surrounded by actual boundaries."
   (url-configuration-directory (expand-file-name "url" kam-emacs-cache-directory)))
 
 (use-package jinx
+  :ensure t
   :bind
   ("C-$" . jinx-correct)
   :custom
@@ -3370,6 +3435,7 @@ surrounded by actual boundaries."
         shr-fill-text nil))
 
 (use-package ghostel
+  :ensure t
   :hook ((after-init . ghostel-compile-global-mode)
          (after-init . ghostel-shell-command-global-mode)
          (after-init . ghostel-comint-global-mode)
@@ -3404,12 +3470,14 @@ surrounded by actual boundaries."
                  (mode ghostel-mode))))
 
 (use-package ghostel-compile
+  :after (ghostel)
   :ensure nil
   :hook (after-init . ghostel-compile-global-mode)
   :custom
   (ghostel-compile-buffer-name "*compilation*"))
 
 (use-package ghostel-shell-command
+  :after (ghostel)
   :ensure nil
   :hook (after-init . ghostel-shell-command-global-mode)
   ;; :bind
@@ -3418,16 +3486,19 @@ surrounded by actual boundaries."
   (ghostel-shell-command-buffer-name "*Shell Command*"))
 
 (use-package ghostel-comint
+  :after (ghostel)
   :ensure nil
   :hook (after-init . ghostel-comint-global-mode))
 
 (use-package pcre2el
+  :after (ghostel)
   :config
   (defmacro prx (&rest expressions)
     "Convert native `rx' EXPRESSIONS to PCRE style syntax."
     `(rxt-elisp-to-pcre (rx ,@expressions))))
 
 (use-package kirigami
+  :ensure t
   :commands (kirigami-open-fold
              kirigami-open-fold-rec
              kirigami-close-fold
@@ -3445,6 +3516,7 @@ surrounded by actual boundaries."
    ("C-<tab>" . kirigami-toggle-fold)))      ; Toggle fold at point
 
 (use-package outline-indent
+  :ensure t
   :commands outline-indent-minor-mode
   :hook ((yaml-ts-mode . outline-indent-minor-mode)
          (python-ts-mode . outline-indent-minor-mode))
@@ -3468,6 +3540,7 @@ surrounded by actual boundaries."
       (setq buffer-display-table display-table))))
 
 (use-package treesit-fold
+  :ensure t
   :commands (treesit-fold-close
              treesit-fold-close-all
              treesit-fold-open
@@ -3492,6 +3565,7 @@ surrounded by actual boundaries."
 
 (use-package visible-mark
   :after (kam-theme standard-themes)
+  :ensure t
   :init
   (defface kam-visible-mark-face
     `((t nil))
@@ -3510,6 +3584,7 @@ surrounded by actual boundaries."
   (global-visible-mark-mode))
 
 (use-package elfeed
+  :ensure t
   ;; :hook (elfeed-show-mode . kam-writing-mode)
   :hook ((elfeed-search-mode . hide-cursor-mode)
          (elfeed-search-mode . lin-mode)
@@ -3581,6 +3656,7 @@ surrounded by actual boundaries."
 
 (use-package elfeed-tube
   :after (elfeed)
+  :ensure t
   :bind
   (:map elfeed-show-mode-map
         ("F" . elfeed-tube-fetch)
@@ -3593,12 +3669,14 @@ surrounded by actual boundaries."
 
 (use-package elfeed-tube-mpv
   :after (elfeed)
+  :ensure t
   :bind
   (:map elfeed-show-mode-map
         ("C-c C-f" . elfeed-tube-mpv-follow-mode)
         ("C-c C-w" . elfeed-tube-mpv-where)))
 
 (use-package eww
+  :ensure t
   :bind
   (:map eww-mode-map
         ("SPC" . kam-scroll-down)
@@ -3629,6 +3707,7 @@ With optional ARG, open browser in EWW."
       (browse-url-at-point))))
 
 (use-package calibredb
+  :ensure t
   ;; :commands (calibredb)
   :hook ((calibredb-search-mode . hide-cursor-mode)
          (calibredb-search-mode . lin-mode))
@@ -3668,6 +3747,7 @@ With optional ARG, open browser in EWW."
 
 (use-package emms
   :when (eq system-type 'gnu/linux)
+  :ensure t
   :bind
   ("C-c m m" . emms-browser)
   ("C-c m s" . kam-emms-play-pause)
@@ -3696,7 +3776,7 @@ With optional ARG, open browser in EWW."
 
 (use-package emms-browser
   :ensure nil
-  :requires (emms)
+  :after (emms)
   :bind
   (:map emms-browser-mode-map
         ("SPC" . kam-scroll-down)
@@ -3712,7 +3792,7 @@ With optional ARG, open browser in EWW."
 
 (use-package emms-playlist-mode
   :ensure nil
-  :requires (emms)
+  :after (emms)
   :hook (emms-playlist-mode . hide-cursor-mode)
   :bind
   (:map emms-playlist-mode-map
@@ -3737,6 +3817,7 @@ With optional ARG, open browser in EWW."
 (use-package denote
   :demand t
   :after (kam-notes kam-os savehist)
+  :ensure t
   :hook ((dired-mode . denote-dired-mode)
          (after-init . denote-rename-buffer-mode)
          ;; (after-init . kam-notes-set-custom-faces)
@@ -3766,6 +3847,7 @@ With optional ARG, open browser in EWW."
   (add-to-list 'savehist-additional-variables 'denote-known-keywords))
 
 (use-package denote-sequence
+  :ensure t
   :bind
   ("C-c n s s" . denote-sequence)
   ("C-c n s f" . denote-sequence-find)
@@ -3775,6 +3857,8 @@ With optional ARG, open browser in EWW."
   ("C-c n s c" . denote-sequence-convert))
 
 (use-package consult-denote
+  :after (consult denote)
+  :ensure t
   :custom
   (consult-denote-find-command #'consult-fd)
   (consult-denote-grep-command #'consult-ripgrep)
@@ -3785,11 +3869,13 @@ With optional ARG, open browser in EWW."
   (consult-denote-mode))
 
 (use-package sly
+  :ensure t
   :commands (sly)
   :custom
   (inferior-lisp-program (executable-find "sbcl")))
 
 (use-package super-save
+  :ensure t
   :hook (after-init . super-save-mode)
   :custom
   (super-save-silent t)
@@ -3804,6 +3890,7 @@ With optional ARG, open browser in EWW."
 
 (use-package osx-trash
   :if (eq system-type 'darwin)
+  :ensure t
   :custom
   (osx-trash-command "trash -F")
   :config
