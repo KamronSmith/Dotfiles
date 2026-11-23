@@ -5,7 +5,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
 (defvar kam-emacs-cache-directory
   (concat user-emacs-directory "cache/")
   "Directory containing temporary files for Emacs.")
@@ -16,8 +15,6 @@
 (use-package package
   :ensure nil
   :custom
-  (use-package-always-ensure t)
-  (use-package-compute-statistics t)
   (package-archives
    '(("gnu-elpa"       . "https://elpa.gnu.org/packages/")
      ("gnu-elpa-devel" . "https://elpa.gnu.org/devel/")
