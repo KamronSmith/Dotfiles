@@ -256,6 +256,11 @@ Enable that mode to its keybindings take over those of the major mode.")
   (duplicate-region-final-position 1)
   (duplicate-line-final-position -1)
   (exchange-point-and-mark-highlight-region nil)
+  (x-gtk-use-system-tooltips nil)
+  (x-select-enable-clipboard t)
+  (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+  (x-underline-at-descent-line t)
+  (x-stretch-cursor nil)
   :config
   (require 'kam-common)
 
@@ -3182,16 +3187,6 @@ surrounded by actual boundaries."
     (add-to-list 'write-file-functions 'delete-trailing-whitespace)
     ;; (kill-ring-deindent-mode)
     ))
-
-(use-package x
-  :if (eq system-type 'gnu/linux)
-  :ensure nil
-  :custom
-  (x-gtk-use-system-tooltips nil)
-  (x-select-enable-clipboard t)
-  (x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-  (x-underline-at-descent-line t)
-  (x-stretch-cursor nil))
 
 (use-package epa
   :ensure nil
