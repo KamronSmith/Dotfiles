@@ -257,6 +257,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 
 ;;;###autoload
 (defun kam-os-list-installed-packages-by-size (packages)
+  "List all packages and sort them by size."
   (async-shell-command
    (concat "expac -S -H M '%k\t%n'"
            (string-join (kam-pacman--installed-packages) " ")
@@ -264,18 +265,18 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 
 ;;;###autoload
 (defun kam-os-clear-package-cache ()
-  "Clears the old/uninstalled packages in /var/cache/pacman/pkg/."
+  "Clear the old/uninstalled packages in /var/cache/pacman/pkg/."
   (async-shell-command "paccache -r"))
 
 ;;;###autoload
 (defun kam-os-view-pacman-log-file ()
-  "Opens up the Pacman log file to check for errors."
+  "Open up the Pacman log file to check for errors."
   (interactive)
   (find-file "/var/log/pacman.log"))
 
 ;;;###autoload
 (defun kam-arch-wiki-search (topic)
-  "Search the Arch wiki for a topic using EWW."
+  "Search the Arch wiki for TOPIC using EWW."
   (interactive "sTopic to search for: ")
   (eww-browse-url
    (concat
@@ -284,13 +285,13 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 ;;; Power
 ;;;###autoload
 (defun kam-os-reboot ()
-  "Restarts the computer."
+  "Restart the computer."
   (interactive)
   (async-shell-command "reboot"))
 
 ;;;###autoload
 (defun kam-os-shutdown ()
-  "Shuts down the computer."
+  "Shutdown the computer."
   (interactive)
   (async-shell-command "systemctl poweroff"))
 
@@ -302,7 +303,7 @@ Additionally, save the updated list of installed packages in `kam-dotfiles-insta
 
 ;;;###autoload
 (defun kam-os-restart-emacs ()
-  "Restart Emacs under a variety of operating system conditions."
+  "Restart Emacs under a variety of operating systems."
   (interactive)
   (cond
    ((and (kam-when-system-type 'gnu/linux t)
@@ -383,7 +384,7 @@ SERVICE should be a string that corresponds to a service."
 ;;; Hard drive space
 ;;;###autoload
 (defun kam-os-drive-space ()
-  "List all available drive space."
+  "List available drive space."
   (interactive)
   (let* ((buf "*Drive Space*")
          (shell-command-buffer-name-async buf))
