@@ -652,5 +652,11 @@ system."
   `(let ((default-directory ,directory))
      ,@body))
 
+(defmacro kam-as-sudo (&rest body)
+  "Run BODY forms as Sudo."
+  (declare (indent 1) (debug (sexp def-body)))
+  `(let ((default-directory "/sudo::"))
+     ,@body))
+
 (provide 'kam-common)
 ;;; kam-common.el ends here
