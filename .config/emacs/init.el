@@ -584,7 +584,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 (use-package dired
   :ensure nil
   :hook ((dired-mode . dired-hide-details-mode)
-         (dired-mode . dired-async-mode)
          (dired-mode . kam-dired-mode-setup)
          (dired-after-readin . kam-dired-directory-add-to-history))
   :bind
@@ -3799,6 +3798,22 @@ With optional ARG, open browser in EWW."
   (osx-trash-command "trash -F")
   :config
   (osx-trash-setup))
+
+(use-package async
+  :ensure t
+  :hook
+  (dired-mode . dired-async-mode)
+  ;; :bind
+  ;; (:map dired-mode-map
+  ;;       ("C" . dired-async-do-copy)
+  ;;       ("H" . dired-async-do-hardlink)
+  ;;       ("S" . dired-async-do-symlink)
+  ;;       ("R" . dired-async-do-rename))
+  :custom
+  (async-quiet-switch "-q")
+  (async-bytecomp-allowed-packages '(all))
+  :config
+  (async-bytecomp-package-mode))
 
 (require 'kam-writing)
 (require 'kam-tasks)
