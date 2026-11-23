@@ -292,6 +292,12 @@ Enable that mode to its keybindings take over those of the major mode.")
 
   (setenv "GPG_AGENT_INFO" nil)
 
+  (defun kam-font-faces-setup ()
+    "Setup function for fonts."
+    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
+    (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
+    (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular))
+
   (defun kam-emacs-setup ()
     "Setup function for Emacs.
 Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
@@ -311,7 +317,8 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (menu-bar-mode 1)
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
-      (require 'kam-mac)))
+      (require 'kam-mac))
+    (kam-font-faces-setup))
 
   (put 'narrow-to-region 'disabled nil)
 
@@ -1183,23 +1190,7 @@ surrounded by actual boundaries."
   (display-time-mode))
 
 (use-package server
-  :ensure nil
-  :config
-  (defun kam-font-faces-setup ()
-    "Setup for the font faces."
-    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
-    (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
-    (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular))
-
-  (if (daemonp)
-      (add-hook 'after-make-frame-functions
-                (lambda (frame)
-                  (with-selected-frame frame
-                    (kam-font-faces-setup)
-                    (run-hooks 'standard-themes-after-load-theme-hook))))
-    (kam-font-faces-setup)
-    (load-theme 'standard-dark :no-confirm)
-    (run-hooks 'standard-themes-after-load-theme-hook)))
+  :ensure nil)
 
 (use-package ligature
   :ensure t
@@ -1573,7 +1564,7 @@ surrounded by actual boundaries."
 
 (use-package corfu
   :ensure t
-  :hook (after-init-mode . global-corfu-mode)
+  :hook (after-init . global-corfu-mode)
   :bind
   (:map corfu-map
         ("<return>" . corfu-insert)
@@ -3104,11 +3095,6 @@ surrounded by actual boundaries."
   (add-to-list 'display-buffer-alist '((category . xref-jump)
                                        (display-buffer-same-window display-buffer-reuse-window))))
 
-(use-package etags
-  :ensure nil
-  :config
-  (etags-regen-mode))
-
 (use-package diff-mode
   :ensure nil
   :defer t
@@ -3142,6 +3128,7 @@ surrounded by actual boundaries."
   (ediff-ignore-similar-regions t))
 
 (use-package kam-ediff
+  :after (kam-ediff)
   :ensure nil
   :hook ((ediff-before-setup . kam-ediff-store-layout)
          (ediff-startup . kam-ediff-mode-setup)
@@ -3436,9 +3423,9 @@ surrounded by actual boundaries."
 
 (use-package ghostel
   :ensure t
-  :hook ((after-init . ghostel-compile-global-mode)
-         (after-init . ghostel-shell-command-global-mode)
-         (after-init . ghostel-comint-global-mode)
+  :hook ((compilation-mode . ghostel-compile-global-mode)
+         (shell-command-mode . ghostel-shell-command-global-mode)
+         (comint-mode . ghostel-comint-global-mode)
          (ghostel-mode . kam-ghostel-mode-setup))
   :bind
   ("C-x t" . ghostel)
@@ -3583,76 +3570,77 @@ surrounded by actual boundaries."
   :config
   (global-visible-mark-mode))
 
-(use-package elfeed
-  :ensure t
-  ;; :hook (elfeed-show-mode . kam-writing-mode)
-  :hook ((elfeed-search-mode . hide-cursor-mode)
-         (elfeed-search-mode . lin-mode)
-         (elfeed-show-mode . visual-line-mode)
-         (elfeed-show-mode . kam-writing-mode))
-  :bind
-  ("C-c r" . elfeed)
-  (:map elfeed-show-mode-map
-        ("n" . kam-elfeed-show-next)
-        ("p" . kam-elfeed-show-prev)
-        ("SPC" . kam-scroll-down)
-        ("<backspace>" . kam-scroll-up))
-  (:map elfeed-search-mode-map
-        ;; ([remap scroll-down-command] . kam-scroll-up)
-        ;; ([remap scroll-up-command] . kam-scroll-down)
-        ("g" . elfeed-update)
-        ("u" . elfeed-search-unmark)
-        ("R" . elfeed-search-tag-unread))
-  :custom
-  (elfeed-db-directory (expand-file-name "elfeed" kam-emacs-cache-directory))
-  (elfeed-enclosure-default-dir (expand-file-name "elfeed" kam-emacs-cache-directory))
-  (elfeed-search-title-max-width 125)
-  (elfeed-search-title-min-width 30)
-  (elfeed-search-clipboard-type 'CLIPBOARD)
-  (elfeed-search-filter "@2-weeks-ago +unread")
-  (elfeed-show-truncate-long-urls t)
-  (elfeed-search-date-format '("%F %R" 20 :left))
-  (elfeed-show-entry-switch #'pop-to-buffer)
-  (elfeed-show-unique-buffers nil)
-  (elfeed-use-libxml t)
-  :config
-  (require 'kam-elfeed)
-  (setq elfeed-feeds
-        '(("https://www.artofmanliness.com/feed/" :title "The Art Of Manliness" culture manhood)
-          ("https://xkcd.com/rss.xml" science comics)
-          ("https://www.brainpickings.org/feed/" :title "The Marginalian" culture art)
-          ("https://donaldrobertson.name/feed/" philosophy)
-          ("https://startingstrength.com/rss.rss" :title "Starting Strength" health strengthtraining)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwY9iS8oMyWDYIe6_RmoA" :title "NoBoilerplate" programming technology youtube)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg" :title "DistroTube" linux youtube)
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmdlnVFzmf7Zhqm_QE-UlJw") Alex Leonidas
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC68TLK0mAEzUyHx5x5k-S1Q") Jeff Nippard
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCIh_TPYPqjJuS_-nOfAIlfg") The Bioneer
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsvn_Po0SmunchJYOWpOxMg") VideoGameDunkey
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPdaxSov0mgwh77JvjQO2jQ" :title "Man Carrying Thing" books culture youtube) ; Man carrying thing
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCussGOBf--SiEXrqCh-3rfA") Expatriarch
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2_krAagEXVPftDXZCDiVZA" :title "Kaname Naito" japanese youtube) ; Kaname Naito
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQjBsscIa_mgEnSvWpm_9vw" :title "Odysseas" books philosophy youtube)
-          ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPIyEJzvW7SsbiIrooixjNA" :title "Doug's Dharma" buddhism youtube)
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6biysICWOJ-C3P4Tyeggzg")
-          ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2ME6cK8jWnRSWyUdV0yWJw")
-          ;; ("https://www.theatlantic.com/feed/all/")
-          ("https://www.theatlantic.com/politics/" :title "The Atlantic" politics news)
-          ("https://www.theatlantic.com/science/" :title "The Atlantic" science)
-          ("https://www.theatlantic.com/technology/" :title "The Atlantic" technology culture)
-          ("https://www.newyorker.com/feed/news" :title "The New Yorker" news)
-          ("https://www.newyorker.com/feed/culture" :title "The New Yorker" culture)
-          ("https://dynomight.net/feed.xml" :title "DynoMight")
-          ("https://feeds.npr.org/1020/rss.xml" :title "NPR" news)
-          ("http://rss.sciam.com/sciam/mindmatters" :title "Scientific American" science)
-          ("http://rss.sciam.com/sciam/feature-articles" :title "Scientific American" science)
-          ("https://joshblais.com/index.xml" emacs philosophy)
-          ("https://protesilaos.com/codelog.xml" :title "Protesilaos" emacs linux)
-          ("https://protesilaos.com/interpretations.xml" :title "Protesilaos" art philosophy)))
+(kam-when-system-type 'gnu/linux
+  (use-package elfeed
+    :ensure t
+    ;; :hook (elfeed-show-mode . kam-writing-mode)
+    :hook ((elfeed-search-mode . hide-cursor-mode)
+           (elfeed-search-mode . lin-mode)
+           (elfeed-show-mode . visual-line-mode)
+           (elfeed-show-mode . kam-writing-mode))
+    :bind
+    ("C-c r" . elfeed)
+    (:map elfeed-show-mode-map
+          ("n" . kam-elfeed-show-next)
+          ("p" . kam-elfeed-show-prev)
+          ("SPC" . kam-scroll-down)
+          ("<backspace>" . kam-scroll-up))
+    (:map elfeed-search-mode-map
+          ;; ([remap scroll-down-command] . kam-scroll-up)
+          ;; ([remap scroll-up-command] . kam-scroll-down)
+          ("g" . elfeed-update)
+          ("u" . elfeed-search-unmark)
+          ("R" . elfeed-search-tag-unread))
+    :custom
+    (elfeed-db-directory (expand-file-name "elfeed" kam-emacs-cache-directory))
+    (elfeed-enclosure-default-dir (expand-file-name "elfeed" kam-emacs-cache-directory))
+    (elfeed-search-title-max-width 125)
+    (elfeed-search-title-min-width 30)
+    (elfeed-search-clipboard-type 'CLIPBOARD)
+    (elfeed-search-filter "@2-weeks-ago +unread")
+    (elfeed-show-truncate-long-urls t)
+    (elfeed-search-date-format '("%F %R" 20 :left))
+    (elfeed-show-entry-switch #'pop-to-buffer)
+    (elfeed-show-unique-buffers nil)
+    (elfeed-use-libxml t)
+    :config
+    (require 'kam-elfeed)
+    (setq elfeed-feeds
+          '(("https://www.artofmanliness.com/feed/" :title "The Art Of Manliness" culture manhood)
+            ("https://xkcd.com/rss.xml" science comics)
+            ("https://www.brainpickings.org/feed/" :title "The Marginalian" culture art)
+            ("https://donaldrobertson.name/feed/" philosophy)
+            ("https://startingstrength.com/rss.rss" :title "Starting Strength" health strengthtraining)
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UCUMwY9iS8oMyWDYIe6_RmoA" :title "NoBoilerplate" programming technology youtube)
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UCVls1GmFKf6WlTraIb_IaJg" :title "DistroTube" linux youtube)
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCmdlnVFzmf7Zhqm_QE-UlJw") Alex Leonidas
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC68TLK0mAEzUyHx5x5k-S1Q") Jeff Nippard
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCIh_TPYPqjJuS_-nOfAIlfg") The Bioneer
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCsvn_Po0SmunchJYOWpOxMg") VideoGameDunkey
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPdaxSov0mgwh77JvjQO2jQ" :title "Man Carrying Thing" books culture youtube) ; Man carrying thing
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UCussGOBf--SiEXrqCh-3rfA") Expatriarch
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2_krAagEXVPftDXZCDiVZA" :title "Kaname Naito" japanese youtube) ; Kaname Naito
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UCQjBsscIa_mgEnSvWpm_9vw" :title "Odysseas" books philosophy youtube)
+            ("https://www.youtube.com/feeds/videos.xml?channel_id=UCPIyEJzvW7SsbiIrooixjNA" :title "Doug's Dharma" buddhism youtube)
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC6biysICWOJ-C3P4Tyeggzg")
+            ;; ("https://www.youtube.com/feeds/videos.xml?channel_id=UC2ME6cK8jWnRSWyUdV0yWJw")
+            ;; ("https://www.theatlantic.com/feed/all/")
+            ("https://www.theatlantic.com/politics/" :title "The Atlantic" politics news)
+            ("https://www.theatlantic.com/science/" :title "The Atlantic" science)
+            ("https://www.theatlantic.com/technology/" :title "The Atlantic" technology culture)
+            ("https://www.newyorker.com/feed/news" :title "The New Yorker" news)
+            ("https://www.newyorker.com/feed/culture" :title "The New Yorker" culture)
+            ("https://dynomight.net/feed.xml" :title "DynoMight")
+            ("https://feeds.npr.org/1020/rss.xml" :title "NPR" news)
+            ("http://rss.sciam.com/sciam/mindmatters" :title "Scientific American" science)
+            ("http://rss.sciam.com/sciam/feature-articles" :title "Scientific American" science)
+            ("https://joshblais.com/index.xml" emacs philosophy)
+            ("https://protesilaos.com/codelog.xml" :title "Protesilaos" emacs linux)
+            ("https://protesilaos.com/interpretations.xml" :title "Protesilaos" art philosophy)))
 
-  (defun kam-elfeed-show-mode-setup ()
-    "Setup function for `elfeed-show-mode'."
-    (setopt-local browse-url-browser-function browse-url-eww)))
+    (defun kam-elfeed-show-mode-setup ()
+      "Setup function for `elfeed-show-mode'."
+      (setopt-local browse-url-browser-function browse-url-eww))))
 
 (use-package elfeed-tube
   :after (elfeed)
@@ -3882,19 +3870,21 @@ With optional ARG, open browser in EWW."
   (auto-save-default nil))
 
 (use-package timeshift
+  :if (kam-when-system-type 'gnu/linux t)
   :ensure nil
   :commands
   (timeshift-snapshot-list
    timeshift-snapshot-create
    timeshift-snapshot-delete))
 
-(use-package osx-trash
-  :if (eq system-type 'darwin)
-  :ensure t
-  :custom
-  (osx-trash-command "trash -F")
-  :config
-  (osx-trash-setup))
+(kam-when-system-type 'darwin
+  (use-package osx-trash
+    :if (eq system-type 'darwin)
+    :ensure t
+    :custom
+    (osx-trash-command "trash -F")
+    :config
+    (osx-trash-setup)))
 
 (use-package async
   :ensure t

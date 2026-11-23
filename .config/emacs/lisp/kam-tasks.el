@@ -7,7 +7,7 @@
 ;;; Code:
 
 (require 'kam-os)
-(require 'org)
+;; (require 'org)
 
 (defvar kam-todo-file
   (expand-file-name "Inbox/todo.org" kam-home-directory))

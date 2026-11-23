@@ -8,7 +8,7 @@
 (require 'kam-common)
 (require 'spacious-padding)
 (require 'standard-themes)
-(require 'org)
+;; (require 'org)
 (require 'denote)
 
 ;;; Spacious-padding extensions
@@ -114,21 +114,6 @@ See `kam-theme-update-custom-faces'.")
     (custom-set-faces
      `(hl-line ((,c :background ,bg-dim)))
      `(hl-line-nonselected ((,c :background ,bg-main))))))
-
-(defun kam-org-custom-faces-setup ()
-  "Set up custom `org-mode' faces with `standard-themes'."
-  (standard-themes-with-colors
-    (custom-set-faces
-     `(org-meta-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-special-keyword ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-meta-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-document-title ((,c :inherit nil :height 1.0 :foreground ,fg-dim)))
-     `(org-document-info ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-document-info-keyword ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-drawer ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-property-value ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-ellipsis ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
-     `(org-block-end-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim))))))
 
 ;;; fonts
 (defvar kam-favorite-fonts

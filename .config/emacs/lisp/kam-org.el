@@ -310,5 +310,65 @@ If the entry has a CUSTOM_ID, return it as is, else create a new one."
   (kam-org-metaup)
   (org-cycle))
 
+;;;###autoload
+(defun kam-org-insert-notes-drawer ()
+  "Generate or open a NOTES drawer under the current heading.
+If a drawer exists for this section, a new line is created at the end of
+the current note."
+  (interactive)
+  (push-mark)
+  (org-previous-visible-heading 1)
+  (forward-line)
+  (if (looking-at-p "^[ \t]*:NOTES:")
+      (progn
+        (org-fold-hide-drawer-toggle 'off)
+        (re-search-forward "^[ \t]*:END:" nil t)
+        (forward-line -1)
+        (org-end-of-line)
+        (org-return))
+    (org-insert-drawer nil "NOTES")))
+
+(defun kam-org-custom-faces-setup ()
+  "Set up custom `org-mode' faces with `standard-themes'."
+  (standard-themes-with-colors
+    (custom-set-faces
+     `(org-meta-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-special-keyword ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-meta-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-document-title ((,c :inherit nil :height 1.0 :foreground ,fg-dim)))
+     `(org-document-info ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-document-info-keyword ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-drawer ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-property-value ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-ellipsis ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
+     `(org-block-end-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim))))))
+
+(defmacro kam-consult-imenu--action (prompt &rest body)
+  "Execute forms in BODY at the location of an `consult-imenu' selection.
+PROMPT is the prompt of `consult-imenu'."
+  `(let ((item (kam-consult-imenu--select ',prompt)))
+     (pcase item
+       (`(,name ,pos ,fn . ,args)
+        (push-mark nil t)
+        (apply fn name pos args))
+       (`(,_ . ,pos)
+        (save-excursion
+          (consult--jump pos)
+          ,@body))
+       (_ (error "Unknown Imenu item: %S" item)))))
+
+(defmacro kam-consult-org-heading--action (&rest body)
+  "Execute forms in BODY at the location of an `consult-org-heading' selection."
+  `(let* ((headings (consult-org-heading)))
+     ,@body))
+
+;;;###autoload
+(defun kam-consult-org-heading-link ()
+  "Insert a link at point to the location of an Org heading using minibuffer completion."
+  (interactive)
+  (save-excursion
+    (kam-consult-org-heading--action (org-store-link nil t)))
+  (kam-org-insert-last-stored-link-with-prompt))
+
 (provide 'kam-org)
 ;;; kam-org.el ends here

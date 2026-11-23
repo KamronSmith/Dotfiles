@@ -26,6 +26,8 @@
             (add-to-list 'denote-known-keywords keyword)))
         (kam-denote-first-history-keyword)))
 
+(declare-function 'org-set-property "org")
+
 ;;;###autoload
 (defun kam-notes-set-processed-property ()
   "Set the property PROCESSED to no on an `org-mode' heading."
@@ -104,17 +106,20 @@
   "Insert TEMPLATE for creating a literature note, enhanced with `completing-read'."
   (interactive))
 
+(declare-function 'org-previous-visible-heading "org")
+(declare-function 'org-insert-heading "org")
+(declare-function 'org-end-of-subtree "org")
+
 ;;;###autoload
 (defun kam-notes-insert-quote-block (title)
-  "Insert a quote block with an org mode heading superior."
+  "Insert a quote block with TITLE with an org mode heading superior."
   (interactive (list (read-string "Enter a title: ")))
   (org-previous-visible-heading 1)
   (org-insert-heading)
   (org-set-property "PROCESSED" "no")
   (insert title)
   (org-end-of-subtree)
-  (newline)
-  (tempo-template-org-quote))
+  (newline))
 
 (provide 'kam-notes)
 ;;; kam-notes.el ends here

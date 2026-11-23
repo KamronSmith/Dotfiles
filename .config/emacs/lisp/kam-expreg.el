@@ -5,7 +5,7 @@
 
 ;;; Code:
 (require 'expreg)
-(require 'org)
+;; (require 'org)
 
 (defun kam-expreg--sexp-dim (fn)
   "Return a cons cell of the dimensions of the Expreg function FN.
@@ -72,6 +72,10 @@ With optional numeric prefix ARG, do it that many times. Powered by
   (interactive "p")
   (dotimes (_ arg)
     (goto-char (car (kam-expreg--sexp)))))
+
+(declare-function 'org-element-context "org-element")
+(declare-function 'org-element-property "org-element-ast")
+(declare-function 'org-element-type "org-element-ast")
 
 (defun kam-expreg--org-elements ()
   "Return a list of regions containing `org-mode' elements."

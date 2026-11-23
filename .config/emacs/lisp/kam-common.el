@@ -6,7 +6,6 @@
 
 ;;; Code:
 (require 'kmacro)
-(require 'org)
 
 (defgroup kam-common ()
   "Common commands intended to be used throughout the configuration."
@@ -513,7 +512,6 @@ Intelligently means: region, subtree, or defun, whichever applies first."
   (cond ((and (buffer-narrowed-p) (not p)) (widen))
         ((region-active-p)
          (narrow-to-region (region-beginning) (region-end)))
-        ((derived-mode-p 'org-mode) (org-narrow-to-subtree))
         (t (narrow-to-defun))))
 
 (defun kam-current-elisp-sexp ()
@@ -564,6 +562,8 @@ use the symbol at point."
          (to-string (read-regexp (format "Query replace %s with: " sym))))
     (deactivate-mark)
     (query-replace-regexp sym to-string)))
+
+(declare-function 'kmacro-keyboard-quit "kmacro")
 
 ;;;###autoload
 (defun kam-keyboard-escape-quit-dwim ()
