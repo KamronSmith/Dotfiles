@@ -1413,12 +1413,11 @@ surrounded by actual boundaries."
 ;;         ("M-l" . consult-flycheck)))
 
 (use-package marginalia
+  :hook (after-init . marginalia-mode)
   :custom
   (marginalia-field-width 100)
   (marginalia-align 'left)
-  (marginalia-align-offset 20)
-  :config
-  (marginalia-mode))
+  (marginalia-align-offset 20))
 
 (use-package embark
   :after (vertico)  ;; load after vertico to avoid vertico-map is void error
@@ -1501,6 +1500,7 @@ surrounded by actual boundaries."
         ("<kam-i>" . kam-consult-project-imenu)))
 
 (use-package orderless
+  :demand t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -2674,6 +2674,7 @@ surrounded by actual boundaries."
 
 (use-package nerd-icons-completion
   :if (package-installed-p 'nerd-icons)
+  :hook (after-init . nerd-icons-completion-mode)
   :config
   (nerd-icons-completion-mode))
 
@@ -2683,15 +2684,13 @@ surrounded by actual boundaries."
 
 (use-package nerd-icons-xref
   :if (package-installed-p 'nerd-icons)
-  :config
-  (nerd-icons-xref-mode))
+  :hook (after-init . nerd-icons-xref-mode))
 
 (use-package nerd-icons-grep
   :if (package-installed-p 'nerd-icons)
+  :hook (grep-mode . nerd-icons-grep-mode)
   :custom
-  (grep-use-headings t)
-  :custom
-  (nerd-icons-grep-mode))
+  (grep-use-headings t))
 
 (use-package visual-fill-column
   :hook ((visual-line-mode . visual-fill-column-for-vline)
@@ -2707,6 +2706,7 @@ surrounded by actual boundaries."
   (advice-add 'text-scale-adjust :after #'visual-fill-column-adjust))
 
 (use-package kam-mode-line
+  :demand t
   :ensure nil
   :config
   (setopt mode-line-compact nil)
