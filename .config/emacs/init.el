@@ -724,8 +724,14 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   :config
   (setq trashed-buffer-name "*Trash*")
   (setq trashed-trash-dir kam-trash-directory)
-  (setq trashed-files-dir kam-trash-directory)
-  (setq trashed-info-dir kam-trash-directory)
+  (setq trashed-files-dir (or (kam-when-system-type 'gnu/linux
+                                (expand-file-name "files" kam-trash-directory))
+                              (kam-when-system-type 'darwin
+                                kam-trash-directory)))
+  (setq trashed-info-dir (or (kam-when-system-type 'gnu/linux
+                               (expand-file-name "files" kam-trash-directory))
+                             (kam-when-system-type 'darwin
+                               kam-trash-directory)))
 
   (defun kam-trashed ()
     "Either run `trashed' or open the system trash can."
