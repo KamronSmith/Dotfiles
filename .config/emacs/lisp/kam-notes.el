@@ -26,12 +26,6 @@
             (add-to-list 'denote-known-keywords keyword)))
         (kam-denote-first-history-keyword)))
 
-(defun kam-denote-open-or-create ()
-  "Like"
-  (interactive)
-  (let ((denote-prompts '(title keywords subdirectory)))
-    (denote-open-or-create)))
-
 ;;;###autoload
 (defun kam-notes-set-processed-property ()
   "Set the property PROCESSED to no on an `org-mode' heading."
