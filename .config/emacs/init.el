@@ -1342,6 +1342,7 @@ surrounded by actual boundaries."
   (add-to-list 'consult-preview-allowed-hooks 'display-line-numbers-mode)
 
   (advice-add 'consult--jump :around 'kam-centered-cursor-mode-advice)
+  (advice-add 'consult--jump :around 'kam-display-command-same-window)
   (advice-add 'consult-buffer :after (lambda (&rest _) (recenter)))
 
   (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
