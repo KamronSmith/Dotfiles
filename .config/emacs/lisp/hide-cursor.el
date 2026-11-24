@@ -1,9 +1,9 @@
 ;;; hide-cursor-mode.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
-;;; Code: 
+;;; Code:
 (defvar-local hide-cursor--original nil)
 
 ;;;###autoload
@@ -18,5 +18,5 @@
     (setq cursor-type (or hide-cursor--original
                           t))))
 
-(provide 'hide-cursor-mode)
+(provide 'hide-cursor)
 ;;; hide-cursor-mode.el ends here
