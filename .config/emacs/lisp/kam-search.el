@@ -139,23 +139,27 @@ where to run the command."
   "Like `compile-goto-error' but does not split the window."
   (interactive)
   (let ((split-window-preferred-function #'kam-no-split-window)
-        (display-buffer-overriding-action '(kam-display-buffer-in-mru-window)))
+        (display-buffer-overriding-action '(kam-display-buffer-use-most-recent-window)))
     (compile-goto-error)))
 
 ;;;###autoload
 (defun kam-next-error-no-select (&optional n)
-  "Like `next-error-no-select' but will not split the window.
-Additionally, it will also always only use the currently selected window."
-  (interactive)
+  "Move point to the next error in the `next-error' buffer and highlight match.
+Optional numeric prefix argument N says how many error messages to move
+forwards (or backwards, if negative). Additionally, it will always only
+use the currently selected window and not split the window."
+  (interactive "p")
   (let ((split-window-preferred-function #'kam-no-split-window)
         (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
     (next-error-no-select n)))
 
 ;;;###autoload
 (defun kam-previous-error-no-select (&optional n)
-  "Like `previous-error-no-select' but will not split the window.
-Additionally, it will always only use the currently selected window."
-  (interactive)
+  "Move point to the previous error in the `next-error' buffer and highlight match.
+Optional numeric prefix argument N says how many error messages to move
+backwards (or forwards, if negative). Additionally, it will always only
+use the currently selected window and not split the window."
+  (interactive "p")
   (let ((split-window-preferred-function #'kam-no-split-window)
         (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
     (previous-error-no-select n)))

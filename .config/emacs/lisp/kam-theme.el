@@ -121,13 +121,13 @@ See `kam-theme-update-custom-faces'.")
     ("Iosevka" . 160)
     ("IBM Plex Mono" . 140)
     ("JetBrains Mono" . 140))
-  "List of my favorite fonts and their font sizes.")
+  "Alist of my favorite fonts and their font sizes.")
 
 ;;;###autoload
 (defun kam-load-font (font)
   "Choose a font from `kam-favorite-fonts'."
   (interactive (list (completing-read
-                      "Font to load: "
+                      "Load font: "
                       kam-favorite-fonts)))
   (let* ((font-size (cdr (assoc font kam-favorite-fonts))))
     (set-face-attribute 'default nil :font font :height font-size :weight 'regular :width 'regular)
