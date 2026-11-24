@@ -59,10 +59,10 @@
 (defun link-menu--return-link-from-menu (link-name links)
   "Return the link that matches LINK-NAME from LINKS."
   (let* ((chosen))
-    (mapcar (lambda (link)
-              (when (string-equal (plist-get link :args) link-name)
-                (setq chosen link)))
-            links)
+    (mapc (lambda (link)
+            (when (string-equal (plist-get link :args) link-name)
+              (setq chosen link)))
+          links)
     chosen))
 
 ;;;###autoload

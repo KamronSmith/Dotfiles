@@ -12,6 +12,24 @@
   "Extensions for `shell-mode'."
   :group 'shell)
 
+(defvar kam-shell-history-file "~/.config/zsh/zhistory"
+  "Where the history file for Z-shell is stored.")
+
+(defun kam-shell-mode-setup ()
+  "Setup function for `shell-mode'."
+  (setq-local comint-process-echoes t
+              comint-input-ring-file-name kam-shell-history-file
+              comint-input-ring-size 100000
+              comint-input-ring-seperator "\n: \\([0-9]+\\):\\([0-9]+\\);" ; Because of ZSH extended_history option
+              outline-regexp comint-prompt-regexp
+              completion-styles '(partial-completion basic)
+              completion-at-point-functions '(cape-file comint-completion-at-point t)
+              corfu-auto nil
+              corfu-quit-no-match t)
+  (hl-line-mode -1)
+  (comint-read-input-ring t)
+  (shell-dirtrack-mode 1))
+
 (defun kam-shell-command--prompt ()
   (read-shell-command
    (format-prompt "Shell command in '%s'" nil (abbreviate-file-name default-directory))

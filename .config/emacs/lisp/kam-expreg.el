@@ -5,7 +5,16 @@
 
 ;;; Code:
 (require 'expreg)
-;; (require 'org)
+
+(defgroup kam-expreg ()
+  "Extensions for `expreg'."
+  :group 'expreg)
+
+(defun kam-expreg-text-mode-setup ()
+  "Setup `text-mode' for `expreg'."
+  (add-to-list 'expreg-functions #'expreg--sentence)
+  (when (eq major-mode 'org-mode)
+    (add-to-list 'expreg-functions #'kam-expreg--org-elements t)))
 
 (defun kam-expreg--sexp-dim (fn)
   "Return a cons cell of the dimensions of the Expreg function FN.

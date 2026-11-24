@@ -1,4 +1,4 @@
-;;; kam-mode-line.el --- Functions for a custom mode-line -*- lexical-binding: t; -*-
+;;; kam-mode-line.el --- Extensions for a custom mode-line -*- lexical-binding: t; -*-
 
 ;;; Summary:
 
@@ -311,7 +311,8 @@ Specific to the current window's mode-line.")
 
 (defvar-local kam-mode-line-decolorify
   '(:eval
-    (if kam-decolorify-mode
+    (if (and (featurep 'decolorify)
+             decolorify-mode)
         (concat
          (propertize " D"
                      'face 'kam-mode-line-indicator-red)

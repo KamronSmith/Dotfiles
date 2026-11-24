@@ -9,6 +9,18 @@
 (require 'consult)
 (require 'standard-themes)
 
+(defgroup kam-eshell ()
+  "Extensions for `eshell'."
+  :group 'eshell)
+
+(defun kam-eshell-mode-setup ()
+  "Setup function for `eshell-mode'."
+  (setenv "TERM" "xterm-256-color")
+  (setq-local completion-styles '(basic partial-completion)
+              completion-at-point-functions '(pcomplete-completions-at-point cape-file cape-history)
+              eshell-prompt-regexp kam-eshell-prompt-regexp)
+  (eshell-prompt-mode))
+
 (defun kam-eshell-prompt-function ()
   "Function for `eshell-prompt-function'."
   (standard-themes-with-colors

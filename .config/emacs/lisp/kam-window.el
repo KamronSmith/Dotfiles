@@ -46,23 +46,22 @@ Check if the `window-width' or the `window-height' is less than
 ;;;###autoload
 (defun kam-quit-window (&optional arg)
   "Quit the window.
-With optional ARG, kill the buffer."
-  (interactive)
+Additionally with optional ARG, kill the buffer the window contains."
+  (interactive "P")
   (quit-window arg))
 
 ;;;###autoload
 (defun kam-scroll-down (&optional arg)
   "Scroll down a half screen.
-With optional ARG, scroll down that many times.
-Please see "
-  (interactive)
+With optional ARG, scroll down that many times."
+  (interactive "p")
   (scroll-up arg))
 
 ;;;###autoload
 (defun kam-scroll-up (&optional arg)
-  "Scroll up.
+  "Scroll up half a screen.
 With optional ARG, scroll up that many times."
-  (interactive)
+  (interactive "p")
   (scroll-down arg))
 
 ;;;###autoload
@@ -103,8 +102,8 @@ Additionally, select the newly formed window."
 
 ;;;###autoload
 (defun kam-alternate-buffer (&optional window)
-  "Switch back and forth between current and last buffer in the current window."
-  (interactive)
+  "Switch back and forth between current and last buffer in WINDOW"
+  (interactive "p")
   (let ((current-buffer (window-buffer window)))
     (switch-to-buffer
      (cl-find-if (lambda (buffer)
@@ -120,8 +119,12 @@ Additionally, select the newly formed window."
       (kam-split-window-right)
     (call-interactively 'ace-window)))
 
-(defun kam-recenter-advice (&ignore _)
-  (recenter))
+(defun kam-recenter-advice (&rest _)
+  "Recenter the window.
+Intended to be used as advice after a function moves the point."
+  (ignore-errors
+    (recenter)))
+
 ;;;###autoload
 (defun kam-next-buffer (&optional arg)
   "Switch to the next ARGth buffer.
@@ -171,9 +174,8 @@ With universal prefix ARG, run in the next window."
 Only split if there is no split, and only split into left and right windows."
   (interactive)
   (let ((window (or window (selected-window))))
-    (if (and
-         (window-splittable-p window t)
-         (= (length (window-list)) 1))
+    (if (and (window-splittable-p window t)
+             (= (length (window-list)) 1))
         (with-selected-window window
           (split-window-right))
       nil)))
@@ -182,7 +184,7 @@ Only split if there is no split, and only split into left and right windows."
 (defun kam-toggle-delete-other-windows ()
   "Delete other windows in the frame if any, or restore previous window config."
   (interactive)
-  (if (and winner-mode
+  (if (and (featurep 'winner)
            (equal (selected-window) (next-window)))
       (winner-undo)
     (delete-other-windows)))
@@ -198,6 +200,11 @@ Only split if there is no split, and only split into left and right windows."
   "Use in `split-window-preferred-function' to disable window splitting."
   nil)
 
+(defun kam-display-buffer-use-most-recent-window (buffer alist)
+  "Display BUFFER in the most recently used window."
+  (when-let* ((mru-win (get-mru-window t nil t)))
+    (window--display-buffer buffer mru-win 'reuse alist)))
+
 (defun kam-aw-consult-buffer (window)
   "Perform `consult-buffer' in AW selected WINDOW."
   (aw-switch-to-window window)
@@ -211,7 +218,7 @@ Only split if there is no split, and only split into left and right windows."
 (defun kam-aw-delete-window-dwim (window)
   "Perform `kam-delete-window-dwim' in the AW-selected WINDOW."
   (aw-switch-to-window window)
-  (kam-delete-window-dwim))
+  (call-interactively #'kam-delete-window-dwim))
 
 (defun kam-aw-execute-extended-command (window)
   "Perform `execute-extended-command' in the AW-selected WINDOW."

@@ -5,8 +5,6 @@
 ;;; Commentary:
 
 ;;; Code:
-(require 'kmacro)
-
 (defgroup kam-common ()
   "Common commands intended to be used throughout the configuration."
   :group 'editing)

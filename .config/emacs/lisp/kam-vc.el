@@ -1,3 +1,6 @@
+;;; kam-vc.el --- -*- lexical-binding: t; -*-
+;;; Summary:
+
 ;;; Commentary:
 
 ;;; Code:

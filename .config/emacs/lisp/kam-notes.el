@@ -8,23 +8,6 @@
 ;; (require 'org)
 (require 'standard-themes)
 (require 'kam-os)
-(require 'denote)
-(require 'denote-sequence)
-
-(defun kam-denote-keywords ()
-  "Return a list of keywords based on `denote-keyword-history'."
-  (delete-dups (denote-infer-keywords-from-files)))
-
-(defun kam-denote-first-history-keyword ()
-  "Return the most recent `denote-keyword-history' element as a list of strings."
-  (string-split (car denote-keyword-history) ","))
-
-(defun kam-denote-add-known-keyword ()
-  "Add the most recent created keywords to `denote-known-keywords'."
-  (mapc (lambda (keyword)
-          (when (not (member keyword denote-known-keywords))
-            (add-to-list 'denote-known-keywords keyword)))
-        (kam-denote-first-history-keyword)))
 
 (declare-function 'org-set-property "org")
 

@@ -9,8 +9,8 @@
 (require 'kam-dotfiles)
 
 (defgroup kam-os ()
-  "Extensions to customize Emacs to fit my operating system.
-And the way I want to use a computer.")
+  "Extensions to customize Emacs to fit how I want to use a computer."
+  :group 'convenience)
 
 (defcustom kam-home-directory (expand-file-name "~/")
   "Home directory."

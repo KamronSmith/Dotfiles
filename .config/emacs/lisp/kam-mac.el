@@ -1,9 +1,12 @@
 ;;; kam-mac.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
 ;;; Code:
+(defgroup kam-mac ()
+  "Extensions for use on MacOS."
+  :group 'convenience)
 
 ;;;###autoload
 (defun kam-mac-copy-config-to-config-folder ()

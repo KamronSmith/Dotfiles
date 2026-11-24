@@ -1,10 +1,14 @@
 ;;; kam-elfeed.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
-;;; Code: 
+;;; Code:
 (require 'elfeed)
+
+(defgroup kam-elfeed ()
+  "Extensions for `elfeed'."
+  :group 'elfeed)
 
 ;;;###autoload
 (defun kam-elfeed-show-next ()

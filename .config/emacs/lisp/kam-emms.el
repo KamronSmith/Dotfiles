@@ -1,17 +1,15 @@
 ;;; kam-emms.el --- -*- lexical-binding: t; -*-
 
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
 ;;; Code:
 (require 'emms)
-(require 'consult)
 
-(defvar kam-consult-source-songs
-  `(:name "Songs"
-          :items (directory-files kam-music-directory t
-                                  directory-files-no-dot-files-regexp)))
+(defgroup kam-emms ()
+  "Extensions for `emms'."
+  :group 'emms)
 
 ;;;###autoload
 (defun kam-emms-play-pause ()
