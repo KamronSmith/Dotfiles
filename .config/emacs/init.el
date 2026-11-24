@@ -292,16 +292,22 @@ Enable that mode to its keybindings take over those of the major mode.")
 
   (setenv "GPG_AGENT_INFO" nil)
 
-  (defun kam-font-faces-setup ()
-    "Setup function for fonts."
-    (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
-    (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
-    (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular))
+  (defun kam-font-setup ()
+    "Setup for the font faces."
+    (if (daemonp)
+        (add-hook 'after-make-frame-functions
+                  (lambda (frame)
+                    (with-selected-frame frame
+                      (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
+                      (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
+                      (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular))))
+      (set-face-attribute 'default nil :font "Aporetic Sans Mono" :height 150 :weight 'regular :width 'regular)
+      (set-face-attribute 'fixed-pitch nil :font "Aporetic Sans Mono" :height 1.0 :weight 'regular :width 'regular)
+      (set-face-attribute 'variable-pitch nil :family "Newsreader" :height 1.0 :weight 'regular :width 'regular)))
 
   (defun kam-emacs-setup ()
     "Setup function for Emacs.
 Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
-
     (kam-when-system-type 'gnu/linux
       (setopt x-meta-keysym 'meta))
     (kam-when-system-type 'darwin
@@ -318,7 +324,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (add-to-list 'default-frame-alist '(ns-appearance . dark))
       (add-to-list 'default-frame-alist '(ns-transparent-titlebar . t))
       (require 'kam-mac))
-    (kam-font-faces-setup))
+    (kam-font-setup))
 
   (put 'narrow-to-region 'disabled nil)
 
