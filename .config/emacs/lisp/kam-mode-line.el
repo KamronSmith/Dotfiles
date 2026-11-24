@@ -311,7 +311,8 @@ Specific to the current window's mode-line.")
 
 (defvar-local kam-mode-line-decolorify
   '(:eval
-    (if kam-decolorify-mode
+    (if (and (featurep 'decolorify)
+             decolorify-mode)
         (concat
          (propertize " D"
                      'face 'kam-mode-line-indicator-red)

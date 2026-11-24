@@ -1357,7 +1357,7 @@ surrounded by actual boundaries."
   (advice-add #'register-preview :override #'consult-register-window)
   ;; (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
   (add-to-list 'consult-preview-allowed-hooks 'visual-line-mode)
-  (add-to-list 'consult-preview-allowed-hooks 'kam-decolorify-mode)
+  (add-to-list 'consult-preview-allowed-hooks 'decolorify-mode)
   (add-to-list 'consult-preview-allowed-hooks 'display-line-numbers-mode)
 
   (advice-add 'consult--jump :around 'kam-centered-cursor-mode-advice)
@@ -2603,6 +2603,11 @@ surrounded by actual boundaries."
 
   (standard-themes-load-theme 'standard-light))
 
+(use-package decolorify
+  :after (standard-themes)
+  :hook (prog-mode . decolorify-mode)
+  :ensure nil)
+
 (use-package ef-themes
   :ensure t)
 
@@ -2845,8 +2850,7 @@ surrounded by actual boundaries."
 (use-package prog-mode
   :ensure nil
   :hook ((prog-mode . kam-prog-mode-setup)
-         (prog-mode . kam-decolorify-mode)
-         (prog-mode . auto-fill-mode))
+	 (prog-mode . auto-fill-mode))
   ;; :bind
   ;; (:map prog-mode-map
   ;;       ("RET" . newline))
