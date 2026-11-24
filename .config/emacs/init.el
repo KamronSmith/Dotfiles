@@ -13,6 +13,7 @@
   (make-directory kam-emacs-cache-directory t))
 
 (use-package package
+  :demand t
   :ensure nil
   :custom
   (package-archives
@@ -24,7 +25,9 @@
   (package-vc-register-as-project nil)
   (package-install-upgrade-built-in t)
   (package-native-compile t)
-  (package-vc-allow-build-commands t))
+  (package-vc-allow-build-commands t)
+  :config
+  (package-initialize))
 
 (use-package native-compile
   :ensure nil
