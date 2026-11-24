@@ -2407,6 +2407,7 @@ surrounded by actual boundaries."
   (add-to-list 'project-switch-commands '(kam-keyboard-escape-quit-dwim "Quit" "C-g") t))
 
 (use-package kam-project
+  :demand t
   :after (project)
   :ensure nil
   :commands

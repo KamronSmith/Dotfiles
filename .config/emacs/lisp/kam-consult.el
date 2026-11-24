@@ -7,7 +7,6 @@
 ;;; Code:
 (require 'consult)
 (require 'kam-common)
-;; (require 'kam-org)
 (require 'info)
 
 (defgroup kam-consult ()
