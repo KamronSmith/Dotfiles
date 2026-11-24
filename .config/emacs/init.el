@@ -604,7 +604,8 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 
 (use-package dired
   :ensure nil
-  :hook ((dired-mode . dired-hide-details-mode)
+  :hook ((dired-mode . hl-line-mode)
+         (dired-mode . dired-hide-details-mode)
          (dired-after-readin . kam-dired-directory-add-to-history))
   :bind
   (:map dired-mode-map
@@ -727,7 +728,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 (use-package kam-dired
   :after (dired)
   :ensure nil
-  :hook (dired-mode . kam-dired-mode-setup)
+  :hook (dired-mode . kam-dired-imenu-setup)
   :bind
   (:map dired-mode-map
         ("R" . kam-dired-do-rename)
