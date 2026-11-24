@@ -2730,12 +2730,10 @@ surrounded by actual boundaries."
   (add-to-list 'corfu-margin-formatters #'nerd-icons-corfu-formatter))
 
 (use-package nerd-icons-completion
-  :if (package-installed-p 'nerd-icons)
-  :after (nerd-icons)
+  :after (nerd-icons marginalia)
   :ensure t
-  :hook (after-init . nerd-icons-completion-mode)
-  :config
-  (nerd-icons-completion-mode))
+  :hook ((after-init . nerd-icons-completion-mode)
+         (marginalia-mode . nerd-icons-completion-marginalia-setup)))
 
 (use-package nerd-icons-ibuffer
   :if (package-installed-p 'nerd-icons)
