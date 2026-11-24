@@ -216,6 +216,7 @@ Enable that mode to its keybindings take over those of the major mode.")
   (confirm-non-existent-file-or-buffer nil)
   (use-short-answers t)
   (initial-scratch-message "")
+  (custom-raised-buttons t)
   (delete-by-moving-to-trash t)
   (custom-file (make-temp-file "emacs-custom-"))
   (set-mark-command-repeat-pop t)
@@ -1374,6 +1375,7 @@ surrounded by actual boundaries."
                "-eshell\\*$"))
 
 (use-package kam-consult
+  :demand t
   :after (consult)
   :ensure nil
   :bind
@@ -2571,7 +2573,6 @@ surrounded by actual boundaries."
   :init
   (standard-themes-take-over-modus-themes-mode 1)
   :config
-  (require 'kam-theme)
   (setopt standard-themes-common-palette-overrides
           '((bg-completion bg-dim)
             (fg-heading-1 rainbow-2)
