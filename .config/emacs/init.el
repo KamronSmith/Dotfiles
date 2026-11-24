@@ -5,6 +5,8 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'kam-common)
+
 (defvar kam-emacs-cache-directory
   (concat user-emacs-directory "cache/")
   "Directory containing temporary files for Emacs.")
@@ -265,8 +267,6 @@ Enable that mode to its keybindings take over those of the major mode.")
   (x-underline-at-descent-line t)
   (x-stretch-cursor nil)
   :config
-  (require 'kam-common)
-
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
