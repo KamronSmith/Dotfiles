@@ -327,7 +327,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
       (require 'kam-mac))
     (kam-font-setup))
 
-  (put 'narrow-to-region 'disabled nil)
+  (kam-disable-command 'narrow-to-region)
 
   (add-to-list 'find-file-not-found-functions #'kam-find-file-auto-create-missing-dirs)
 
@@ -643,7 +643,7 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
      ("\\.\\(png\\|jpe?g\\|tiff\\)" "xdg-open")
      (".*" "xdg-open")))
   :config
-  (put 'dired-find-alternate-file 'disabled nil)
+  (kam-disable-command 'dired-find-alternate-file)
   (add-to-list 'display-buffer-alist
                '((major-mode . dired-mode)
                  display-buffer-pop-up-window
@@ -3775,7 +3775,7 @@ surrounded by actual boundaries."
   (dolist (command '( eww-list-bookmarks eww-add-bookmark eww-bookmark-mode
                       eww-list-buffers eww-toggle-fonts eww-toggle-colors
                       eww-switch-to-buffer))
-    (put command 'disabled t))
+    (kam-disable-command command))
 
   (defun kam-browse-url-at-point (&optional arg)
     "Browse url at point.

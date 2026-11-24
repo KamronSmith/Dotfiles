@@ -15,6 +15,10 @@
   (interactive)
   (find-file user-init-file))
 
+(defun kam-disable-command (cmd)
+  "Disable command CMD."
+  (put cmd 'disabled t))
+
 (defun kam-find-file-auto-create-missing-dirs ()
   "Auto-create missing directories in `find-file' if not found."
   (let ((target-dir (file-name-directory buffer-file-name)))
