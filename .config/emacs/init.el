@@ -644,11 +644,8 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (put 'dired-find-alternate-file 'disabled nil)
   (add-to-list 'display-buffer-alist
                '((major-mode . dired-mode)
-                 (;; display-buffer-reuse-mode-window
-                  display-buffer-pop-up-window
-                  display-buffer-same-window)
-                 ;; (mode dired-mode)
-                 )))
+                 display-buffer-pop-up-window
+                 display-buffer-same-window)))
 
 (use-package dired-x
   :ensure nil
@@ -729,6 +726,13 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (image-dired-thumb-margin 2)
   (image-dired-thumb-relief 0)
   (image-dired-thumbs-per-row 4))
+
+(use-package kam-dired
+  :after (dired)
+  :ensure nil
+  :bind
+  (:map dired-mode-map
+        ("R" . kam-dired-do-rename)))
 
 (use-package trashed
   :ensure t
