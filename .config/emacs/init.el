@@ -1838,11 +1838,8 @@ surrounded by actual boundaries."
 (use-package isearch
   :ensure nil
   ;; :after (kam-search)
-  :hook (isearch-update-post . kam-isearch-goto-match-beginning)
   :bind
   (:map isearch-mode-map
-        ("C-g" . kam-isearch-quit)
-        ;; ("<backspace>" . kam-isearch-removed-failed-or-last-char)
         ("C-." . kam-isearch-yank-symbol))
   :custom
   (isearch-lazy-count t)
@@ -1911,7 +1908,11 @@ surrounded by actual boundaries."
                  (body-function . select-window))))
 
 (use-package kam-search
-  :ensure nil)
+  :ensure nil
+  :hook (isearch-update-post . kam-isearch-goto-match-beginning)
+  :bind
+  (:map isearch-mode-map
+        ("C-g" . kam-isearch-quit)))
 
 (use-package link-hint
   :ensure t
