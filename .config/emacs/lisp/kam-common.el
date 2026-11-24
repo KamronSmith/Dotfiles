@@ -191,7 +191,7 @@ whichever position is higher."
 (defun kam-rename-file-and-buffer (name)
   "Apply NAME to the current file and rename its buffer."
   (interactive
-   (list (read-file-name "Rename current file: " (file-relative-name (buffer-file-name)))))
+   (list (read-file-name "Rename current file: " (buffer-file-name))))
   (let ((file (buffer-file-name)))
     (if (vc-registered file)
         (vc-rename-file file name))
@@ -510,7 +510,7 @@ If the region is active, indent the region."
   "If the buffer is narrowed, it widens. Otherwise, it narrows intelligently.
 Intelligently means: region, subtree, or defun, whichever applies first."
   (interactive "P")
-  (declare (interactive-only))
+  (declare (interactive-only t))
   (cond ((and (buffer-narrowed-p) (not p)) (widen))
         ((region-active-p)
          (narrow-to-region (region-beginning) (region-end)))
