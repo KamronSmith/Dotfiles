@@ -8,7 +8,6 @@
 (require 'kam-common)
 (require 'spacious-padding)
 (require 'standard-themes)
-(require 'denote)
 
 ;;; Spacious-padding extensions
 (define-minor-mode kam-spacious-padding-subtle-mode-line-mode
@@ -24,8 +23,6 @@
         (kam-reload-mode 'spacious-padding-mode))
     (setq spacious-padding-subtle-frame-lines nil)
     (kam-reload-mode 'spacious-padding-mode)))
-
-;;; Standard Themes
 
 (defvar kam-favorite-themes
   '(standard-dark
@@ -69,37 +66,10 @@ See `kam-theme-update-custom-faces'.")
 (defun kam-standard-themes-custom-faces-setup ()
   "Set up custom faces with `standard-themes'."
   (standard-themes-with-colors
-    (cond ((eq (modus-themes-get-current-theme) 'standard-dark)
-           (custom-set-faces
-            `(region ((,c :extend t)))
-            `(fringe ((,c :background ,bg-main)))
-            ;; `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
-            ;; `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
-            ;; `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
-            ;; `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
-            ))
-          ((eq (modus-themes-get-current-theme) 'standard-light)
-           `(region ((,c :extend t)))
-           `(fringe ((,c :background ,bg-main)))
-           ;; `(font-lock-function-call-face ((,c :foreground ,fnname :weight regular)))
-           ;; `(font-lock-function-name-face ((,c :foreground ,fnname :weight regular)))
-           ;; `(font-lock-variable-use-face ((,c :foreground ,variable :weight regular)))
-           ;; `(font-lock-variable-name-face ((,c :foreground ,variable :weight regular)))
-           ))))
-
-(defun kam-denote-custom-faces-setup ()
-  "Set up custom `denote' faces with `standard-themes'."
-  (standard-themes-with-colors
     (custom-set-faces
-     `(denote-faces-keywords ((,c :foreground ,magenta-warmer :weight normal)))
-     ;; `(denote-faces-title ((,c :foreground ,fg-main :inherit bold)))
-     `(denote-faces-year ((,c :foreground ,blue-intense)))
-     `(denote-faces-month ((,c :foreground ,blue-faint)))
-     `(denote-faces-day ((,c :foreground ,blue-faint)))
-     `(denote-faces-time ((,c :foreground ,fg-dim)))
-     `(denote-faces-hour ((,c :foreground ,fg-dim)))
-     `(denote-faces-minute ((,c :foreground ,fg-dim)))
-     `(denote-faces-second ((,c :foreground ,fg-dim))))))
+     `(region ((,c :extend t)))
+     `(fringe ((,c :background ,bg-main)))
+     `(modus-themes-button ((,c :inherit fixed-pitch))))))
 
 (defun kam-olivetti-custom-faces-setup ()
   "Set up custom `olivetti' faces with `standard-themes'."
