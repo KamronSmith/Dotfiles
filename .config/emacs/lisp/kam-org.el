@@ -9,6 +9,10 @@
 (require 'org)
 (require 'consult)
 
+(defgroup kam-org ()
+  "Extensions for `org-mode'."
+  :group 'org)
+
 ;; (defun kam-org-metaup ()
 ;;   "Go to the previous heading or item, or to a higher level heading.
 ;; If not on a heading or item, finds the previous heading backwards. If

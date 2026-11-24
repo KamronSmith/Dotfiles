@@ -4,6 +4,12 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'ediff)
+
+(defgroup kam-ediff ()
+  "Extensions for `ediff'."
+  :group 'ediff)
+
 (defvar kam-ediff--before-buffers nil
   "Snapshot of `buffer-list' before `kam-vc-ediff' starts.")
 

@@ -7,6 +7,10 @@
 (require 'denote)
 (require 'denote-sequence)
 
+(defgroup kam-denote ()
+  "Extensions for `denote'."
+  :group 'denote)
+
 (defun kam-denote-keywords ()
   "Return a list of keywords based on `denote-keyword-history'."
   (delete-dups (denote-infer-keywords-from-files)))

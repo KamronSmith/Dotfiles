@@ -6,6 +6,10 @@
 ;;; Code:
 (require 'project)
 
+(defgroup kam-project ()
+  "Extensions to `project'."
+  :group 'project)
+
 (defvar kam-project-switch-commands-to-remove
   '((project-find-dir "Dired" "d")
     (project-find-dir "Find directory")

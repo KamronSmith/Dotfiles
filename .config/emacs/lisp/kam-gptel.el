@@ -6,6 +6,10 @@
 ;;; Code:
 (require 'gptel)
 
+(defgroup kam-gptel ()
+  "Extensions for `gptel'."
+  :group 'gptel)
+
 ;;;###autoload
 (defun chatgpt ()
   "Get a ChatGPT buffer."

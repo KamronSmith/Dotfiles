@@ -6,6 +6,10 @@
 ;;; Code:
 (require 'dired)
 
+(defgroup kam-dired ()
+  "Extensions for `dired-mode'."
+  :group 'dired)
+
 (defvar kam-automount-directory (format "/run/media/%s" user-login-name)
   "Directory under which drives are mounted.")
 

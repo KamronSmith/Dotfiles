@@ -9,6 +9,10 @@
 (require 'consult)
 (require 'standard-themes)
 
+(defgroup kam-eshell ()
+  "Extensions for `eshell'."
+  :group 'eshell)
+
 (defun kam-eshell-mode-setup ()
   "Setup function for `eshell-mode'."
   (setenv "TERM" "xterm-256-color")

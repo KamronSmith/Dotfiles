@@ -5,7 +5,10 @@
 
 ;;; Code:
 (require 'expreg)
-;; (require 'org)
+
+(defgroup kam-expreg ()
+  "Extensions for `expreg'."
+  :group 'expreg)
 
 (defun kam-expreg-text-mode-setup ()
   "Setup `text-mode' for `expreg'."
