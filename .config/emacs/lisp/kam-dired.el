@@ -188,23 +188,6 @@ Duplicates are not saved."
         (dired-next-line 1)))))
 
 ;;;###autoload
-(defun kam-dired-do-get-size (&optional arg)
-  "Get size of all marked (or next ARG) files."
-  (interactive "p")
-  (let* ((files (dired-get-marked-files))
-         (size (kam-du-size files)))
-    (message
-     (if (= 1 (length files))
-         (format "Size of %s: %s" (file-name-nondirectory (car files)) size)
-       (format "Size of all marked files: %s" size)))))
-
-(defun kam-dired-directory-get-size ()
-  (interactive)
-  (let* ((files (directory-files
-                 default-directory
-                 t directory-files-no-dot-files-regexp))
-         (size (kam-du-size files)))
-    (message "Size of %s: %s" default-directory size)))
 
 (defun kam-dired-directory-get-size-recursively ()
   (interactive)
