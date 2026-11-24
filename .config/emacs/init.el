@@ -2613,6 +2613,10 @@ surrounded by actual boundaries."
   :hook (prog-mode . decolorify-mode)
   :ensure nil)
 
+(use-package hide-cursor
+  :ensure nil
+  :hook (dired-mode . hide-cursor-mode))
+
 (use-package ef-themes
   :ensure t)
 
