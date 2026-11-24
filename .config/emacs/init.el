@@ -1837,7 +1837,7 @@ surrounded by actual boundaries."
 ;;; Isearch
 (use-package isearch
   :ensure nil
-  :after (kam-search)
+  ;; :after (kam-search)
   :hook (isearch-update-post . kam-isearch-goto-match-beginning)
   :bind
   (:map isearch-mode-map
