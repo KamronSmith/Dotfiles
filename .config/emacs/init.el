@@ -3667,37 +3667,97 @@ surrounded by actual boundaries."
       "Setup function for `elfeed-show-mode'."
       (setopt-local browse-url-browser-function browse-url-eww)))
 
+  (use-package elfeed-tube
+    :after (elfeed)
+    :ensure t
+    :bind
+    (:map elfeed-show-mode-map
+          ("F" . elfeed-tube-fetch)
+          ([remap save-buffer] . elfeed-tube-save)
+          :map elfeed-search-mode-map
+          ("F" . elfeed-tube-fetch)
+          ([remap save-buffer] . elfeed-tube-save))
+    :config
+    (elfeed-tube-setup))
+
+  (use-package elfeed-tube-mpv
+    :after (elfeed)
+    :ensure t
+    :bind
+    (:map elfeed-show-mode-map
+          ("C-c C-f" . elfeed-tube-mpv-follow-mode)
+          ("C-c C-w" . elfeed-tube-mpv-where)))
+
   (use-package kam-elfeed
     :after (elfeed)
     :ensure nil
     :bind
     (:map elfeed-show-map
           ("n" . kam-elfeed-show-next)
-          ("p" . kam-elfeed-show-prev))))
+          ("p" . kam-elfeed-show-prev)))
 
-(use-package elfeed-tube
-  :after (elfeed)
-  :ensure t
-  :bind
-  (:map elfeed-show-mode-map
-        ("F" . elfeed-tube-fetch)
-        ([remap save-buffer] . elfeed-tube-save)
-        :map elfeed-search-mode-map
-        ("F" . elfeed-tube-fetch)
-        ([remap save-buffer] . elfeed-tube-save))
-  :config
-  (elfeed-tube-setup))
+  (use-package emms
+    :ensure t
+    :bind
+    ("C-c m m" . emms-browser)
+    ("C-c m n" . emms-next-no-error)
+    ("C-c m p" . emms-previous)
+    ("C-c m e" . emms)
+    :custom
+    (emms-info-functions '(emms-info-native
+                           emms-info-metaflac
+                           emms-info-ogginfo))
+    (emms-player-list '(emms-player-mpv))
+    (emms-player-mpv-player (executable-find "mpv"))
+    (emms-source-file-default-directory kam-music-directory)
+    (emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
+    (emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
+    (emms-score-file (expand-file-name "emms/scores" kam-emacs-cache-directory))
+    :config
+    (require 'emms-setup)
+    (require 'emms-mpris)
+    (emms-all)
+    (emms-mpris-enable)
 
-(use-package elfeed-tube-mpv
-  :after (elfeed)
-  :ensure t
-  :bind
-  (:map elfeed-show-mode-map
-        ("C-c C-f" . elfeed-tube-mpv-follow-mode)
-        ("C-c C-w" . elfeed-tube-mpv-where)))
+    (with-eval-after-load 'consult
+      (add-to-list 'consult-buffer-filter "^Browsing by: " t)))
+
+  (use-package emms-browser
+    :ensure nil
+    :after (emms)
+    :bind
+    (:map emms-browser-mode-map
+          ("SPC" . kam-scroll-down)
+          ("<backspace>" . kam-scroll-up))
+    :hook ((emms-browser-mode . hide-cursor-mode)
+           (emms-browser-mode . lin-mode))
+    :custom
+    (emms-browser-buffer-name "*Music*")
+    :config
+    (emms-browser-make-filter "All" 'ignore)
+    (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory)))
+  ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters)))
+
+  (use-package emms-playlist-mode
+    :ensure nil
+    :after (emms)
+    :hook (emms-playlist-mode . hide-cursor-mode)
+    :bind
+    :custom
+    (emms-playlist-buffer-name "*Playlist*")
+    (emms-playlist-mode-open-playlists t))
+
+  (use-package kam-emms
+    :after (emms)
+    :ensure nil
+    :bind
+    ("C-c m s" . kam-emms-play-pause)
+    (:map emms-playlist-mode-map
+          ("p" . kam-emms-previous)
+          ("n" . kam-emms-next))))
 
 (use-package eww
-  :ensure t
+  :ensure nil
   :bind
   (:map eww-mode-map
         ("SPC" . kam-scroll-down)
@@ -3765,67 +3825,6 @@ With optional ARG, open browser in EWW."
     (interactive)
     (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
       (consult-ripgrep calibredb-root-dir))))
-
-(kam-when-system-type 'gnu/linux
-  (use-package emms
-    :ensure t
-    :bind
-    ("C-c m m" . emms-browser)
-    ("C-c m n" . emms-next-no-error)
-    ("C-c m p" . emms-previous)
-    ("C-c m e" . emms)
-    :custom
-    (emms-info-functions '(emms-info-native
-                           emms-info-metaflac
-                           emms-info-ogginfo))
-    (emms-player-list '(emms-player-mpv))
-    (emms-player-mpv-player (executable-find "mpv"))
-    (emms-source-file-default-directory kam-music-directory)
-    (emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
-    (emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
-    (emms-score-file (expand-file-name "emms/scores" kam-emacs-cache-directory))
-    :config
-    (require 'emms-setup)
-    (require 'emms-mpris)
-    (emms-all)
-    (emms-mpris-enable)
-
-    (with-eval-after-load 'consult
-      (add-to-list 'consult-buffer-filter "^Browsing by: " t)))
-
-  (use-package emms-browser
-    :ensure nil
-    :after (emms)
-    :bind
-    (:map emms-browser-mode-map
-          ("SPC" . kam-scroll-down)
-          ("<backspace>" . kam-scroll-up))
-    :hook ((emms-browser-mode . hide-cursor-mode)
-           (emms-browser-mode . lin-mode))
-    :custom
-    (emms-browser-buffer-name "*Music*")
-    :config
-    (emms-browser-make-filter "All" 'ignore)
-    (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory)))
-  ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters)))
-
-  (use-package emms-playlist-mode
-    :ensure nil
-    :after (emms)
-    :hook (emms-playlist-mode . hide-cursor-mode)
-    :bind
-    :custom
-    (emms-playlist-buffer-name "*Playlist*")
-    (emms-playlist-mode-open-playlists t))
-
-  (use-package kam-emms
-    :after (emms)
-    :ensure nil
-    :bind
-    ("C-c m s" . kam-emms-play-pause)
-    (:map emms-playlist-mode-map
-          ("p" . kam-emms-previous)
-          ("n" . kam-emms-next))))
 
 ;;; LLM Client
 (use-package gptel
