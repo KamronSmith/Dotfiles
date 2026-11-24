@@ -1,4 +1,4 @@
-;;; kam-mode-line.el --- Functions for a custom mode-line -*- lexical-binding: t; -*-
+;;; kam-mode-line.el --- Extensions for a custom mode-line -*- lexical-binding: t; -*-
 
 ;;; Summary:
 

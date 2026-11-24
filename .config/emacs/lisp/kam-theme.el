@@ -8,7 +8,6 @@
 (require 'kam-common)
 (require 'spacious-padding)
 (require 'standard-themes)
-;; (require 'org)
 (require 'denote)
 
 ;;; Spacious-padding extensions
@@ -132,8 +131,6 @@ See `kam-theme-update-custom-faces'.")
   (let* ((font-size (cdr (assoc font kam-favorite-fonts))))
     (set-face-attribute 'default nil :font font :height font-size :weight 'regular :width 'regular)
     (set-face-attribute 'fixed-pitch nil :font font :height 1.0 :weight 'regular :width 'regular)))
-
-;;; Decolorify Mode
 
 ;;; text scale
 (defvar kam-text-scale-adjust-history nil

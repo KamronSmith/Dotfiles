@@ -6,6 +6,15 @@
 ;;; Code:
 (require 'project)
 
+(defvar kam-project-switch-commands-to-remove
+  '((project-find-dir "Dired" "d")
+    (project-find-dir "Find directory")
+    (project-find-regexp "Find regexp")
+    (project-vc-dir "VC-Dir")
+    (project-eshell "Eshell")
+    (project-find-file "Find file"))
+  "List of commands to remove from `project-switch-commands'")
+
 (defun kam-project-switch-project (dir)
   "\"Switch\" to another project by running an Emacs command.
 The available commands are presented as a dispatch menu
@@ -28,6 +37,7 @@ to directory DIR."
 (defvar kam-project-name-history nil
   "Minibuffer history for `kam-project-new'.")
 
+;;;###autoload
 (defun kam-project-new ()
   "Create a project in the `kam-projects-directory'."
   (interactive)
@@ -41,6 +51,7 @@ to directory DIR."
           (make-empty-file (concat project-name "/project.txt")))
       (make-empty-file (concat project-name "/.project")))))
 
+;;;###autoload
 (defun kam-project-delete (proj)
   "Delete a project."
   (interactive (list (project-prompt-project-name)))
@@ -55,6 +66,7 @@ to directory DIR."
                                   default-directory)))
       (call-interactively command))))
 
+;;;###autoload
 (defun kam-project-compile-maybe ()
   "Run `compile' in the project root directory if the buffer belongs to a project."
   (interactive)
@@ -62,11 +74,13 @@ to directory DIR."
       (kam-project-root-command 'compile)
     (call-interactively 'compile)))
 
+;;;###autoload
 (defun kam-project-grep ()
   "Run `grep' in the project's root directory."
   (interactive)
   (kam-project-root-command 'grep))
 
+;;;###autoload
 (defun kam-project-dired ()
   "Dired in the project root directory."
   (interactive)
@@ -81,6 +95,7 @@ to directory DIR."
   (project-remember-projects-under kam-projects-directory t)
   (kam-clear-echo-area))
 
+;;;###autoload
 (defun kam-project-update-list ()
   "Update the project list when deleting/adding projects."
   (interactive)

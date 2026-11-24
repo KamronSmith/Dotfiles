@@ -218,7 +218,7 @@ Only split if there is no split, and only split into left and right windows."
 (defun kam-aw-delete-window-dwim (window)
   "Perform `kam-delete-window-dwim' in the AW-selected WINDOW."
   (aw-switch-to-window window)
-  (kam-delete-window-dwim))
+  (call-interactively #'kam-delete-window-dwim))
 
 (defun kam-aw-execute-extended-command (window)
   "Perform `execute-extended-command' in the AW-selected WINDOW."

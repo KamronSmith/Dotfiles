@@ -1,17 +1,19 @@
 ;;; kam-gptel.el --- -*- lexical-binding: t; -*-
-;;; Summary: 
+;;; Summary:
 
-;;; Commentary: 
+;;; Commentary:
 
 ;;; Code:
 (require 'gptel)
 
+;;;###autoload
 (defun chatgpt ()
   "Get a ChatGPT buffer."
   (interactive)
   (gptel "*ChatGPT*")
   (pop-to-buffer "*ChatGPT*"))
 
+;;;###autoload
 (defun claude ()
   "Get a Claude buffer."
   (interactive)

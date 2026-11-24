@@ -343,20 +343,6 @@ the current note."
      `(org-ellipsis ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim)))
      `(org-block-end-line ((,c :inherit fixed-pitch :height 1.0 :foreground ,fg-dim))))))
 
-(defmacro kam-consult-imenu--action (prompt &rest body)
-  "Execute forms in BODY at the location of an `consult-imenu' selection.
-PROMPT is the prompt of `consult-imenu'."
-  `(let ((item (kam-consult-imenu--select ',prompt)))
-     (pcase item
-       (`(,name ,pos ,fn . ,args)
-        (push-mark nil t)
-        (apply fn name pos args))
-       (`(,_ . ,pos)
-        (save-excursion
-          (consult--jump pos)
-          ,@body))
-       (_ (error "Unknown Imenu item: %S" item)))))
-
 (defmacro kam-consult-org-heading--action (&rest body)
   "Execute forms in BODY at the location of an `consult-org-heading' selection."
   `(let* ((headings (consult-org-heading)))

@@ -353,5 +353,19 @@ Please see `kam-consult-excluded-preview-buffer-names' and
                    :category 'file
                    :predicate pred)))
 
+(defmacro kam-consult-imenu--action (prompt &rest body)
+  "Execute forms in BODY at the location of an `consult-imenu' selection.
+PROMPT is the prompt of `consult-imenu'."
+  `(let ((item (kam-consult-imenu--select ',prompt)))
+     (pcase item
+       (`(,name ,pos ,fn . ,args)
+        (push-mark nil t)
+        (apply fn name pos args))
+       (`(,_ . ,pos)
+        (save-excursion
+          (consult--jump pos)
+          ,@body))
+       (_ (error "Unknown Imenu item: %S" item)))))
+
 (provide 'kam-consult)
 ;;; kam-consult.el ends here

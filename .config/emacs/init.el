@@ -543,11 +543,15 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
   (comment-style 'multi-line))
 
 (use-package kam-os
+  :demand t
   :ensure nil)
 
 (use-package kam-dotfiles
+  :after (kam-os)
   :ensure nil
-  :after (kam-os))
+  :commands
+  (kam-dotfiles-stow
+   kam-dotfiles-restow))
 
 (use-package lin
   :ensure t
@@ -604,17 +608,14 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 (use-package dired
   :ensure nil
   :hook ((dired-mode . dired-hide-details-mode)
-         (dired-mode . kam-dired-mode-setup)
          (dired-after-readin . kam-dired-directory-add-to-history))
   :bind
   (:map dired-mode-map
         ("<mouse-2>" . dired-mouse-find-file)
         ("b" . dired-up-directory)
         ("o" . dired-do-open)
-        ("i" . kam-dired-insert-subdir)
         ("R" . dired-do-rename)
         ("\\" . dired-create-empty-file)
-        ("X" . kam-dired-do-destroy)
         ("C-w" . dired-do-delete)
         ("M-w" . dired-copy-filename-as-kill)
         ([kam-i] . kam-split-window-right))
@@ -640,7 +641,6 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
      ("\\.\\(png\\|jpe?g\\|tiff\\)" "xdg-open")
      (".*" "xdg-open")))
   :config
-  (require 'kam-dired)
   (put 'dired-find-alternate-file 'disabled nil)
   (add-to-list 'display-buffer-alist
                '((major-mode . dired-mode)
@@ -730,9 +730,14 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 (use-package kam-dired
   :after (dired)
   :ensure nil
+  :hook (dired-mode . kam-dired-mode-setup)
   :bind
   (:map dired-mode-map
-        ("R" . kam-dired-do-rename)))
+        ("R" . kam-dired-do-rename)
+        ("i" . kam-dired-insert-subdir)
+        ("X" . kam-dired-do-destroy)
+        ("C-c C-n" . kam-dired-subdirectory-next)
+        ("C-c C-p" . kam-dired-subdirectory-previous)))
 
 (use-package trashed
   :ensure t
@@ -1301,46 +1306,39 @@ surrounded by actual boundaries."
 (use-package consult
   :ensure t
   :bind
-  (:map global-map
-        (([remap Info-search] . consult-info)
-         ([repeat-complex-command] . consult-complex-command)
-         ([remap goto-line] . consult-goto-line)
-         ([remap yank-pop] . consult-yank-pop)
-         ([remap bookmark-jump] . consult-bookmark)
-         ([remap switch-to-buffer] . consult-buffer)
-         ([remap imenu] . kam-consult-project-imenu)
-         ([remap load-theme] . consult-theme)
-         ("C-M-x" . consult-mode-command)
-         ("C-x C-b" . consult-buffer)
-         ("C-x r s" . consult-register-store)
-         ("C-x r l" . consult-register-load)
-         :map search-map
-         ("M-f" . consult-fd)
-         ("M-g" . consult-ripgrep)
-         ("M-k" . consult-keep-lines)
-         ("M-u" . consult-focus-lines)
-         ;; ("M-l" . consult-line)
-         ("M-p" . kam-consult-line-symbol-at-point)
-         ("M-r" . kam-consult-ripgrep-symbol-at-point)
-         ("M-d" . consult-line)
-         :map goto-map
-         ("M-e" . consult-compile-error)
-         ("M-o" . kam-consult-outline)
-         ("M-i" . imenu)
-         ("M-m" . consult-mark)
-         ("M-k" . consult-global-mark)
-         :map isearch-mode-map
-         ("M-r" . consult-isearch-history)
-         ("M-s M-l" . kam-consult-isearch)
-         :map minibuffer-local-map
-         ("M-s" . consult-history)
-         ("M-r" . consult-history)
-         :map project-prefix-map
-         ("l" . consult-line-multi)
-         ("i" . consult-imenu-multi)
-         ("b" . consult-project-buffer)
-         :map help-map
-         ("s" . kam-consult-search-emacs-info-pages)))
+  ([remap Info-search] . consult-info)
+  ([repeat-complex-command] . consult-complex-command)
+  ([remap goto-line] . consult-goto-line)
+  ([remap yank-pop] . consult-yank-pop)
+  ([remap bookmark-jump] . consult-bookmark)
+  ([remap switch-to-buffer] . consult-buffer)
+  ([remap imenu] . kam-consult-project-imenu)
+  ([remap load-theme] . consult-theme)
+  ("C-M-x" . consult-mode-command)
+  ("C-x C-b" . consult-buffer)
+  ("C-x r s" . consult-register-store)
+  ("C-x r l" . consult-register-load)
+  (:map search-map
+        ("M-f" . consult-fd)
+        ("M-g" . consult-ripgrep)
+        ("M-k" . consult-keep-lines)
+        ("M-u" . consult-focus-lines)
+        ;; ("M-l" . consult-line)
+        ("M-d" . consult-line))
+  (:map goto-map
+        ("M-e" . consult-compile-error)
+        ("M-i" . imenu)
+        ("M-m" . consult-mark)
+        ("M-k" . consult-global-mark))
+  (:map isearch-mode-map
+        ("M-r" . consult-isearch-history))
+  (:map minibuffer-local-map
+        ("M-s" . consult-history)
+        ("M-r" . consult-history))
+  (:map project-prefix-map
+        ("l" . consult-line-multi)
+        ("i" . consult-imenu-multi)
+        ("b" . consult-project-buffer))
   :custom
   (register-preview-delay 0)
   (register-preview-function #'consult-register-format)
@@ -1350,14 +1348,10 @@ surrounded by actual boundaries."
   (consult-async-min-input 3)
   (consult-buffer-list-function #'buffer-list)
   (consult-preview-key 'any)
-  (consult-preview-excluded-buffers 'kam-consult-preview-excluded-buffer-p)
   (consult-ripgrep-args
    "rg --null --follow --line-buffered --color=never --max-columns=1000 --path-separator / --smart-case --no-heading --with-filename --line-number --search-zip --hidden --glob=!.git ")
   (consult-fd-args "fd --follow --hidden --full-path --color=never ")
-  (read-file-name-function #'kam-consult-find-file-with-preview)
-  (project-read-file-name-function #'kam-consult-project-find-file-with-preview)
   :config
-  (require 'kam-consult)
   (advice-add #'register-preview :override #'consult-register-window)
   ;; (add-to-list 'consult-preview-allowed-hooks 'global-org-modern-mode)
   (add-to-list 'consult-preview-allowed-hooks 'visual-line-mode)
@@ -1371,14 +1365,32 @@ surrounded by actual boundaries."
   (dolist (cmd '(consult-buffer consult-ripgrep consult-fd))
     (advice-add cmd :before (lambda (&rest _) (push-mark (point) t nil))))
 
-  (add-hook 'minibuffer-setup-hook #'kam-consult--no-prompt-preview 90)
-
   (add-to-list 'consult-buffer-filter
                "-shell\\*$")
   (add-to-list 'consult-buffer-filter
                "\\*Customize ")
   (add-to-list 'consult-buffer-filter
-               "-eshell\\*$")
+               "-eshell\\*$"))
+
+(use-package kam-consult
+  :after (consult)
+  :ensure nil
+  :bind
+  (:map search-map
+        ("M-p" . kam-consult-line-symbol-at-point)
+        ("M-r" . kam-consult-ripgrep-symbol-at-point))
+  (:map goto-map
+        ("M-o" . kam-consult-outline))
+  (:map isearch-mode-map
+        ("M-s M-l" . kam-consult-isearch))
+  (:map help-map
+        ("s" . kam-consult-search-emacs-info-pages))
+  :custom
+  (consult-preview-excluded-buffers 'kam-consult-preview-excluded-buffer-p)
+  (read-file-name-function #'kam-consult-find-file-with-preview)
+  (project-read-file-name-function #'kam-consult-project-find-file-with-preview)
+  :config
+  (add-hook 'minibuffer-setup-hook #'kam-consult--no-prompt-preview 90)
 
   (setopt consult-buffer-sources
           '(kam-consult-source-buffer
@@ -2042,32 +2054,27 @@ surrounded by actual boundaries."
 
 (use-package expreg
   :ensure t
+  :bind
+  ("C-&" . expreg-expand)
+  (:repeat-map expreg-repeat-map
+               ("&" . expreg-expand)))
+
+(use-package kam-expreg
+  :after (expreg)
+  :ensure nil
+  :hook (text-mode . kam-expreg-text-mode-setup)
   :commands
   (kam-forward-out-sexp
    kam-mark-inner-sexp
    kam-kill-inner-sexp
    kam-expreg-end-of-sexp
    kam-expreg-beginning-of-sexp)
-  :hook
-  (text-mode . kam-expreg-text-mode-setup)
   :bind
-  ("C-&" . expreg-expand)
-  ("C-M-m" . kam-mark-inner-sexp)
   ("C-M-q" . kam-kill-inner-sexp)
+  ("C-M-m" . kam-mark-inner-sexp)
   ("C-M-o" . kam-forward-out-sexp)
   (:map prog-mode-map
-        ("C-M-q" . kam-kill-inner-sexp))
-  (:repeat-map expreg-repeat-map
-               ("&" . expreg-expand))
-  :config
-  (require 'kam-expreg)
-
-  (defun kam-expreg-text-mode-setup ()
-    "Setup `text-mode' for `expreg'."
-    (add-to-list 'expreg-functions #'expreg--sentence)
-    ;; (when (eq major-mode 'org-mode)
-    ;;   (add-to-list 'expreg-functions #'kam-expreg--org-elements t))
-    ))
+        ("C-M-q" . kam-kill-inner-sexp)))
 
 (use-package org
   :ensure nil
@@ -2378,11 +2385,8 @@ surrounded by actual boundaries."
   :bind
   (:map project-prefix-map
         ("c" . project-compile)
-        ("d" . kam-project-dired)
-        ("g" . kam-project-grep)
         ("p" . nil)
         ("f" . nil)
-        ("n" . kam-project-new)
         ("r" . project-recompile))
   :custom
   (project-switch-use-entire-map nil)
@@ -2394,30 +2398,31 @@ surrounded by actual boundaries."
                         "go/pkg/"
                         ".direnv"))
 
-  ;; (project-prompter 'kam-project--read-project-by-name)
   :config
-  (require 'kam-project)
-
-  (defvar kam-project-switch-commands-to-remove
-    '((project-find-dir "Dired" "d")
-      (project-find-dir "Find directory")
-      (project-find-regexp "Find regexp")
-      (project-vc-dir "VC-Dir")
-      (project-eshell "Eshell")
-      (project-find-file "Find file"))
-    "List of commands to remove from `project-switch-commands'")
-
-  (setq project-switch-commands
-        (seq-remove (lambda (x)
-                      (member x kam-project-switch-commands-to-remove))
-                    project-switch-commands))
-
   (add-to-list 'project-switch-commands '(project-shell "Shell" "s"))
   (add-to-list 'project-switch-commands '(project-find-file "Find file" "f"))
   (add-to-list 'project-switch-commands '(project-dired "Dired" "d"))
   (add-to-list 'project-switch-commands '(project-dired "Grep" "g"))
   (add-to-list 'project-switch-commands '(magit-project-status "Git" "v"))
-  (add-to-list 'project-switch-commands '(kam-keyboard-escape-quit-dwim "Quit" "C-g") t)
+  (add-to-list 'project-switch-commands '(kam-keyboard-escape-quit-dwim "Quit" "C-g") t))
+
+(use-package kam-project
+  :after (project)
+  :ensure nil
+  :commands
+  (kam-project-new)
+  :bind
+  ("C-@" . kam-project-compile-maybe)
+  (:map project-prefix-map
+        ("d" . kam-project-dired)
+        ("g" . kam-project-grep)
+        ("n" . kam-project-new))
+  :config
+  (setq project-switch-commands
+        (seq-remove (lambda (x)
+                      (member x kam-project-switch-commands-to-remove))
+                    project-switch-commands))
+
   (advice-add 'kam-project-new :after #'kam-project-remember-advice))
 
 
@@ -2429,9 +2434,15 @@ surrounded by actual boundaries."
   (comint-prompt-read-only t)
   (comint-buffer-maximum-size 9999)
   (comint-input-ignoredups t)
-  (ansi-color-for-comint-mode t)
-  :config
-  (require 'kam-comint))
+  (ansi-color-for-comint-mode t))
+
+(use-package kam-comint
+  :after (comint)
+  :ensure nil
+  :bind
+  (:map comint-mode-map
+        ("M-r" . consult-history)
+        ("M-." . kam-comint-insert-arguments-from-command)))
 
 (use-package shell
   :ensure nil
@@ -2441,8 +2452,6 @@ surrounded by actual boundaries."
   ;; ([remap shell-command] . kam-shell-command)
   ("C-!" . shell-command)
   (:map shell-mode-map
-        ("C-^" . kam-shell-up-directory)
-        ("C-x C-d" . kam-shell-cd)
         ("C-c C-k" . comint-clear-buffer)
         ("C-c C-w" . comint-write-buffer)
         ("C-g" . comint-interrupt-subjob)
@@ -2465,26 +2474,6 @@ surrounded by actual boundaries."
      ("^[^ \t\n]+:.*" . font-lock-string-face)
      ("^\\[[1-9][0-9]*\\]" . font-lock-constant-face)))
   :config
-  (require 'kam-shell)
-
-  (defvar kam-shell-history-file "~/.config/zsh/zhistory"
-    "Where the history file for Z-shell is stored.")
-
-  (defun kam-shell-mode-setup ()
-    "Setup function for `shell-mode'."
-    (setq-local comint-process-echoes t
-                comint-input-ring-file-name kam-shell-history-file
-                comint-input-ring-size 100000
-                comint-input-ring-seperator "\n: \\([0-9]+\\):\\([0-9]+\\);" ; Because of ZSH extended_history option
-                outline-regexp comint-prompt-regexp
-                completion-styles '(partial-completion basic)
-                completion-at-point-functions '(cape-file comint-completion-at-point t)
-                corfu-auto nil
-                corfu-quit-no-match t)
-    (hl-line-mode -1)
-    (comint-read-input-ring t)
-    (shell-dirtrack-mode 1))
-
   (add-to-list 'display-buffer-alist
                '("\\*shell[\\*\\:]"
                  (display-buffer-reuse-mode-window
@@ -2499,6 +2488,15 @@ surrounded by actual boundaries."
                   display-buffer-use-least-recent-window)
                  (body-function . view-mode))))
 
+(use-package kam-shell
+  :after (shell)
+  :ensure nil
+  :hook (shell-mode . kam-shell-mode-setup)
+  :bind
+  (:map shell-mode-map
+        ("C-^" . kam-shell-up-directory)
+        ("C-x C-d" . kam-shell-cd)))
+
 (use-package readline-completion
   :after (shell)
   :ensure t
@@ -2507,8 +2505,7 @@ surrounded by actual boundaries."
 
 (use-package eshell
   :ensure nil
-  :hook ((eshell-mode . completion-preview-mode)
-         (eshell-mode . kam-eshell-mode-setup))
+  :hook ((eshell-mode . completion-preview-mode))
   ;; TODO 2026-07-15: figure out how to enable these binds
   ;; emacs says that there eshell-mode-map is void
 
@@ -2525,7 +2522,6 @@ surrounded by actual boundaries."
   ;;       ("M-r" . consult-history)
   ;;       ("C-c C-l" . eshell-clear))
   :custom
-  (eshell-prompt-function kam-eshell-prompt-function)
   (eshell-history-file-name (expand-file-name "eshell/history" kam-emacs-cache-directory))
   (eshell-last-dir-ring-file-name (expand-file-name "eshell/lastdir" kam-emacs-cache-directory))
   (eshell-banner-message "")
@@ -2539,18 +2535,7 @@ surrounded by actual boundaries."
   (eshell-prefer-lisp-functions nil)
   (eshell-destroy-buffer-when-process-dies t)
   (eshell-highlight-prompt nil)
-  (eshell-input-filter #'kam-eshell-input-filter)
   :config
-  (require 'kam-eshell)
-
-  (defun kam-eshell-mode-setup ()
-    "Setup function for `eshell-mode'."
-    (setenv "TERM" "xterm-256-color")
-    (setq-local completion-styles '(basic partial-completion)
-                completion-at-point-functions '(pcomplete-completions-at-point cape-file cape-history)
-                eshell-prompt-regexp kam-eshell-prompt-regexp)
-    (eshell-prompt-mode))
-
   (add-to-list 'display-buffer-alist
                '("\\*eshell[\\*\\:]" ; matches title for reg eshell and `kam-eshell-here'
                  (display-buffer-reuse-mode-window
@@ -2569,6 +2554,14 @@ surrounded by actual boundaries."
   :after (eshell)
   :ensure t
   :hook (eshell-mode . eshell-syntax-highlighting-mode))
+
+(use-package kam-eshell
+  :after (eshell)
+  :ensure nil
+  :hook (eshell-mode . kam-eshell-mode-setup)
+  :custom
+  (eshell-prompt-function kam-eshell-prompt-function)
+  (eshell-input-filter #'kam-eshell-input-filter))
 
 (use-package standard-themes
   :after (kam-theme)
@@ -2607,6 +2600,17 @@ surrounded by actual boundaries."
                                      (t . (bold 1))))
 
   (standard-themes-load-theme 'standard-light))
+
+(use-package kam-theme
+  :after (standard-themes spacious-padding)
+  :ensure nil
+  :commands
+  (kam-standard-themes-reload-theme
+   kam-load-theme
+   kam-load-font
+   kam-text-scale-adjust
+   kam-old-mode
+   kam-documentation-mode))
 
 (use-package decolorify
   :after (standard-themes)
@@ -2789,10 +2793,10 @@ surrounded by actual boundaries."
 (use-package kam-mode-line
   :demand t
   :ensure nil
+  :custom
+  (mode-line-compact nil)
+  (mode-line-right-align-edge 'right-fringe)
   :config
-  (setopt mode-line-compact nil)
-  (setopt mode-line-right-align-edge 'right-fringe)
-
   (dolist (construct '(kam-mode-line-kbd-macro
                        kam-mode-line-mark-active
                        kam-mode-line-rectangle-mark
@@ -2841,9 +2845,7 @@ surrounded by actual boundaries."
                   mode-line-format-right-align
                   ;; kam-mode-line-vc-branch
                   "   "
-                  kam-mode-line-display-time
-                  ))
-  )
+                  kam-mode-line-display-time)))
 
 (use-package text-mode
   :ensure nil
@@ -2930,6 +2932,10 @@ surrounded by actual boundaries."
                   cape-dabbrev
                   t))))
 
+(use-package kam-elisp
+  :after (elisp-mode)
+  :ensure nil)
+
 ;; (use-package sh-mode
 ;;   :ensure nil
 ;;   :config
@@ -2995,13 +3001,16 @@ surrounded by actual boundaries."
 
 (use-package vc
   :ensure nil
-  :bind
-  (:map vc-prefix-map
-        ("e" . kam-vc-ediff))
   :custom
   (vc-follow-symlinks t)
-  :config
-  (require 'kam-vc))
+  :config)
+
+(use-package kam-vc
+  :after (vc)
+  :ensure nil
+  :bind
+  (:map vc-prefix-map
+        ("e" . kam-vc-ediff)))
 
 (use-package git-commit
   :ensure nil
@@ -3145,7 +3154,7 @@ surrounded by actual boundaries."
   (ediff-ignore-similar-regions t))
 
 (use-package kam-ediff
-  :after (kam-ediff)
+  :after (ediff)
   :ensure nil
   :hook ((ediff-before-setup . kam-ediff-store-layout)
          (ediff-startup . kam-ediff-mode-setup)
@@ -3214,7 +3223,6 @@ surrounded by actual boundaries."
   :ensure nil
   :hook (compilation-filter . ansi-color-compilation-filter)
   :bind
-  ("C-@" . kam-project-compile-maybe)
   ("M-@" . recompile)
   (:map compilation-mode-map
         ("n" . compilation-next-error)
@@ -3598,8 +3606,6 @@ surrounded by actual boundaries."
     :bind
     ("C-c r" . elfeed)
     (:map elfeed-show-mode-map
-          ("n" . kam-elfeed-show-next)
-          ("p" . kam-elfeed-show-prev)
           ("SPC" . kam-scroll-down)
           ("<backspace>" . kam-scroll-up))
     (:map elfeed-search-mode-map
@@ -3657,7 +3663,15 @@ surrounded by actual boundaries."
 
     (defun kam-elfeed-show-mode-setup ()
       "Setup function for `elfeed-show-mode'."
-      (setopt-local browse-url-browser-function browse-url-eww))))
+      (setopt-local browse-url-browser-function browse-url-eww)))
+
+  (use-package kam-elfeed
+    :after (elfeed)
+    :ensure nil
+    :bind
+    (:map elfeed-show-map
+          ("n" . kam-elfeed-show-next)
+          ("p" . kam-elfeed-show-prev))))
 
 (use-package elfeed-tube
   :after (elfeed)
@@ -3750,67 +3764,71 @@ With optional ARG, open browser in EWW."
     (let ((consult-ripgrep-command "rg --null --ignore-case --type txt --line-number . --color always --max-columns 500 --no-heading -e ARG OPTS"))
       (consult-ripgrep calibredb-root-dir))))
 
-(use-package emms
-  :when (eq system-type 'gnu/linux)
-  :ensure t
-  :bind
-  ("C-c m m" . emms-browser)
-  ("C-c m s" . kam-emms-play-pause)
-  ("C-c m n" . emms-next-no-error)
-  ("C-c m p" . emms-previous)
-  ("C-c m e" . emms)
-  :custom
-  (emms-info-functions '(emms-info-native
-                         emms-info-metaflac
-                         emms-info-ogginfo))
-  (emms-player-list '(emms-player-mpv))
-  (emms-player-mpv-player (executable-find "mpv"))
-  (emms-source-file-default-directory kam-music-directory)
-  (emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
-  (emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
-  (emms-score-file (expand-file-name "emms/scores" kam-emacs-cache-directory))
-  :config
-  (require 'emms-setup)
-  (require 'emms-mpris)
-  (require 'kam-emms)
-  (emms-all)
-  (emms-mpris-enable)
+(kam-when-system-type 'gnu/linux
+  (use-package emms
+    :ensure t
+    :bind
+    ("C-c m m" . emms-browser)
+    ("C-c m n" . emms-next-no-error)
+    ("C-c m p" . emms-previous)
+    ("C-c m e" . emms)
+    :custom
+    (emms-info-functions '(emms-info-native
+                           emms-info-metaflac
+                           emms-info-ogginfo))
+    (emms-player-list '(emms-player-mpv))
+    (emms-player-mpv-player (executable-find "mpv"))
+    (emms-source-file-default-directory kam-music-directory)
+    (emms-cache-file (expand-file-name "emms/cache" kam-emacs-cache-directory))
+    (emms-history-file (expand-file-name "emms/history" kam-emacs-cache-directory))
+    (emms-score-file (expand-file-name "emms/scores" kam-emacs-cache-directory))
+    :config
+    (require 'emms-setup)
+    (require 'emms-mpris)
+    (emms-all)
+    (emms-mpris-enable)
 
-  (with-eval-after-load 'consult
-    (add-to-list 'consult-buffer-filter "^Browsing by: " t)))
+    (with-eval-after-load 'consult
+      (add-to-list 'consult-buffer-filter "^Browsing by: " t)))
 
-(use-package emms-browser
-  :ensure nil
-  :after (emms)
-  :bind
-  (:map emms-browser-mode-map
-        ("SPC" . kam-scroll-down)
-        ("<backspace>" . kam-scroll-up))
-  :hook ((emms-browser-mode . hide-cursor-mode)
-         (emms-browser-mode . lin-mode))
-  :custom
-  (emms-browser-buffer-name "*Music*")
-  :config
-  (emms-browser-make-filter "All" 'ignore)
-  (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory)))
-;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters)))
+  (use-package emms-browser
+    :ensure nil
+    :after (emms)
+    :bind
+    (:map emms-browser-mode-map
+          ("SPC" . kam-scroll-down)
+          ("<backspace>" . kam-scroll-up))
+    :hook ((emms-browser-mode . hide-cursor-mode)
+           (emms-browser-mode . lin-mode))
+    :custom
+    (emms-browser-buffer-name "*Music*")
+    :config
+    (emms-browser-make-filter "All" 'ignore)
+    (emms-browser-make-filter "Library" (emms-browser-filter-only-dir kam-music-directory)))
+  ;; (emms-browser-set-filter (assoc "Library" 'emms-browser-filters)))
 
-(use-package emms-playlist-mode
-  :ensure nil
-  :after (emms)
-  :hook (emms-playlist-mode . hide-cursor-mode)
-  :bind
-  (:map emms-playlist-mode-map
-        ("p" . kam-emms-previous)
-        ("n" . kam-emms-next))
-  :custom
-  (emms-playlist-buffer-name "*Playlist*")
-  (emms-playlist-mode-open-playlists t))
+  (use-package emms-playlist-mode
+    :ensure nil
+    :after (emms)
+    :hook (emms-playlist-mode . hide-cursor-mode)
+    :bind
+    :custom
+    (emms-playlist-buffer-name "*Playlist*")
+    (emms-playlist-mode-open-playlists t))
+
+  (use-package kam-emms
+    :after (emms)
+    :ensure nil
+    :bind
+    ("C-c m s" . kam-emms-play-pause)
+    (:map emms-playlist-mode-map
+          ("p" . kam-emms-previous)
+          ("n" . kam-emms-next))))
 
 ;;; LLM Client
 (use-package gptel
+  :ensure t
   :config
-  (require 'kam-gptel)
   (setq gptel-default-mode 'org-mode)
   (setq gptel-model (gptel-make-anthropic "Claude"
                       :stream t
@@ -3819,15 +3837,18 @@ With optional ARG, open browser in EWW."
 
   (gptel-highlight-mode))
 
+(use-package kam-gptel
+  :after (gptel)
+  :ensure nil
+  :commands
+  (claude
+   chatgpt))
+
 (use-package denote
-  :demand t
-  :after (kam-notes kam-os savehist)
+  :after (kam-os savehist)
   :ensure t
   :hook ((dired-mode . denote-dired-mode)
-         (after-init . denote-rename-buffer-mode)
-         ;; (after-init . kam-notes-set-custom-faces)
-         (denote-after-rename-file . kam-denote-add-known-keyword)
-         (denote-after-new-note . kam-denote-add-known-keyword))
+         (after-init . denote-rename-buffer-mode))
   :bind
   ("C-c n h" . kam-notes-visit-home-note)
   ("C-c n w" . kam-notes-visit-workbench-note)
@@ -3846,9 +3867,6 @@ With optional ARG, open browser in EWW."
   (denote-rename-confirmations nil)
   (denote-date-prompt-use-org-read-date t)
   :config
-  (require 'kam-notes)
-  (setopt denote-known-keywords (kam-denote-keywords))
-
   (add-to-list 'savehist-additional-variables 'denote-known-keywords))
 
 (use-package denote-sequence
@@ -3860,6 +3878,17 @@ With optional ARG, open browser in EWW."
   ("C-c n s d" . denote-sequence-dired)
   ("C-c n s r" . denote-sequence-reparent)
   ("C-c n s c" . denote-sequence-convert))
+
+(use-package kam-denote
+  :demand t
+  :after (denote denote-sequence)
+  :ensure nil
+  :commands
+  (kam-denote-sequence-dired-with-clone)
+  :hook ((denote-after-rename-file . kam-denote-add-known-keyword)
+         (denote-after-new-note . kam-denote-add-known-keyword))
+  :config
+  (setopt denote-known-keywords (kam-denote-keywords)))
 
 (use-package consult-denote
   :after (consult denote)
@@ -3894,9 +3923,14 @@ With optional ARG, open browser in EWW."
    timeshift-snapshot-create
    timeshift-snapshot-delete))
 
+(use-package yt-dlp
+  :ensure nil
+  :commands
+  (kam-ytdlp-download-video
+   kam-ytdlp-download-music))
+
 (kam-when-system-type 'darwin
   (use-package osx-trash
-    :if (eq system-type 'darwin)
     :ensure t
     :custom
     (osx-trash-command "trash -F")
@@ -3907,12 +3941,6 @@ With optional ARG, open browser in EWW."
   :ensure t
   :hook
   (dired-mode . dired-async-mode)
-  ;; :bind
-  ;; (:map dired-mode-map
-  ;;       ("C" . dired-async-do-copy)
-  ;;       ("H" . dired-async-do-hardlink)
-  ;;       ("S" . dired-async-do-symlink)
-  ;;       ("R" . dired-async-do-rename))
   :custom
   (async-quiet-switch "-q")
   (async-bytecomp-allowed-packages '(all))
