@@ -150,7 +150,7 @@ forwards (or backwards, if negative). Additionally, it will always only
 use the currently selected window and not split the window."
   (interactive "p")
   (let ((split-window-preferred-function #'kam-no-split-window)
-        (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
+        (display-buffer-base-action '(kam-display-buffer-use-most-recent-window)))
     (next-error-no-select n)))
 
 ;;;###autoload
@@ -161,7 +161,7 @@ backwards (or forwards, if negative). Additionally, it will always only
 use the currently selected window and not split the window."
   (interactive "p")
   (let ((split-window-preferred-function #'kam-no-split-window)
-        (display-buffer-base-action '(kam-display-buffer-in-mru-window)))
+        (display-buffer-base-action '(kam-display-buffer-use-most-recent-window)))
     (previous-error-no-select n)))
 
 (defun kam-isearch-removed-failed-or-last-char ()

@@ -200,6 +200,11 @@ Only split if there is no split, and only split into left and right windows."
   "Use in `split-window-preferred-function' to disable window splitting."
   nil)
 
+(defun kam-display-buffer-use-most-recent-window (buffer alist)
+  "Display BUFFER in the most recently used window."
+  (when-let* ((mru-win (get-mru-window t nil t)))
+    (window--display-buffer buffer mru-win 'reuse alist)))
+
 (defun kam-aw-consult-buffer (window)
   "Perform `consult-buffer' in AW selected WINDOW."
   (aw-switch-to-window window)
