@@ -31,9 +31,9 @@
 (defun kam-dotfiles-restow (&optional arg)
   "Run stow -R in `kam-dotfiles-directory'.
 With optional ARG, force update Emacs byte-compiled files."
-  (interactive "p")
+  (interactive "P")
   (kam-with-directory kam-dotfiles-directory
-    (shell-command "stow -R ."))
+    (shell-command "stow -R . -t \"$HOME\""))
   (when arg
     (prepare-user-lisp nil nil t)))
 
@@ -41,9 +41,9 @@ With optional ARG, force update Emacs byte-compiled files."
 (defun kam-dotfiles-stow (&optional arg)
   "Run stow in `kam-dotfiles-directory'.
 With optional ARG, force update Emacs byte-compiled files."
-  (interactive "p")
-  (let ((default-directory kam-dotfiles-directory))
-    (shell-command "stow ."))
+  (interactive "P")
+  (kam-with-directory kam-dotfiles-directory
+    (shell-command "stow . -t \"$HOME\""))
   (when arg
     (prepare-user-lisp nil nil t)))
 
