@@ -287,7 +287,8 @@ project root directory invisible."
   '("\\*Backtrace\\*"
     "\\*Agenda Commands\\*"
     "\\*Pp Eval Output\\*"
-    "\\*Pacman: ")
+    "\\*Pacman: "
+    "\\*Pp Macroexpand Output\\*")
   "A list of strings of buffer names that should be excluded from Consult preview.
 Each entry should be a regular expression that corresponds to the name of a buffer.")
 
