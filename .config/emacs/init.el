@@ -539,6 +539,15 @@ Basic OS settings and if in the terminal. To be used in to `after-init-hook'."
 
   (advice-add 'switch-to-buffer :around 'kam-display-command-same-window))
 
+(use-package switcher
+  :demand t
+  :ensure nil
+  :bind
+  (:map switcher-mode-map
+        ("C-<right>" . switcher-next-buffer))
+  :config
+  (switcher-mode 1))
+
 (use-package kam-comment
   :ensure nil
   :bind
