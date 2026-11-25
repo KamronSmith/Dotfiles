@@ -45,6 +45,13 @@
 
 (defvar-local decolorify--heading-4-cookie nil)
 
+(defmacro decolorify-make-cookie (face)
+  (let ((cookie-name (intern (format "decolorify--%s-cookie" face))))
+    `(defvar ,cookie-name nil
+       (format "Decolorify cookie for `%s'" ,face))))
+
+;; (decolorify-make-cookie font-lock-builtin-face)
+
 (defvar-local decolorify-cookies nil
   "List of all `decolorify-mode' cookies.")
 
