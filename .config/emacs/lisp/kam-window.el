@@ -101,17 +101,6 @@ Additionally, select the newly formed window."
     (split-window-below)))
 
 ;;;###autoload
-(defun kam-alternate-buffer (&optional window)
-  "Switch back and forth between current and last buffer in WINDOW"
-  (interactive "p")
-  (let ((current-buffer (window-buffer window)))
-    (switch-to-buffer
-     (cl-find-if (lambda (buffer)
-                   (not (eq buffer current-buffer)))
-                 (mapcar #'car (window-prev-buffers window)))
-     nil t)))
-
-;;;###autoload
 (defun kam-ace-window ()
   "Like the normal `ace-window' command, but splits the window if there is only one window."
   (interactive)
