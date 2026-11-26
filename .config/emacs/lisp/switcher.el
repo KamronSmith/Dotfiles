@@ -15,20 +15,21 @@
 (defvar-local switcher-timer nil)
 
 (defun switcher--set-next-buffers ()
-  "Set the current window's next buffers."
+  "Set the current window's next buffers to nil."
   (set-window-next-buffers (selected-window) nil))
 
 (defun switcher--cleanup ()
+  "Cleanup function for `switcher-mode'."
   (when (timerp switcher-timer)
-    (cancel-timer switcher-timer))
-  (setq switcher-timer nil))
+    (cancel-timer switcher-timer)
+    (setq switcher-timer nil)))
 
 ;;;###autoload
-(defun switcher-next-buffer ()
-  (interactive)
-  (if (eq (window-next-buffers) nil)
-      (user-error "At the bottom of the buffer list")
-    (next-buffer)))
+(defun switcher-next-buffer (&optional arg)
+  (interactive "p")
+  (if (window-next-buffers)
+      (next-buffer arg)
+    (user-error "At the bottom of the buffer list")))
 
 (defvar switcher-mode-map (make-sparse-keymap)
   "Keymap for `switcher-mode'.")
