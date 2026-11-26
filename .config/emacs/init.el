@@ -2077,15 +2077,8 @@ surrounded by actual boundaries."
                ("&" . expreg-expand)))
 
 (use-package kam-expreg
-  :after (expreg)
   :ensure nil
   :hook (text-mode . kam-expreg-text-mode-setup)
-  :commands
-  (kam-forward-out-sexp
-   kam-mark-inner-sexp
-   kam-kill-inner-sexp
-   kam-expreg-end-of-sexp
-   kam-expreg-beginning-of-sexp)
   :bind
   ("C-M-q" . kam-kill-inner-sexp)
   ("C-M-m" . kam-mark-inner-sexp)
