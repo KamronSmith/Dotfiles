@@ -205,25 +205,21 @@ Only split if there is no split, and only split into left and right windows."
   (when-let* ((mru-win (get-mru-window t nil t)))
     (window--display-buffer buffer mru-win 'reuse alist)))
 
-(defun kam-aw-consult-buffer (window)
-  "Perform `consult-buffer' in AW selected WINDOW."
-  (aw-switch-to-window window)
-  (consult-buffer))
+(defmacro kam-aw-command (command)
+  (let ((command-name (intern (format "kam-aw-%s" command))))
+    `(defun ,command-name (window)
+       ,(format "Perform `%s' in AW selected WINDOW." command)
+       (aw-switch-to-window window)
+       (call-interactively #',command))))
 
-(defun kam-aw-find-file (window)
-  "Perform `find-file' in AW selected WINDOW."
-  (aw-switch-to-window window)
-  (call-interactively #'find-file))
+(kam-aw-command consult-buffer)
+(kam-aw-command find-file)
+(kam-aw-command execute-extended-command)
 
 (defun kam-aw-delete-window-dwim (window)
   "Perform `kam-delete-window-dwim' in the AW-selected WINDOW."
   (aw-switch-to-window window)
   (call-interactively #'kam-delete-window-dwim))
-
-(defun kam-aw-execute-extended-command (window)
-  "Perform `execute-extended-command' in the AW-selected WINDOW."
-  (aw-switch-to-window window)
-  (call-interactively 'execute-extended-command))
 
 (defun kam-aw-one-command (window)
   "Run a command in the AW-selected WINDOW."
