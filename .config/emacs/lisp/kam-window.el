@@ -151,7 +151,7 @@ With universal prefix ARG, run in the next window."
 
 (defun kam-get-alternate-buffer (&optional window)
   "Return the last buffer WINDOW has displayed other than the current one."
-  (let* ((prev-buffers (window-prev-buffers))
+  (let* ((prev-buffers (window-prev-buffers window))
          (head (car prev-buffers)))
     (if (eq (car head) (window-buffer window))
         (cadr prev-buffers)
@@ -162,7 +162,7 @@ With universal prefix ARG, run in the next window."
   "Switch to the last buffer used."
   (interactive)
   (let* ((alt-buffer (kam-get-alternate-buffer)))
-    (switch-to-buffer alt-buffer)))
+    (switch-to-buffer (car alt-buffer))))
 
 (defun kam-display-command-same-window (orig-fn &rest args)
   "Call ORIG-FN with ARGS while displaying everything in the same window."
