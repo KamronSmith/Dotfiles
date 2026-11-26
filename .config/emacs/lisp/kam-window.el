@@ -206,6 +206,7 @@ Only split if there is no split, and only split into left and right windows."
     (window--display-buffer buffer mru-win 'reuse alist)))
 
 (defmacro kam-aw-command (command)
+  "Run interactive COMMAND in AW selected window."
   (let* ((command-str (copy-sequence (symbol-name command))))
     `(defun ,(intern (format "kam-aw-%s" (string-remove-prefix "kam-" command-str))) (window)
        ,(format "Perform `%s' in AW selected WINDOW." command)
