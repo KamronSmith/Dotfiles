@@ -180,11 +180,15 @@ Only split if there is no split, and only split into left and right windows."
           (split-window-right))
       nil)))
 
+(defun kam-no-split-window ()
+  "Use in `split-window-preferred-function' to disable window splitting."
+  nil)
+
 ;;;###autoload
 (defun kam-toggle-delete-other-windows ()
   "Delete other windows in the frame if any, or restore previous window config."
   (interactive)
-  (if (and (featurep 'winner)
+  (if (and (bound-and-true-p winner-mode)
            (equal (selected-window) (next-window)))
       (winner-undo)
     (delete-other-windows)))
@@ -195,10 +199,6 @@ Only split if there is no split, and only split into left and right windows."
   (interactive)
   (clone-indirect-buffer-other-window nil 'pop-to-buffer)
   (kam-narrow-or-widen-dwim))
-
-(defun kam-no-split-window ()
-  "Use in `split-window-preferred-function' to disable window splitting."
-  nil)
 
 (defun kam-display-buffer-use-most-recent-window (buffer alist)
   "Display BUFFER in the most recently used window."
