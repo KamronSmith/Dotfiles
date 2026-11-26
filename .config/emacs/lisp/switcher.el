@@ -26,6 +26,8 @@
 
 ;;;###autoload
 (defun switcher-next-buffer (&optional arg)
+  "Switch to the next buffer only if `window-next-buffers' is not non-nil.
+With optional prefix ARG, switch that many times."
   (interactive "p")
   (if (window-next-buffers)
       (next-buffer arg)
