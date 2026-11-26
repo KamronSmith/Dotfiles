@@ -3047,6 +3047,8 @@ surrounded by actual boundaries."
   :custom
   (flycheck-emacs-lisp-load-path 'inherit)
   (flycheck-emacs-lisp-package-user-dir package-user-dir)
+  (flycheck-annotate-current-line-style 'eol)
+  (flycheck-annotate-other-lines-style 'eol)
   :config
   (global-flycheck-eglot-mode 1))
 
